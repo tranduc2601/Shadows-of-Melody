@@ -1,0 +1,258 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+
+const featuredArtist = {
+  name: "The Weeknd",
+  genre: "R&B · Pop · Alternative",
+  followers: "45.2M",
+  monthly: "89.4M",
+  verified: true,
+  image: "bg-gradient-to-br from-red-600 via-rose-600 to-orange-500",
+};
+
+const artists = [
+  { id: 1, name: "The Weeknd", genre: "R&B / Pop", followers: "45.2M", monthly: "89.4M", popularity: 97, image: "bg-gradient-to-br from-red-500 to-orange-500", following: false },
+  { id: 2, name: "Dua Lipa", genre: "Pop / Dance", followers: "28.1M", monthly: "65.1M", popularity: 93, image: "bg-gradient-to-br from-pink-500 to-purple-500", following: true },
+  { id: 3, name: "M83", genre: "Synthwave / Indie", followers: "12.5M", monthly: "22.3M", popularity: 88, image: "bg-gradient-to-br from-indigo-500 to-blue-600", following: false },
+  { id: 4, name: "Synthwave Vibes", genre: "Synthwave", followers: "8.3M", monthly: "15.7M", popularity: 82, image: "bg-gradient-to-br from-cyan-500 to-blue-500", following: true },
+  { id: 5, name: "Night City", genre: "Electronic", followers: "6.7M", monthly: "12.1M", popularity: 79, image: "bg-gradient-to-br from-fuchsia-500 to-purple-600", following: false },
+  { id: 6, name: "Chill Girl", genre: "Lo-fi / Chill", followers: "5.1M", monthly: "9.8M", popularity: 75, image: "bg-gradient-to-br from-orange-300 to-rose-400", following: false },
+  { id: 7, name: "Brain Waves", genre: "Ambient / Focus", followers: "3.9M", monthly: "8.2M", popularity: 70, image: "bg-gradient-to-br from-emerald-400 to-cyan-600", following: true },
+  { id: 8, name: "Raw Sounds", genre: "Acoustic / Indie", followers: "2.8M", monthly: "5.6M", popularity: 66, image: "bg-gradient-to-br from-amber-500 to-orange-600", following: false },
+];
+
+const topTracks = [
+  { id: 1, title: "Blinding Lights", plays: "3.1B", duration: "3:20", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500" },
+  { id: 2, title: "Starboy", plays: "2.5B", duration: "3:50", cover: "bg-gradient-to-br from-rose-500 to-orange-500" },
+  { id: 3, title: "Save Your Tears", plays: "2.1B", duration: "3:35", cover: "bg-gradient-to-br from-blue-500 to-cyan-500" },
+  { id: 4, title: "After Hours", plays: "1.9B", duration: "6:01", cover: "bg-gradient-to-br from-red-700 to-rose-900" },
+  { id: 5, title: "Can't Feel My Face", plays: "1.7B", duration: "3:35", cover: "bg-gradient-to-br from-orange-500 to-amber-600" },
+];
+
+const albums = [
+  { title: "After Hours", year: 2020, type: "Album", tracks: 14, color: "from-red-700 to-rose-900" },
+  { title: "Starboy", year: 2016, type: "Album", tracks: 13, color: "from-rose-500 to-orange-600" },
+  { title: "Beauty Behind the Madness", year: 2015, type: "Album", tracks: 13, color: "from-orange-400 to-red-500" },
+  { title: "Dawn FM", year: 2022, type: "Album", tracks: 16, color: "from-purple-500 to-indigo-600" },
+];
+---
+
+<MainLayout title="Nghệ Sĩ - Shadows of Melody">
+  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden md:flex z-40">
+      <div class="h-20 flex items-center px-6">
+        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
+          Melody
+        </a>
+      </div>
+      <div class="px-4 py-6 flex-1 overflow-y-auto">
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
+        <nav class="space-y-1 mb-8">
+          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
+          </a>
+          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
+          </a>
+          <a href="/artists" class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
+            <span class="material-symbols-outlined text-purple-400">person</span>Nghệ Sĩ
+          </a>
+        </nav>
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
+        <nav class="space-y-1">
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined text-rose-400">favorite</span>Liked Songs
+          </a>
+          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
+          </a>
+        </nav>
+      </div>
+      <div class="p-4 border-t border-white/5">
+        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px]">
+            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+              <span class="material-symbols-outlined text-purple-400">person</span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
+            <p class="text-xs text-purple-400 font-medium">Premium</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
+
+      <!-- Artist Hero Banner -->
+      <div class="relative flex-shrink-0 h-72 overflow-hidden">
+        <!-- Background -->
+        <div class={`absolute inset-0 ${featuredArtist.image} opacity-60`}></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
+
+        <!-- Nav Arrows -->
+        <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10">
+          <div class="flex items-center gap-2">
+            <button class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
+              <span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span>
+            </button>
+            <button class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors opacity-50">
+              <span class="material-symbols-outlined text-white text-xl">arrow_forward_ios</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Artist Info -->
+        <div class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
+          <div class="flex items-end gap-6">
+            <div class={`w-28 h-28 rounded-full ${featuredArtist.image} flex-shrink-0 border-4 border-white/10 shadow-2xl`}></div>
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="flex items-center gap-1 text-xs text-blue-400 font-semibold">
+                  <span class="material-symbols-outlined text-sm">verified</span>Verified Artist
+                </span>
+              </div>
+              <h1 class="text-5xl font-black text-white drop-shadow-xl">{featuredArtist.name}</h1>
+              <p class="text-gray-300 mt-1">{featuredArtist.monthly} người nghe hàng tháng</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable area -->
+      <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10">
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-4 py-6">
+          <button class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
+            <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
+          </button>
+          <button class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-white transition-colors text-sm">
+            Theo dõi
+          </button>
+          <button class="p-2 text-gray-400 hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-2xl">more_horiz</span>
+          </button>
+          <div class="ml-auto flex items-center gap-2 text-sm text-gray-400">
+            <span class="material-symbols-outlined text-purple-400">people</span>
+            <span>{featuredArtist.followers} người theo dõi</span>
+          </div>
+        </div>
+
+        <!-- Top Tracks -->
+        <section class="mb-10">
+          <h2 class="text-xl font-bold text-white mb-4">Phổ biến nhất</h2>
+          <div class="space-y-1">
+            {topTracks.map((track, i) => (
+              <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors">
+                <span class="w-6 text-center text-gray-500 text-sm group-hover:hidden">{i + 1}</span>
+                <span class="material-symbols-outlined text-purple-400 w-6 hidden group-hover:block text-sm">play_arrow</span>
+                <div class={`w-12 h-12 rounded-lg ${track.cover} flex-shrink-0 shadow-md group-hover:scale-105 transition-transform`}></div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-white font-medium truncate group-hover:text-purple-300 transition-colors">{track.title}</p>
+                  <p class="text-gray-500 text-sm">{track.plays} lượt nghe</p>
+                </div>
+                <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100">favorite_border</span>
+                <span class="text-gray-500 text-sm">{track.duration}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Albums -->
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">Albums</h2>
+            <button class="text-sm font-semibold text-purple-400 hover:text-purple-300 uppercase tracking-wider">Xem tất cả</button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {albums.map(album => (
+              <div class="group cursor-pointer">
+                <div class={`aspect-square rounded-2xl bg-gradient-to-br ${album.color} mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform`}>
+                  <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
+                    <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity">play_circle</span>
+                  </div>
+                </div>
+                <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400 transition-colors">{album.title}</p>
+                <p class="text-gray-500 text-xs">{album.year} · {album.type} · {album.tracks} bài</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- All Artists -->
+        <section>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-white">Tất cả nghệ sĩ</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {artists.map(artist => (
+              <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-5 hover:bg-white/[0.06] transition-all cursor-pointer group">
+                <div class="flex items-center gap-4 mb-4">
+                  <div class={`w-16 h-16 rounded-full ${artist.image} flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}></div>
+                  <div class="min-w-0">
+                    <p class="text-white font-semibold truncate group-hover:text-purple-400 transition-colors">{artist.name}</p>
+                    <p class="text-gray-500 text-xs truncate">{artist.genre}</p>
+                  </div>
+                </div>
+                <!-- Popularity bar -->
+                <div class="mb-3">
+                  <div class="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>Độ phổ biến</span>
+                    <span>{artist.popularity}%</span>
+                  </div>
+                  <div class="h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full" style={`width: ${artist.popularity}%`}></div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-gray-500">{artist.followers} người theo dõi</span>
+                  <button class={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${artist.following ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30" : "border border-white/20 text-gray-300 hover:border-white hover:text-white"}`}>
+                    {artist.following ? "Đang theo dõi" : "Theo dõi"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Player Bar -->
+      <div class="h-24 flex-shrink-0 border-t border-white/5 bg-[#0a1229]/90 backdrop-blur-xl px-6 flex items-center gap-4 relative z-20">
+        <div class="flex items-center gap-3 w-64">
+          <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex-shrink-0 shadow-md"></div>
+          <div class="min-w-0">
+            <p class="text-white text-sm font-semibold truncate">Blinding Lights</p>
+            <p class="text-gray-400 text-xs truncate">The Weeknd</p>
+          </div>
+          <button class="ml-2"><span class="material-symbols-outlined text-gray-400 hover:text-rose-400 transition-colors">favorite_border</span></button>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <div class="flex items-center gap-6">
+            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors">shuffle</span></button>
+            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_previous</span></button>
+            <button class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
+              <span class="material-symbols-outlined text-white">play_arrow</span>
+            </button>
+            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_next</span></button>
+            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors">repeat</span></button>
+          </div>
+          <div class="flex items-center gap-3 w-full max-w-md">
+            <span class="text-xs text-gray-500">0:48</span>
+            <div class="flex-1 h-1 bg-white/10 rounded-full"><div class="w-1/4 h-full bg-purple-500 rounded-full"></div></div>
+            <span class="text-xs text-gray-500">3:20</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-40 justify-end">
+          <span class="material-symbols-outlined text-gray-400">volume_up</span>
+          <div class="flex-1 h-1 bg-white/10 rounded-full"><div class="w-3/4 h-full bg-white/60 rounded-full"></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</MainLayout>
