@@ -1,0 +1,251 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+
+const queue = [
+  { id: 1, title: "Midnight City", artist: "M83", duration: "4:03", cover: "bg-gradient-to-br from-indigo-500 to-purple-500", active: true },
+  { id: 2, title: "Starboy", artist: "The Weeknd", duration: "3:50", cover: "bg-gradient-to-br from-rose-500 to-orange-500", active: false },
+  { id: 3, title: "Levitating", artist: "Dua Lipa", duration: "3:23", cover: "bg-gradient-to-br from-pink-500 to-violet-500", active: false },
+  { id: 4, title: "Blinding Lights", artist: "The Weeknd", duration: "3:20", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500", active: false },
+  { id: 5, title: "Save Your Tears", artist: "The Weeknd", duration: "3:35", cover: "bg-gradient-to-br from-blue-500 to-cyan-500", active: false },
+  { id: 6, title: "Neon Blade", artist: "Synthwave Vibes", duration: "4:12", cover: "bg-gradient-to-br from-cyan-500 to-emerald-500", active: false },
+];
+
+const lyrics = [
+  { time: "0:00", text: "♪ Intro ♪", active: false },
+  { time: "0:17", text: "Waiting in a car", active: false },
+  { time: "0:25", text: "Waiting for a ride in the dark", active: false },
+  { time: "0:38", text: "The night city grows", active: false },
+  { time: "0:46", text: "Look and see her eyes, they glow", active: false },
+  { time: "1:00", text: "Waiting in a car", active: false },
+  { time: "1:08", text: "Waiting for a ride in the dark", active: true },
+  { time: "1:20", text: "Heading for the top", active: false },
+  { time: "1:28", text: "No we can't stop", active: false },
+  { time: "1:40", text: "We're gonna ride the stars tonight", active: false },
+  { time: "1:55", text: "Hey! Midnight City...", active: false },
+];
+---
+
+<MainLayout title="Player - Shadows of Melody">
+  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden md:flex z-40">
+      <div class="h-20 flex items-center px-6">
+        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
+          Melody
+        </a>
+      </div>
+      <div class="px-4 py-6 flex-1 overflow-y-auto">
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
+        <nav class="space-y-1 mb-8">
+          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
+          </a>
+          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
+          </a>
+          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
+          </a>
+        </nav>
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
+        <nav class="space-y-1">
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined text-rose-400">favorite</span>Liked Songs
+          </a>
+          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
+          </a>
+        </nav>
+      </div>
+      <div class="p-4 border-t border-white/5">
+        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px]">
+            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+              <span class="material-symbols-outlined text-purple-400">person</span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
+            <p class="text-xs text-purple-400 font-medium">Premium</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content: Three-panel layout -->
+    <main class="flex-1 flex overflow-hidden">
+
+      <!-- CENTER: Player -->
+      <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#0a0d1a] relative overflow-hidden px-8">
+        <!-- Ambient Glow -->
+        <div class="absolute w-[500px] h-[500px] bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute w-[300px] h-[300px] bg-purple-600/15 blur-[100px] rounded-full pointer-events-none top-1/4 left-1/3"></div>
+
+        <div class="relative z-10 flex flex-col items-center w-full max-w-sm">
+          <!-- Album Art -->
+          <div class="w-72 h-72 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-2xl shadow-indigo-500/40 mb-8 relative group hover:scale-105 transition-transform duration-500">
+            <!-- Vinyl record effect -->
+            <div class="absolute -right-6 top-1/2 -translate-y-1/2 w-60 h-60 rounded-full border-4 border-white/5 bg-gradient-to-br from-gray-900 to-black opacity-0 group-hover:opacity-100 transition-opacity blur-sm"></div>
+            <!-- Note overlay -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-20">
+              <span class="material-symbols-outlined text-white" style="font-size: 8rem;">music_note</span>
+            </div>
+          </div>
+
+          <!-- Track Info -->
+          <div class="text-center w-full mb-6">
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-left">
+                <h2 class="text-2xl font-black text-white">Midnight City</h2>
+                <p class="text-gray-400">M83 · Hurry Up, We're Dreaming</p>
+              </div>
+              <button id="likeBtn" class="w-10 h-10 flex items-center justify-center hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-gray-400 hover:text-rose-400 transition-colors text-3xl">favorite_border</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full mb-4">
+            <div class="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group relative mb-2">
+              <div class="h-full w-[34%] bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full relative">
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>1:22</span>
+              <span>4:03</span>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex items-center justify-between w-full mb-6">
+            <button class="p-2 text-gray-400 hover:text-white transition-colors">
+              <span class="material-symbols-outlined">shuffle</span>
+            </button>
+            <button class="p-2 text-gray-300 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-4xl">skip_previous</span>
+            </button>
+            <button id="playBtn" class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 flex items-center justify-center hover:scale-110 transition-all shadow-2xl shadow-purple-500/40">
+              <span class="material-symbols-outlined text-white text-4xl">play_arrow</span>
+            </button>
+            <button class="p-2 text-gray-300 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-4xl">skip_next</span>
+            </button>
+            <button class="p-2 text-gray-400 hover:text-white transition-colors">
+              <span class="material-symbols-outlined">repeat</span>
+            </button>
+          </div>
+
+          <!-- Volume & Extra Controls -->
+          <div class="flex items-center gap-3 w-full">
+            <span class="material-symbols-outlined text-gray-500 text-lg">volume_down</span>
+            <div class="flex-1 h-1 bg-white/10 rounded-full cursor-pointer">
+              <div class="w-3/4 h-full bg-white/50 rounded-full"></div>
+            </div>
+            <span class="material-symbols-outlined text-gray-500 text-lg">volume_up</span>
+            <button class="ml-2 p-1.5 text-gray-400 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-lg">queue_music</span>
+            </button>
+            <button class="p-1.5 text-gray-400 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-lg">lyrics</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Tabs (Queue / Lyrics) -->
+      <div class="w-80 flex-shrink-0 border-l border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden xl:flex">
+        <!-- Panel Tabs -->
+        <div class="flex border-b border-white/5 flex-shrink-0">
+          <button id="tabQueue" class="flex-1 py-4 text-sm font-semibold text-white border-b-2 border-purple-500 transition-all">Danh sách phát</button>
+          <button id="tabLyrics" class="flex-1 py-4 text-sm font-semibold text-gray-400 border-b-2 border-transparent hover:text-white transition-all">Lời bài hát</button>
+        </div>
+
+        <!-- QUEUE Panel -->
+        <div id="panelQueue" class="flex-1 overflow-y-auto py-4 px-3">
+          <p class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 mb-3">Đang phát tiếp</p>
+          <div class="space-y-1">
+            {queue.map((track, i) => (
+              <div class={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all group ${track.active ? "bg-purple-500/20 border border-purple-500/30" : "hover:bg-white/5"}`}>
+                <div class={`w-10 h-10 rounded-lg ${track.cover} flex-shrink-0 relative`}>
+                  {track.active && (
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                      <span class="material-symbols-outlined text-white text-sm">graphic_eq</span>
+                    </div>
+                  )}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class={`text-sm font-medium truncate ${track.active ? "text-purple-300" : "text-white"}`}>{track.title}</p>
+                  <p class="text-gray-500 text-xs truncate">{track.artist}</p>
+                </div>
+                <span class="text-gray-500 text-xs">{track.duration}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- LYRICS Panel (hidden by default) -->
+        <div id="panelLyrics" class="flex-1 overflow-y-auto py-6 px-6 hidden">
+          <div class="space-y-6 text-center">
+            {lyrics.map(line => (
+              <div class={`transition-all duration-300 ${line.active ? "text-white text-xl font-bold scale-105" : "text-gray-600 text-base hover:text-gray-400"}`}>
+                {line.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Toggle play button
+    const playBtn = document.getElementById('playBtn');
+    let isPlaying = false;
+    playBtn?.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      const icon = playBtn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = isPlaying ? 'pause' : 'play_arrow';
+    });
+
+    // Toggle like button
+    const likeBtn = document.getElementById('likeBtn');
+    let isLiked = false;
+    likeBtn?.addEventListener('click', () => {
+      isLiked = !isLiked;
+      const icon = likeBtn.querySelector('.material-symbols-outlined');
+      if (icon) {
+        icon.textContent = isLiked ? 'favorite' : 'favorite_border';
+        icon.classList.toggle('text-rose-400', isLiked);
+        icon.classList.toggle('text-gray-400', !isLiked);
+      }
+    });
+
+    // Switch tabs
+    const tabQueue = document.getElementById('tabQueue');
+    const tabLyrics = document.getElementById('tabLyrics');
+    const panelQueue = document.getElementById('panelQueue');
+    const panelLyrics = document.getElementById('panelLyrics');
+
+    tabQueue?.addEventListener('click', () => {
+      tabQueue.classList.add('text-white', 'border-purple-500');
+      tabQueue.classList.remove('text-gray-400', 'border-transparent');
+      tabLyrics?.classList.add('text-gray-400', 'border-transparent');
+      tabLyrics?.classList.remove('text-white', 'border-purple-500');
+      panelQueue?.classList.remove('hidden');
+      panelLyrics?.classList.add('hidden');
+    });
+
+    tabLyrics?.addEventListener('click', () => {
+      tabLyrics.classList.add('text-white', 'border-purple-500');
+      tabLyrics.classList.remove('text-gray-400', 'border-transparent');
+      tabQueue?.classList.add('text-gray-400', 'border-transparent');
+      tabQueue?.classList.remove('text-white', 'border-purple-500');
+      panelLyrics?.classList.remove('hidden');
+      panelQueue?.classList.add('hidden');
+    });
+  </script>
+</MainLayout>

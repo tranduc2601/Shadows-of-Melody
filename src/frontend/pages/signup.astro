@@ -1,0 +1,148 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Đăng Ký - Shadows of Melody">
+  <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center justify-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-purple-400">music_note</span>
+          Shadows of Melody
+        </h1>
+        <p class="text-gray-400 text-sm">Tham gia cộng đồng âm nhạc của chúng tôi</p>
+      </div>
+
+      <!-- Signup Form -->
+      <div class="bg-[#0a1229]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">Tạo Tài Khoản Mới</h2>
+
+        <form id="signupForm" class="space-y-4">
+          <!-- Full Name Input -->
+          <div>
+            <label for="fullname" class="block text-sm font-medium text-gray-300 mb-2">
+              Họ và Tên
+            </label>
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
+              required
+              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+              placeholder="Nguyễn Văn A"
+            />
+          </div>
+
+          <!-- Email Input -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <!-- Password Input -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+              Mật Khẩu
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+              placeholder="••••••••"
+            />
+            <p class="text-xs text-gray-500 mt-2">
+              Mật khẩu phải có ít nhất 8 ký tự
+            </p>
+          </div>
+
+          <!-- Confirm Password Input -->
+          <div>
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
+              Xác Nhận Mật Khẩu
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <!-- Terms & Conditions -->
+          <div class="flex items-start gap-2 pt-2">
+            <input
+              type="checkbox"
+              id="terms"
+              name="terms"
+              required
+              class="w-4 h-4 mt-1 bg-[#1a2847] border border-white/10 rounded cursor-pointer accent-purple-500 flex-shrink-0"
+            />
+            <label for="terms" class="text-sm text-gray-400 cursor-pointer">
+              Tôi đồng ý với
+              <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
+                Điều khoản dịch vụ
+              </a>
+              và
+              <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
+                Chính sách bảo mật
+              </a>
+            </label>
+          </div>
+
+          <!-- Sign Up Button -->
+          <button
+            type="submit"
+            class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-500/25 mt-6"
+          >
+            Tạo Tài Khoản
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="my-6 flex items-center">
+          <div class="flex-1 h-px bg-white/10"></div>
+          <span class="px-4 text-gray-500 text-sm">HOẶC</span>
+          <div class="flex-1 h-px bg-white/10"></div>
+        </div>
+
+        <!-- Google Sign Up -->
+        <button
+          class="w-full py-3 bg-[#1a2847] border border-white/10 text-gray-300 font-medium rounded-lg hover:bg-[#233d5d] transition-all duration-200 flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <text x="0" y="20" font-size="20" fill="currentColor">G</text>
+          </svg>
+          Đăng ký với Google
+        </button>
+
+        <!-- Login Link -->
+        <p class="text-center text-gray-400 text-sm mt-6">
+          Đã có tài khoản?
+          <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+            Đăng Nhập
+          </a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <p class="text-center text-gray-500 text-xs mt-6">
+        Chúng tôi sẽ gửi email xác nhận đến địa chỉ email của bạn
+      </p>
+    </div>
+  </div>
+
+</MainLayout>
