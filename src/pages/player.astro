@@ -29,9 +29,9 @@ const lyrics = [
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <!-- Sidebar -->
-    <aside class="w-64 flex-shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden md:flex z-40">
+    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
       <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
           <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
           Melody
         </a>
@@ -61,7 +61,7 @@ const lyrics = [
       </div>
       <div class="p-4 border-t border-white/5">
         <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px]">
+          <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5">
             <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
               <span class="material-symbols-outlined text-purple-400">person</span>
             </div>
@@ -78,16 +78,16 @@ const lyrics = [
     <main class="flex-1 flex overflow-hidden">
 
       <!-- CENTER: Player -->
-      <div class="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#0a0d1a] relative overflow-hidden px-8">
+      <div class="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#0a0d1a] relative overflow-hidden px-8">
         <!-- Ambient Glow -->
-        <div class="absolute w-[500px] h-[500px] bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute w-[300px] h-[300px] bg-purple-600/15 blur-[100px] rounded-full pointer-events-none top-1/4 left-1/3"></div>
+        <div class="absolute w-125 h-125 bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute w-75 h-75 bg-purple-600/15 blur-[100px] rounded-full pointer-events-none top-1/4 left-1/3"></div>
 
         <div class="relative z-10 flex flex-col items-center w-full max-w-sm">
           <!-- Album Art -->
-          <div class="w-72 h-72 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-2xl shadow-indigo-500/40 mb-8 relative group hover:scale-105 transition-transform duration-500">
+          <div class="w-72 h-72 rounded-3xl bg-linear-to-br from-indigo-500 to-purple-600 shadow-2xl shadow-indigo-500/40 mb-8 relative group hover:scale-105 transition-transform duration-500">
             <!-- Vinyl record effect -->
-            <div class="absolute -right-6 top-1/2 -translate-y-1/2 w-60 h-60 rounded-full border-4 border-white/5 bg-gradient-to-br from-gray-900 to-black opacity-0 group-hover:opacity-100 transition-opacity blur-sm"></div>
+            <div class="absolute -right-6 top-1/2 -translate-y-1/2 w-60 h-60 rounded-full border-4 border-white/5 bg-linear-to-br from-gray-900 to-black opacity-0 group-hover:opacity-100 transition-opacity blur-sm"></div>
             <!-- Note overlay -->
             <div class="absolute inset-0 flex items-center justify-center opacity-20">
               <span class="material-symbols-outlined text-white" style="font-size: 8rem;">music_note</span>
@@ -110,7 +110,7 @@ const lyrics = [
           <!-- Progress Bar -->
           <div class="w-full mb-4">
             <div class="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group relative mb-2">
-              <div class="h-full w-[34%] bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full relative">
+              <div class="h-full w-[34%] bg-linear-to-r from-purple-500 to-indigo-500 rounded-full relative">
                 <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
             </div>
@@ -128,7 +128,7 @@ const lyrics = [
             <button class="p-2 text-gray-300 hover:text-white transition-colors">
               <span class="material-symbols-outlined text-4xl">skip_previous</span>
             </button>
-            <button id="playBtn" class="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 flex items-center justify-center hover:scale-110 transition-all shadow-2xl shadow-purple-500/40">
+            <button id="playBtn" class="w-16 h-16 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 flex items-center justify-center hover:scale-110 transition-all shadow-2xl shadow-purple-500/40">
               <span class="material-symbols-outlined text-white text-4xl">play_arrow</span>
             </button>
             <button class="p-2 text-gray-300 hover:text-white transition-colors">
@@ -157,9 +157,9 @@ const lyrics = [
       </div>
 
       <!-- RIGHT PANEL: Tabs (Queue / Lyrics) -->
-      <div class="w-80 flex-shrink-0 border-l border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden xl:flex">
+      <div class="w-80 shrink-0 border-l border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden xl:flex xl:flex-col">
         <!-- Panel Tabs -->
-        <div class="flex border-b border-white/5 flex-shrink-0">
+        <div class="flex border-b border-white/5 shrink-0">
           <button id="tabQueue" class="flex-1 py-4 text-sm font-semibold text-white border-b-2 border-purple-500 transition-all">Danh sách phát</button>
           <button id="tabLyrics" class="flex-1 py-4 text-sm font-semibold text-gray-400 border-b-2 border-transparent hover:text-white transition-all">Lời bài hát</button>
         </div>
@@ -170,7 +170,7 @@ const lyrics = [
           <div class="space-y-1">
             {queue.map((track, i) => (
               <div class={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all group ${track.active ? "bg-purple-500/20 border border-purple-500/30" : "hover:bg-white/5"}`}>
-                <div class={`w-10 h-10 rounded-lg ${track.cover} flex-shrink-0 relative`}>
+                <div class={`w-10 h-10 rounded-lg ${track.cover} shrink-0 relative`}>
                   {track.active && (
                     <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
                       <span class="material-symbols-outlined text-white text-sm">graphic_eq</span>

@@ -41,9 +41,9 @@ const albums = [
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <!-- Sidebar -->
-    <aside class="w-64 flex-shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden md:flex z-40">
+    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
       <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
           <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
           Melody
         </a>
@@ -57,7 +57,7 @@ const albums = [
           <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
           </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
+          <a href="/artists" class="flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
             <span class="material-symbols-outlined text-purple-400">person</span>Nghệ Sĩ
           </a>
         </nav>
@@ -73,7 +73,7 @@ const albums = [
       </div>
       <div class="p-4 border-t border-white/5">
         <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px]">
+          <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5">
             <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
               <span class="material-symbols-outlined text-purple-400">person</span>
             </div>
@@ -87,13 +87,13 @@ const albums = [
     </aside>
 
     <!-- Main -->
-    <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
+    <main class="flex-1 flex flex-col overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
 
       <!-- Artist Hero Banner -->
-      <div class="relative flex-shrink-0 h-72 overflow-hidden">
+      <div class="relative shrink-0 h-72 overflow-hidden">
         <!-- Background -->
         <div class={`absolute inset-0 ${featuredArtist.image} opacity-60`}></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
+        <div class="absolute inset-0 bg-linear-to-b from-transparent via-black/30 to-[#060e20]"></div>
 
         <!-- Nav Arrows -->
         <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10">
@@ -110,7 +110,7 @@ const albums = [
         <!-- Artist Info -->
         <div class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
           <div class="flex items-end gap-6">
-            <div class={`w-28 h-28 rounded-full ${featuredArtist.image} flex-shrink-0 border-4 border-white/10 shadow-2xl`}></div>
+            <div class={`w-28 h-28 rounded-full ${featuredArtist.image} shrink-0 border-4 border-white/10 shadow-2xl`}></div>
             <div>
               <div class="flex items-center gap-2 mb-1">
                 <span class="flex items-center gap-1 text-xs text-blue-400 font-semibold">
@@ -129,7 +129,7 @@ const albums = [
 
         <!-- Action Buttons -->
         <div class="flex items-center gap-4 py-6">
-          <button class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
+          <button class="w-14 h-14 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
             <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
           </button>
           <button class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-white transition-colors text-sm">
@@ -152,7 +152,7 @@ const albums = [
               <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors">
                 <span class="w-6 text-center text-gray-500 text-sm group-hover:hidden">{i + 1}</span>
                 <span class="material-symbols-outlined text-purple-400 w-6 hidden group-hover:block text-sm">play_arrow</span>
-                <div class={`w-12 h-12 rounded-lg ${track.cover} flex-shrink-0 shadow-md group-hover:scale-105 transition-transform`}></div>
+                <div class={`w-12 h-12 rounded-lg ${track.cover} shrink-0 shadow-md group-hover:scale-105 transition-transform`}></div>
                 <div class="flex-1 min-w-0">
                   <p class="text-white font-medium truncate group-hover:text-purple-300 transition-colors">{track.title}</p>
                   <p class="text-gray-500 text-sm">{track.plays} lượt nghe</p>
@@ -173,7 +173,7 @@ const albums = [
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {albums.map(album => (
               <div class="group cursor-pointer">
-                <div class={`aspect-square rounded-2xl bg-gradient-to-br ${album.color} mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform`}>
+                <div class={`aspect-square rounded-2xl bg-linear-to-br ${album.color} mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform`}>
                   <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
                     <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity">play_circle</span>
                   </div>
@@ -192,9 +192,9 @@ const albums = [
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {artists.map(artist => (
-              <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-5 hover:bg-white/[0.06] transition-all cursor-pointer group">
+              <div class="bg-white/3 border border-white/5 rounded-2xl p-5 hover:bg-white/6 transition-all cursor-pointer group">
                 <div class="flex items-center gap-4 mb-4">
-                  <div class={`w-16 h-16 rounded-full ${artist.image} flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform`}></div>
+                  <div class={`w-16 h-16 rounded-full ${artist.image} shrink-0 shadow-lg group-hover:scale-110 transition-transform`}></div>
                   <div class="min-w-0">
                     <p class="text-white font-semibold truncate group-hover:text-purple-400 transition-colors">{artist.name}</p>
                     <p class="text-gray-500 text-xs truncate">{artist.genre}</p>
@@ -207,7 +207,7 @@ const albums = [
                     <span>{artist.popularity}%</span>
                   </div>
                   <div class="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full" style={`width: ${artist.popularity}%`}></div>
+                    <div class="h-full bg-linear-to-r from-purple-500 to-indigo-500 rounded-full" style={`width: ${artist.popularity}%`}></div>
                   </div>
                 </div>
                 <div class="flex items-center justify-between">
@@ -223,9 +223,9 @@ const albums = [
       </div>
 
       <!-- Player Bar -->
-      <div class="h-24 flex-shrink-0 border-t border-white/5 bg-[#0a1229]/90 backdrop-blur-xl px-6 flex items-center gap-4 relative z-20">
+      <div class="h-24 shrink-0 border-t border-white/5 bg-[#0a1229]/90 backdrop-blur-xl px-6 flex items-center gap-4 relative z-20">
         <div class="flex items-center gap-3 w-64">
-          <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex-shrink-0 shadow-md"></div>
+          <div class="w-14 h-14 rounded-lg bg-linear-to-br from-red-500 to-orange-500 shrink-0 shadow-md"></div>
           <div class="min-w-0">
             <p class="text-white text-sm font-semibold truncate">Blinding Lights</p>
             <p class="text-gray-400 text-xs truncate">The Weeknd</p>
@@ -236,7 +236,7 @@ const albums = [
           <div class="flex items-center gap-6">
             <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors">shuffle</span></button>
             <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_previous</span></button>
-            <button class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
+            <button class="w-10 h-10 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
               <span class="material-symbols-outlined text-white">play_arrow</span>
             </button>
             <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_next</span></button>
