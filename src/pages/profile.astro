@@ -1,0 +1,354 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+
+const user = {
+  name: "Duy Ho",
+  handle: "@duyho",
+  bio: "Music lover · Synthwave enthusiast · Night owl 🌙",
+  plan: "Premium",
+  followers: "1.2K",
+  following: 348,
+  totalLiked: 247,
+  joinedYear: 2022,
+  avatar: "bg-linear-to-tr from-purple-500 to-pink-500",
+};
+
+const recentTracks = [
+  { title: "Midnight City",      artist: "M83",           cover: "bg-gradient-to-br from-indigo-500 to-purple-500", playedAt: "2 phút trước"   },
+  { title: "Blinding Lights",    artist: "The Weeknd",    cover: "bg-gradient-to-br from-red-500 to-fuchsia-500",   playedAt: "18 phút trước"  },
+  { title: "Levitating",         artist: "Dua Lipa",      cover: "bg-gradient-to-br from-pink-500 to-violet-500",   playedAt: "1 giờ trước"    },
+  { title: "Starboy",            artist: "The Weeknd",    cover: "bg-gradient-to-br from-rose-500 to-orange-500",   playedAt: "3 giờ trước"    },
+  { title: "Do I Wanna Know?",   artist: "Arctic Monkeys",cover: "bg-gradient-to-br from-amber-500 to-red-500",    playedAt: "Hôm qua"         },
+];
+
+const userPlaylists = [
+  { name: "Chill Vibes",         tracks: 24, color: "from-cyan-500 to-blue-600",     icon: "🌊" },
+  { name: "Late Night Drive",    tracks: 18, color: "from-purple-500 to-indigo-700",  icon: "🚗" },
+  { name: "Morning Boost",       tracks: 30, color: "from-orange-400 to-yellow-500",  icon: "☀️" },
+  { name: "Synthwave Dreams",    tracks: 15, color: "from-fuchsia-500 to-pink-600",   icon: "🎹" },
+];
+
+const topArtists = [
+  { name: "The Weeknd",   image: "bg-gradient-to-br from-red-500 to-orange-500"    },
+  { name: "M83",          image: "bg-gradient-to-br from-indigo-500 to-blue-600"   },
+  { name: "Dua Lipa",     image: "bg-gradient-to-br from-pink-500 to-purple-500"   },
+  { name: "Daft Punk",    image: "bg-gradient-to-br from-yellow-400 to-orange-500" },
+];
+
+const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
+---
+
+<MainLayout title="Hồ sơ - Shadows of Melody">
+  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+
+    <!-- Sidebar -->
+    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
+      <div class="h-20 flex items-center px-6">
+        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
+          Melody
+        </a>
+      </div>
+
+      <div class="px-4 py-6 flex-1 overflow-y-auto">
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
+        <nav class="space-y-1 mb-8">
+          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
+          </a>
+          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
+          </a>
+          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
+          </a>
+        </nav>
+
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
+        <nav class="space-y-1">
+          <a href="/liked" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-rose-400">favorite</span>Liked Songs
+          </a>
+          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
+          </a>
+        </nav>
+      </div>
+
+      <!-- Active: Profile -->
+      <div class="p-4 border-t border-white/5">
+        <div class="flex items-center gap-3 p-2 rounded-xl transition-colors">
+          <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0 bg-linear-to-r from-purple-500/20 to-transparent rounded-xl px-2 py-1 shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
+            <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
+              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+                <span class="material-symbols-outlined text-purple-400">person</span>
+              </div>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-white truncate">{user.name}</p>
+              <p class="text-xs text-purple-400 font-medium truncate">{user.plan}</p>
+            </div>
+          </a>
+          <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
+            <span class="material-symbols-outlined text-[20px]">settings</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+      <!-- Ambient Glow -->
+      <div class="absolute top-0 right-0 w-[50%] h-[50%] bg-purple-900/15 blur-[160px] rounded-full pointer-events-none"></div>
+      <div class="absolute bottom-[20%] left-0 w-[35%] h-[40%] bg-indigo-900/10 blur-[130px] rounded-full pointer-events-none"></div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
+
+        <!-- Profile Banner -->
+        <div class="relative h-48 bg-linear-to-r from-purple-900/60 via-indigo-900/50 to-pink-900/30 overflow-hidden">
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(168,85,247,0.3)_0%,transparent_60%)]"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(236,72,153,0.2)_0%,transparent_60%)]"></div>
+          <!-- Edit banner button -->
+          <button type="button" class="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-sm text-white/70 hover:text-white transition-all border border-white/10">
+            <span class="material-symbols-outlined text-[16px]">edit</span>
+            Chỉnh sửa banner
+          </button>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="px-6 lg:px-8">
+          <div class="flex flex-col sm:flex-row sm:items-end gap-5 -mt-14 relative z-10 mb-8">
+            <!-- Avatar -->
+            <div class="relative shrink-0">
+              <div class="w-28 h-28 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-1 shadow-2xl shadow-purple-500/30">
+                <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+                  <span class="material-symbols-outlined text-purple-300" style="font-size: 3.5rem;">person</span>
+                </div>
+              </div>
+              <button type="button" aria-label="Đổi ảnh đại diện" class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
+                <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
+              </button>
+            </div>
+
+            <!-- Name + Stats -->
+            <div class="flex-1 min-w-0 pb-2">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-3xl font-black text-white">{user.name}</h1>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs font-bold text-purple-300 uppercase tracking-wider">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>{user.plan}
+                </span>
+              </div>
+              <p class="text-gray-500 text-sm mt-0.5">{user.handle}</p>
+              <p class="text-gray-400 text-sm mt-2 max-w-md">{user.bio}</p>
+              <div class="flex items-center gap-6 mt-3 text-sm">
+                <div>
+                  <span class="font-bold text-white">{user.followers}</span>
+                  <span class="text-gray-500 ml-1">người theo dõi</span>
+                </div>
+                <div>
+                  <span class="font-bold text-white">{user.following}</span>
+                  <span class="text-gray-500 ml-1">đang theo dõi</span>
+                </div>
+                <div>
+                  <span class="font-bold text-white">{user.totalLiked}</span>
+                  <span class="text-gray-500 ml-1">bài yêu thích</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 shrink-0 pb-2">
+              <a href="/settings" class="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-full font-semibold text-sm transition-all">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+                Chỉnh sửa hồ sơ
+              </a>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="flex items-center gap-1 border-b border-white/5 mb-8">
+            {tabs.map((tab, i) => (
+              <button
+                type="button"
+                class={`px-5 py-3 text-sm font-semibold transition-all relative ${
+                  i === 0
+                    ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-purple-400 after:rounded-full"
+                    : "text-gray-500 hover:text-gray-300"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <!-- Grid Layout -->
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+
+            <!-- Left: Recent Tracks -->
+            <div class="xl:col-span-2">
+              <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400 text-[20px]">history</span>
+                Nghe gần đây
+              </h2>
+              <div class="space-y-1.5">
+                {recentTracks.map((track, i) => (
+                  <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
+                    <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0 group-hover:hidden">{i + 1}</span>
+                    <span class="material-symbols-outlined text-purple-400 text-[20px] hidden group-hover:block shrink-0">play_arrow</span>
+                    <div class={`w-11 h-11 rounded-xl shrink-0 ${track.cover} shadow-md group-hover:scale-105 transition-transform`}></div>
+                    <div class="flex-1 min-w-0">
+                      <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">{track.title}</p>
+                      <p class="text-xs text-gray-500 truncate mt-0.5">{track.artist}</p>
+                    </div>
+                    <span class="text-xs text-gray-600 shrink-0 hidden sm:block">{track.playedAt}</span>
+                    <button type="button" aria-label="Thêm tùy chọn" class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white transition-all">
+                      <span class="material-symbols-outlined text-[20px]">more_horiz</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- Right: Top Artists + Stats -->
+            <div class="flex flex-col gap-8">
+              <!-- Top Artists -->
+              <div>
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-purple-400 text-[20px]">star</span>
+                  Nghệ sĩ yêu thích
+                </h2>
+                <div class="grid grid-cols-2 gap-3">
+                  {topArtists.map((artist) => (
+                    <a href="/artists" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group cursor-pointer">
+                      <div class={`w-14 h-14 rounded-full ${artist.image} group-hover:scale-105 transition-transform shadow-lg`}></div>
+                      <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">{artist.name}</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Listening Stats -->
+              <div>
+                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-purple-400 text-[20px]">equalizer</span>
+                  Thống kê
+                </h2>
+                <div class="bg-white/3 border border-white/5 rounded-2xl p-5 space-y-4">
+                  {[
+                    { label: "Giờ nghe tháng này", value: "42h", icon: "schedule",  pct: 70  },
+                    { label: "Bài hát đã nghe",    value: "312",  icon: "music_note", pct: 55  },
+                    { label: "Nghệ sĩ khám phá",   value: "28",   icon: "person",     pct: 40  },
+                  ].map((stat) => (
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                          <span class="material-symbols-outlined text-[16px] text-purple-400">{stat.icon}</span>
+                          {stat.label}
+                        </div>
+                        <span class="text-sm font-bold text-white">{stat.value}</span>
+                      </div>
+                      <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div class={`h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full`} style={`width: ${stat.pct}%`}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Playlists Grid -->
+          <div class="mb-6">
+            <div class="flex items-end justify-between mb-5">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400 text-[20px]">queue_music</span>
+                Playlists
+              </h2>
+              <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">Xem tất cả</a>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {userPlaylists.map((pl) => (
+                <a href="/playlist" class="group cursor-pointer">
+                  <div class={`aspect-square rounded-2xl bg-linear-to-br ${pl.color} mb-3 flex items-center justify-center text-4xl shadow-lg group-hover:scale-[1.03] group-hover:shadow-2xl transition-all duration-300 relative overflow-hidden`}>
+                    <span role="img" aria-label={pl.name}>{pl.icon}</span>
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+                    </div>
+                  </div>
+                  <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">{pl.name}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">{pl.tracks} bài hát</p>
+                </a>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Now Playing Bar -->
+      <div class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center gap-4 w-1/4 min-w-50">
+          <div class="w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500 to-purple-500 shadow-lg shadow-purple-500/20 relative group cursor-pointer overflow-hidden shrink-0">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span class="material-symbols-outlined text-white text-xl">keyboard_arrow_up</span>
+            </div>
+          </div>
+          <div class="flex flex-col justify-center min-w-0">
+            <span class="font-bold text-white text-[15px] truncate">Midnight City</span>
+            <span class="text-xs text-gray-400 truncate mt-0.5">M83</span>
+          </div>
+          <button type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
+            <span class="material-symbols-outlined">favorite</span>
+          </button>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
+          <div class="flex items-center gap-6 mb-1.5">
+            <button type="button" aria-label="Shuffle" class="text-gray-500 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">shuffle</span></button>
+            <button type="button" aria-label="Trước" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_previous</span></button>
+            <button type="button" aria-label="Phát / Dừng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+              <span class="material-symbols-outlined">play_arrow</span>
+            </button>
+            <button type="button" aria-label="Tiếp theo" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_next</span></button>
+            <button type="button" aria-label="Lặp lại" class="text-green-400 hover:text-green-300 transition-colors relative">
+              <span class="material-symbols-outlined text-xl">repeat</span>
+              <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400"></span>
+            </button>
+          </div>
+          <div class="w-full flex items-center gap-3">
+            <span class="text-[11px] font-medium text-gray-400 w-10 text-right">0:45</span>
+            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden group hover:h-1.5 transition-all cursor-pointer relative">
+              <div class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 w-1/3">
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
+              </div>
+            </div>
+            <span class="text-[11px] font-medium text-gray-400 w-10">4:03</span>
+          </div>
+        </div>
+
+        <div class="w-1/4 min-w-50 hidden md:flex items-center justify-end gap-4">
+          <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">mic</span></button>
+          <button type="button" aria-label="Hàng chờ" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">queue_music</span></button>
+          <button type="button" aria-label="Thiết bị" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">devices</span></button>
+          <div class="flex items-center gap-2 w-24 group cursor-pointer">
+            <span class="material-symbols-outlined text-gray-400 text-xl group-hover:text-white transition-colors">volume_up</span>
+            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden hover:h-1.5 transition-all">
+              <div class="h-full bg-white group-hover:bg-purple-400 transition-colors w-2/3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</MainLayout>

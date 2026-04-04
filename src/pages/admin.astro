@@ -1,0 +1,529 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+
+const stats = [
+  { label: "Total Users",    value: "128,450", change: "+12.4%", up: true,  icon: "group",       color: "from-violet-500 to-purple-600"  },
+  { label: "Total Songs",    value: "54,920",  change: "+8.1%",  up: true,  icon: "music_note",  color: "from-blue-500 to-indigo-600"    },
+  { label: "Total Artists",  value: "3,210",   change: "+5.3%",  up: true,  icon: "mic",         color: "from-pink-500 to-rose-600"      },
+  { label: "Monthly Revenue",value: "$48,290", change: "-2.1%",  up: false, icon: "payments",    color: "from-amber-500 to-orange-600"   },
+];
+
+const users = [
+  { id: 1,  name: "Duy Ho",         email: "duy@example.com",     role: "Admin",   plan: "Premium", joined: "Jan 12, 2024", status: "Active"   },
+  { id: 2,  name: "Linh Nguyen",    email: "linh@example.com",    role: "User",    plan: "Free",    joined: "Feb 03, 2024", status: "Active"   },
+  { id: 3,  name: "Minh Tran",      email: "minh@example.com",    role: "User",    plan: "Premium", joined: "Mar 18, 2024", status: "Inactive" },
+  { id: 4,  name: "Sara Kim",       email: "sara@example.com",    role: "Editor",  plan: "Premium", joined: "Apr 01, 2024", status: "Active"   },
+  { id: 5,  name: "Jake Pham",      email: "jake@example.com",    role: "User",    plan: "Free",    joined: "Apr 22, 2024", status: "Banned"   },
+  { id: 6,  name: "Hana Le",        email: "hana@example.com",    role: "User",    plan: "Premium", joined: "May 07, 2024", status: "Active"   },
+];
+
+const songs = [
+  { id: 1, title: "Midnight City",   artist: "M83",             album: "Hurry Up",        duration: "4:03", plays: "1.2M", status: "Published", cover: "from-indigo-500 to-purple-500"   },
+  { id: 2, title: "Starboy",         artist: "The Weeknd",      album: "Starboy",         duration: "3:50", plays: "2.5M", status: "Published", cover: "from-rose-500 to-orange-500"     },
+  { id: 3, title: "Levitating",      artist: "Dua Lipa",        album: "Future Nostalgia",duration: "3:23", plays: "1.8M", status: "Published", cover: "from-pink-500 to-violet-500"     },
+  { id: 4, title: "Blinding Lights", artist: "The Weeknd",      album: "After Hours",     duration: "3:20", plays: "3.1M", status: "Published", cover: "from-red-500 to-fuchsia-500"     },
+  { id: 5, title: "Neon Blade",      artist: "Synthwave Vibes", album: "Cyberpunk",       duration: "4:12", plays: "890K", status: "Draft",     cover: "from-cyan-500 to-emerald-500"    },
+  { id: 6, title: "Deep Focus",      artist: "Brain Waves",     album: "Ambient Vol. 2",  duration: "6:40", plays: "430K", status: "Review",    cover: "from-emerald-400 to-teal-600"    },
+];
+
+const artists = [
+  { id: 1, name: "The Weeknd",      genre: "R&B / Pop",         songs: 78,  followers: "45.2M", status: "Verified",   image: "from-red-500 to-orange-500"    },
+  { id: 2, name: "Dua Lipa",        genre: "Pop / Dance",       songs: 52,  followers: "28.1M", status: "Verified",   image: "from-pink-500 to-purple-500"   },
+  { id: 3, name: "M83",             genre: "Synthwave / Indie", songs: 140, followers: "12.5M", status: "Verified",   image: "from-indigo-500 to-blue-600"   },
+  { id: 4, name: "Synthwave Vibes", genre: "Synthwave",         songs: 34,  followers: "8.3M",  status: "Pending",    image: "from-cyan-500 to-blue-500"     },
+  { id: 5, name: "Night City",      genre: "Electronic",        songs: 21,  followers: "6.7M",  status: "Verified",   image: "from-fuchsia-500 to-purple-600"},
+  { id: 6, name: "Brain Waves",     genre: "Ambient / Focus",   songs: 18,  followers: "3.9M",  status: "Suspended",  image: "from-emerald-400 to-cyan-600"  },
+];
+
+const recentActivity = [
+  { action: "New user registered",      subject: "Hana Le",          time: "2 min ago",  icon: "person_add",   color: "text-green-400"  },
+  { action: "Song flagged for review",  subject: "Neon Blade",       time: "15 min ago", icon: "flag",         color: "text-amber-400"  },
+  { action: "Artist verified",          subject: "Dua Lipa",         time: "1 hr ago",   icon: "verified",     color: "text-blue-400"   },
+  { action: "User account banned",      subject: "Jake Pham",        time: "3 hr ago",   icon: "block",        color: "text-rose-400"   },
+  { action: "New playlist published",   subject: "Deep Focus Vol.3", time: "5 hr ago",   icon: "queue_music",  color: "text-purple-400" },
+  { action: "Premium subscription",     subject: "Linh Nguyen",      time: "8 hr ago",   icon: "workspace_premium", color: "text-fuchsia-400" },
+];
+---
+
+<MainLayout title="Admin Panel - Shadows of Melody">
+  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+
+    <!-- Admin Sidebar -->
+    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#070d1f]/90 backdrop-blur-xl hidden md:flex md:flex-col z-40">
+      <!-- Logo -->
+      <div class="h-20 flex items-center px-6 border-b border-white/5">
+        <a href="/" class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
+          <span class="text-lg font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400">Shadow of Melody</span>
+        </a>
+      </div>
+
+      <!-- Admin Badge -->
+      <div class="mx-4 mt-4 px-3 py-2 rounded-xl bg-linear-to-r from-purple-500/20 to-indigo-500/10 border border-purple-500/20 flex items-center gap-2">
+        <span class="material-symbols-outlined text-purple-400 text-[18px]">admin_panel_settings</span>
+        <span class="text-xs font-bold text-purple-300 uppercase tracking-widest">Admin Panel</span>
+      </div>
+
+      <!-- Nav -->
+      <div class="px-4 py-6 flex-1 overflow-y-auto">
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Overview</p>
+        <nav class="space-y-1 mb-8">
+          <a href="/admin" class="flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
+            <span class="material-symbols-outlined text-purple-400">dashboard</span>Dashboard
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">bar_chart</span>Analytics
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">receipt_long</span>Reports
+          </a>
+        </nav>
+
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Manage</p>
+        <nav class="space-y-1 mb-8">
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>Users
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">music_note</span>Songs
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">mic</span>Artists
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">album</span>Albums
+          </a>
+        </nav>
+
+        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">System</p>
+        <nav class="space-y-1">
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>Settings
+          </a>
+          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">security</span>Security
+          </a>
+          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">arrow_back</span>Back to App
+          </a>
+        </nav>
+      </div>
+
+      <!-- Admin Profile -->
+      <div class="p-4 border-t border-white/5">
+        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
+          <div class="w-10 h-10 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 p-0.5">
+            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+              <span class="material-symbols-outlined text-purple-400">shield_person</span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
+            <p class="text-xs text-indigo-400 font-medium">Super Admin</p>
+          </div>
+          <span class="material-symbols-outlined text-gray-500 text-[18px]">more_vert</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+      <!-- Ambient Glow -->
+      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/8 blur-[150px] rounded-full pointer-events-none"></div>
+      <div class="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] bg-purple-600/8 blur-[120px] rounded-full pointer-events-none"></div>
+
+      <!-- Header -->
+      <header class="h-20 shrink-0 flex items-center justify-between px-6 lg:px-8 border-b border-white/5 relative z-10">
+        <div class="flex items-center gap-4">
+          <!-- Mobile menu -->
+          <button class="md:hidden w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+          <div>
+            <h1 class="text-xl font-bold text-white">Dashboard</h1>
+            <p class="text-xs text-gray-500">Welcome back, Duy Ho</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Search -->
+          <div class="relative hidden sm:flex items-center group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-[19px] group-focus-within:text-purple-400 transition-colors pointer-events-none">search</span>
+            <input
+              type="text"
+              placeholder="Search anything..."
+              class="w-64 h-10 bg-white/6 border border-white/10 text-gray-100 placeholder-gray-500 rounded-xl py-0 pl-11 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40 focus:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+            />
+            <kbd class="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600 bg-white/5 border border-white/10 rounded-md pointer-events-none select-none">/</kbd>
+          </div>
+
+          <!-- Notifications -->
+          <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 transition-all relative">
+            <span class="material-symbols-outlined text-gray-300 text-[20px]">notifications</span>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></span>
+          </button>
+
+          <!-- Quick Add -->
+          <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full text-sm font-semibold transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            <span class="hidden sm:inline">Add New</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto px-6 lg:px-8 py-8 relative z-10 custom-scrollbar">
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+          {stats.map((s) => (
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                <div class={`w-11 h-11 rounded-xl bg-linear-to-br ${s.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                  <span class="material-symbols-outlined text-white text-[20px]">{s.icon}</span>
+                </div>
+                <span class={`text-xs font-semibold px-2 py-1 rounded-full ${s.up ? "bg-green-500/15 text-green-400" : "bg-rose-500/15 text-rose-400"} flex items-center gap-0.5`}>
+                  <span class="material-symbols-outlined text-[14px]">{s.up ? "trending_up" : "trending_down"}</span>
+                  {s.change}
+                </span>
+              </div>
+              <p class="text-2xl font-black text-white mb-1">{s.value}</p>
+              <p class="text-xs text-gray-400 font-medium">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <!-- Management Section + Activity Feed -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+          <!-- Management Tables (left, 2 cols wide) -->
+          <div class="xl:col-span-2 space-y-6">
+
+            <!-- Tab Header -->
+            <div class="flex items-center gap-1 bg-white/3 border border-white/5 rounded-2xl p-1.5 w-fit">
+              {["Users", "Songs", "Artists"].map((tab, i) => (
+                <button
+                  class={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+                    i === 0
+                      ? "bg-linear-to-r from-purple-500 to-indigo-600 text-white shadow-[0_4px_15px_rgba(168,85,247,0.3)]"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            <!-- Users Table -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <h2 class="text-base font-bold text-white">User Management</h2>
+                <div class="flex items-center gap-2">
+                  <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                    <span class="material-symbols-outlined text-[16px]">filter_list</span>Filter
+                  </button>
+                  <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                    <span class="material-symbols-outlined text-[16px]">file_download</span>Export
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                      <th class="px-6 py-3">User</th>
+                      <th class="px-6 py-3 hidden sm:table-cell">Role</th>
+                      <th class="px-6 py-3 hidden md:table-cell">Plan</th>
+                      <th class="px-6 py-3 hidden lg:table-cell">Joined</th>
+                      <th class="px-6 py-3">Status</th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-white/3">
+                    {users.map((u) => (
+                      <tr class="hover:bg-white/3 transition-colors group">
+                        <td class="px-6 py-4">
+                          <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center shrink-0 text-white text-sm font-bold">
+                              {u.name.charAt(0)}
+                            </div>
+                            <div class="min-w-0">
+                              <p class="text-sm font-semibold text-gray-100 truncate">{u.name}</p>
+                              <p class="text-xs text-gray-500 truncate">{u.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 hidden sm:table-cell">
+                          <span class={`text-xs font-semibold px-2 py-1 rounded-full ${
+                            u.role === "Admin"  ? "bg-purple-500/20 text-purple-300" :
+                            u.role === "Editor" ? "bg-blue-500/20 text-blue-300"    :
+                                                  "bg-white/5 text-gray-400"
+                          }`}>{u.role}</span>
+                        </td>
+                        <td class="px-6 py-4 hidden md:table-cell">
+                          <span class={`text-xs font-semibold px-2 py-1 rounded-full ${
+                            u.plan === "Premium" ? "bg-amber-500/20 text-amber-300" : "bg-white/5 text-gray-400"
+                          }`}>{u.plan}</span>
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell text-xs text-gray-400">{u.joined}</td>
+                        <td class="px-6 py-4">
+                          <span class={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            u.status === "Active"   ? "bg-green-500/15 text-green-400" :
+                            u.status === "Inactive" ? "bg-gray-500/15 text-gray-400"  :
+                                                      "bg-rose-500/15 text-rose-400"
+                          }`}>
+                            <span class={`w-1.5 h-1.5 rounded-full ${
+                              u.status === "Active"   ? "bg-green-400" :
+                              u.status === "Inactive" ? "bg-gray-400"  : "bg-rose-400"
+                            }`}></span>
+                            {u.status}
+                          </span>
+                        </td>
+                        <td class="px-6 py-4">
+                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all" title="View">
+                              <span class="material-symbols-outlined text-[17px]">visibility</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all" title="Edit">
+                              <span class="material-symbols-outlined text-[17px]">edit</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" title="Delete">
+                              <span class="material-symbols-outlined text-[17px]">delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <!-- Pagination -->
+              <div class="flex items-center justify-between px-6 py-4 border-t border-white/5">
+                <p class="text-xs text-gray-500">Showing <span class="text-white font-semibold">6</span> of <span class="text-white font-semibold">128,450</span> users</p>
+                <div class="flex items-center gap-1">
+                  <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all">
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  </button>
+                  {[1, 2, 3].map((p) => (
+                    <button class={`w-8 h-8 rounded-lg text-sm font-semibold transition-all ${
+                      p === 1
+                        ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white"
+                        : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                    }`}>{p}</button>
+                  ))}
+                  <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all">
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Songs Table -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <h2 class="text-base font-bold text-white">Song Management</h2>
+                <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                  <span class="material-symbols-outlined text-[16px]">add</span>Add Song
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                      <th class="px-6 py-3">Song</th>
+                      <th class="px-6 py-3 hidden md:table-cell">Album</th>
+                      <th class="px-6 py-3 hidden sm:table-cell text-right">Plays</th>
+                      <th class="px-6 py-3 hidden lg:table-cell text-center">Duration</th>
+                      <th class="px-6 py-3">Status</th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-white/3">
+                    {songs.map((s) => (
+                      <tr class="hover:bg-white/3 transition-colors group">
+                        <td class="px-6 py-4">
+                          <div class="flex items-center gap-3">
+                            <div class={`w-10 h-10 rounded-lg bg-linear-to-br ${s.cover} shrink-0`}></div>
+                            <div class="min-w-0">
+                              <p class="text-sm font-semibold text-gray-100 truncate">{s.title}</p>
+                              <p class="text-xs text-gray-500 truncate">{s.artist}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400">{s.album}</td>
+                        <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400 text-right font-medium">{s.plays}</td>
+                        <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-center">{s.duration}</td>
+                        <td class="px-6 py-4">
+                          <span class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            s.status === "Published" ? "bg-green-500/15 text-green-400" :
+                            s.status === "Draft"     ? "bg-gray-500/15 text-gray-400"   :
+                                                       "bg-amber-500/15 text-amber-400"
+                          }`}>{s.status}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">visibility</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">edit</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Artists Table -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <h2 class="text-base font-bold text-white">Artist Management</h2>
+                <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                  <span class="material-symbols-outlined text-[16px]">add</span>Add Artist
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                      <th class="px-6 py-3">Artist</th>
+                      <th class="px-6 py-3 hidden sm:table-cell">Genre</th>
+                      <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
+                      <th class="px-6 py-3 hidden lg:table-cell text-right">Followers</th>
+                      <th class="px-6 py-3">Status</th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-white/3">
+                    {artists.map((a) => (
+                      <tr class="hover:bg-white/3 transition-colors group">
+                        <td class="px-6 py-4">
+                          <div class="flex items-center gap-3">
+                            <div class={`w-10 h-10 rounded-full bg-linear-to-br ${a.image} shrink-0`}></div>
+                            <p class="text-sm font-semibold text-gray-100">{a.name}</p>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">{a.genre}</td>
+                        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400 text-center">{a.songs}</td>
+                        <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-right font-medium">{a.followers}</td>
+                        <td class="px-6 py-4">
+                          <span class={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            a.status === "Verified"  ? "bg-blue-500/15 text-blue-400"   :
+                            a.status === "Pending"   ? "bg-amber-500/15 text-amber-400" :
+                                                       "bg-rose-500/15 text-rose-400"
+                          }`}>
+                            <span class="material-symbols-outlined text-[13px]">{
+                              a.status === "Verified" ? "verified" :
+                              a.status === "Pending"  ? "schedule"  : "block"
+                            }</span>
+                            {a.status}
+                          </span>
+                        </td>
+                        <td class="px-6 py-4">
+                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">visibility</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">edit</span>
+                            </button>
+                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all">
+                              <span class="material-symbols-outlined text-[17px]">delete</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Activity Feed + Quick Actions -->
+          <div class="space-y-6">
+
+            <!-- Quick Actions -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
+              <h3 class="text-sm font-bold text-white mb-4">Quick Actions</h3>
+              <div class="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Add User",     icon: "person_add",   color: "from-violet-500 to-purple-600" },
+                  { label: "Upload Song",  icon: "music_note",   color: "from-blue-500 to-indigo-600"   },
+                  { label: "New Artist",   icon: "mic",          color: "from-pink-500 to-rose-600"     },
+                  { label: "New Playlist", icon: "queue_music",  color: "from-amber-500 to-orange-600"  },
+                ].map((action) => (
+                  <button class="flex flex-col items-center gap-2 p-4 bg-white/3 border border-white/5 rounded-xl hover:bg-white/[0.07] transition-all group">
+                    <div class={`w-10 h-10 rounded-xl bg-linear-to-br ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
+                      <span class="material-symbols-outlined text-white text-[18px]">{action.icon}</span>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-400 group-hover:text-white transition-colors text-center">{action.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
+              <div class="flex items-center justify-between mb-5">
+                <h3 class="text-sm font-bold text-white">Recent Activity</h3>
+                <button class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors">View All</button>
+              </div>
+              <div class="space-y-4">
+                {recentActivity.map((item) => (
+                  <div class="flex items-start gap-3 group">
+                    <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors mt-0.5">
+                      <span class={`material-symbols-outlined text-[17px] ${item.color}`}>{item.icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-medium text-gray-300 leading-snug">{item.action}</p>
+                      <p class="text-xs text-purple-400 font-semibold truncate mt-0.5">{item.subject}</p>
+                    </div>
+                    <span class="text-[11px] text-gray-600 shrink-0 mt-0.5">{item.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
+              <h3 class="text-sm font-bold text-white mb-5">System Health</h3>
+              <div class="space-y-4">
+                {[
+                  { label: "Server CPU",    value: 42, color: "from-green-500 to-emerald-600"  },
+                  { label: "Memory Usage",  value: 67, color: "from-blue-500 to-indigo-600"    },
+                  { label: "Storage",       value: 55, color: "from-amber-500 to-orange-600"   },
+                  { label: "Bandwidth",     value: 81, color: "from-rose-500 to-pink-600"      },
+                ].map((metric) => (
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-xs font-medium text-gray-400">{metric.label}</span>
+                      <span class={`text-xs font-bold ${metric.value > 75 ? "text-rose-400" : metric.value > 60 ? "text-amber-400" : "text-green-400"}`}>{metric.value}%</span>
+                    </div>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        class={`h-full bg-linear-to-r ${metric.color} rounded-full transition-all`}
+                        style={`width: ${metric.value}%`}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</MainLayout>
