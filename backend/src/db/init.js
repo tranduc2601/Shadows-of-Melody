@@ -22,13 +22,13 @@ const initDb = async () => {
         // Execute each statement
         for (const statement of statements) {
             await pool.query(statement);
-            console.log('✅ Executed:', statement.split('\n')[0].substring(0, 50) + '...');
+            console.log('Executed:', statement.split('\n')[0].substring(0, 50) + '...');
         }
 
-        console.log('✅ Database initialized successfully!');
+        console.log('Database initialized successfully!');
         process.exit(0);
     } catch (error) {
-        console.error('❌ Database initialization failed:', error);
+        console.error('Database initialization failed:', error);
         process.exit(1);
     }
 };
