@@ -1,4 +1,5 @@
 import History from '../models/History.js';
+import Song from '../models/Song.js';
 
 export const getHistory = async (req, res) => {
     try {
@@ -72,5 +73,46 @@ export const clearHistory = async (req, res) => {
             success: false,
             message: 'Failed to clear history',
         });
+    }
+};
+
+/**
+ * POST /api/history/play-session
+ * Records a completed play session. Only counts toward play_count and history if:
+ *  - duration_played >= 30 seconds
+ *  - no existing history entry for same user+song in the last 10 minutes
+ */
+export const recordPlaySession = async (req, res) => {
+    try {
+        const { song_id, duration_played } = req.body;
+        const userId = req.user.id;
+
+        if (!song_id) {
+            return res.status(400).json({ success: false, message: 'song_id required' });
+        }
+
+        const durationSec = parseInt(duration_played, 10) || 0;
+
+        // Require at least 30 seconds listened
+        if (durationSec < 30) {
+            return res.status(200).json({ success: true, counted: false, reason: 'too_short' });
+        }
+
+        // Check if already counted in last 10 minutes (anti-spam)
+        const hasRecent = await History.hasRecentEntry(userId, song_id, 10);
+        if (hasRecent) {
+            return res.status(200).json({ success: true, counted: false, reason: 'too_recent' });
+        }
+
+        // Increment play_count
+        await Song.incrementPlayCount(song_id);
+
+        // Add to history
+        await History.create(userId, song_id, durationSec);
+
+        return res.status(200).json({ success: true, counted: true });
+    } catch (error) {
+        console.error('RecordPlaySession error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to record session' });
     }
 };

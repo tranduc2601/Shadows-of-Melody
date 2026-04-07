@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import PlayerBar from "../components/PlayerBar.astro";
 
 const album = {
   title: "After Hours",
@@ -220,58 +221,7 @@ const relatedAlbums = [
       </div>
 
       <!-- Now Playing Bar -->
-      <div class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div class="flex items-center gap-4 w-1/4 min-w-50">
-          <div class="w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500 to-purple-500 shadow-lg shadow-purple-500/20 relative group cursor-pointer overflow-hidden shrink-0">
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <span class="material-symbols-outlined text-white text-xl">keyboard_arrow_up</span>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center min-w-0">
-            <span class="font-bold text-white text-[15px] truncate">Midnight City</span>
-            <span class="text-xs text-gray-400 truncate mt-0.5">M83</span>
-          </div>
-          <button type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
-            <span class="material-symbols-outlined">favorite</span>
-          </button>
-        </div>
-
-        <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
-          <div class="flex items-center gap-6 mb-1.5">
-            <button type="button" aria-label="Shuffle" class="text-gray-500 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">shuffle</span></button>
-            <button type="button" aria-label="Trước" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_previous</span></button>
-            <button type="button" aria-label="Phát / Dừng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-              <span class="material-symbols-outlined">play_arrow</span>
-            </button>
-            <button type="button" aria-label="Tiếp theo" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_next</span></button>
-            <button type="button" aria-label="Lặp lại" class="text-green-400 hover:text-green-300 transition-colors relative">
-              <span class="material-symbols-outlined text-xl">repeat</span>
-              <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400"></span>
-            </button>
-          </div>
-          <div class="w-full flex items-center gap-3">
-            <span class="text-[11px] font-medium text-gray-400 w-10 text-right">0:45</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden group hover:h-1.5 transition-all cursor-pointer relative">
-              <div class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 w-1/3">
-                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
-              </div>
-            </div>
-            <span class="text-[11px] font-medium text-gray-400 w-10">4:03</span>
-          </div>
-        </div>
-
-        <div class="w-1/4 min-w-50 hidden md:flex items-center justify-end gap-4">
-          <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">mic</span></button>
-          <button type="button" aria-label="Hàng chờ" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">queue_music</span></button>
-          <button type="button" aria-label="Thiết bị" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">devices</span></button>
-          <div class="flex items-center gap-2 w-24 group cursor-pointer">
-            <span class="material-symbols-outlined text-gray-400 text-xl group-hover:text-white transition-colors">volume_up</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden hover:h-1.5 transition-all">
-              <div class="h-full bg-white group-hover:bg-purple-400 transition-colors w-2/3"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PlayerBar />
     </main>
   </div>
 

@@ -1,75 +1,13 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-const trendingTracks = [
-  { id: 1, title: "Midnight City", artist: "M83", duration: "4:03", plays: "1.2M", cover: "bg-gradient-to-br from-indigo-500 to-purple-500" },
-  { id: 2, title: "Starboy", artist: "The Weeknd", duration: "3:50", plays: "2.5M", cover: "bg-gradient-to-br from-rose-500 to-orange-500" },
-  { id: 3, title: "Levitating", artist: "Dua Lipa", duration: "3:23", plays: "1.8M", cover: "bg-gradient-to-br from-pink-500 to-violet-500" },
-  { id: 4, title: "Blinding Lights", artist: "The Weeknd", duration: "3:20", plays: "3.1M", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500" },
-  { id: 5, title: "Save Your Tears", artist: "The Weeknd", duration: "3:35", plays: "2.1M", cover: "bg-gradient-to-br from-blue-500 to-cyan-500" },
-];
-
-const newReleases = [
-  { title: "Neon Nights", artist: "Synthwave Vibes", type: "Album", color: "from-cyan-400 to-blue-500" },
-  { title: "Lofi Study", artist: "Chill Girl", type: "Playlist", color: "from-orange-300 to-rose-400" },
-  { title: "Deep Focus", artist: "Brain Waves", type: "Playlist", color: "from-emerald-400 to-cyan-500" },
-  { title: "Cyberpunk", artist: "Night City", type: "Album", color: "from-fuchsia-500 to-purple-600" },
-  { title: "Acoustic", artist: "Raw Sounds", type: "Album", color: "from-amber-500 to-orange-600" },
-];
+import Sidebar from "../components/Sidebar.astro";
+import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Shadows of Melody - Home">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
     
-    <!-- Sidebar -->
-    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Shadow of Melody
-        </a>
-      </div>
-
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
-            <span class="material-symbols-outlined text-purple-400">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
-          </a>
-        </nav>
-
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-rose-400">favorite</span>Liked Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-        </nav>
-      </div>
-
-      <!-- User Profile (Bottom of Sidebar) -->
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-          <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5">
-            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
-              <span class="material-symbols-outlined text-purple-400">person</span>
-            </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
-            <p class="text-xs text-purple-400 font-medium truncate">Premium</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <Sidebar currentPage="home" />
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
@@ -176,28 +114,8 @@ const newReleases = [
                     <th class="font-medium text-sm px-4 py-3 w-20 text-center pb-4"><span class="material-symbols-outlined text-[18px]">schedule</span></th>
                   </tr>
                 </thead>
-                <tbody>
-                  {trendingTracks.map((track, index) => (
-                    <tr class="group hover:bg-white/5 transition-colors rounded-xl cursor-pointer">
-                      <td class="px-4 py-3 text-center rounded-l-xl">
-                        <span class="text-gray-500 font-medium group-hover:hidden transition-all">{index + 1}</span>
-                        <span class="material-symbols-outlined text-purple-400 hidden group-hover:block transition-all animate-pulse">play_arrow</span>
-                      </td>
-                      <td class="px-4 py-3">
-                        <div class="flex items-center gap-4">
-                          <div class={`w-12 h-12 rounded-lg shadow-lg ${track.cover} shrink-0 relative overflow-hidden group-hover:scale-105 transition-transform`}>
-                             <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                          </div>
-                          <div class="min-w-0">
-                            <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-[15px]">{track.title}</p>
-                            <p class="text-xs text-gray-400 truncate mt-0.5">{track.artist}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium">{track.plays}</td>
-                      <td class="px-4 py-3 text-sm text-gray-400 text-center rounded-r-xl">{track.duration}</td>
-                    </tr>
-                  ))}
+                <tbody id="trending-tbody">
+                  <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -209,25 +127,8 @@ const newReleases = [
                <h2 class="text-xl font-bold text-white">Top Artists</h2>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              {[
-                { name: "The Weeknd", followers: "34M", mix: "from-red-500 to-black" },
-                { name: "Dua Lipa", followers: "28M", mix: "from-pink-500 to-rose-400" },
-                { name: "Daft Punk", followers: "15M", mix: "from-yellow-400 to-orange-500" },
-                { name: "M83", followers: "8M", mix: "from-blue-500 to-indigo-600" }
-              ].map((artist) => (
-                <div class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center gap-3 hover:bg-white/10 transition-all cursor-pointer group hover:-translate-y-1.5 hover:shadow-xl hover:shadow-purple-500/10">
-                  <div class={`w-24 h-24 rounded-full bg-linear-to-tr ${artist.mix} overflow-hidden relative shadow-lg group-hover:shadow-2xl group-hover:shadow-purple-500/30 transition-shadow`}>
-                     <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity duration-300">
-                        <span class="material-symbols-outlined text-white text-4xl transform scale-50 group-hover:scale-100 transition-transform duration-300">play_circle</span>
-                     </div>
-                  </div>
-                  <div class="text-center mt-2">
-                    <p class="font-bold text-[15px] text-gray-100 group-hover:text-purple-300 transition-colors">{artist.name}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">{artist.followers} fans</p>
-                  </div>
-                </div>
-              ))}
+            <div id="artists-grid" class="grid grid-cols-2 gap-4">
+              <div class="col-span-2 text-gray-500 text-sm text-center py-4">Loading...</div>
             </div>
           </div>
         </div>
@@ -246,92 +147,14 @@ const newReleases = [
                </div>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-               {newReleases.map((release) => (
-                  <div class="group cursor-pointer">
-                     <div class={`w-full aspect-square rounded-2xl bg-linear-to-br ${release.color} shadow-lg mb-4 relative overflow-hidden transition-all duration-300`}>
-                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
-                        
-                        <!-- Type Badge -->
-                        <div class="absolute top-3 left-3 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white/90 uppercase tracking-widest border border-white/10">
-                           {release.type}
-                        </div>
-
-                        <!-- Hover Play Button overlay -->
-                        <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 z-10">
-                           <button class="w-12 h-12 rounded-full bg-purple-500 text-white flex items-center justify-center hover:scale-110 hover:bg-purple-400 shadow-[0_8px_20px_rgba(168,85,247,0.6)] transition-transform">
-                              <span class="material-symbols-outlined text-[24px]">play_arrow</span>
-                           </button>
-                        </div>
-                     </div>
-                     <h3 class="font-bold text-[15px] text-gray-100 truncate group-hover:text-purple-400 transition-colors">{release.title}</h3>
-                     <p class="text-[13px] text-gray-400 truncate mt-0.5">{release.artist}</p>
-                  </div>
-               ))}
+            <div id="releases-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <div class="col-span-5 text-gray-500 text-sm text-center py-4">Loading...</div>
             </div>
         </div>
 
       </div>
 
-      <!-- Now Playing Bar (Glassmorphism) -->
-      <div class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-         
-         <!-- Track Info -->
-         <div class="flex items-center gap-4 w-1/4 min-w-50">
-            <div class="w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500 to-purple-500 shadow-lg shadow-purple-500/20 relative group cursor-pointer overflow-hidden">
-               <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <span class="material-symbols-outlined text-white text-xl">keyboard_arrow_up</span>
-               </div>
-            </div>
-            <div class="flex flex-col justify-center min-w-0">
-               <a href="#" class="font-bold text-white text-[15px] hover:underline truncate">Midnight City</a>
-               <a href="#" class="text-xs text-gray-400 hover:underline truncate mt-0.5">M83</a>
-            </div>
-            <button class="ml-2 text-gray-400 hover:text-pink-500 transition-colors">
-               <span class="material-symbols-outlined">favorite</span>
-            </button>
-         </div>
-
-         <!-- Primary Controls -->
-         <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
-            <div class="flex items-center gap-6 mb-1.5">
-               <button class="text-gray-500 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">shuffle</span></button>
-               <button class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_previous</span></button>
-               <button class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                  <span class="material-symbols-outlined">play_arrow</span>
-               </button>
-               <button class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_next</span></button>
-               <button class="text-green-400 hover:text-green-300 transition-colors relative">
-                  <span class="material-symbols-outlined text-xl">repeat</span>
-                  <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400"></span>
-               </button>
-            </div>
-            
-            <div class="w-full flex items-center gap-3">
-               <span class="text-[11px] font-medium text-gray-400 w-10 text-right">0:45</span>
-               <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden group hover:h-1.5 transition-all cursor-pointer relative">
-                  <div class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 w-1/3">
-                     <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
-                  </div>
-               </div>
-               <span class="text-[11px] font-medium text-gray-400 w-10">4:03</span>
-            </div>
-         </div>
-
-         <!-- Secondary Controls -->
-         <div class="w-1/4 min-w-50 hidden md:flex items-center justify-end gap-4">
-            <button class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">mic</span></button>
-            <button class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">queue_music</span></button>
-            <button class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">devices</span></button>
-            <div class="flex items-center gap-2 w-24 group cursor-pointer">
-               <span class="material-symbols-outlined text-gray-400 text-xl group-hover:text-white transition-colors">volume_up</span>
-               <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden hover:h-1.5 transition-all">
-                  <div class="h-full bg-white group-hover:bg-purple-400 transition-colors w-2/3"></div>
-               </div>
-            </div>
-         </div>
-      </div>
-
+      <PlayerBar />
     </main>
   </div>
 
@@ -360,4 +183,134 @@ const newReleases = [
       'opsz' 24
     }
   </style>
+<script>
+  import { apiFetch, formatDuration, formatCount } from '../lib/api.js';
+  import { player } from '../lib/player.js';
+
+  const GRADIENTS_HEX = [
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f43f5e,#f97316)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#ef4444,#d946ef)',
+    'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    'linear-gradient(135deg,#06b6d4,#10b981)',
+    'linear-gradient(135deg,#d946ef,#7c3aed)',
+    'linear-gradient(135deg,#fb923c,#fb7185)',
+    'linear-gradient(135deg,#34d399,#22d3ee)',
+    'linear-gradient(135deg,#f59e0b,#f97316)',
+  ];
+
+  async function loadHome() {
+    // Trending songs
+    const tbody = document.getElementById('trending-tbody');
+    try {
+      const { data: songs } = await apiFetch('/songs?limit=10');
+      if (tbody) {
+        if (!songs?.length) {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
+        } else {
+          tbody.innerHTML = songs.map((s: any, i: number) => {
+            const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+            const cover = s.cover_url
+              ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover" alt=""/>`
+              : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0" style="background:${grad}"></div>`;
+            return `
+              <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
+                <td class="px-4 py-3 text-center rounded-l-xl">
+                  <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
+                  <span class="material-symbols-outlined text-purple-400 hidden group-hover:block animate-pulse">play_arrow</span>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-4">
+                    ${cover}
+                    <div class="min-w-0">
+                      <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-[15px]">${s.title}</p>
+                      <p class="text-xs text-gray-400 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium">${formatCount(s.plays_count)}</td>
+                <td class="px-4 py-3 text-sm text-gray-400 text-center rounded-r-xl">${formatDuration(s.duration)}</td>
+              </tr>`;
+          }).join('');
+        }
+      }
+    } catch {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-red-400 text-sm">Cannot fetch data.</td></tr>';
+    }
+
+    // Top artists
+    const artistsGrid = document.getElementById('artists-grid');
+    try {
+      const { data: artists } = await apiFetch('/artists?limit=4');
+      if (artistsGrid && artists?.length) {
+        artistsGrid.innerHTML = artists.slice(0, 4).map((a: any) => {
+          const grad = GRADIENTS_HEX[(a.id - 1) % GRADIENTS_HEX.length];
+          const img = a.image_url
+            ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
+            : '';
+          return `
+            <div class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/10 transition-all cursor-pointer group hover:-translate-y-1.5 hover:shadow-xl">
+              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg" style="background:${grad}">
+                ${img}
+                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity">
+                  <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+                </div>
+              </div>
+              <div class="text-center mt-2">
+                <p class="font-bold text-[15px] text-gray-100 group-hover:text-purple-300 transition-colors">${a.name}</p>
+                <p class="text-xs text-gray-500 mt-0.5">${formatCount(a.followers_count)} fans</p>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    } catch {}
+
+    // New releases (albums)
+    const releasesGrid = document.getElementById('releases-grid');
+    try {
+      const { data: albums } = await apiFetch('/albums?limit=5');
+      if (releasesGrid && albums?.length) {
+        releasesGrid.innerHTML = albums.slice(0, 5).map((al: any) => {
+          const grad = GRADIENTS_HEX[(al.id - 1) % GRADIENTS_HEX.length];
+          const cover = al.cover_url
+            ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+            : '';
+          const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
+          return `
+            <div class="group cursor-pointer">
+              <div class="w-full aspect-square rounded-2xl shadow-lg mb-4 relative overflow-hidden" style="background:${grad}">
+                ${cover}
+                <div class="absolute top-3 left-3 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white/90 uppercase tracking-widest border border-white/10">Album</div>
+                <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 z-10">
+                  <button class="w-12 h-12 rounded-full bg-purple-500 text-white flex items-center justify-center hover:scale-110 shadow-lg">
+                    <span class="material-symbols-outlined text-[24px]">play_arrow</span>
+                  </button>
+                </div>
+              </div>
+              <h3 class="font-bold text-[15px] text-gray-100 truncate group-hover:text-purple-400 transition-colors">${al.title}</h3>
+              <p class="text-[13px] text-gray-400 truncate mt-0.5">${year}</p>
+            </div>`;
+        }).join('');
+      }
+    } catch {}
+  }
+
+  loadHome();
+
+  // Song click handlers (delegated)
+  document.getElementById('trending-tbody')?.addEventListener('click', (e) => {
+    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
+    if (!row) return;
+    try {
+      const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
+      const allRows = Array.from(document.querySelectorAll('.song-row'));
+      const queue = allRows.map(r => {
+        try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
+      }).filter(Boolean);
+      player.playSong(song, queue);
+    } catch {}
+  });
+</script>
+
 </MainLayout>

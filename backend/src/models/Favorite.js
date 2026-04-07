@@ -20,7 +20,7 @@ class Favorite {
     static async findByUserId(userId, limit = 20, offset = 0) {
         const [rows] = await pool.query(
             `SELECT s.*, 
-                    GROUP_CONCAT(DISTINCT a.name) as artist_names,
+                    STRING_AGG(DISTINCT a.name, ',') as artist_names,
                     f.created_at as favorited_at
              FROM favorites f
              JOIN songs s ON f.song_id = s.id

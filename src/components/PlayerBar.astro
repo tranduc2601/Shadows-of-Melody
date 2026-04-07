@@ -1,0 +1,332 @@
+﻿---
+// PlayerBar â€” functional music player bar
+// Listens to events from src/lib/player.js
+---
+
+<div id="playerBar" class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+
+  <!-- Track Info -->
+  <div class="flex items-center gap-4 w-1/4 min-w-[180px]">
+    <div id="pb-cover" class="w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500 to-purple-500 shadow-lg shadow-purple-500/20 relative group cursor-pointer overflow-hidden shrink-0">
+      <span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-white/30 text-3xl">music_note</span>
+      <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+        <span class="material-symbols-outlined text-white text-xl">keyboard_arrow_up</span>
+      </div>
+    </div>
+    <div class="flex flex-col justify-center min-w-0 flex-1">
+      <span id="pb-title" class="font-bold text-white text-[15px] truncate">No Music Playing</span>
+      <span id="pb-artist" class="text-xs text-gray-400 truncate mt-0.5">â€”</span>
+    </div>
+    <button id="pb-fav" type="button" aria-label="YÃªu thÃ­ch" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
+      <span class="material-symbols-outlined">favorite_border</span>
+    </button>
+  </div>
+
+  <!-- Primary Controls -->
+  <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
+    <div class="flex items-center gap-6 mb-1.5">
+      <button id="pb-shuffle" type="button" aria-label="Ngáº«u nhiÃªn" class="text-gray-500 hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-xl">shuffle</span>
+      </button>
+      <button id="pb-prev" type="button" aria-label="TrÆ°á»›c" class="text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-2xl">skip_previous</span>
+      </button>
+      <button id="pb-play" type="button" aria-label="PhÃ¡t / Dá»«ng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+        <span class="material-symbols-outlined">play_arrow</span>
+      </button>
+      <button id="pb-next" type="button" aria-label="Tiáº¿p theo" class="text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined text-2xl">skip_next</span>
+      </button>
+      <button id="pb-repeat" type="button" aria-label="Láº·p láº¡i" class="text-gray-500 hover:text-white transition-colors relative">
+        <span class="material-symbols-outlined text-xl">repeat</span>
+        <span id="pb-repeat-dot" class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-current opacity-0"></span>
+      </button>
+    </div>
+    <div class="w-full flex items-center gap-3">
+      <span id="pb-curtime" class="text-[11px] font-medium text-gray-400 w-10 text-right tabular-nums">0:00</span>
+      <div id="pb-seek" class="flex-1 h-1 bg-white/10 rounded-full overflow-visible group hover:h-1.5 transition-all cursor-pointer relative">
+        <div id="pb-progress" class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none" style="width:0%">
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
+        </div>
+      </div>
+      <span id="pb-duration" class="text-[11px] font-medium text-gray-400 w-10 tabular-nums">0:00</span>
+    </div>
+  </div>
+
+  <!-- Secondary Controls -->
+  <div class="w-1/4 min-w-[180px] hidden md:flex items-center justify-end gap-4">
+    <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors">
+      <span class="material-symbols-outlined text-xl">mic</span>
+    </button>
+    <button type="button" aria-label="HÃ ng chá»" class="text-gray-400 hover:text-white transition-colors">
+      <span class="material-symbols-outlined text-xl">queue_music</span>
+    </button>
+    <button type="button" aria-label="Thiáº¿t bá»‹" class="text-gray-400 hover:text-white transition-colors">
+      <span class="material-symbols-outlined text-xl">devices</span>
+    </button>
+    <div class="flex items-center gap-2 w-24">
+      <button id="pb-volbtn" type="button" class="text-gray-400 hover:text-white transition-colors shrink-0">
+        <span class="material-symbols-outlined text-xl">volume_up</span>
+      </button>
+      <div id="pb-voltrack" class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden hover:h-1.5 transition-all cursor-pointer relative">
+        <div id="pb-volbar" class="h-full bg-white hover:bg-purple-400 transition-colors rounded-full pointer-events-none" style="width:75%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { player } from '../lib/player.js';
+  import { apiFetch } from '../lib/api.js';
+
+  const pbTitle    = document.getElementById('pb-title') as HTMLElement;
+  const pbArtist   = document.getElementById('pb-artist') as HTMLElement;
+  const pbCover    = document.getElementById('pb-cover') as HTMLElement;
+  const pbPlay     = document.getElementById('pb-play') as HTMLButtonElement;
+  const pbPrev     = document.getElementById('pb-prev') as HTMLButtonElement;
+  const pbNext     = document.getElementById('pb-next') as HTMLButtonElement;
+  const pbShuffle  = document.getElementById('pb-shuffle') as HTMLButtonElement;
+  const pbRepeat   = document.getElementById('pb-repeat') as HTMLButtonElement;
+  const pbRepeatDot = document.getElementById('pb-repeat-dot') as HTMLElement;
+  const pbSeek     = document.getElementById('pb-seek') as HTMLElement;
+  const pbProgress = document.getElementById('pb-progress') as HTMLElement;
+  const pbCurtime  = document.getElementById('pb-curtime') as HTMLElement;
+  const pbDuration = document.getElementById('pb-duration') as HTMLElement;
+  const pbVolTrack = document.getElementById('pb-voltrack') as HTMLElement;
+  const pbVolBar   = document.getElementById('pb-volbar') as HTMLElement;
+  const pbVolbtn   = document.getElementById('pb-volbtn') as HTMLButtonElement;
+  const pbFav      = document.getElementById('pb-fav') as HTMLButtonElement;
+
+  const GRADS = [
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f43f5e,#f97316)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#ef4444,#d946ef)',
+    'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    'linear-gradient(135deg,#06b6d4,#10b981)',
+    'linear-gradient(135deg,#d946ef,#7c3aed)',
+    'linear-gradient(135deg,#fb923c,#fb7185)',
+  ];
+
+  function fmt(sec: number) {
+    const s = Math.floor(sec) || 0;
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }
+
+  function grad(id: number) {
+    return GRADS[(Number(id) - 1) % GRADS.length];
+  }
+
+  function updatePlayIcon(playing: boolean) {
+    const icon = pbPlay?.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = playing ? 'pause' : 'play_arrow';
+  }
+
+  // ── Play session tracking ────────────────────────────────────────────────
+  let _sessionSongId: number | null = null;
+  let _sessionStart: number | null = null;
+
+  async function submitSessionIfValid() {
+    if (!_sessionSongId || !_sessionStart) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) { _sessionSongId = null; _sessionStart = null; return; }
+    const durationSec = Math.round((Date.now() - _sessionStart) / 1000);
+    const songId = _sessionSongId;
+    _sessionSongId = null;
+    _sessionStart = null;
+    try {
+      await apiFetch('/history/play-session', {
+        method: 'POST',
+        body: JSON.stringify({ song_id: songId, duration_played: durationSec }),
+      });
+    } catch {}
+  }
+
+  window.addEventListener('beforeunload', () => {
+    if (!_sessionSongId || !_sessionStart) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+    const durationSec = Math.round((Date.now() - _sessionStart) / 1000);
+    if (durationSec < 1) return;
+    const songId = _sessionSongId;
+    fetch('http://localhost:5000/api/history/play-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ song_id: songId, duration_played: durationSec }),
+      keepalive: true,
+    }).catch(() => {});
+  });
+
+  // â”€â”€ Player events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  window.addEventListener('player:songchange', (e: any) => {
+    const song = e.detail.song;
+    if (!song) return;
+    if (pbTitle)  pbTitle.textContent  = song.title || 'â€”';
+    if (pbArtist) pbArtist.textContent = song.artist_names || 'â€”';
+    if (pbCover) {
+      const bg = grad(song.id);
+      if (song.cover_url) {
+        pbCover.innerHTML = `<img src="${song.cover_url}" class="w-full h-full object-cover" alt="" />`;
+        pbCover.style.background = '';
+      } else {
+        pbCover.innerHTML = `<span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-white/30 text-3xl">music_note</span>`;
+        pbCover.style.background = bg;
+      }
+    }
+    if (pbDuration && song.duration) pbDuration.textContent = fmt(song.duration);
+    _lastSec = -1;
+    if (pbProgress) pbProgress.style.width = '0%';
+    if (pbCurtime)  pbCurtime.textContent  = '0:00';
+    updatePlayIcon(true);
+    startRaf();
+    const favIcon = pbFav?.querySelector('.material-symbols-outlined');
+    if (favIcon) favIcon.textContent = 'favorite_border';
+    // End previous session, start new
+    submitSessionIfValid();
+    _sessionSongId = song.id;
+    _sessionStart = Date.now();
+  });
+
+  // â”€â”€ rAF progress loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  let _rafId = 0;
+  let _lastSec = -1;
+  let _isDragging = false;
+
+  function startRaf() {
+    cancelAnimationFrame(_rafId);
+    (function tick() {
+      if (!_isDragging) {
+        const audioDur = player.duration;
+        const dur = (isFinite(audioDur) && audioDur > 0)
+          ? audioDur
+          : (player.current?.duration ?? 0);
+        const cur = player.currentTime;
+        if (dur > 0) {
+          const sec = Math.floor(cur);
+          if (sec !== _lastSec) {
+            _lastSec = sec;
+            if (pbProgress) pbProgress.style.width = `${(cur / dur) * 100}%`;
+            if (pbCurtime)  pbCurtime.textContent  = fmt(sec);
+          }
+        }
+      }
+      _rafId = requestAnimationFrame(tick);
+    })();
+  }
+
+  window.addEventListener('player:play', () => {
+    // Resume: restart session timer if not already tracking
+    if (player.current && !_sessionStart) {
+      _sessionSongId = player.current.id;
+      _sessionStart = Date.now();
+    }
+    updatePlayIcon(true);
+    startRaf();
+  });
+  window.addEventListener('player:pause', () => {
+    submitSessionIfValid();
+    updatePlayIcon(false);
+  });
+
+  // â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  pbPlay?.addEventListener('click', () => player.toggle());
+  pbPrev?.addEventListener('click', () => player.prev());
+  pbNext?.addEventListener('click', () => player.next());
+
+  pbShuffle?.addEventListener('click', () => {
+    const on = player.toggleShuffle();
+    pbShuffle.classList.toggle('text-purple-400', on);
+    pbShuffle.classList.toggle('text-gray-500', !on);
+  });
+
+  pbRepeat?.addEventListener('click', () => {
+    const mode = player.cycleRepeat();
+    const icon = pbRepeat.querySelector('.material-symbols-outlined');
+    const active = mode !== 'none';
+    pbRepeat.classList.toggle('text-purple-400', active);
+    pbRepeat.classList.toggle('text-gray-500', !active);
+    if (pbRepeatDot) pbRepeatDot.style.opacity = active ? '1' : '0';
+    if (icon) icon.textContent = mode === 'one' ? 'repeat_one' : 'repeat';
+  });
+
+  // â”€â”€ Seek bar drag â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  function applySeekVisual(clientX: number) {
+    const rect = pbSeek!.getBoundingClientRect();
+    const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    if (pbProgress) pbProgress.style.width = `${frac * 100}%`;
+    const audioDur = player.duration;
+    const dur = (isFinite(audioDur) && audioDur > 0) ? audioDur : (player.current?.duration ?? 0);
+    if (dur > 0 && pbCurtime) pbCurtime.textContent = fmt(frac * dur);
+    return frac;
+  }
+
+  pbSeek?.addEventListener('mousedown', (e) => {
+    _isDragging = true;
+    applySeekVisual(e.clientX);
+    const onMove = (mv: MouseEvent) => applySeekVisual(mv.clientX);
+    const onUp   = (mv: MouseEvent) => {
+      _isDragging = false;
+      _lastSec = -1;
+      player.seek(applySeekVisual(mv.clientX));
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup',   onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup',   onUp);
+  });
+
+  pbSeek?.addEventListener('touchstart', (e) => {
+    _isDragging = true;
+    applySeekVisual(e.touches[0].clientX);
+    const onMove = (mv: TouchEvent) => applySeekVisual(mv.touches[0].clientX);
+    const onEnd  = (mv: TouchEvent) => {
+      _isDragging = false;
+      _lastSec = -1;
+      player.seek(applySeekVisual(mv.changedTouches[0].clientX));
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend',  onEnd);
+    };
+    window.addEventListener('touchmove', onMove, { passive: true });
+    window.addEventListener('touchend',  onEnd);
+  }, { passive: true });
+
+  // â”€â”€ Volume â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  pbVolTrack?.addEventListener('click', (e) => {
+    const rect = pbVolTrack.getBoundingClientRect();
+    const v    = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    player.setVolume(v);
+    if (pbVolBar) pbVolBar.style.width = `${v * 100}%`;
+    const icon = pbVolbtn?.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = v === 0 ? 'volume_off' : v < 0.5 ? 'volume_down' : 'volume_up';
+  });
+
+  pbVolbtn?.addEventListener('click', () => {
+    const icon = pbVolbtn.querySelector('.material-symbols-outlined');
+    if (icon?.textContent === 'volume_off') {
+      player.setVolume(0.75);
+      if (pbVolBar) pbVolBar.style.width = '75%';
+      if (icon) icon.textContent = 'volume_up';
+    } else {
+      player.setVolume(0);
+      if (pbVolBar) pbVolBar.style.width = '0%';
+      if (icon) icon.textContent = 'volume_off';
+    }
+  });
+
+  // â”€â”€ Favorite â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  pbFav?.addEventListener('click', async () => {
+    const song = player.current;
+    if (!song) return;
+    const icon = pbFav.querySelector('.material-symbols-outlined');
+    const isFav = icon?.textContent === 'favorite';
+    try {
+      if (isFav) {
+        await apiFetch(`/favorites/${song.id}`, { method: 'DELETE' });
+        if (icon) icon.textContent = 'favorite_border';
+      } else {
+        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: song.id }) });
+        if (icon) icon.textContent = 'favorite';
+      }
+    } catch {}
+  });
+</script>

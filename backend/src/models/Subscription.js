@@ -2,11 +2,11 @@ import { pool } from '../config/database.js';
 
 class Subscription {
     static async create(userId, subscriptionType, startDate, endDate) {
-        const [result] = await pool.query(
-            'INSERT INTO subscriptions (user_id, subscription_type, start_date, end_date) VALUES (?, ?, ?, ?)',
+        const [rows] = await pool.query(
+            'INSERT INTO subscriptions (user_id, subscription_type, start_date, end_date) VALUES (?, ?, ?, ?) RETURNING id',
             [userId, subscriptionType, startDate, endDate]
         );
-        return result.insertId;
+        return rows[0].id;
     }
 
     static async findByUserId(userId) {
@@ -32,7 +32,7 @@ class Subscription {
         const values = Object.values(data);
 
         await pool.query(
-            `UPDATE subscriptions SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+            `UPDATE subscriptions SET ${fields}, updated_at = NOW() WHERE id = ?`,
             [...values, id]
         );
     }
@@ -59,14 +59,14 @@ class Subscription {
 
     static async countActive() {
         const [rows] = await pool.query(
-            'SELECT COUNT(*) as count FROM subscriptions WHERE is_active = TRUE'
+            'SELECT COUNT(*)::int as count FROM subscriptions WHERE is_active = TRUE'
         );
         return rows[0].count;
     }
 
     static async countByType(subscriptionType) {
         const [rows] = await pool.query(
-            'SELECT COUNT(*) as count FROM subscriptions WHERE subscription_type = ? AND is_active = TRUE',
+            'SELECT COUNT(*)::int as count FROM subscriptions WHERE subscription_type = ? AND is_active = TRUE',
             [subscriptionType]
         );
         return rows[0].count;

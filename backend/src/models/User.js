@@ -2,13 +2,13 @@ import bcryptjs from 'bcryptjs';
 import { pool } from '../config/database.js';
 
 class User {
-    static async create({ username, email, password, full_name }) {
+    static async create({ username, email, password }) {
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const [result] = await pool.query(
-            'INSERT INTO users (username, email, password_hash, full_name) VALUES (?, ?, ?, ?)',
-            [username, email, hashedPassword, full_name]
+        const [rows] = await pool.query(
+            'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?) RETURNING id',
+            [username, email, hashedPassword]
         );
-        return result.insertId;
+        return rows[0].id;
     }
 
     static async findByEmail(email) {
@@ -22,7 +22,7 @@ class User {
     }
 
     static async findById(id) {
-        const [rows] = await pool.query('SELECT id, username, email, full_name, avatar_url, bio, is_admin, is_verified, created_at FROM users WHERE id = ? AND deleted_at IS NULL', [id]);
+        const [rows] = await pool.query('SELECT id, username, email, avatar_url, bio, is_admin, is_verified, created_at FROM users WHERE id = ? AND deleted_at IS NULL', [id]);
         return rows[0];
     }
 
@@ -33,7 +33,7 @@ class User {
         const values = Object.values(data);
 
         await pool.query(
-            `UPDATE users SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+            `UPDATE users SET ${fields}, updated_at = NOW() WHERE id = ?`,
             [...values, id]
         );
     }
@@ -44,18 +44,18 @@ class User {
 
     static async findAll(limit = 20, offset = 0) {
         const [rows] = await pool.query(
-            'SELECT id, username, email, full_name, avatar_url, is_admin, created_at FROM users WHERE deleted_at IS NULL LIMIT ? OFFSET ?',
+            'SELECT id, username, email, avatar_url, is_admin, created_at FROM users WHERE deleted_at IS NULL LIMIT ? OFFSET ?',
             [limit, offset]
         );
         return rows;
     }
 
     static async delete(id) {
-        await pool.query('UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?', [id]);
+        await pool.query('UPDATE users SET deleted_at = NOW() WHERE id = ?', [id]);
     }
 
     static async countTotal() {
-        const [rows] = await pool.query('SELECT COUNT(*) as count FROM users WHERE deleted_at IS NULL');
+        const [rows] = await pool.query('SELECT COUNT(*)::int as count FROM users WHERE deleted_at IS NULL');
         return rows[0].count;
     }
 }

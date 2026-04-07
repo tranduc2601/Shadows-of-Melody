@@ -1,91 +1,13 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-const playlists = [
-  { id: 1, name: "Chill Vibes", tracks: 24, duration: "1h 32m", color: "from-cyan-500 to-blue-600", icon: "🌊" },
-  { id: 2, name: "Late Night Drive", tracks: 18, duration: "1h 08m", color: "from-purple-500 to-indigo-700", icon: "🚗" },
-  { id: 3, name: "Morning Boost", tracks: 30, duration: "1h 55m", color: "from-orange-400 to-yellow-500", icon: "☀️" },
-  { id: 4, name: "Synthwave Dreams", tracks: 15, duration: "58m", color: "from-fuchsia-500 to-pink-600", icon: "🎹" },
-  { id: 5, name: "Focus Mode", tracks: 22, duration: "1h 20m", color: "from-emerald-500 to-teal-600", icon: "🎯" },
-  { id: 6, name: "Party Hits", tracks: 40, duration: "2h 30m", color: "from-red-500 to-orange-500", icon: "🎉" },
-];
-
-const featuredTracks = [
-  { id: 1, title: "Midnight City", artist: "M83", album: "Hurry Up", duration: "4:03", cover: "bg-gradient-to-br from-indigo-500 to-purple-500" },
-  { id: 2, title: "Starboy", artist: "The Weeknd", album: "Starboy", duration: "3:50", cover: "bg-gradient-to-br from-rose-500 to-orange-500" },
-  { id: 3, title: "Levitating", artist: "Dua Lipa", album: "Future Nostalgia", duration: "3:23", cover: "bg-gradient-to-br from-pink-500 to-violet-500" },
-  { id: 4, title: "Blinding Lights", artist: "The Weeknd", album: "After Hours", duration: "3:20", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500" },
-  { id: 5, title: "Save Your Tears", artist: "The Weeknd", album: "After Hours", duration: "3:35", cover: "bg-gradient-to-br from-blue-500 to-cyan-500" },
-  { id: 6, title: "Neon Blade", artist: "Synthwave Vibes", album: "Cyberpunk", duration: "4:12", cover: "bg-gradient-to-br from-cyan-500 to-emerald-500" },
-  { id: 7, title: "Electric Feel", artist: "MGMT", album: "Oracular Spectacular", duration: "3:49", cover: "bg-gradient-to-br from-lime-500 to-green-600" },
-  { id: 8, title: "Do I Wanna Know?", artist: "Arctic Monkeys", album: "AM", duration: "4:32", cover: "bg-gradient-to-br from-amber-500 to-red-500" },
-];
+import Sidebar from "../components/Sidebar.astro";
+import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Playlist - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
-    <!-- Sidebar -->
-    <aside class="w-64 flex-shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl flex flex-col hidden md:flex z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Melody
-        </a>
-      </div>
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
-          </a>
-        </nav>
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-rose-400">favorite</span>Liked Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
-            <span class="material-symbols-outlined text-purple-400">queue_music</span>Playlists
-          </a>
-        </nav>
-
-        <!-- Playlist list in sidebar -->
-        <div class="mt-6 space-y-1 pl-2">
-          {playlists.map(pl => (
-            <a href={`#playlist-${pl.id}`} class="flex items-center gap-3 px-3 py-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-lg transition-all text-sm group cursor-pointer">
-              <div class={`w-8 h-8 rounded-md bg-gradient-to-br ${pl.color} text-sm flex items-center justify-center flex-shrink-0`}>{pl.icon}</div>
-              <span class="truncate">{pl.name}</span>
-            </a>
-          ))}
-          <button class="flex items-center gap-3 px-3 py-2 text-gray-500 hover:text-white w-full rounded-lg hover:bg-white/5 transition-all text-sm mt-2">
-            <span class="w-8 h-8 rounded-md border border-dashed border-white/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-base">add</span>
-            </span>
-            Tạo Playlist Mới
-          </button>
-        </div>
-      </div>
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px]">
-            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
-              <span class="material-symbols-outlined text-purple-400">person</span>
-            </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
-            <p class="text-xs text-purple-400 font-medium">Premium</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <Sidebar currentPage="playlist" />
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
@@ -96,7 +18,7 @@ const featuredTracks = [
         <div class="flex items-center gap-3">
           <h1 class="text-2xl font-bold text-white">Thư Viện Playlist</h1>
         </div>
-        <button class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-full transition-all hover:scale-105 shadow-lg shadow-purple-500/25">
+        <button id="header-create-pl" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-full transition-all hover:scale-105 shadow-lg shadow-purple-500/25">
           <span class="material-symbols-outlined">add</span>
           Tạo playlist
         </button>
@@ -106,23 +28,8 @@ const featuredTracks = [
 
         <!-- Playlist Grid -->
         <section class="mb-12">
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {playlists.map(pl => (
-              <div class="group cursor-pointer" id={`playlist-${pl.id}`}>
-                <div class={`aspect-square rounded-2xl bg-gradient-to-br ${pl.color} mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform`}>
-                  <div class="absolute inset-0 flex items-center justify-center text-5xl">
-                    {pl.icon}
-                  </div>
-                  <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
-                    <button class="w-12 h-12 rounded-full bg-green-500 hover:bg-green-400 flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all">
-                      <span class="material-symbols-outlined text-black">play_arrow</span>
-                    </button>
-                  </div>
-                </div>
-                <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400 transition-colors">{pl.name}</p>
-                <p class="text-gray-500 text-xs">{pl.tracks} bài · {pl.duration}</p>
-              </div>
-            ))}
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="playlists-grid">
+            <p class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</p>
           </div>
         </section>
 
@@ -175,68 +82,148 @@ const featuredTracks = [
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                {featuredTracks.map((track, i) => (
-                  <tr class="group hover:bg-white/5 transition-colors cursor-pointer border-b border-white/[0.02] last:border-none">
-                    <td class="px-6 py-3 text-center">
-                      <span class="text-gray-500 group-hover:hidden">{i + 1}</span>
-                      <span class="material-symbols-outlined text-purple-400 hidden group-hover:block">play_arrow</span>
-                    </td>
-                    <td class="px-4 py-3">
-                      <div class="flex items-center gap-3">
-                        <div class={`w-10 h-10 rounded-lg ${track.cover} flex-shrink-0`}></div>
-                        <div>
-                          <p class="text-white font-medium text-sm group-hover:text-purple-400 transition-colors">{track.title}</p>
-                          <p class="text-gray-500 text-xs">{track.artist}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-4 py-3 text-gray-500 text-sm hidden md:table-cell">{track.album}</td>
-                    <td class="px-4 py-3 text-right">
-                      <div class="flex items-center justify-end gap-3">
-                        <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 transition-colors opacity-0 group-hover:opacity-100">favorite_border</span>
-                        <span class="text-gray-500 text-sm">{track.duration}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+              <tbody id="featured-tbody">
+                <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Loading bài hát...</td></tr>
               </tbody>
             </table>
           </div>
         </section>
       </div>
 
-      <!-- Player Bar -->
-      <div class="h-24 flex-shrink-0 border-t border-white/5 bg-[#0a1229]/90 backdrop-blur-xl px-6 flex items-center gap-4 relative z-20">
-        <div class="flex items-center gap-3 w-64">
-          <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex-shrink-0 shadow-md text-2xl flex items-center justify-center">🌊</div>
-          <div class="min-w-0">
-            <p class="text-white text-sm font-semibold truncate">Chill Vibes</p>
-            <p class="text-gray-400 text-xs truncate">Playlist · 24 bài</p>
-          </div>
-          <button class="ml-2"><span class="material-symbols-outlined text-gray-400 hover:text-rose-400 transition-colors">favorite_border</span></button>
-        </div>
-        <div class="flex-1 flex flex-col items-center gap-2">
-          <div class="flex items-center gap-6">
-            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors">shuffle</span></button>
-            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_previous</span></button>
-            <button class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-              <span class="material-symbols-outlined text-white">play_arrow</span>
-            </button>
-            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors text-3xl">skip_next</span></button>
-            <button><span class="material-symbols-outlined text-gray-400 hover:text-white transition-colors">repeat</span></button>
-          </div>
-          <div class="flex items-center gap-3 w-full max-w-md">
-            <span class="text-xs text-gray-500">1:24</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full"><div class="w-1/3 h-full bg-purple-500 rounded-full"></div></div>
-            <span class="text-xs text-gray-500">4:03</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 w-40 justify-end">
-          <span class="material-symbols-outlined text-gray-400">volume_up</span>
-          <div class="flex-1 h-1 bg-white/10 rounded-full"><div class="w-3/4 h-full bg-white/60 rounded-full"></div></div>
-        </div>
-      </div>
+      <PlayerBar />
     </main>
   </div>
+
+<script>
+  import { apiFetch, formatDuration } from '../lib/api.js';
+  import { player } from '../lib/player.js';
+
+  const GRADS = [
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f43f5e,#f97316)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#ef4444,#d946ef)',
+    'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    'linear-gradient(135deg,#06b6d4,#10b981)',
+    'linear-gradient(135deg,#d946ef,#7c3aed)',
+    'linear-gradient(135deg,#fb923c,#fb7185)',
+  ];
+  const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
+
+  async function loadPlaylists() {
+    const token = localStorage.getItem('auth_token');
+    const grid = document.getElementById('playlists-grid')!;
+    const sidebar = document.getElementById('sidebar-playlists')!;
+    const btn = sidebar.querySelector('button');
+
+    if (!token) {
+      grid.innerHTML = `<p class="col-span-6 text-center py-8 text-gray-400">
+        <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a> để xem playlist.
+      </p>`;
+      return;
+    }
+
+    try {
+      const { data: playlists } = await apiFetch('/playlists');
+
+      // Sidebar list
+      const sidebarLinks = (playlists || []).map((pl: any) => `
+        <a href="#playlist-${pl.id}" class="flex items-center gap-3 px-3 py-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-lg transition-all text-sm cursor-pointer">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden" style="background:${grad(pl.id)}">
+            ${pl.cover_url ? `<img src="${pl.cover_url}" class="w-full h-full object-cover" alt=""/>` : '<span class="material-symbols-outlined text-white text-sm">queue_music</span>'}
+          </div>
+          <span class="truncate">${pl.name}</span>
+        </a>`).join('');
+      sidebar.innerHTML = sidebarLinks + (btn ? btn.outerHTML : '');
+
+      if (!playlists?.length) {
+        grid.innerHTML = '<p class="col-span-6 text-gray-500 text-sm text-center py-4">Chưa có playlist nào.</p>';
+        return;
+      }
+
+      grid.innerHTML = playlists.map((pl: any) => `
+        <div class="group cursor-pointer" id="playlist-${pl.id}">
+          <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform" style="background:${grad(pl.id)}">
+            ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span></div>'}
+            <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
+              <button class="w-12 h-12 rounded-full bg-green-500 hover:bg-green-400 flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+                <span class="material-symbols-outlined text-black">play_arrow</span>
+              </button>
+            </div>
+          </div>
+          <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400">${pl.name}</p>
+          <p class="text-gray-500 text-xs">${pl.description || 'Playlist'}</p>
+        </div>`).join('');
+
+      // Load first playlist's songs into featured section
+      if (playlists.length > 0) {
+        loadPlaylistSongs(playlists[0].id);
+      }
+    } catch {
+      grid.innerHTML = '<p class="col-span-6 text-red-400 text-sm text-center py-4">Không thể tải playlist.</p>';
+    }
+  }
+
+  async function loadPlaylistSongs(playlistId: number) {
+    const tbody = document.getElementById('featured-tbody')!;
+    try {
+      const { data: pl } = await apiFetch(`/playlists/${playlistId}`);
+      const songs = pl?.songs || [];
+      if (!songs.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Playlist trống.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = songs.map((s: any, i: number) => {
+        const cover = s.cover_url
+          ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg flex-shrink-0 object-cover" alt=""/>`
+          : `<div class="w-10 h-10 rounded-lg flex-shrink-0" style="background:${grad(s.id)}"></div>`;
+        return `
+          <tr class="group hover:bg-white/5 transition-colors cursor-pointer border-b border-white/[0.02] last:border-none song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
+            <td class="px-6 py-3 text-center">
+              <span class="text-gray-500 group-hover:hidden">${i + 1}</span>
+              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block">play_arrow</span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
+                ${cover}
+                <div>
+                  <p class="text-white font-medium text-sm group-hover:text-purple-400">${s.title}</p>
+                  <p class="text-gray-500 text-xs">${s.artist_names || 'Unknown'}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-gray-500 text-sm hidden md:table-cell">${s.album_title || '—'}</td>
+            <td class="px-4 py-3 text-right">
+              <div class="flex items-center justify-end gap-3">
+                <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100">favorite_border</span>
+                <span class="text-gray-500 text-sm">${formatDuration(s.duration)}</span>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    } catch {}
+  }
+
+  loadPlaylists();
+
+  // Header "Create Playlist" button wires to Sidebar modal
+  document.getElementById('header-create-pl')?.addEventListener('click', () => {
+    document.getElementById('modal-new-playlist')?.classList.remove('hidden');
+  });
+
+  // Song click handler
+  document.getElementById('featured-tbody')?.addEventListener('click', (e) => {
+    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
+    if (!row) return;
+    try {
+      const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
+      const allRows = Array.from(document.querySelectorAll('#featured-tbody .song-row'));
+      const queue = allRows.map(r => {
+        try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
+      }).filter((x): x is any => x !== null);
+      player.playSong(song, queue);
+    } catch {}
+  });
+</script>
+
 </MainLayout>

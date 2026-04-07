@@ -2,10 +2,11 @@ import User from '../models/User.js';
 import Subscription from '../models/Subscription.js';
 import { generateToken } from '../utils/jwt.js';
 import { validateEmail, validatePassword, validateUsername } from '../utils/validators.js';
+import { pool } from '../config/database.js';
 
 export const register = async (req, res) => {
     try {
-        const { username, email, password, confirmPassword, full_name } = req.body;
+        const { username, email, password, confirmPassword } = req.body;
 
         // Validation
         if (!username || !email || !password) {
@@ -65,7 +66,6 @@ export const register = async (req, res) => {
             username,
             email,
             password,
-            full_name: full_name || username,
         });
 
         // Create free subscription
@@ -138,8 +138,8 @@ export const login = async (req, res) => {
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                full_name: user.full_name,
                 avatar_url: user.avatar_url,
+                is_admin: user.is_admin,
                 token,
             },
         });
@@ -185,15 +185,35 @@ export const getMe = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { full_name, avatar_url, bio } = req.body;
+        const { username, bio, avatar_url, current_password, new_password } = req.body;
+
+        // Handle password change
+        if (new_password) {
+            if (!current_password) {
+                return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại là bắt buộc' });
+            }
+            const [rows] = await pool.query('SELECT password_hash FROM users WHERE id = ?', [userId]);
+            const hash = rows[0]?.password_hash;
+            const valid = await User.verifyPassword(current_password, hash || '');
+            if (!valid) {
+                return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại không đúng' });
+            }
+            const bcryptjs = (await import('bcryptjs')).default;
+            const newHash = await bcryptjs.hash(new_password, 10);
+            await pool.query('UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?', [newHash, userId]);
+            return res.json({ success: true, message: 'Password updated' });
+        }
 
         const updateData = {};
-        if (full_name) updateData.full_name = full_name;
-        if (avatar_url) updateData.avatar_url = avatar_url;
-        if (bio) updateData.bio = bio;
+        if (username !== undefined) updateData.username = username;
+        if (bio !== undefined) updateData.bio = bio;
+        if (avatar_url !== undefined) updateData.avatar_url = avatar_url;
+
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).json({ success: false, message: 'No fields to update' });
+        }
 
         await User.update(userId, updateData);
-
         const user = await User.findById(userId);
 
         return res.status(200).json({
@@ -207,5 +227,21 @@ export const updateProfile = async (req, res) => {
             success: false,
             message: 'Failed to update profile',
         });
+    }
+};
+
+export const uploadAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
+        const { uploadToCloudinary } = await import('../utils/cloudinaryStorage.js');
+        const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'avatars', 'image');
+        // Persist avatar URL to DB
+        await pool.query('UPDATE users SET avatar_url = ?, updated_at = NOW() WHERE id = ?', [secureUrl, req.user.id]);
+        return res.json({ success: true, data: { url: secureUrl } });
+    } catch (error) {
+        console.error('UploadAvatar error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to upload avatar' });
     }
 };

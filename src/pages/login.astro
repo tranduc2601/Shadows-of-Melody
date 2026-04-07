@@ -11,12 +11,12 @@ import MainLayout from "../layouts/MainLayout.astro";
           <span class="material-symbols-outlined text-purple-400">music_note</span>
           Shadows of Melody
         </h1>
-        <p class="text-gray-400 text-sm">Khám phá âm nhạc tuyệt vời</p>
+        <p class="text-gray-400 text-sm">Discover amazing music</p>
       </div>
 
       <!-- Login Form -->
       <div class="bg-[#0a1229]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-center text-white">Đăng Nhập</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">Login</h2>
 
         <form id="loginForm" class="space-y-5">
           <!-- Email Input -->
@@ -37,7 +37,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           <!-- Password Input -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-              Mật Khẩu
+              Password
             </label>
             <input
               type="password"
@@ -57,26 +57,35 @@ import MainLayout from "../layouts/MainLayout.astro";
                 name="remember"
                 class="w-4 h-4 bg-[#1a2847] border border-white/10 rounded cursor-pointer accent-purple-500"
               />
-              <span class="text-gray-400">Ghi nhớ tôi</span>
+              <span class="text-gray-400">Remember me</span>
             </label>
             <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
-              Quên mật khẩu?
+              Forgot password?
             </a>
+          </div>
+
+          <!-- Error message -->
+          <div id="loginError" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+          <!-- Session banner (shown when redirected from expired session) -->
+          <div id="sessionBanner" class="hidden bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">timer_off</span>
+            Your session has expired. Please log in again.
           </div>
 
           <!-- Login Button -->
           <button
             type="submit"
+            id="loginBtn"
             class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-500/25"
           >
-            Đăng Nhập
+            Login
           </button>
         </form>
 
         <!-- Divider -->
         <div class="my-6 flex items-center">
           <div class="flex-1 h-px bg-white/10"></div>
-          <span class="px-4 text-gray-500 text-sm">HOẶC</span>
+          <span class="px-4 text-gray-500 text-sm">OR</span>
           <div class="flex-1 h-px bg-white/10"></div>
         </div>
 
@@ -87,26 +96,73 @@ import MainLayout from "../layouts/MainLayout.astro";
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <text x="0" y="20" font-size="20" fill="currentColor">G</text>
           </svg>
-          Đăng nhập với Google
+          Login with Google
         </button>
 
         <!-- Sign Up Link -->
         <p class="text-center text-gray-400 text-sm mt-6">
-          Chưa có tài khoản?
+          Don't have an account?
           <a href="/signup" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
-            Đăng Ký Ngay
+            Sign Up
           </a>
         </p>
       </div>
 
       <!-- Footer -->
       <p class="text-center text-gray-500 text-xs mt-6">
-        Bằng cách đăng nhập, bạn đồng ý với 
-        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Điều khoản dịch vụ</a>
-        và
-        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Chính sách bảo mật</a>
+        By logging in, you agree to the 
+        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Terms of Service</a>
+        and
+        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Privacy Policy</a>
       </p>
     </div>
   </div>
+
+
+<script>
+  const form    = document.getElementById('loginForm') as HTMLFormElement;
+  const errDiv  = document.getElementById('loginError') as HTMLElement;
+  const banner  = document.getElementById('sessionBanner') as HTMLElement;
+  const btn     = document.getElementById('loginBtn') as HTMLButtonElement;
+
+  // Show session-expired banner if redirected with ?reason=session_expired
+  const reason = new URLSearchParams(window.location.search).get('reason');
+  if (reason === 'session_expired' && banner) banner.classList.remove('hidden');
+
+  // If already logged in with a valid token, skip the login page
+  const existingToken = localStorage.getItem('auth_token');
+  if (existingToken && reason !== 'session_expired') {
+    window.location.href = '/';
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+
+    errDiv.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Đang đăng nhập...';
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Đăng nhập thất bại');
+
+      localStorage.setItem('auth_token', json.data.token);
+      localStorage.setItem('auth_user', JSON.stringify(json.data));
+      window.location.href = '/';
+    } catch (err: any) {
+      errDiv.textContent = err.message;
+      errDiv.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Đăng Nhập';
+    }
+  });
+</script>
 
 </MainLayout>

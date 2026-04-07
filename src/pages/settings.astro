@@ -57,7 +57,7 @@ const categories = [
               </div>
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
+              <p id="sidebar-user-name" class="text-sm font-semibold text-white truncate">—</p>
               <p class="text-xs text-purple-400 font-medium truncate">Premium</p>
             </div>
           </a>
@@ -118,20 +118,21 @@ const categories = [
           <div class="bg-white/3 border border-white/5 rounded-3xl p-6 mb-5">
             <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-5">Ảnh đại diện</h3>
             <div class="flex items-center gap-6">
-              <div class="w-20 h-20 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0 shadow-lg shadow-purple-500/20">
-                <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+            <div id="avatar-display" class="w-20 h-20 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0 shadow-lg shadow-purple-500/20">
+                <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden" id="avatar-inner">
                   <span class="material-symbols-outlined text-purple-300" style="font-size: 2.5rem;">person</span>
                 </div>
               </div>
               <div class="flex flex-col gap-2">
-                <button type="button" class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all">
+                <button id="upload-avatar-btn" type="button" class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all">
                   <span class="material-symbols-outlined text-[16px]">upload</span>
                   Tải ảnh lên
                 </button>
-                <button type="button" class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/5 rounded-xl text-sm font-medium transition-all">
+                <button id="delete-avatar-btn" type="button" class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/5 rounded-xl text-sm font-medium transition-all">
                   <span class="material-symbols-outlined text-[16px]">delete</span>
                   Xóa ảnh
                 </button>
+                <input id="avatar-file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
               </div>
             </div>
           </div>
@@ -179,7 +180,7 @@ const categories = [
                 >Music lover · Synthwave enthusiast · Night owl 🌙</textarea>
               </div>
               <div class="flex justify-end">
-                <button type="button" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-xl py-2.5 px-6 font-semibold text-sm transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
+                <button id="save-profile-btn" type="button" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-xl py-2.5 px-6 font-semibold text-sm transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
                   Lưu thay đổi
                 </button>
               </div>
@@ -223,7 +224,7 @@ const categories = [
                 </div>
               </div>
               <div class="flex justify-end">
-                <button type="button" class="flex items-center gap-2 px-6 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-semibold transition-all">
+                <button id="change-password-btn" type="button" class="flex items-center gap-2 px-6 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-semibold transition-all">
                   <span class="material-symbols-outlined text-[16px]">lock_reset</span>
                   Đổi mật khẩu
                 </button>
@@ -332,4 +333,135 @@ const categories = [
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
+
+<script>
+  import { apiFetch, getUser, setAuth, getToken, clearAuth } from '../lib/api.js';
+
+  // ── Load user data ─────────────────────────────────────────────────────────
+  async function loadUser() {
+    try {
+      const { data: user } = await apiFetch('/auth/me');
+      const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
+      if (sidebarName) sidebarName.textContent = user.username || '—';
+
+      const displayNameInput = document.getElementById('display-name') as HTMLInputElement;
+      const usernameInput    = document.getElementById('username') as HTMLInputElement;
+      const emailInput       = document.getElementById('email') as HTMLInputElement;
+      const bioTextarea      = document.getElementById('bio') as HTMLTextAreaElement;
+      if (displayNameInput) displayNameInput.value = user.username || '';
+      if (usernameInput)    usernameInput.value    = user.username || '';
+      if (emailInput)       emailInput.value       = user.email    || '';
+      if (bioTextarea)      bioTextarea.value      = user.bio      || '';
+
+      if (user.avatar_url) setAvatarPreview(user.avatar_url);
+    } catch {}
+  }
+
+  function setAvatarPreview(url: string | null) {
+    const inner = document.getElementById('avatar-inner') as HTMLElement;
+    if (!inner) return;
+    if (url) {
+      inner.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+    } else {
+      inner.innerHTML = `<span class="material-symbols-outlined text-purple-300" style="font-size:2.5rem">person</span>`;
+    }
+  }
+
+  // ── Avatar upload ──────────────────────────────────────────────────────────
+  const uploadBtn  = document.getElementById('upload-avatar-btn') as HTMLButtonElement;
+  const deleteBtn  = document.getElementById('delete-avatar-btn') as HTMLButtonElement;
+  const fileInput  = document.getElementById('avatar-file-input') as HTMLInputElement;
+
+  uploadBtn?.addEventListener('click', () => fileInput?.click());
+
+  fileInput?.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    uploadBtn.textContent = 'Đang tải...';
+    uploadBtn.disabled = true;
+    try {
+      const form = new FormData();
+      form.append('avatar', file);
+      const token = getToken();
+      const res = await fetch('http://localhost:5000/api/auth/upload-avatar', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message);
+      setAvatarPreview(json.data.url);
+      // Persist avatar_url immediately
+      await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ avatar_url: json.data.url }) });
+    } catch (err: any) {
+      alert('Không thể tải ảnh: ' + err.message);
+    } finally {
+      uploadBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">upload</span> Tải ảnh lên';
+      uploadBtn.disabled = false;
+      fileInput.value = '';
+    }
+  });
+
+  deleteBtn?.addEventListener('click', async () => {
+    setAvatarPreview(null);
+    try {
+      await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ avatar_url: null }) });
+    } catch {}
+  });
+
+  // ── Save profile ───────────────────────────────────────────────────────────
+  document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('save-profile-btn') as HTMLButtonElement;
+    const username = (document.getElementById('username') as HTMLInputElement)?.value.trim();
+    const bio      = (document.getElementById('bio') as HTMLTextAreaElement)?.value.trim();
+    if (!username) { alert('Tên người dùng không được để trống.'); return; }
+    btn.textContent = 'Đang lưu...';
+    btn.disabled = true;
+    try {
+      const { data: user } = await apiFetch('/auth/profile', {
+        method: 'PUT',
+        body: JSON.stringify({ username, bio }),
+      });
+      const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
+      if (sidebarName) sidebarName.textContent = user.username;
+      const displayNameInput = document.getElementById('display-name') as HTMLInputElement;
+      if (displayNameInput) displayNameInput.value = user.username;
+      btn.textContent = 'Đã lưu!';
+      setTimeout(() => { btn.textContent = 'Lưu thay đổi'; btn.disabled = false; }, 1500);
+    } catch (err: any) {
+      alert('Không thể lưu: ' + err.message);
+      btn.textContent = 'Lưu thay đổi';
+      btn.disabled = false;
+    }
+  });
+
+  // ── Change password ────────────────────────────────────────────────────────
+  document.getElementById('change-password-btn')?.addEventListener('click', async () => {
+    const current = (document.getElementById('current-password') as HTMLInputElement)?.value;
+    const newPwd   = (document.getElementById('new-password') as HTMLInputElement)?.value;
+    const confirm  = (document.getElementById('confirm-password') as HTMLInputElement)?.value;
+    if (!current || !newPwd) { alert('Vui lòng điền đầy đủ thông tin.'); return; }
+    if (newPwd !== confirm)  { alert('Mật khẩu mới không khớp.');         return; }
+    const btn = document.getElementById('change-password-btn') as HTMLButtonElement;
+    btn.textContent = 'Đang đổi...';
+    btn.disabled = true;
+    try {
+      await apiFetch('/auth/profile', {
+        method: 'PUT',
+        body: JSON.stringify({ current_password: current, new_password: newPwd }),
+      });
+      alert('Đổi mật khẩu thành công!');
+      (document.getElementById('current-password') as HTMLInputElement).value = '';
+      (document.getElementById('new-password') as HTMLInputElement).value = '';
+      (document.getElementById('confirm-password') as HTMLInputElement).value = '';
+    } catch (err: any) {
+      alert('Không thể đổi mật khẩu: ' + err.message);
+    } finally {
+      btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">lock_reset</span> Đổi mật khẩu';
+      btn.disabled = false;
+    }
+  });
+
+  loadUser();
+</script>
 </MainLayout>

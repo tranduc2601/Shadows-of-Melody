@@ -11,27 +11,31 @@ import MainLayout from "../layouts/MainLayout.astro";
           <span class="material-symbols-outlined text-purple-400">music_note</span>
           Shadows of Melody
         </h1>
-        <p class="text-gray-400 text-sm">Tham gia cộng đồng âm nhạc của chúng tôi</p>
+        <p class="text-gray-400 text-sm">Join our music community</p>
       </div>
 
       <!-- Signup Form -->
       <div class="bg-[#0a1229]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
-        <h2 class="text-2xl font-bold mb-6 text-center text-white">Tạo Tài Khoản Mới</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">Create New Account</h2>
 
         <form id="signupForm" class="space-y-4">
-          <!-- Full Name Input -->
+          <!-- Username Input -->
           <div>
-            <label for="fullname" class="block text-sm font-medium text-gray-300 mb-2">
-              Họ và Tên
+            <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
+              Username
             </label>
             <input
               type="text"
-              id="fullname"
-              name="fullname"
+              id="username"
+              name="username"
               required
+              minlength="3"
+              maxlength="20"
+              pattern="[a-zA-Z0-9_]+"
               class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
-              placeholder="Nguyễn Văn A"
+              placeholder="username"
             />
+            <p class="text-xs text-gray-500 mt-1">Only letters, numbers, and underscores are allowed</p>
           </div>
 
           <!-- Email Input -->
@@ -52,7 +56,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           <!-- Password Input -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-              Mật Khẩu
+              Password
             </label>
             <input
               type="password"
@@ -63,14 +67,14 @@ import MainLayout from "../layouts/MainLayout.astro";
               placeholder="••••••••"
             />
             <p class="text-xs text-gray-500 mt-2">
-              Mật khẩu phải có ít nhất 8 ký tự
+              Password must be at least 8 characters
             </p>
           </div>
 
           <!-- Confirm Password Input -->
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
-              Xác Nhận Mật Khẩu
+              Confirm Password
             </label>
             <input
               type="password"
@@ -92,30 +96,34 @@ import MainLayout from "../layouts/MainLayout.astro";
               class="w-4 h-4 mt-1 bg-[#1a2847] border border-white/10 rounded cursor-pointer accent-purple-500 flex-shrink-0"
             />
             <label for="terms" class="text-sm text-gray-400 cursor-pointer">
-              Tôi đồng ý với
+              I agree to the
               <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
-                Điều khoản dịch vụ
+                Terms of Service
               </a>
-              và
+              and
               <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
-                Chính sách bảo mật
+                Privacy Policy
               </a>
             </label>
           </div>
 
+          <!-- Error message -->
+          <div id="signupError" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+
           <!-- Sign Up Button -->
           <button
             type="submit"
+            id="signupBtn"
             class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-purple-500/25 mt-6"
           >
-            Tạo Tài Khoản
+            Create Account
           </button>
         </form>
 
         <!-- Divider -->
         <div class="my-6 flex items-center">
           <div class="flex-1 h-px bg-white/10"></div>
-          <span class="px-4 text-gray-500 text-sm">HOẶC</span>
+          <span class="px-4 text-gray-500 text-sm">OR</span>
           <div class="flex-1 h-px bg-white/10"></div>
         </div>
 
@@ -126,14 +134,14 @@ import MainLayout from "../layouts/MainLayout.astro";
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <text x="0" y="20" font-size="20" fill="currentColor">G</text>
           </svg>
-          Đăng ký với Google
+          Sign Up with Google
         </button>
 
         <!-- Login Link -->
         <p class="text-center text-gray-400 text-sm mt-6">
-          Đã có tài khoản?
+          Already have an account?
           <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
-            Đăng Nhập
+            Login
           </a>
         </p>
       </div>
@@ -144,5 +152,54 @@ import MainLayout from "../layouts/MainLayout.astro";
       </p>
     </div>
   </div>
+
+
+<script>
+  const form = document.getElementById('signupForm') as HTMLFormElement;
+  const errDiv = document.getElementById('signupError') as HTMLElement;
+  const btn = document.getElementById('signupBtn') as HTMLButtonElement;
+
+  // If already logged in, skip signup page
+  const existingToken = localStorage.getItem('auth_token');
+  if (existingToken) window.location.href = '/';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = (document.getElementById('username') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('password') as HTMLInputElement).value;
+    const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
+
+    errDiv.classList.add('hidden');
+
+    if (password !== confirmPassword) {
+      errDiv.textContent = 'Mật khẩu xác nhận không khớp.';
+      errDiv.classList.remove('hidden');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Đang tạo tài khoản...';
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password, confirmPassword }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Đăng ký thất bại');
+
+      localStorage.setItem('auth_token', json.data.token);
+      localStorage.setItem('auth_user', JSON.stringify(json.data));
+      window.location.href = '/';
+    } catch (err: any) {
+      errDiv.textContent = err.message;
+      errDiv.classList.remove('hidden');
+      btn.disabled = false;
+      btn.textContent = 'Tạo Tài Khoản';
+    }
+  });
+</script>
 
 </MainLayout>

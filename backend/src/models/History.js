@@ -12,7 +12,7 @@ class History {
     static async findByUserId(userId, limit = 50, offset = 0) {
         const [rows] = await pool.query(
             `SELECT lh.*, s.title, s.duration, s.cover_url,
-                    GROUP_CONCAT(DISTINCT a.name) as artist_names
+                    STRING_AGG(DISTINCT a.name, ',') as artist_names
              FROM listening_history lh
              JOIN songs s ON lh.song_id = s.id
              LEFT JOIN song_artists sa ON s.id = sa.song_id
@@ -37,7 +37,7 @@ class History {
     static async getRecentSongs(userId, limit = 10) {
         const [rows] = await pool.query(
             `SELECT DISTINCT s.*, 
-                    GROUP_CONCAT(DISTINCT a.name) as artist_names,
+                    STRING_AGG(DISTINCT a.name, ',') as artist_names,
                     MAX(lh.played_at) as last_played
              FROM listening_history lh
              JOIN songs s ON lh.song_id = s.id
@@ -68,11 +68,24 @@ class History {
     }
 
     static async deleteOlderThan(days) {
+        const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
         const [result] = await pool.query(
-            'DELETE FROM listening_history WHERE played_at < DATE_SUB(NOW(), INTERVAL ? DAY)',
-            [days]
+            'DELETE FROM listening_history WHERE played_at < ?',
+            [cutoff]
         );
-        return result.affectedRows;
+        return result.affectedRows || 0;
+    }
+
+    /**
+     * Returns true if the user has a history entry for this song within the last `withinMinutes` minutes.
+     */
+    static async hasRecentEntry(userId, songId, withinMinutes = 10) {
+        const cutoff = new Date(Date.now() - withinMinutes * 60 * 1000);
+        const [rows] = await pool.query(
+            'SELECT 1 FROM listening_history WHERE user_id = ? AND song_id = ? AND played_at > ? LIMIT 1',
+            [userId, songId, cutoff]
+        );
+        return rows.length > 0;
     }
 }
 

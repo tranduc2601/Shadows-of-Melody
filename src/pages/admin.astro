@@ -1,48 +1,5 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-const stats = [
-  { label: "Total Users",    value: "128,450", change: "+12.4%", up: true,  icon: "group",       color: "from-violet-500 to-purple-600"  },
-  { label: "Total Songs",    value: "54,920",  change: "+8.1%",  up: true,  icon: "music_note",  color: "from-blue-500 to-indigo-600"    },
-  { label: "Total Artists",  value: "3,210",   change: "+5.3%",  up: true,  icon: "mic",         color: "from-pink-500 to-rose-600"      },
-  { label: "Monthly Revenue",value: "$48,290", change: "-2.1%",  up: false, icon: "payments",    color: "from-amber-500 to-orange-600"   },
-];
-
-const users = [
-  { id: 1,  name: "Duy Ho",         email: "duy@example.com",     role: "Admin",   plan: "Premium", joined: "Jan 12, 2024", status: "Active"   },
-  { id: 2,  name: "Linh Nguyen",    email: "linh@example.com",    role: "User",    plan: "Free",    joined: "Feb 03, 2024", status: "Active"   },
-  { id: 3,  name: "Minh Tran",      email: "minh@example.com",    role: "User",    plan: "Premium", joined: "Mar 18, 2024", status: "Inactive" },
-  { id: 4,  name: "Sara Kim",       email: "sara@example.com",    role: "Editor",  plan: "Premium", joined: "Apr 01, 2024", status: "Active"   },
-  { id: 5,  name: "Jake Pham",      email: "jake@example.com",    role: "User",    plan: "Free",    joined: "Apr 22, 2024", status: "Banned"   },
-  { id: 6,  name: "Hana Le",        email: "hana@example.com",    role: "User",    plan: "Premium", joined: "May 07, 2024", status: "Active"   },
-];
-
-const songs = [
-  { id: 1, title: "Midnight City",   artist: "M83",             album: "Hurry Up",        duration: "4:03", plays: "1.2M", status: "Published", cover: "from-indigo-500 to-purple-500"   },
-  { id: 2, title: "Starboy",         artist: "The Weeknd",      album: "Starboy",         duration: "3:50", plays: "2.5M", status: "Published", cover: "from-rose-500 to-orange-500"     },
-  { id: 3, title: "Levitating",      artist: "Dua Lipa",        album: "Future Nostalgia",duration: "3:23", plays: "1.8M", status: "Published", cover: "from-pink-500 to-violet-500"     },
-  { id: 4, title: "Blinding Lights", artist: "The Weeknd",      album: "After Hours",     duration: "3:20", plays: "3.1M", status: "Published", cover: "from-red-500 to-fuchsia-500"     },
-  { id: 5, title: "Neon Blade",      artist: "Synthwave Vibes", album: "Cyberpunk",       duration: "4:12", plays: "890K", status: "Draft",     cover: "from-cyan-500 to-emerald-500"    },
-  { id: 6, title: "Deep Focus",      artist: "Brain Waves",     album: "Ambient Vol. 2",  duration: "6:40", plays: "430K", status: "Review",    cover: "from-emerald-400 to-teal-600"    },
-];
-
-const artists = [
-  { id: 1, name: "The Weeknd",      genre: "R&B / Pop",         songs: 78,  followers: "45.2M", status: "Verified",   image: "from-red-500 to-orange-500"    },
-  { id: 2, name: "Dua Lipa",        genre: "Pop / Dance",       songs: 52,  followers: "28.1M", status: "Verified",   image: "from-pink-500 to-purple-500"   },
-  { id: 3, name: "M83",             genre: "Synthwave / Indie", songs: 140, followers: "12.5M", status: "Verified",   image: "from-indigo-500 to-blue-600"   },
-  { id: 4, name: "Synthwave Vibes", genre: "Synthwave",         songs: 34,  followers: "8.3M",  status: "Pending",    image: "from-cyan-500 to-blue-500"     },
-  { id: 5, name: "Night City",      genre: "Electronic",        songs: 21,  followers: "6.7M",  status: "Verified",   image: "from-fuchsia-500 to-purple-600"},
-  { id: 6, name: "Brain Waves",     genre: "Ambient / Focus",   songs: 18,  followers: "3.9M",  status: "Suspended",  image: "from-emerald-400 to-cyan-600"  },
-];
-
-const recentActivity = [
-  { action: "New user registered",      subject: "Hana Le",          time: "2 min ago",  icon: "person_add",   color: "text-green-400"  },
-  { action: "Song flagged for review",  subject: "Neon Blade",       time: "15 min ago", icon: "flag",         color: "text-amber-400"  },
-  { action: "Artist verified",          subject: "Dua Lipa",         time: "1 hr ago",   icon: "verified",     color: "text-blue-400"   },
-  { action: "User account banned",      subject: "Jake Pham",        time: "3 hr ago",   icon: "block",        color: "text-rose-400"   },
-  { action: "New playlist published",   subject: "Deep Focus Vol.3", time: "5 hr ago",   icon: "queue_music",  color: "text-purple-400" },
-  { action: "Premium subscription",     subject: "Linh Nguyen",      time: "8 hr ago",   icon: "workspace_premium", color: "text-fuchsia-400" },
-];
 ---
 
 <MainLayout title="Admin Panel - Shadows of Melody">
@@ -54,7 +11,7 @@ const recentActivity = [
       <div class="h-20 flex items-center px-6 border-b border-white/5">
         <a href="/" class="flex items-center gap-2">
           <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          <span class="text-lg font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400">Shadow of Melody</span>
+          <span class="text-lg font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400">Melody</span>
         </a>
       </div>
 
@@ -121,7 +78,7 @@ const recentActivity = [
             </div>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
+            <p id="sidebar-admin-name" class="text-sm font-semibold text-white truncate">Admin</p>
             <p class="text-xs text-indigo-400 font-medium">Super Admin</p>
           </div>
           <span class="material-symbols-outlined text-gray-500 text-[18px]">more_vert</span>
@@ -144,7 +101,7 @@ const recentActivity = [
           </button>
           <div>
             <h1 class="text-xl font-bold text-white">Dashboard</h1>
-            <p class="text-xs text-gray-500">Welcome back, Duy Ho</p>
+            <p class="text-xs text-gray-500">Welcome back, <span id="header-admin-name">Admin</span></p>
           </div>
         </div>
 
@@ -179,21 +136,62 @@ const recentActivity = [
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-          {stats.map((s) => (
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
-              <div class="flex items-start justify-between mb-4">
-                <div class={`w-11 h-11 rounded-xl bg-linear-to-br ${s.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                  <span class="material-symbols-outlined text-white text-[20px]">{s.icon}</span>
-                </div>
-                <span class={`text-xs font-semibold px-2 py-1 rounded-full ${s.up ? "bg-green-500/15 text-green-400" : "bg-rose-500/15 text-rose-400"} flex items-center gap-0.5`}>
-                  <span class="material-symbols-outlined text-[14px]">{s.up ? "trending_up" : "trending_down"}</span>
-                  {s.change}
-                </span>
+          <!-- Users -->
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-white text-[20px]">group</span>
               </div>
-              <p class="text-2xl font-black text-white mb-1">{s.value}</p>
-              <p class="text-xs text-gray-400 font-medium">{s.label}</p>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                <span id="stat-users-change">—</span>
+              </span>
             </div>
-          ))}
+            <p id="stat-users" class="text-2xl font-black text-white mb-1">—</p>
+            <p class="text-xs text-gray-400 font-medium">Total Users</p>
+          </div>
+          <!-- Songs -->
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-white text-[20px]">music_note</span>
+              </div>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[14px]">library_music</span>
+                Live
+              </span>
+            </div>
+            <p id="stat-songs" class="text-2xl font-black text-white mb-1">—</p>
+            <p class="text-xs text-gray-400 font-medium">Total Songs</p>
+          </div>
+          <!-- Artists -->
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-white text-[20px]">mic</span>
+              </div>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                Live
+              </span>
+            </div>
+            <p id="stat-artists" class="text-2xl font-black text-white mb-1">—</p>
+            <p class="text-xs text-gray-400 font-medium">Total Artists</p>
+          </div>
+          <!-- Playlists placeholder -->
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-white text-[20px]">queue_music</span>
+              </div>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                Live
+              </span>
+            </div>
+            <p id="stat-playlists" class="text-2xl font-black text-white mb-1">—</p>
+            <p class="text-xs text-gray-400 font-medium">Total Playlists</p>
+          </div>
         </div>
 
         <!-- Management Section + Activity Feed -->
@@ -242,82 +240,15 @@ const recentActivity = [
                       <th class="px-6 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-white/3">
-                    {users.map((u) => (
-                      <tr class="hover:bg-white/3 transition-colors group">
-                        <td class="px-6 py-4">
-                          <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center shrink-0 text-white text-sm font-bold">
-                              {u.name.charAt(0)}
-                            </div>
-                            <div class="min-w-0">
-                              <p class="text-sm font-semibold text-gray-100 truncate">{u.name}</p>
-                              <p class="text-xs text-gray-500 truncate">{u.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 hidden sm:table-cell">
-                          <span class={`text-xs font-semibold px-2 py-1 rounded-full ${
-                            u.role === "Admin"  ? "bg-purple-500/20 text-purple-300" :
-                            u.role === "Editor" ? "bg-blue-500/20 text-blue-300"    :
-                                                  "bg-white/5 text-gray-400"
-                          }`}>{u.role}</span>
-                        </td>
-                        <td class="px-6 py-4 hidden md:table-cell">
-                          <span class={`text-xs font-semibold px-2 py-1 rounded-full ${
-                            u.plan === "Premium" ? "bg-amber-500/20 text-amber-300" : "bg-white/5 text-gray-400"
-                          }`}>{u.plan}</span>
-                        </td>
-                        <td class="px-6 py-4 hidden lg:table-cell text-xs text-gray-400">{u.joined}</td>
-                        <td class="px-6 py-4">
-                          <span class={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
-                            u.status === "Active"   ? "bg-green-500/15 text-green-400" :
-                            u.status === "Inactive" ? "bg-gray-500/15 text-gray-400"  :
-                                                      "bg-rose-500/15 text-rose-400"
-                          }`}>
-                            <span class={`w-1.5 h-1.5 rounded-full ${
-                              u.status === "Active"   ? "bg-green-400" :
-                              u.status === "Inactive" ? "bg-gray-400"  : "bg-rose-400"
-                            }`}></span>
-                            {u.status}
-                          </span>
-                        </td>
-                        <td class="px-6 py-4">
-                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all" title="View">
-                              <span class="material-symbols-outlined text-[17px]">visibility</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all" title="Edit">
-                              <span class="material-symbols-outlined text-[17px]">edit</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" title="Delete">
-                              <span class="material-symbols-outlined text-[17px]">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                  <tbody id="admin-users-tbody" class="divide-y divide-white/3">
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                   </tbody>
                 </table>
               </div>
               <!-- Pagination -->
               <div class="flex items-center justify-between px-6 py-4 border-t border-white/5">
-                <p class="text-xs text-gray-500">Showing <span class="text-white font-semibold">6</span> of <span class="text-white font-semibold">128,450</span> users</p>
-                <div class="flex items-center gap-1">
-                  <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all">
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                  </button>
-                  {[1, 2, 3].map((p) => (
-                    <button class={`w-8 h-8 rounded-lg text-sm font-semibold transition-all ${
-                      p === 1
-                        ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white"
-                        : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                    }`}>{p}</button>
-                  ))}
-                  <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all">
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                  </button>
-                </div>
+                <p id="users-pagination-info" class="text-xs text-gray-500">Loading...</p>
+                <div class="flex items-center gap-1" id="users-pagination-btns"></div>
               </div>
             </div>
 
@@ -325,8 +256,8 @@ const recentActivity = [
             <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
               <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
                 <h2 class="text-base font-bold text-white">Song Management</h2>
-                <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
-                  <span class="material-symbols-outlined text-[16px]">add</span>Add Song
+                <button id="btn-open-upload" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                  <span class="material-symbols-outlined text-[16px]">upload</span>Upload Song
                 </button>
               </div>
               <div class="overflow-x-auto">
@@ -341,43 +272,8 @@ const recentActivity = [
                       <th class="px-6 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-white/3">
-                    {songs.map((s) => (
-                      <tr class="hover:bg-white/3 transition-colors group">
-                        <td class="px-6 py-4">
-                          <div class="flex items-center gap-3">
-                            <div class={`w-10 h-10 rounded-lg bg-linear-to-br ${s.cover} shrink-0`}></div>
-                            <div class="min-w-0">
-                              <p class="text-sm font-semibold text-gray-100 truncate">{s.title}</p>
-                              <p class="text-xs text-gray-500 truncate">{s.artist}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400">{s.album}</td>
-                        <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400 text-right font-medium">{s.plays}</td>
-                        <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-center">{s.duration}</td>
-                        <td class="px-6 py-4">
-                          <span class={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                            s.status === "Published" ? "bg-green-500/15 text-green-400" :
-                            s.status === "Draft"     ? "bg-gray-500/15 text-gray-400"   :
-                                                       "bg-amber-500/15 text-amber-400"
-                          }`}>{s.status}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">visibility</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">edit</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                  <tbody id="admin-songs-tbody" class="divide-y divide-white/3">
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -387,7 +283,7 @@ const recentActivity = [
             <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
               <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
                 <h2 class="text-base font-bold text-white">Artist Management</h2>
-                <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                <button id="btn-add-artist" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
                   <span class="material-symbols-outlined text-[16px]">add</span>Add Artist
                 </button>
               </div>
@@ -396,128 +292,15 @@ const recentActivity = [
                   <thead>
                     <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
                       <th class="px-6 py-3">Artist</th>
-                      <th class="px-6 py-3 hidden sm:table-cell">Genre</th>
                       <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
                       <th class="px-6 py-3 hidden lg:table-cell text-right">Followers</th>
-                      <th class="px-6 py-3">Status</th>
                       <th class="px-6 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-white/3">
-                    {artists.map((a) => (
-                      <tr class="hover:bg-white/3 transition-colors group">
-                        <td class="px-6 py-4">
-                          <div class="flex items-center gap-3">
-                            <div class={`w-10 h-10 rounded-full bg-linear-to-br ${a.image} shrink-0`}></div>
-                            <p class="text-sm font-semibold text-gray-100">{a.name}</p>
-                          </div>
-                        </td>
-                        <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">{a.genre}</td>
-                        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400 text-center">{a.songs}</td>
-                        <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-right font-medium">{a.followers}</td>
-                        <td class="px-6 py-4">
-                          <span class={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
-                            a.status === "Verified"  ? "bg-blue-500/15 text-blue-400"   :
-                            a.status === "Pending"   ? "bg-amber-500/15 text-amber-400" :
-                                                       "bg-rose-500/15 text-rose-400"
-                          }`}>
-                            <span class="material-symbols-outlined text-[13px]">{
-                              a.status === "Verified" ? "verified" :
-                              a.status === "Pending"  ? "schedule"  : "block"
-                            }</span>
-                            {a.status}
-                          </span>
-                        </td>
-                        <td class="px-6 py-4">
-                          <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">visibility</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">edit</span>
-                            </button>
-                            <button class="w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all">
-                              <span class="material-symbols-outlined text-[17px]">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                  <tbody id="admin-artists-tbody" class="divide-y divide-white/3">
+                    <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                   </tbody>
                 </table>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Right Column: Activity Feed + Quick Actions -->
-          <div class="space-y-6">
-
-            <!-- Quick Actions -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
-              <h3 class="text-sm font-bold text-white mb-4">Quick Actions</h3>
-              <div class="grid grid-cols-2 gap-3">
-                {[
-                  { label: "Add User",     icon: "person_add",   color: "from-violet-500 to-purple-600" },
-                  { label: "Upload Song",  icon: "music_note",   color: "from-blue-500 to-indigo-600"   },
-                  { label: "New Artist",   icon: "mic",          color: "from-pink-500 to-rose-600"     },
-                  { label: "New Playlist", icon: "queue_music",  color: "from-amber-500 to-orange-600"  },
-                ].map((action) => (
-                  <button class="flex flex-col items-center gap-2 p-4 bg-white/3 border border-white/5 rounded-xl hover:bg-white/[0.07] transition-all group">
-                    <div class={`w-10 h-10 rounded-xl bg-linear-to-br ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
-                      <span class="material-symbols-outlined text-white text-[18px]">{action.icon}</span>
-                    </div>
-                    <span class="text-xs font-semibold text-gray-400 group-hover:text-white transition-colors text-center">{action.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
-              <div class="flex items-center justify-between mb-5">
-                <h3 class="text-sm font-bold text-white">Recent Activity</h3>
-                <button class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors">View All</button>
-              </div>
-              <div class="space-y-4">
-                {recentActivity.map((item) => (
-                  <div class="flex items-start gap-3 group">
-                    <div class="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors mt-0.5">
-                      <span class={`material-symbols-outlined text-[17px] ${item.color}`}>{item.icon}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs font-medium text-gray-300 leading-snug">{item.action}</p>
-                      <p class="text-xs text-purple-400 font-semibold truncate mt-0.5">{item.subject}</p>
-                    </div>
-                    <span class="text-[11px] text-gray-600 shrink-0 mt-0.5">{item.time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <!-- System Health -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
-              <h3 class="text-sm font-bold text-white mb-5">System Health</h3>
-              <div class="space-y-4">
-                {[
-                  { label: "Server CPU",    value: 42, color: "from-green-500 to-emerald-600"  },
-                  { label: "Memory Usage",  value: 67, color: "from-blue-500 to-indigo-600"    },
-                  { label: "Storage",       value: 55, color: "from-amber-500 to-orange-600"   },
-                  { label: "Bandwidth",     value: 81, color: "from-rose-500 to-pink-600"      },
-                ].map((metric) => (
-                  <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                      <span class="text-xs font-medium text-gray-400">{metric.label}</span>
-                      <span class={`text-xs font-bold ${metric.value > 75 ? "text-rose-400" : metric.value > 60 ? "text-amber-400" : "text-green-400"}`}>{metric.value}%</span>
-                    </div>
-                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        class={`h-full bg-linear-to-r ${metric.color} rounded-full transition-all`}
-                        style={`width: ${metric.value}%`}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
 
@@ -526,4 +309,669 @@ const recentActivity = [
       </div>
     </main>
   </div>
+
+<!-- ── Upload Song Modal ───────────────────────────────────────────────────── -->
+<div id="modal-upload" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-upload-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-lg shadow-2xl z-10 mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-white">Upload New Song</h2>
+      <button id="modal-upload-close" class="text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form id="form-upload" class="space-y-4" enctype="multipart/form-data">
+
+      <!-- Audio file drop zone -->
+      <div id="audio-dropzone" class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-purple-500/50 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-4xl text-gray-500 block mb-2">audio_file</span>
+        <p class="text-sm text-gray-400 mb-1">Select audio file</p>
+        <p class="text-xs text-gray-600">MP3, WAV, FLAC, AAC, OGG, M4A · up to 500MB</p>
+        <input id="audio-file" type="file" accept=".mp3,.wav,.flac,.aac,.ogg,.m4a" class="hidden" required />
+        <p id="audio-filename" class="mt-2 text-xs text-purple-400 hidden"></p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Title <span class="text-rose-400">*</span></label>
+          <input id="up-title" type="text" required placeholder="Song Title"
+            class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Duration (seconds) <span class="text-rose-400">*</span></label>
+          <input id="up-duration" type="number" min="1" required placeholder="240"
+            class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Album <span class="text-gray-500">(optional)</span></label>
+          <select id="up-album"
+            class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+            <option value="">— No Album —</option>
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Artist</label>
+          <div id="artists-checkboxes" class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
+            <p class="text-gray-500 text-xs">Loading...</p>
+          </div>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">Genre</label>
+          <div id="genres-checkboxes" class="grid grid-cols-2 gap-2 max-h-28 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
+            <p class="text-gray-500 text-xs">Loading...</p>
+          </div>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            Cover Image <span class="text-gray-500 font-normal">(jpg, png, webp · up to 5MB)</span>
+          </label>
+          <div id="cover-dropzone" class="border-2 border-dashed border-white/20 rounded-xl p-4 flex items-center gap-4 hover:border-purple-500/50 transition-colors cursor-pointer">
+            <div id="cover-preview" class="w-16 h-16 rounded-lg shrink-0 bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+              <span class="material-symbols-outlined text-gray-500 text-2xl">image</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-400 mb-0.5">Click or drag and drop cover image here</p>
+              <p id="cover-filename" class="text-xs text-purple-400 hidden truncate"></p>
+              <p id="cover-upload-status" class="text-xs text-gray-500 hidden"></p>
+            </div>
+            <input id="cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
+          </div>
+          <input id="up-cover-url" type="hidden" />
+        </div>
+      </div>
+
+      <div id="upload-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <div id="upload-progress" class="hidden">
+        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+          <div id="upload-bar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all" style="width:0%"></div>
+        </div>
+        <p id="upload-status" class="text-xs text-gray-400 mt-2 text-center">Loading...</p>
+      </div>
+
+      <button type="submit" id="btn-upload-submit"
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">upload</span>Upload
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  import { apiFetch, getToken, getUser, colorFor } from '../lib/api.js';
+
+  const GRADS = [
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f43f5e,#f97316)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#ef4444,#d946ef)',
+    'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    'linear-gradient(135deg,#06b6d4,#10b981)',
+    'linear-gradient(135deg,#d946ef,#7c3aed)',
+    'linear-gradient(135deg,#fb923c,#fb7185)',
+  ];
+  const grad = (id: number) => GRADS[(Number(id) - 1) % GRADS.length];
+
+  function fmt(sec: number) {
+    const s = Math.floor(sec) || 0;
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }
+
+  function fmtDate(iso: string) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  // ── Admin profile name ───────────────────────────────────────────────────────
+  const _me = getUser();
+  if (_me) {
+    const name = _me.username || 'Admin';
+    document.getElementById('sidebar-admin-name')?.textContent && (document.getElementById('sidebar-admin-name')!.textContent = name);
+    const hdr = document.getElementById('header-admin-name');
+    if (hdr) hdr.textContent = name;
+  }
+
+  // ── Stats ────────────────────────────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const { data } = await apiFetch('/admin/stats');
+      const set = (id: string, v: any) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+      set('stat-users',     data.users_count?.toLocaleString()   ?? '0');
+      set('stat-songs',     data.songs_count?.toLocaleString()   ?? '0');
+      set('stat-artists',   data.artists_count?.toLocaleString() ?? '0');
+      set('stat-playlists', data.playlists_count?.toLocaleString() ?? '—');
+
+      // Recent users sidebar
+      const recentEl = document.getElementById('admin-recent-users');
+      if (recentEl && data.recent_users?.length) {
+        recentEl.innerHTML = data.recent_users.map((u: any) => `
+          <div class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-white text-xs font-bold"
+                 style="background:${colorFor(u.id)}">
+              ${(u.username || u.email || '?').charAt(0).toUpperCase()}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-semibold text-gray-200 truncate">${u.username || u.email}</p>
+              <p class="text-[11px] text-gray-500 truncate">${u.email}</p>
+            </div>
+            <span class="text-[11px] text-gray-600 shrink-0">${fmtDate(u.created_at)}</span>
+          </div>`).join('');
+      } else if (recentEl) {
+        recentEl.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Chưa có người dùng nào.</p>';
+      }
+    } catch (err: any) {
+      console.error('loadStats error:', err.message);
+    }
+  }
+
+  // ── Users table ──────────────────────────────────────────────────────────────
+  let _userPage = 1;
+
+  async function loadUsers(page = 1) {
+    _userPage = page;
+    const tbody = document.getElementById('admin-users-tbody');
+    const info  = document.getElementById('users-pagination-info');
+    const btns  = document.getElementById('users-pagination-btns');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: users, pagination } = await apiFetch(`/admin/users?page=${page}&limit=10`);
+      if (!users?.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Chưa có người dùng.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = users.map((u: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-user-id="${u.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white text-sm font-bold"
+                   style="background:${colorFor(u.id)}">
+                ${(u.username || u.email || '?').charAt(0).toUpperCase()}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-100 truncate">${u.username || '—'}</p>
+                <p class="text-xs text-gray-500 truncate">${u.email}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell">
+            <span class="text-xs font-semibold px-2 py-1 rounded-full ${u.is_admin ? 'bg-purple-500/20 text-purple-300' : 'bg-white/5 text-gray-400'}">
+              ${u.is_admin ? 'Admin' : 'User'}
+            </span>
+          </td>
+          <td class="px-6 py-4 hidden md:table-cell">
+            <span class="text-xs font-semibold px-2 py-1 rounded-full bg-white/5 text-gray-400">Free</span>
+          </td>
+          <td class="px-6 py-4 hidden lg:table-cell text-xs text-gray-400">${fmtDate(u.created_at)}</td>
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-500/15 text-green-400">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>Active
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-toggle-admin w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${u.id}" title="${u.is_admin ? 'Gỡ Admin' : 'Đặt Admin'}">
+                <span class="material-symbols-outlined text-[17px]">${u.is_admin ? 'shield' : 'shield_person'}</span>
+              </button>
+              <button class="btn-delete-user w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${u.id}" title="Xóa">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      // Pagination info
+      if (info) info.innerHTML = `Hiển thị <span class="text-white font-semibold">${users.length}</span> / <span class="text-white font-semibold">${pagination.total}</span> người dùng`;
+      if (btns) {
+        const totalPages = Math.ceil(pagination.total / pagination.limit) || 1;
+        const pages = Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1);
+        btns.innerHTML = `
+          <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all" data-page="${page - 1}" ${page <= 1 ? 'disabled' : ''}>
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          ${pages.map(p => `<button class="w-8 h-8 rounded-lg text-sm font-semibold transition-all ${p === page ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}" data-page="${p}">${p}</button>`).join('')}
+          <button class="w-8 h-8 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all" data-page="${page + 1}" ${page >= totalPages ? 'disabled' : ''}>
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>`;
+      }
+
+      // Delegated handlers
+      tbody.addEventListener('click', async (e: Event) => {
+        const target = e.target as HTMLElement;
+        const delBtn    = target.closest('.btn-delete-user')    as HTMLElement | null;
+        const adminBtn  = target.closest('.btn-toggle-admin')   as HTMLElement | null;
+        if (delBtn) {
+          const id = delBtn.dataset.id;
+          if (!id || !confirm(`Xóa người dùng #${id}?`)) return;
+          try { await apiFetch(`/admin/users/${id}`, { method: 'DELETE' }); delBtn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
+        }
+        if (adminBtn) {
+          const id = adminBtn.dataset.id;
+          if (!id) return;
+          try { await apiFetch(`/admin/users/${id}/toggle-admin`, { method: 'PATCH' }); loadUsers(_userPage); } catch (err: any) { alert(err.message); }
+        }
+      });
+      btns?.addEventListener('click', (e: Event) => {
+        const btn = (e.target as HTMLElement).closest('[data-page]') as HTMLElement | null;
+        if (!btn || (btn as HTMLButtonElement).disabled) return;
+        const p = parseInt(btn.dataset.page || '1');
+        if (p > 0) loadUsers(p);
+      });
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+    }
+  }
+
+  // ── Artists table ────────────────────────────────────────────────────────────
+  async function loadArtists() {
+    const tbody = document.getElementById('admin-artists-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: artists } = await apiFetch('/admin/artists?limit=20');
+      if (!artists?.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Chưa có nghệ sĩ nào.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = artists.map((a: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-artist-id="${a.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-white text-sm font-bold"
+                   style="background:${colorFor(a.id)}">
+                ${a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : a.name.charAt(0)}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-100 truncate">${a.name}</p>
+                ${a.bio ? `<p class="text-xs text-gray-500 truncate">${a.bio}</p>` : ''}
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400 text-center">${a.songs_count || 0}</td>
+          <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-right font-medium">${(a.followers_count || 0).toLocaleString()}</td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-delete-artist w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${a.id}" title="Xóa">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      tbody.addEventListener('click', async (e: Event) => {
+        const btn = (e.target as HTMLElement).closest('.btn-delete-artist') as HTMLElement | null;
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (!id || !confirm(`Xóa nghệ sĩ #${id}? Thao tác này sẽ xóa tất cả bài hát liên quan.`)) return;
+        try { await apiFetch(`/artists/${id}`, { method: 'DELETE' }); btn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
+      });
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+    }
+  }
+
+  // ── Load real songs ──────────────────────────────────────────────────────────
+  async function loadSongs() {
+    const tbody = document.getElementById('admin-songs-tbody');
+    if (!tbody) return;
+    try {
+      const { data: songs } = await apiFetch('/songs?limit=20');
+      if (!songs?.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = songs.map((s: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-song-id="${s.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg shrink-0 overflow-hidden" style="background:${grad(s.id)}">
+                ${s.cover_url ? `<img src="${s.cover_url}" class="w-full h-full object-cover" alt=""/>` : ''}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-100 truncate">${s.title}</p>
+                <p class="text-xs text-gray-500 truncate">${s.artist_names || '—'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400">${s.album_title || '—'}</td>
+          <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400 text-right font-medium">${s.plays_count?.toLocaleString() || 0}</td>
+          <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-center">${fmt(s.duration)}</td>
+          <td class="px-6 py-4"><span class="bg-green-500/15 text-green-400 text-xs font-semibold px-2.5 py-1 rounded-full">Published</span></td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-delete-song w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" data-id="${s.id}" title="Xóa">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      // Delete handler (delegated)
+      tbody.addEventListener('click', async (e) => {
+        const btn = (e.target as HTMLElement).closest('.btn-delete-song') as HTMLElement;
+        if (!btn) return;
+        const id = btn.dataset.id;
+        if (!id || !confirm(`Xóa bài hát #${id}?`)) return;
+        try {
+          await apiFetch(`/songs/${id}`, { method: 'DELETE' });
+          btn.closest('tr')?.remove();
+        } catch (err: any) {
+          alert(err.message || 'Xóa thất bại');
+        }
+      }, { once: false });
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+    }
+  }
+
+  // ── Upload Modal ─────────────────────────────────────────────────────────────
+  const modal       = document.getElementById('modal-upload') as HTMLElement;
+  const modalBg     = document.getElementById('modal-upload-bg') as HTMLElement;
+  const modalClose  = document.getElementById('modal-upload-close') as HTMLElement;
+  const form        = document.getElementById('form-upload') as HTMLFormElement;
+  const audioFile   = document.getElementById('audio-file') as HTMLInputElement;
+  const dropzone    = document.getElementById('audio-dropzone') as HTMLElement;
+  const audioName   = document.getElementById('audio-filename') as HTMLElement;
+  const upTitle     = document.getElementById('up-title') as HTMLInputElement;
+  const upDuration  = document.getElementById('up-duration') as HTMLInputElement;
+  const upAlbum     = document.getElementById('up-album') as HTMLSelectElement;
+  const upCoverUrl     = document.getElementById('up-cover-url') as HTMLInputElement;
+  const coverFile       = document.getElementById('cover-file') as HTMLInputElement;
+  const coverDropzone   = document.getElementById('cover-dropzone') as HTMLElement;
+  const coverPreview    = document.getElementById('cover-preview') as HTMLElement;
+  const coverFilename   = document.getElementById('cover-filename') as HTMLElement;
+  const coverUploadStatus = document.getElementById('cover-upload-status') as HTMLElement;
+  const genresBox   = document.getElementById('genres-checkboxes') as HTMLElement;
+  const errDiv      = document.getElementById('upload-error') as HTMLElement;
+  const progressEl  = document.getElementById('upload-progress') as HTMLElement;
+  const uploadBar   = document.getElementById('upload-bar') as HTMLElement;
+  const uploadStatus = document.getElementById('upload-status') as HTMLElement;
+  const submitBtn   = document.getElementById('btn-upload-submit') as HTMLButtonElement;
+  const artistsBox  = document.getElementById('artists-checkboxes') as HTMLElement;
+
+  function openModal() {
+    modal?.classList.remove('hidden');
+    loadFormDropdowns();
+  }
+  function closeModal() {
+    modal?.classList.add('hidden');
+    form?.reset();
+    errDiv?.classList.add('hidden');
+    progressEl?.classList.add('hidden');
+    if (audioName) { audioName.textContent = ''; audioName.classList.add('hidden'); }
+    if (coverPreview) coverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
+    if (coverFilename) coverFilename.classList.add('hidden');
+    if (coverUploadStatus) coverUploadStatus.classList.add('hidden');
+    if (upCoverUrl) upCoverUrl.value = '';
+  }
+
+  document.getElementById('btn-open-upload')?.addEventListener('click', openModal);
+  document.getElementById('qa-upload')?.addEventListener('click', openModal);
+  modalBg?.addEventListener('click', closeModal);
+  modalClose?.addEventListener('click', closeModal);
+
+  // File picker via dropzone click
+  dropzone?.addEventListener('click', () => audioFile?.click());
+  audioFile?.addEventListener('change', () => {
+    const file = audioFile.files?.[0];
+    if (!file) return;
+    if (audioName) {
+      audioName.textContent = `✓ ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+      audioName.classList.remove('hidden');
+    }
+    // Auto-read duration using Audio element
+    const url = URL.createObjectURL(file);
+    const tmpAudio = new Audio(url);
+    tmpAudio.addEventListener('loadedmetadata', () => {
+      if (upDuration && tmpAudio.duration && isFinite(tmpAudio.duration)) {
+        upDuration.value = String(Math.round(tmpAudio.duration));
+      }
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  // ── Cover image upload ──────────────────────────────────────────────
+  coverDropzone?.addEventListener('click', () => coverFile?.click());
+  coverFile?.addEventListener('change', async () => {
+    const file = coverFile.files?.[0];
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      showErr('Ảnh bìa phải là định dạng JPG, PNG hoặc WebP.');
+      coverFile.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showErr('Ảnh bìa không được vượt quá 5MB.');
+      coverFile.value = '';
+      return;
+    }
+    if (coverFilename) { coverFilename.textContent = file.name; coverFilename.classList.remove('hidden'); }
+    if (coverUploadStatus) { coverUploadStatus.textContent = 'Đang tải lên...'; coverUploadStatus.classList.remove('hidden'); }
+    if (upCoverUrl) upCoverUrl.value = '';
+    const objUrl = URL.createObjectURL(file);
+    if (coverPreview) coverPreview.innerHTML = `<img src="${objUrl}" class="w-full h-full object-cover" alt="" />`;
+    try {
+      const imgFd = new FormData();
+      imgFd.append('cover', file);
+      const token = getToken();
+      const res = await fetch('http://localhost:5000/api/admin/upload/cover', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: imgFd,
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload ảnh thất bại');
+      if (upCoverUrl) upCoverUrl.value = json.data.url;
+      if (coverUploadStatus) coverUploadStatus.textContent = '✓ Đã tải lên thành công';
+      URL.revokeObjectURL(objUrl);
+    } catch (err: any) {
+      if (coverUploadStatus) coverUploadStatus.textContent = `Lỗi: ${err.message}`;
+      if (coverPreview) coverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
+      if (upCoverUrl) upCoverUrl.value = '';
+      URL.revokeObjectURL(objUrl);
+    }
+  });
+
+  async function loadFormDropdowns() {
+    // Artists checkboxes
+    if (artistsBox) {
+      try {
+        const { data: artists } = await apiFetch('/artists?limit=100');
+        if (!artists?.length) { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Không có nghệ sĩ.</p>'; }
+        else artistsBox.innerHTML = artists.map((a: any) => `
+          <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
+            <input type="checkbox" value="${a.id}" class="accent-purple-500 w-3.5 h-3.5" name="artist_ids" />
+            <span class="text-xs text-gray-300 truncate">${a.name}</span>
+          </label>`).join('');
+      } catch { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Lỗi tải nghệ sĩ.</p>'; }
+    }
+
+    // Genres checkboxes
+    if (genresBox) {
+      try {
+        const { data: genres } = await apiFetch('/admin/genres');
+        if (!genres?.length) { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Không có thể loại.</p>'; }
+        else genresBox.innerHTML = genres.map((g: any) => `
+          <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
+            <input type="checkbox" value="${g.id}" class="accent-indigo-500 w-3.5 h-3.5" name="genre_ids" />
+            <span class="text-xs text-gray-300 truncate">${g.name}</span>
+          </label>`).join('');
+      } catch { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Lỗi tải thể loại.</p>'; }
+    }
+
+    // Albums dropdown
+    try {
+      const { data: albums } = await apiFetch('/admin/albums');
+      if (upAlbum && albums?.length) {
+        upAlbum.innerHTML = '<option value="">— Không thuộc album —</option>' +
+          albums.map((al: any) => `<option value="${al.id}">${al.title}${al.artist_name ? ' — ' + al.artist_name : ''}</option>`).join('');
+      }
+    } catch {}
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errDiv?.classList.add('hidden');
+
+    const file = audioFile?.files?.[0];
+    if (!file) { showErr('Vui lòng chọn file âm thanh.'); return; }
+    if (!upTitle.value.trim()) { showErr('Vui lòng nhập tiêu đề.'); return; }
+    if (!upDuration.value || parseInt(upDuration.value) <= 0) { showErr('Vui lòng nhập thời lượng hợp lệ.'); return; }
+
+    const checkedArtists = Array.from(form.querySelectorAll('input[name="artist_ids"]:checked'))
+      .map((cb: any) => cb.value);
+    const checkedGenres = Array.from(form.querySelectorAll('input[name="genre_ids"]:checked'))
+      .map((cb: any) => cb.value);
+
+    const fd = new FormData();
+    fd.append('audio', file);
+    fd.append('title', upTitle.value.trim());
+    fd.append('duration', upDuration.value);
+    if (upAlbum.value) fd.append('album_id', upAlbum.value);
+    const hasCoverFile = (coverFile?.files?.length ?? 0) > 0;
+    if (hasCoverFile && !upCoverUrl.value) { showErr('Ảnh bìa đang tải lên hoặc bị lỗi. Vui lòng chọn lại ảnh bìa.'); return; }
+    if (upCoverUrl.value) fd.append('cover_url', upCoverUrl.value);
+    fd.append('artist_ids', JSON.stringify(checkedArtists));
+    fd.append('genre_ids',  JSON.stringify(checkedGenres));
+
+    submitBtn.disabled = true;
+    progressEl?.classList.remove('hidden');
+    if (uploadBar) uploadBar.style.width = '10%';
+
+    try {
+      const token = getToken();
+      const res = await fetch('http://localhost:5000/api/admin/songs/upload', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: fd,
+      });
+      if (uploadBar) uploadBar.style.width = '90%';
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (uploadBar) uploadBar.style.width = '100%';
+      if (uploadStatus) uploadStatus.textContent = 'Upload thành công!';
+      setTimeout(() => { closeModal(); loadSongs(); }, 1200);
+    } catch (err: any) {
+      showErr(err.message || 'Upload thất bại');
+      progressEl?.classList.add('hidden');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  function showErr(msg: string) {
+    if (errDiv) { errDiv.textContent = msg; errDiv.classList.remove('hidden'); }
+  }
+
+  // ── Add Artist Modal ─────────────────────────────────────────────────────────
+  const artistModal      = document.getElementById('modal-add-artist') as HTMLElement;
+  const artistModalBg    = document.getElementById('modal-artist-bg') as HTMLElement;
+  const artistModalClose = document.getElementById('modal-artist-close') as HTMLElement;
+  const artistForm       = document.getElementById('form-add-artist') as HTMLFormElement;
+  const artistErrDiv     = document.getElementById('artist-error') as HTMLElement;
+
+  document.getElementById('btn-add-artist')?.addEventListener('click', () => artistModal?.classList.remove('hidden'));
+  artistModalBg?.addEventListener('click',    () => { artistModal?.classList.add('hidden'); artistForm?.reset(); });
+  artistModalClose?.addEventListener('click', () => { artistModal?.classList.add('hidden'); artistForm?.reset(); });
+
+  artistForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    artistErrDiv?.classList.add('hidden');
+    const name     = (document.getElementById('artist-name')     as HTMLInputElement)?.value.trim();
+    const bio      = (document.getElementById('artist-bio')      as HTMLTextAreaElement)?.value.trim();
+    const imageUrl = (document.getElementById('artist-image-url') as HTMLInputElement)?.value.trim();
+    if (!name) { artistErrDiv.textContent = 'Vui lòng nhập tên nghệ sĩ.'; artistErrDiv.classList.remove('hidden'); return; }
+    const submitArtistBtn = document.getElementById('btn-artist-submit') as HTMLButtonElement;
+    submitArtistBtn.disabled = true;
+    try {
+      await apiFetch('/artists', { method: 'POST', body: JSON.stringify({ name, bio: bio || undefined, image_url: imageUrl || undefined }) });
+      artistModal?.classList.add('hidden');
+      artistForm?.reset();
+      loadArtists();
+    } catch (err: any) {
+      artistErrDiv.textContent = err.message || 'Thêm nghệ sĩ thất bại';
+      artistErrDiv.classList.remove('hidden');
+    } finally {
+      submitArtistBtn.disabled = false;
+    }
+  });
+
+  // ── Boot ─────────────────────────────────────────────────────────────────────
+  // Verify admin session before loading any data
+  (async () => {
+    const token = getToken();
+
+    if (!token) {
+      window.location.href = '/login?reason=not_logged_in';
+      return;
+    }
+
+    // Always verify against the API — don't trust stale localStorage
+    let meData: any;
+    try {
+      const res = await apiFetch('/auth/me');
+      meData = res.data;
+    } catch {
+      // apiFetch already redirects on 401
+      return;
+    }
+
+    if (!meData?.is_admin) {
+      window.location.href = '/?reason=forbidden';
+      return;
+    }
+
+    // Refresh localStorage so subsequent checks are correct
+    const storedUser = getUser();
+    if (storedUser) {
+      import('../lib/api.js').then(({ setAuth }) => {
+        setAuth(token, { ...storedUser, ...meData });
+      });
+    }
+
+    // Token is valid and user is admin — load all sections
+    loadStats();
+    loadUsers();
+    loadArtists();
+    loadSongs();
+  })();
+</script>
+<!-- ── Add Artist Modal ──────────────────────────────────────────────────── -->
+<div id="modal-add-artist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg font-bold text-white">Thêm Nghệ Sĩ Mới</h2>
+      <button id="modal-artist-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+    <form id="form-add-artist" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Tên nghệ sĩ <span class="text-rose-400">*</span></label>
+        <input id="artist-name" type="text" placeholder="Nhập tên nghệ sĩ..."
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Avatar URL <span class="text-gray-500">(tùy chọn)</span></label>
+        <input id="artist-image-url" type="url" placeholder="https://..."
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Giới thiệu <span class="text-gray-500">(tùy chọn)</span></label>
+        <textarea id="artist-bio" rows="3" placeholder="Mô tả ngắn về nghệ sĩ..."
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"></textarea>
+      </div>
+      <div id="artist-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <button type="submit" id="btn-artist-submit"
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">add</span>Thêm Nghệ Sĩ
+      </button>
+    </form>
+  </div>
+</div>
+
 </MainLayout>

@@ -16,6 +16,7 @@ import favoriteRoutes from './routes/favorites.js';
 import historyRoutes from './routes/history.js';
 import streamRoutes from './routes/stream.js';
 import subscriptionRoutes from './routes/subscriptions.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/stream', streamRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

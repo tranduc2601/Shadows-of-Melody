@@ -1,41 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-const user = {
-  name: "Duy Ho",
-  handle: "@duyho",
-  bio: "Music lover · Synthwave enthusiast · Night owl 🌙",
-  plan: "Premium",
-  followers: "1.2K",
-  following: 348,
-  totalLiked: 247,
-  joinedYear: 2022,
-  avatar: "bg-linear-to-tr from-purple-500 to-pink-500",
-};
-
-const recentTracks = [
-  { title: "Midnight City",      artist: "M83",           cover: "bg-gradient-to-br from-indigo-500 to-purple-500", playedAt: "2 phút trước"   },
-  { title: "Blinding Lights",    artist: "The Weeknd",    cover: "bg-gradient-to-br from-red-500 to-fuchsia-500",   playedAt: "18 phút trước"  },
-  { title: "Levitating",         artist: "Dua Lipa",      cover: "bg-gradient-to-br from-pink-500 to-violet-500",   playedAt: "1 giờ trước"    },
-  { title: "Starboy",            artist: "The Weeknd",    cover: "bg-gradient-to-br from-rose-500 to-orange-500",   playedAt: "3 giờ trước"    },
-  { title: "Do I Wanna Know?",   artist: "Arctic Monkeys",cover: "bg-gradient-to-br from-amber-500 to-red-500",    playedAt: "Hôm qua"         },
-];
-
-const userPlaylists = [
-  { name: "Chill Vibes",         tracks: 24, color: "from-cyan-500 to-blue-600",     icon: "🌊" },
-  { name: "Late Night Drive",    tracks: 18, color: "from-purple-500 to-indigo-700",  icon: "🚗" },
-  { name: "Morning Boost",       tracks: 30, color: "from-orange-400 to-yellow-500",  icon: "☀️" },
-  { name: "Synthwave Dreams",    tracks: 15, color: "from-fuchsia-500 to-pink-600",   icon: "🎹" },
-];
-
-const topArtists = [
-  { name: "The Weeknd",   image: "bg-gradient-to-br from-red-500 to-orange-500"    },
-  { name: "M83",          image: "bg-gradient-to-br from-indigo-500 to-blue-600"   },
-  { name: "Dua Lipa",     image: "bg-gradient-to-br from-pink-500 to-purple-500"   },
-  { name: "Daft Punk",    image: "bg-gradient-to-br from-yellow-400 to-orange-500" },
-];
-
-const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
+import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Hồ sơ - Shadows of Melody">
@@ -57,10 +22,10 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
           </a>
           <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Search
           </a>
           <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Artists
           </a>
         </nav>
 
@@ -85,13 +50,16 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
               </div>
             </div>
             <div class="min-w-0">
-              <p class="text-sm font-semibold text-white truncate">{user.name}</p>
-              <p class="text-xs text-purple-400 font-medium truncate">{user.plan}</p>
+              <p class="text-sm font-semibold text-white truncate" id="sidebar-name">—</p>
+              <p class="text-xs text-purple-400 font-medium truncate" id="sidebar-plan">Free</p>
             </div>
           </a>
           <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
             <span class="material-symbols-outlined text-[20px]">settings</span>
           </a>
+          <button id="logout-btn" type="button" title="Đăng xuất" class="shrink-0 text-gray-500 hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-500/10">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+          </button>
         </div>
       </div>
     </aside>
@@ -112,7 +80,7 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
           <!-- Edit banner button -->
           <button type="button" class="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-sm text-white/70 hover:text-white transition-all border border-white/10">
             <span class="material-symbols-outlined text-[16px]">edit</span>
-            Chỉnh sửa banner
+            Edit banner
           </button>
         </div>
 
@@ -122,37 +90,38 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
             <!-- Avatar -->
             <div class="relative shrink-0">
               <div class="w-28 h-28 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-1 shadow-2xl shadow-purple-500/30">
-                <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+                <div id="profile-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
                   <span class="material-symbols-outlined text-purple-300" style="font-size: 3.5rem;">person</span>
                 </div>
               </div>
-              <button type="button" aria-label="Đổi ảnh đại diện" class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
+              <button id="avatar-upload-btn" type="button" aria-label="Đổi ảnh đại diện" class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
                 <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
               </button>
+              <input id="avatar-file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
             </div>
 
             <!-- Name + Stats -->
             <div class="flex-1 min-w-0 pb-2">
               <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="text-3xl font-black text-white">{user.name}</h1>
+                <h1 class="text-3xl font-black text-white" id="profile-name">—</h1>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs font-bold text-purple-300 uppercase tracking-wider">
-                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>{user.plan}
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span id="profile-plan">Free</span>
                 </span>
               </div>
-              <p class="text-gray-500 text-sm mt-0.5">{user.handle}</p>
-              <p class="text-gray-400 text-sm mt-2 max-w-md">{user.bio}</p>
+              <p class="text-gray-500 text-sm mt-0.5" id="profile-handle">—</p>
+              <p class="text-gray-400 text-sm mt-2 max-w-md" id="profile-bio">—</p>
               <div class="flex items-center gap-6 mt-3 text-sm">
                 <div>
-                  <span class="font-bold text-white">{user.followers}</span>
-                  <span class="text-gray-500 ml-1">người theo dõi</span>
+                  <span class="font-bold text-white" id="profile-followers">0</span>
+                  <span class="text-gray-500 ml-1">followed</span>
                 </div>
                 <div>
-                  <span class="font-bold text-white">{user.following}</span>
-                  <span class="text-gray-500 ml-1">đang theo dõi</span>
+                  <span class="font-bold text-white" id="profile-following">0</span>
+                  <span class="text-gray-500 ml-1">following</span>
                 </div>
                 <div>
-                  <span class="font-bold text-white">{user.totalLiked}</span>
-                  <span class="text-gray-500 ml-1">bài yêu thích</span>
+                  <span class="font-bold text-white" id="profile-liked">0</span>
+                  <span class="text-gray-500 ml-1">liked</span>
                 </div>
               </div>
             </div>
@@ -161,25 +130,16 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
             <div class="flex items-center gap-3 shrink-0 pb-2">
               <a href="/settings" class="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-full font-semibold text-sm transition-all">
                 <span class="material-symbols-outlined text-[18px]">edit</span>
-                Chỉnh sửa hồ sơ
+                Edit Profile
               </a>
             </div>
           </div>
 
           <!-- Tabs -->
           <div class="flex items-center gap-1 border-b border-white/5 mb-8">
-            {tabs.map((tab, i) => (
-              <button
-                type="button"
-                class={`px-5 py-3 text-sm font-semibold transition-all relative ${
-                  i === 0
-                    ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-purple-400 after:rounded-full"
-                    : "text-gray-500 hover:text-gray-300"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-purple-400 after:rounded-full">Overview</button>
+            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-gray-500 hover:text-gray-300">Playlists</button>
+            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-gray-500 hover:text-gray-300">Following</button>
           </div>
 
           <!-- Grid Layout -->
@@ -189,24 +149,10 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
             <div class="xl:col-span-2">
               <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
                 <span class="material-symbols-outlined text-purple-400 text-[20px]">history</span>
-                Nghe gần đây
+                Recent Play
               </h2>
-              <div class="space-y-1.5">
-                {recentTracks.map((track, i) => (
-                  <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
-                    <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0 group-hover:hidden">{i + 1}</span>
-                    <span class="material-symbols-outlined text-purple-400 text-[20px] hidden group-hover:block shrink-0">play_arrow</span>
-                    <div class={`w-11 h-11 rounded-xl shrink-0 ${track.cover} shadow-md group-hover:scale-105 transition-transform`}></div>
-                    <div class="flex-1 min-w-0">
-                      <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">{track.title}</p>
-                      <p class="text-xs text-gray-500 truncate mt-0.5">{track.artist}</p>
-                    </div>
-                    <span class="text-xs text-gray-600 shrink-0 hidden sm:block">{track.playedAt}</span>
-                    <button type="button" aria-label="Thêm tùy chọn" class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white transition-all">
-                      <span class="material-symbols-outlined text-[20px]">more_horiz</span>
-                    </button>
-                  </div>
-                ))}
+              <div class="space-y-1.5" id="recent-tracks">
+                <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
               </div>
             </div>
 
@@ -216,20 +162,15 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
               <div>
                 <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
                   <span class="material-symbols-outlined text-purple-400 text-[20px]">star</span>
-                  Nghệ sĩ yêu thích
+                  Favorite Artists
                 </h2>
-                <div class="grid grid-cols-2 gap-3">
-                  {topArtists.map((artist) => (
-                    <a href="/artists" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group cursor-pointer">
-                      <div class={`w-14 h-14 rounded-full ${artist.image} group-hover:scale-105 transition-transform shadow-lg`}></div>
-                      <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">{artist.name}</p>
-                    </a>
-                  ))}
+                <div class="grid grid-cols-2 gap-3" id="top-artists">
+                  <p class="col-span-2 text-gray-500 text-sm text-center py-2">Loading...</p>
                 </div>
               </div>
 
               <!-- Listening Stats -->
-              <div>
+              <!-- <div>
                 <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
                   <span class="material-symbols-outlined text-purple-400 text-[20px]">equalizer</span>
                   Thống kê
@@ -254,7 +195,7 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -267,19 +208,8 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
               </h2>
               <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">Xem tất cả</a>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {userPlaylists.map((pl) => (
-                <a href="/playlist" class="group cursor-pointer">
-                  <div class={`aspect-square rounded-2xl bg-linear-to-br ${pl.color} mb-3 flex items-center justify-center text-4xl shadow-lg group-hover:scale-[1.03] group-hover:shadow-2xl transition-all duration-300 relative overflow-hidden`}>
-                    <span role="img" aria-label={pl.name}>{pl.icon}</span>
-                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                      <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
-                    </div>
-                  </div>
-                  <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">{pl.name}</p>
-                  <p class="text-xs text-gray-500 mt-0.5">{pl.tracks} bài hát</p>
-                </a>
-              ))}
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="user-playlists-grid">
+              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
             </div>
           </div>
 
@@ -287,58 +217,7 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
       </div>
 
       <!-- Now Playing Bar -->
-      <div class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div class="flex items-center gap-4 w-1/4 min-w-50">
-          <div class="w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500 to-purple-500 shadow-lg shadow-purple-500/20 relative group cursor-pointer overflow-hidden shrink-0">
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <span class="material-symbols-outlined text-white text-xl">keyboard_arrow_up</span>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center min-w-0">
-            <span class="font-bold text-white text-[15px] truncate">Midnight City</span>
-            <span class="text-xs text-gray-400 truncate mt-0.5">M83</span>
-          </div>
-          <button type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
-            <span class="material-symbols-outlined">favorite</span>
-          </button>
-        </div>
-
-        <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
-          <div class="flex items-center gap-6 mb-1.5">
-            <button type="button" aria-label="Shuffle" class="text-gray-500 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">shuffle</span></button>
-            <button type="button" aria-label="Trước" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_previous</span></button>
-            <button type="button" aria-label="Phát / Dừng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-              <span class="material-symbols-outlined">play_arrow</span>
-            </button>
-            <button type="button" aria-label="Tiếp theo" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-2xl">skip_next</span></button>
-            <button type="button" aria-label="Lặp lại" class="text-green-400 hover:text-green-300 transition-colors relative">
-              <span class="material-symbols-outlined text-xl">repeat</span>
-              <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-400"></span>
-            </button>
-          </div>
-          <div class="w-full flex items-center gap-3">
-            <span class="text-[11px] font-medium text-gray-400 w-10 text-right">0:45</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden group hover:h-1.5 transition-all cursor-pointer relative">
-              <div class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 w-1/3">
-                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
-              </div>
-            </div>
-            <span class="text-[11px] font-medium text-gray-400 w-10">4:03</span>
-          </div>
-        </div>
-
-        <div class="w-1/4 min-w-50 hidden md:flex items-center justify-end gap-4">
-          <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">mic</span></button>
-          <button type="button" aria-label="Hàng chờ" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">queue_music</span></button>
-          <button type="button" aria-label="Thiết bị" class="text-gray-400 hover:text-white transition-colors"><span class="material-symbols-outlined text-xl">devices</span></button>
-          <div class="flex items-center gap-2 w-24 group cursor-pointer">
-            <span class="material-symbols-outlined text-gray-400 text-xl group-hover:text-white transition-colors">volume_up</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden hover:h-1.5 transition-all">
-              <div class="h-full bg-white group-hover:bg-purple-400 transition-colors w-2/3"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PlayerBar />
     </main>
   </div>
 
@@ -351,4 +230,200 @@ const tabs = ["Tổng quan", "Playlists", "Đang theo dõi"];
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
+
+<script>
+  import { apiFetch } from '../lib/api.js';
+
+  const GRADS = [
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f43f5e,#f97316)',
+    'linear-gradient(135deg,#ec4899,#7c3aed)',
+    'linear-gradient(135deg,#ef4444,#d946ef)',
+    'linear-gradient(135deg,#3b82f6,#06b6d4)',
+    'linear-gradient(135deg,#06b6d4,#10b981)',
+    'linear-gradient(135deg,#d946ef,#7c3aed)',
+    'linear-gradient(135deg,#fb923c,#fb7185)',
+  ];
+  const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
+
+  function setText(id: string, text: string) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  async function loadProfile() {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      setText('profile-name', 'Chưa đăng nhập');
+      document.getElementById('recent-tracks')!.innerHTML =
+        '<p class="text-center py-4"><a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a> để xem hồ sơ.</p>';
+      return;
+    }
+
+    try {
+      const { data: user } = await apiFetch('/auth/me');
+
+      setText('sidebar-name', user.full_name || user.username);
+      setText('sidebar-plan', user.subscription?.subscription_type || 'free');
+      setText('profile-name', user.full_name || user.username);
+      setText('profile-plan', user.subscription?.subscription_type || 'free');
+      setText('profile-handle', `@${user.username}`);
+      setText('profile-bio', user.bio || 'Không có mô tả.');
+      setText('profile-followers', '0');
+      setText('profile-following', '0');
+      setText('profile-liked', '0');
+
+      // Show avatar
+      const avatarInner = document.getElementById('profile-avatar-inner');
+      if (avatarInner && user.avatar_url) {
+        avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+      }
+    } catch {}
+
+    // Load history
+    try {
+      const { data: history } = await apiFetch('/history?limit=5');
+      const tracksEl = document.getElementById('recent-tracks')!;
+      if (!history?.length) {
+        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Chưa có lịch sử nghe.</p>';
+      } else {
+        tracksEl.innerHTML = history.map((h: any, i: number) => {
+          const s = h.song || h;
+          const cover = s.cover_url
+            ? `<img src="${s.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md" alt=""/>`
+            : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md" style="background:${grad(s.id || i + 1)}"></div>`;
+          return `
+            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
+              <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0 group-hover:hidden">${i + 1}</span>
+              <span class="material-symbols-outlined text-purple-400 text-[20px] hidden group-hover:block shrink-0">play_arrow</span>
+              ${cover}
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${s.title || '—'}</p>
+                <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
+              </div>
+              <button class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white">
+                <span class="material-symbols-outlined text-[20px]">more_horiz</span>
+              </button>
+            </div>`;
+        }).join('');
+      }
+    } catch {
+      try {
+        // Fallback: show recent songs
+        const { data: songs } = await apiFetch('/songs?limit=5');
+        const tracksEl = document.getElementById('recent-tracks')!;
+        tracksEl.innerHTML = (songs || []).map((s: any, i: number) => {
+          const cover = s.cover_url
+            ? `<img src="${s.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md" alt=""/>`
+            : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
+          return `
+            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
+              <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0">${i + 1}</span>
+              ${cover}
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-100 group-hover:text-purple-400 truncate text-sm">${s.title}</p>
+                <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
+              </div>
+            </div>`;
+        }).join('');
+      } catch {}
+    }
+
+    // Load artists
+    try {
+      const { data: artists } = await apiFetch('/artists?limit=4');
+      const artistsEl = document.getElementById('top-artists')!;
+      if (artists?.length) {
+        artistsEl.innerHTML = artists.slice(0, 4).map((a: any) => {
+          const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : '';
+          return `
+            <a href="/artists" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group cursor-pointer">
+              <div class="w-14 h-14 rounded-full overflow-hidden group-hover:scale-105 transition-transform shadow-lg" style="background:${grad(a.id)}">${img}</div>
+              <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">${a.name}</p>
+            </a>`;
+        }).join('');
+      }
+    } catch {}
+
+    // Load playlists
+    try {
+      const { data: playlists } = await apiFetch('/playlists?limit=4');
+      const plEl = document.getElementById('user-playlists-grid')!;
+      if (playlists?.length) {
+        plEl.innerHTML = playlists.slice(0, 4).map((pl: any) => `
+          <a href="/playlist" class="group cursor-pointer">
+            <div class="aspect-square rounded-2xl mb-3 shadow-lg flex items-center justify-center relative overflow-hidden group-hover:scale-[1.03] transition-all duration-300" style="background:${grad(pl.id)}">
+              ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span>'}
+              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+              </div>
+            </div>
+            <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">${pl.name}</p>
+            <p class="text-xs text-gray-500 mt-0.5">${pl.description || 'Playlist'}</p>
+          </a>`).join('');
+      } else {
+        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Chưa có playlist.</p>';
+      }
+    } catch {}
+  }
+
+  loadProfile();
+
+  // ── Avatar upload ──────────────────────────────────────────────────────────
+  const avatarUploadBtn = document.getElementById('avatar-upload-btn') as HTMLButtonElement;
+  const avatarFileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
+
+  avatarUploadBtn?.addEventListener('click', () => avatarFileInput?.click());
+
+  avatarFileInput?.addEventListener('change', async () => {
+    const file = avatarFileInput.files?.[0];
+    if (!file) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) { alert('Vui lòng đăng nhập.'); return; }
+
+    const btn = avatarUploadBtn;
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-white text-[16px] animate-spin">refresh</span>';
+    btn.disabled = true;
+
+    try {
+      const fd = new FormData();
+      fd.append('avatar', file);
+      const res = await fetch(`http://localhost:5000/api/auth/upload-avatar`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+
+      const newUrl: string = json.data.url;
+
+      // Update avatar display
+      const avatarInner = document.getElementById('profile-avatar-inner');
+      if (avatarInner) {
+        avatarInner.innerHTML = `<img src="${newUrl}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+      }
+
+      // Update localStorage so sidebar and other pages reflect the change
+      try {
+        const stored = JSON.parse(localStorage.getItem('auth_user') || 'null');
+        if (stored) { stored.avatar_url = newUrl; localStorage.setItem('auth_user', JSON.stringify(stored)); }
+      } catch {}
+    } catch (err: any) {
+      alert(err.message || 'Upload ảnh thất bại');
+    } finally {
+      btn.innerHTML = origHTML;
+      btn.disabled = false;
+      avatarFileInput.value = '';
+    }
+  });
+
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    window.location.href = '/login';
+  });
+</script>
+
 </MainLayout>

@@ -1,0 +1,229 @@
+---
+const { currentPage = 'home' } = Astro.props;
+
+const navItems = [
+  { href: '/',        icon: 'home',        label: 'Home',      page: 'home'    },
+  { href: '/search',  icon: 'search',      label: 'Search',  page: 'search'  },
+  { href: '/artists', icon: 'person',      label: 'Artists',   page: 'artists' },
+];
+const libItems = [
+  { href: '/liked',    icon: 'favorite',    label: 'Liked Songs', page: 'liked',    iconClass: 'text-rose-400' },
+  { href: '/playlist', icon: 'queue_music', label: 'Playlists',   page: 'playlist', iconClass: '' },
+];
+---
+
+<aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
+  <div class="h-20 flex items-center px-6">
+    <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
+      <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
+      Melody
+    </a>
+  </div>
+
+  <div class="px-4 py-6 flex-1 overflow-y-auto">
+    <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
+    <nav class="space-y-1 mb-8">
+      {navItems.map(item => (
+        <a href={item.href} class={`flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group ${
+          currentPage === item.page
+            ? 'bg-gradient-to-r from-purple-500/20 to-transparent text-white shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]'
+            : 'text-gray-400 hover:text-white hover:bg-white/5'
+        }`}>
+          <span class={`material-symbols-outlined transition-transform ${
+            currentPage === item.page ? 'text-purple-400' : 'group-hover:scale-110'
+          }`}>{item.icon}</span>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
+    <nav class="space-y-1">
+      {libItems.map(item => (
+        <a href={item.href} class={`flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all group ${
+          currentPage === item.page
+            ? 'bg-gradient-to-r from-purple-500/20 to-transparent text-white shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]'
+            : 'text-gray-400 hover:text-white hover:bg-white/5'
+        }`}>
+          <span class={`material-symbols-outlined group-hover:scale-110 transition-transform ${item.iconClass} ${
+            currentPage === item.page ? 'text-purple-400' : ''
+          }`}>{item.icon}</span>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- User playlists (populated by JS) -->
+    <div class="mt-4 space-y-0.5" id="sidebar-user-playlists"></div>
+
+    <!-- Admin link (shown for admin users only) -->
+    <a id="sidebar-admin-link" href="/admin" class="hidden mt-3 flex items-center gap-3 px-3 py-2 text-purple-400 hover:text-white hover:bg-purple-500/10 w-full rounded-lg transition-all text-sm font-semibold">
+      <span class="w-8 h-8 rounded-md bg-purple-500/20 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-purple-400 text-base">admin_panel_settings</span>
+      </span>
+      Admin Panel
+    </a>
+
+    <!-- Create Playlist button (shown when logged in) -->
+    <button id="btn-new-playlist" class="hidden mt-3 flex items-center gap-3 px-3 py-2 text-gray-500 hover:text-white w-full rounded-lg hover:bg-white/5 transition-all text-sm">
+      <span class="w-8 h-8 rounded-md border border-dashed border-white/20 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-base">add</span>
+      </span>
+      Create new playlist
+    </button>
+  </div>
+
+  <!-- User Profile -->
+  <div class="p-4 border-t border-white/5">
+    <!-- Guest state -->
+    <div id="sidebar-guest">
+      <a href="/login" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-base">login</span>Đăng Nhập
+      </a>
+    </div>
+    <!-- Logged-in state -->
+    <a href="/profile" id="sidebar-user" class="hidden items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors group">
+      <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0">
+        <div id="sidebar-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
+          <span class="material-symbols-outlined text-purple-400">person</span>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p id="sidebar-username" class="text-sm font-semibold text-white truncate">—</p>
+        <p id="sidebar-plan" class="text-xs text-purple-400 font-medium">Free</p>
+      </div>
+      <span class="material-symbols-outlined text-gray-500 group-hover:text-white text-sm">chevron_right</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Create Playlist Modal -->
+<div id="modal-new-playlist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-pl-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-white">Tạo Playlist Mới</h2>
+      <button id="modal-pl-close" class="text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form id="form-new-playlist" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Tên Playlist <span class="text-rose-400">*</span></label>
+        <input id="pl-name" type="text" required placeholder="Playlist của tôi"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Mô Tả</label>
+        <textarea id="pl-desc" rows="3" placeholder="Mô tả về playlist..."
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"></textarea>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input id="pl-public" type="checkbox" checked class="accent-purple-500 w-4 h-4" />
+        <span class="text-sm text-gray-300">Công khai</span>
+      </label>
+      <div id="pl-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <button type="submit" id="pl-submit"
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all">
+        Tạo Playlist
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  import { getUser, apiFetch } from '../lib/api.js';
+
+  // ── Auth state ──────────────────────────────────────────────────────────────
+  const user = getUser();
+
+  const guestEl   = document.getElementById('sidebar-guest') as HTMLElement;
+  const userEl    = document.getElementById('sidebar-user') as HTMLElement;
+  const nameEl    = document.getElementById('sidebar-username') as HTMLElement;
+  const planEl    = document.getElementById('sidebar-plan') as HTMLElement;
+  const avatarInner = document.getElementById('sidebar-avatar-inner') as HTMLElement;
+  const playlistsEl = document.getElementById('sidebar-user-playlists') as HTMLElement;
+  const btnNew    = document.getElementById('btn-new-playlist') as HTMLElement;
+
+  if (user) {
+    guestEl?.classList.add('hidden');
+    userEl?.classList.remove('hidden');
+    userEl?.classList.add('flex');
+    btnNew?.classList.remove('hidden');
+    btnNew?.classList.add('flex');
+
+    if (nameEl) nameEl.textContent = user.full_name || user.username || user.email;
+    if (planEl) planEl.textContent = user.subscription?.plan_name || 'Free';
+    if (user.avatar_url && avatarInner) {
+      avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
+    }
+
+    // Show admin link for admin users
+    if (user.is_admin) {
+      const adminLink = document.getElementById('sidebar-admin-link') as HTMLElement;
+      adminLink?.classList.remove('hidden');
+      adminLink?.classList.add('flex');
+    }
+
+    loadPlaylists();
+  }
+
+  async function loadPlaylists() {
+    if (!playlistsEl) return;
+    try {
+      const { data } = await apiFetch('/playlists?limit=8');
+      if (!data?.length) return;
+      playlistsEl.innerHTML = data.map((pl: any) => `
+        <a href="/playlist?id=${pl.id}" class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-all text-sm group">
+          <div class="w-8 h-8 rounded-md bg-gradient-to-br from-purple-500 to-indigo-500 shrink-0 flex items-center justify-center">
+            <span class="material-symbols-outlined text-white text-sm">queue_music</span>
+          </div>
+          <span class="truncate">${pl.name}</span>
+        </a>
+      `).join('');
+    } catch {}
+  }
+
+  // ── Create Playlist Modal ───────────────────────────────────────────────────
+  const modal     = document.getElementById('modal-new-playlist') as HTMLElement;
+  const modalBg   = document.getElementById('modal-pl-bg') as HTMLElement;
+  const closeBtn  = document.getElementById('modal-pl-close') as HTMLElement;
+  const form      = document.getElementById('form-new-playlist') as HTMLFormElement;
+  const plError   = document.getElementById('pl-error') as HTMLElement;
+  const plSubmit  = document.getElementById('pl-submit') as HTMLButtonElement;
+  const plName    = document.getElementById('pl-name') as HTMLInputElement;
+  const plDesc    = document.getElementById('pl-desc') as HTMLTextAreaElement;
+  const plPublic  = document.getElementById('pl-public') as HTMLInputElement;
+
+  btnNew?.addEventListener('click', () => modal?.classList.remove('hidden'));
+  modalBg?.addEventListener('click', () => modal?.classList.add('hidden'));
+  closeBtn?.addEventListener('click', () => modal?.classList.add('hidden'));
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    plError?.classList.add('hidden');
+    plSubmit.disabled = true;
+    plSubmit.textContent = 'Đang tạo...';
+    try {
+      await apiFetch('/playlists', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: plName.value.trim(),
+          description: plDesc.value.trim(),
+          is_public: plPublic.checked,
+        }),
+      });
+      modal?.classList.add('hidden');
+      form.reset();
+      loadPlaylists();
+    } catch (err: any) {
+      if (plError) {
+        plError.textContent = err.message || 'Tạo playlist thất bại';
+        plError.classList.remove('hidden');
+      }
+    } finally {
+      plSubmit.disabled = false;
+      plSubmit.textContent = 'Tạo Playlist';
+    }
+  });
+</script>

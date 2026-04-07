@@ -1,6 +1,7 @@
 import Song from '../models/Song.js';
 import History from '../models/History.js';
 import { sanitizeSearchQuery } from '../utils/validators.js';
+import { pool } from '../config/database.js';
 
 export const getAllSongs = async (req, res) => {
     try {
@@ -238,5 +239,30 @@ export const addToHistory = async (req, res) => {
             success: false,
             message: 'Failed to add to history',
         });
+    }
+};
+
+export const getGenres = async (req, res) => {
+    try {
+        const [genres] = await pool.query('SELECT id, name FROM genres ORDER BY name ASC');
+        return res.json({ success: true, data: genres });
+    } catch (error) {
+        console.error('GetGenres error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch genres' });
+    }
+};
+
+export const getSongsByGenre = async (req, res) => {
+    try {
+        const { genreId } = req.params;
+        const limit = parseInt(req.query.limit) || 20;
+        const offset = parseInt(req.query.offset) || 0;
+
+        const songs = await Song.findByGenre(genreId, limit, offset);
+
+        return res.json({ success: true, data: songs });
+    } catch (error) {
+        console.error('GetSongsByGenre error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch songs by genre' });
     }
 };
