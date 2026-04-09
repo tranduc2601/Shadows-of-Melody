@@ -109,12 +109,14 @@ export const getArtists = async (req, res) => {
         const [[{ total }], artists] = await Promise.all([
             pool.query('SELECT COUNT(*) AS total FROM artists'),
             pool.query(
-                `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count,
+                `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count, a.user_id,
+                        u.username AS linked_username, u.role AS linked_user_role,
                         COUNT(DISTINCT sa.song_id) AS songs_count
                  FROM artists a
+                 LEFT JOIN users u ON a.user_id = u.id AND u.deleted_at IS NULL
                  LEFT JOIN song_artists sa ON a.id = sa.artist_id
-                 GROUP BY a.id
-                 ORDER BY a.name ASC LIMIT ? OFFSET ?`,
+                 GROUP BY a.id, u.username, u.role
+                 ORDER BY a.name ASC LIMIT $1 OFFSET $2`,
                 [limit, offset]
             ),
         ]);
@@ -127,6 +129,31 @@ export const getArtists = async (req, res) => {
     } catch (err) {
         console.error('Admin getArtists error:', err);
         return res.status(500).json({ success: false, message: 'Failed to load artists' });
+    }
+};
+
+// PATCH /api/admin/artists/:id/revoke-role
+export const revokeArtistRole = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [[artist]] = await pool.query(
+            'SELECT id, user_id FROM artists WHERE id = $1',
+            [id]
+        );
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
+        if (!artist.user_id) {
+            return res.status(400).json({ success: false, message: 'This artist has no linked user account' });
+        }
+        await pool.query(
+            `UPDATE users SET role = 'user', updated_at = NOW() WHERE id = $1`,
+            [artist.user_id]
+        );
+        return res.json({ success: true, message: 'Artist role revoked successfully' });
+    } catch (err) {
+        console.error('revokeArtistRole error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to revoke artist role' });
     }
 };
 
@@ -189,6 +216,75 @@ export const getAlbums = async (req, res) => {
     } catch (err) {
         console.error('Admin getAlbums error:', err);
         return res.status(500).json({ success: false, message: 'Failed to load albums' });
+    }
+};
+
+// POST /api/admin/albums
+export const createAlbum = async (req, res) => {
+    try {
+        const { title, artist_id, cover_url, release_date } = req.body;
+        if (!title?.trim()) {
+            return res.status(400).json({ success: false, message: 'Album title is required' });
+        }
+        const [rows] = await pool.query(
+            `INSERT INTO albums (title, artist_id, cover_url, release_date)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id, title, artist_id`,
+            [title.trim(), artist_id || null, cover_url || null, release_date || null]
+        );
+        return res.status(201).json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('Admin createAlbum error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to create album' });
+    }
+};
+
+// GET /api/admin/artists/:id/content
+export const getArtistContent = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [[artist]] = await pool.query(
+            `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count
+             FROM artists a WHERE a.id = $1`,
+            [id]
+        );
+        if (!artist) return res.status(404).json({ success: false, message: 'Artist not found' });
+
+        const [[{ total_songs }], albums, songs] = await Promise.all([
+            pool.query(
+                `SELECT COUNT(*) AS total_songs FROM song_artists WHERE artist_id = $1`,
+                [id]
+            ),
+            pool.query(
+                `SELECT al.id, al.title, al.cover_url, al.release_date
+                 FROM albums al WHERE al.artist_id = $1
+                 ORDER BY al.release_date DESC NULLS LAST, al.title ASC`,
+                [id]
+            ),
+            pool.query(
+                `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count,
+                        al.title AS album_title
+                 FROM songs s
+                 JOIN song_artists sa ON sa.song_id = s.id AND sa.artist_id = $1
+                 LEFT JOIN albums al ON al.id = s.album_id
+                 ORDER BY s.created_at DESC
+                 LIMIT 50`,
+                [id]
+            ),
+        ]);
+
+        return res.json({
+            success: true,
+            data: {
+                artist,
+                total_songs: parseInt(total_songs) || 0,
+                albums: albums[0] || [],
+                songs:  songs[0]  || [],
+            },
+        });
+    } catch (err) {
+        console.error('getArtistContent error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load artist content' });
     }
 };
 

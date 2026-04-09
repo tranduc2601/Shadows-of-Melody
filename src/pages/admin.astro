@@ -11,7 +11,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       <div class="h-20 flex items-center px-6 border-b border-white/5">
         <a href="/" class="flex items-center gap-2">
           <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          <span class="text-lg font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400">Melody</span>
+          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Melody</span>
         </a>
       </div>
 
@@ -25,44 +25,41 @@ import MainLayout from "../layouts/MainLayout.astro";
       <div class="px-4 py-6 flex-1 overflow-y-auto">
         <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Overview</p>
         <nav class="space-y-1 mb-8">
-          <a href="/admin" class="flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
+          <button data-section="dashboard" class="nav-btn w-full flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
             <span class="material-symbols-outlined text-purple-400">dashboard</span>Dashboard
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <!-- <button data-section="analytics" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">bar_chart</span>Analytics
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <button data-section="reports" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">receipt_long</span>Reports
-          </a>
+          </button> -->
         </nav>
 
         <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Manage</p>
         <nav class="space-y-1 mb-8">
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          <button data-section="users" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>Users
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <button data-section="songs" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">music_note</span>Songs
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <button data-section="artists" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">mic</span>Artists
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <button data-section="playlists" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+          </button>
+          <button data-section="albums" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">album</span>Albums
-          </a>
+          </button>
         </nav>
 
         <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">System</p>
         <nav class="space-y-1">
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>Settings
-          </a>
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">security</span>Security
-          </a>
+          <!-- <button data-section="tasks" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">assignment</span>Tasks
+          </button> -->
           <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">arrow_back</span>Back to App
           </a>
@@ -73,7 +70,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       <div class="p-4 border-t border-white/5">
         <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
           <div class="w-10 h-10 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 p-0.5">
-            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+            <div id="sidebar-admin-avatar" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
               <span class="material-symbols-outlined text-purple-400">shield_person</span>
             </div>
           </div>
@@ -100,7 +97,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             <span class="material-symbols-outlined">menu</span>
           </button>
           <div>
-            <h1 class="text-xl font-bold text-white">Dashboard</h1>
+            <h1 id="page-title" class="text-xl font-bold text-white">Dashboard</h1>
             <p class="text-xs text-gray-500">Welcome back, <span id="header-admin-name">Admin</span></p>
           </div>
         </div>
@@ -118,236 +115,284 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
 
           <!-- Notifications -->
-          <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 transition-all relative">
+          <!-- <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 transition-all relative">
             <span class="material-symbols-outlined text-gray-300 text-[20px]">notifications</span>
             <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></span>
-          </button>
+          </button> -->
 
           <!-- Quick Add -->
-          <button class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full text-sm font-semibold transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
+          <!-- <button id="btn-add-new-header" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full text-sm font-semibold transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
             <span class="material-symbols-outlined text-[18px]">add</span>
             <span class="hidden sm:inline">Add New</span>
-          </button>
+          </button> -->
         </div>
       </header>
 
       <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto px-6 lg:px-8 py-8 relative z-10 custom-scrollbar">
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-          <!-- Users -->
-          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-white text-[20px]">group</span>
+        <!-- ── Dashboard Section ─────────────────────────────────────────── -->
+        <div id="section-dashboard">
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+            <!-- Users -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                <div class="w-11 h-11 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined text-white text-[20px]">group</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                  <span id="stat-users-change">—</span>
+                </span>
               </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                <span id="stat-users-change">—</span>
-              </span>
+              <p id="stat-users" class="text-2xl font-black text-white mb-1">—</p>
+              <p class="text-xs text-gray-400 font-medium">Total Users</p>
             </div>
-            <p id="stat-users" class="text-2xl font-black text-white mb-1">—</p>
-            <p class="text-xs text-gray-400 font-medium">Total Users</p>
-          </div>
-          <!-- Songs -->
-          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-white text-[20px]">music_note</span>
+            <!-- Songs -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                <div class="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined text-white text-[20px]">music_note</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-[14px]">library_music</span>
+                  Live
+                </span>
               </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[14px]">library_music</span>
-                Live
-              </span>
+              <p id="stat-songs" class="text-2xl font-black text-white mb-1">—</p>
+              <p class="text-xs text-gray-400 font-medium">Total Songs</p>
             </div>
-            <p id="stat-songs" class="text-2xl font-black text-white mb-1">—</p>
-            <p class="text-xs text-gray-400 font-medium">Total Songs</p>
-          </div>
-          <!-- Artists -->
-          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-white text-[20px]">mic</span>
+            <!-- Artists -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                <div class="w-11 h-11 rounded-xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined text-white text-[20px]">mic</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                  Live
+                </span>
               </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                Live
-              </span>
+              <p id="stat-artists" class="text-2xl font-black text-white mb-1">—</p>
+              <p class="text-xs text-gray-400 font-medium">Total Artists</p>
             </div>
-            <p id="stat-artists" class="text-2xl font-black text-white mb-1">—</p>
-            <p class="text-xs text-gray-400 font-medium">Total Artists</p>
-          </div>
-          <!-- Playlists placeholder -->
-          <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-              <div class="w-11 h-11 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-white text-[20px]">queue_music</span>
+            <!-- Playlists -->
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                <div class="w-11 h-11 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined text-white text-[20px]">queue_music</span>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                  Live
+                </span>
               </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
-                <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                Live
-              </span>
+              <p id="stat-playlists" class="text-2xl font-black text-white mb-1">—</p>
+              <p class="text-xs text-gray-400 font-medium">Total Playlists</p>
             </div>
-            <p id="stat-playlists" class="text-2xl font-black text-white mb-1">—</p>
-            <p class="text-xs text-gray-400 font-medium">Total Playlists</p>
           </div>
         </div>
 
-        <!-- Management Section -->
-        <div class="space-y-6">
-
-            <!-- Tab Header -->
-            <div class="flex items-center gap-1 bg-white/3 border border-white/5 rounded-2xl p-1.5 w-fit">
-              {["Users", "Songs", "Artists"].map((tab, i) => (
-                <button
-                  class={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
-                    i === 0
-                      ? "bg-linear-to-r from-purple-500 to-indigo-600 text-white shadow-[0_4px_15px_rgba(168,85,247,0.3)]"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {tab}
+        <!-- ── Users Section ─────────────────────────────────────────────── -->
+        <div id="section-users" class="hidden space-y-6">
+          <!-- Users Table -->
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">User Management</h2>
+              <div class="flex items-center gap-2">
+                <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[16px]">filter_list</span>Filter
                 </button>
-              ))}
-            </div>
-
-            <!-- Users Table -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h2 class="text-base font-bold text-white">User Management</h2>
-                <div class="flex items-center gap-2">
-                  <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
-                    <span class="material-symbols-outlined text-[16px]">filter_list</span>Filter
-                  </button>
-                  <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
-                    <span class="material-symbols-outlined text-[16px]">file_download</span>Export
-                  </button>
-                </div>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                  <thead>
-                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                      <th class="px-6 py-3">User</th>
-                      <th class="px-6 py-3 hidden sm:table-cell">Role</th>
-                      <th class="px-6 py-3 hidden md:table-cell">Plan</th>
-                      <th class="px-6 py-3 hidden lg:table-cell">Joined</th>
-                      <th class="px-6 py-3">Status</th>
-                      <th class="px-6 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-users-tbody" class="divide-y divide-white/3">
-                    <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <!-- Pagination -->
-              <div class="flex items-center justify-between px-6 py-4 border-t border-white/5">
-                <p id="users-pagination-info" class="text-xs text-gray-500">Loading...</p>
-                <div class="flex items-center gap-1" id="users-pagination-btns"></div>
-              </div>
-            </div>
-
-            <!-- Songs Table -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h2 class="text-base font-bold text-white">Song Management</h2>
-                <button id="btn-open-upload" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
-                  <span class="material-symbols-outlined text-[16px]">upload</span>Upload Song
+                <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[16px]">file_download</span>Export
                 </button>
               </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                  <thead>
-                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                      <th class="px-6 py-3">Song</th>
-                      <th class="px-6 py-3 hidden md:table-cell">Album</th>
-                      <th class="px-6 py-3 hidden sm:table-cell text-right">Plays</th>
-                      <th class="px-6 py-3 hidden lg:table-cell text-center">Duration</th>
-                      <th class="px-6 py-3">Status</th>
-                      <th class="px-6 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-songs-tbody" class="divide-y divide-white/3">
-                    <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
-
-            <!-- Artists Table -->
-            <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h2 class="text-base font-bold text-white">Artist Management</h2>
-                <button id="btn-add-artist" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
-                  <span class="material-symbols-outlined text-[16px]">add</span>Add Artist
-                </button>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                  <thead>
-                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                      <th class="px-6 py-3">Artist</th>
-                      <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
-                      <th class="px-6 py-3 hidden lg:table-cell text-right">Followers</th>
-                      <th class="px-6 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-artists-tbody" class="divide-y divide-white/3">
-                    <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">User</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Role</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Plan</th>
+                    <th class="px-6 py-3 hidden lg:table-cell">Joined</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
             </div>
-
-            <!-- ── Pending Artist Requests ───────────────────────────────── -->
-            <div class="bg-white/3 border border-amber-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h2 class="text-base font-bold text-white flex items-center gap-2">
-                  <span class="material-symbols-outlined text-amber-400 text-[18px]">star_rate</span>
-                  Pending Artist Requests
-                  <span id="requests-count-badge" class="hidden text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">0</span>
-                </h2>
-                <button id="btn-refresh-requests" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
-                  <span class="material-symbols-outlined text-[16px]">refresh</span>Refresh
-                </button>
-              </div>
-              <div id="artist-requests-list" class="divide-y divide-white/5">
-                <p class="px-6 py-6 text-sm text-gray-500 text-center">Loading...</p>
-              </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between px-6 py-4 border-t border-white/5">
+              <p id="users-pagination-info" class="text-xs text-gray-500">Loading...</p>
+              <div class="flex items-center gap-1" id="users-pagination-btns"></div>
             </div>
-
-            <!-- ── Manager Tasks ─────────────────────────────────────────── -->
-            <div class="bg-white/3 border border-indigo-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
-              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                <h2 class="text-base font-bold text-white flex items-center gap-2">
-                  <span class="material-symbols-outlined text-indigo-400 text-[18px]">assignment</span>
-                  Manager Tasks
-                </h2>
-                <button id="btn-assign-task" class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 rounded-xl text-xs font-semibold transition-all">
-                  <span class="material-symbols-outlined text-[16px]">add_task</span>Assign Task
-                </button>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                  <thead>
-                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                      <th class="px-6 py-3">Task</th>
-                      <th class="px-6 py-3 hidden sm:table-cell">Assigned To</th>
-                      <th class="px-6 py-3 hidden md:table-cell">Status</th>
-                      <th class="px-6 py-3 hidden lg:table-cell">Created</th>
-                      <th class="px-6 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="admin-tasks-tbody" class="divide-y divide-white/3">
-                    <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
           </div>
+
+          <!-- Pending Artist Requests -->
+          <div class="bg-white/3 border border-amber-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-400 text-[18px]">star_rate</span>
+                Pending Artist Requests
+                <span id="requests-count-badge" class="hidden text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">0</span>
+              </h2>
+              <button id="btn-refresh-requests" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                <span class="material-symbols-outlined text-[16px]">refresh</span>Refresh
+              </button>
+            </div>
+            <div id="artist-requests-list" class="divide-y divide-white/5">
+              <p class="px-6 py-6 text-sm text-gray-500 text-center">Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Songs Section ─────────────────────────────────────────────── -->
+        <div id="section-songs" class="hidden space-y-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">Song Management</h2>
+              <button id="btn-open-upload" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                <span class="material-symbols-outlined text-[16px]">upload</span>Upload Song
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Song</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Album</th>
+                    <th class="px-6 py-3 hidden sm:table-cell text-right">Plays</th>
+                    <th class="px-6 py-3 hidden lg:table-cell text-center">Duration</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-songs-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Artists Section ───────────────────────────────────────────── -->
+        <div id="section-artists" class="hidden space-y-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">Artist Management</h2>
+              <button id="btn-add-artist" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                <span class="material-symbols-outlined text-[16px]">add</span>Add Artist
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Artist</th>
+                    <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
+                    <th class="px-6 py-3 hidden lg:table-cell text-right">Followers</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-artists-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Playlists Section ─────────────────────────────────────────── -->
+        <div id="section-playlists" class="hidden space-y-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">Playlist Management</h2>
+              <button id="btn-refresh-playlists" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                <span class="material-symbols-outlined text-[16px]">refresh</span>Refresh
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Playlist</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Owner</th>
+                    <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
+                    <th class="px-6 py-3">Visibility</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-playlists-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Albums Section ───────────────────────────────────────────── -->
+        <div id="section-albums" class="hidden space-y-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">Album Management</h2>
+              <button id="btn-refresh-albums" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                <span class="material-symbols-outlined text-[16px]">refresh</span>Refresh
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Album</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Artist</th>
+                    <th class="px-6 py-3 hidden md:table-cell text-center">Songs</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-albums-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tasks Section ─────────────────────────────────────────────── -->
+        <div id="section-tasks" class="hidden space-y-6">
+          <div class="bg-white/3 border border-indigo-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-indigo-400 text-[18px]">assignment</span>
+                Manager Tasks
+              </h2>
+              <button id="btn-assign-task" class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 rounded-xl text-xs font-semibold transition-all">
+                <span class="material-symbols-outlined text-[16px]">add_task</span>Assign Task
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Task</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Assigned To</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Status</th>
+                    <th class="px-6 py-3 hidden lg:table-cell">Created</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-tasks-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -447,10 +492,33 @@ import MainLayout from "../layouts/MainLayout.astro";
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-2">Album <span class="text-gray-500">(optional)</span></label>
-          <select id="up-album"
-            class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
-            <option value="">— No Album —</option>
-          </select>
+          <div class="flex gap-2">
+            <select id="up-album"
+              class="flex-1 px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+              <option value="">— No Album —</option>
+            </select>
+            <button type="button" id="btn-toggle-new-album"
+              class="shrink-0 px-3 py-3 text-xs font-semibold bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-gray-400 hover:text-indigo-300 rounded-lg transition-all flex items-center gap-1"
+              title="Create new album">
+              <span class="material-symbols-outlined text-[16px]">add</span>
+            </button>
+          </div>
+          <!-- Inline new album form (hidden by default) -->
+          <div id="new-album-form" class="hidden mt-2 flex flex-col gap-2 bg-[#0e1835] border border-indigo-500/30 rounded-lg p-3">
+            <input id="new-album-title" type="text" placeholder="Album title"
+              class="w-full px-3 py-2 bg-[#1a2847] border border-white/10 rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-create-album"
+                class="flex-1 px-3 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all flex items-center justify-center gap-1 disabled:opacity-50">
+                <span class="material-symbols-outlined text-[13px]">add</span>Create Album
+              </button>
+              <button type="button" id="btn-cancel-new-album"
+                class="px-2 py-2 text-xs text-gray-500 hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+              </button>
+            </div>
+            <p id="new-album-error" class="hidden text-xs text-rose-400"></p>
+          </div>
         </div>
         <div class="col-span-2">
           <label class="block text-sm font-medium text-gray-300 mb-2">Artist</label>
@@ -529,6 +597,34 @@ import MainLayout from "../layouts/MainLayout.astro";
     throw new Error('redirecting');
   }
 
+  // ── Toast notification system ────────────────────────────────────────────────
+  function showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'fixed bottom-6 right-6 z-[999] flex flex-col gap-2 pointer-events-none';
+      document.body.appendChild(container);
+    }
+    const colors = {
+      success: 'bg-green-500/20 border-green-500/40 text-green-300',
+      error:   'bg-red-500/20 border-red-500/40 text-red-300',
+      info:    'bg-indigo-500/20 border-indigo-500/40 text-indigo-300',
+    };
+    const icons = { success: 'check_circle', error: 'error', info: 'info' };
+    const toast = document.createElement('div');
+    toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl shadow-2xl text-sm font-medium transition-all duration-300 translate-y-2 opacity-0 ${colors[type]}`;
+    toast.innerHTML = `<span class="material-symbols-outlined text-[18px] shrink-0">${icons[type]}</span><span>${message}</span>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+    });
+    setTimeout(() => {
+      toast.classList.add('translate-y-2', 'opacity-0');
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
     'linear-gradient(135deg,#f43f5e,#f97316)',
@@ -551,6 +647,87 @@ import MainLayout from "../layouts/MainLayout.astro";
     return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
+  // ── Section Navigation ────────────────────────────────────────────────────────
+  const ALL_SECTIONS = ['dashboard', 'users', 'songs', 'artists', 'playlists', 'albums', 'tasks'] as const;
+  type Section = typeof ALL_SECTIONS[number];
+
+  const SECTION_TITLES: Record<string, string> = {
+    dashboard: 'Dashboard',
+    users:     'User Management',
+    songs:     'Song Management',
+    artists:   'Artist Management',
+    playlists: 'Playlist Management',
+    albums:    'Album Management',
+    tasks:     'Manager Tasks',
+  };
+
+  let _activeSection: string = 'dashboard';
+  const _loadedSections = new Set<string>(['dashboard']);
+
+  function switchSection(section: string) {
+    if (_activeSection === section) return;
+    _activeSection = section;
+
+    // Show / hide content sections
+    ALL_SECTIONS.forEach((s) => {
+      const el = document.getElementById(`section-${s}`);
+      if (el) el.classList.toggle('hidden', s !== section);
+    });
+
+    // Update sidebar button active states
+    const NAV_ACTIVE   = 'nav-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all bg-linear-to-r from-purple-500/20 to-transparent text-white shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]';
+    const NAV_INACTIVE = 'nav-btn w-full flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5 group';
+    document.querySelectorAll<HTMLElement>('.nav-btn[data-section]').forEach((btn) => {
+      const isActive = btn.dataset.section === section;
+      btn.className  = isActive ? NAV_ACTIVE : NAV_INACTIVE;
+      const icon = btn.querySelector<HTMLElement>('.material-symbols-outlined');
+      if (icon) {
+        icon.className = isActive
+          ? 'material-symbols-outlined text-purple-400'
+          : 'material-symbols-outlined group-hover:scale-110 transition-transform';
+      }
+    });
+
+    // Update page header title
+    const titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = SECTION_TITLES[section] ?? 'Dashboard';
+
+    // Lazy-load section data on first visit
+    if (!_loadedSections.has(section)) {
+      _loadedSections.add(section);
+      switch (section) {
+        case 'users':     loadUsers(); loadArtistRequests(); break;
+        case 'songs':     loadSongs(); break;
+        case 'artists':   loadArtists(); break;
+        case 'playlists': loadPlaylists(); break;
+        case 'albums':    loadAlbums(); break;
+        case 'tasks':     loadTasks(); break;
+      }
+    }
+  }
+
+  // Wire sidebar nav buttons
+  document.querySelectorAll<HTMLElement>('.nav-btn[data-section]').forEach((btn) => {
+    btn.addEventListener('click', () => switchSection(btn.dataset.section!));
+  });
+
+  // Context-sensitive "Add New" header button
+  document.getElementById('btn-add-new-header')?.addEventListener('click', () => {
+    if (_activeSection === 'songs')   { document.getElementById('btn-open-upload')?.click(); return; }
+    if (_activeSection === 'artists') { document.getElementById('btn-add-artist')?.click(); return; }
+    if (_activeSection === 'tasks')   { document.getElementById('btn-assign-task')?.click(); return; }
+  });
+
+  // Refresh buttons
+  document.getElementById('btn-refresh-playlists')?.addEventListener('click', () => {
+    _loadedSections.delete('playlists');
+    loadPlaylists();
+  });
+  document.getElementById('btn-refresh-albums')?.addEventListener('click', () => {
+    _loadedSections.delete('albums');
+    loadAlbums();
+  });
+
   // ── Admin profile name + role ────────────────────────────────────────────────
   const _me = getUser();
   if (_me) {
@@ -560,9 +737,14 @@ import MainLayout from "../layouts/MainLayout.astro";
     const hdr = document.getElementById('header-admin-name');
     if (hdr) hdr.textContent = name;
     // Dynamic role label
-    const roleLabels: Record<string, string> = { admin: 'Super Admin', manager: 'Manager', artist: 'Artist', user: 'User' };
+    const roleLabels: Record<string, string> = { admin: 'Administrator', manager: 'Manager', artist: 'Artist', user: 'User' };
     const roleEl = document.getElementById('sidebar-admin-role');
-    if (roleEl) roleEl.textContent = roleLabels[_me?.role as string] ?? (_me?.is_admin ? 'Super Admin' : 'Member');
+    if (roleEl) roleEl.textContent = roleLabels[_me?.role as string] ?? (_me?.is_admin ? 'Administrator' : 'Member');
+    // Avatar
+    const avatarEl = document.getElementById('sidebar-admin-avatar');
+    if (avatarEl && _me.avatar_url) {
+      avatarEl.innerHTML = `<img src="${_me.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
+    }
   }
 
   // ── Stats ────────────────────────────────────────────────────────────────────
@@ -610,11 +792,16 @@ import MainLayout from "../layouts/MainLayout.astro";
     tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
     try {
       const { data: users, pagination } = await apiFetch(`/admin/users?page=${page}&limit=10`);
-      if (!users?.length) {
+      // Hide admin and manager accounts from the users table
+      const filteredUsers = (users || []).filter((u: any) => {
+        const r = u.role || (u.is_admin ? 'admin' : 'user');
+        return r !== 'admin' && r !== 'manager';
+      });
+      if (!filteredUsers.length) {
         tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No users found.</td></tr>';
         return;
       }
-      tbody.innerHTML = users.map((u: any) => `
+      tbody.innerHTML = filteredUsers.map((u: any) => `
         <tr class="hover:bg-white/3 transition-colors group" data-user-id="${u.id}">
           <td class="px-6 py-4">
             <div class="flex items-center gap-3">
@@ -669,7 +856,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         </tr>`).join('');
 
       // Pagination info
-      if (info) info.innerHTML = `Hiển thị <span class="text-white font-semibold">${users.length}</span> / <span class="text-white font-semibold">${pagination.total}</span> người dùng`;
+      if (info) info.innerHTML = `Showing <span class="text-white font-semibold">${filteredUsers.length}</span> users`;
       if (btns) {
         const totalPages = Math.ceil(pagination.total / pagination.limit) || 1;
         const pages = Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1);
@@ -689,8 +876,14 @@ import MainLayout from "../layouts/MainLayout.astro";
         const delBtn = target.closest('.btn-delete-user') as HTMLElement | null;
         if (delBtn) {
           const id = delBtn.dataset.id;
-          if (!id || !confirm(`Xóa người dùng #${id}?`)) return;
-          try { await apiFetch(`/admin/users/${id}`, { method: 'DELETE' }); delBtn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
+          if (!id || !confirm(`Delete user #${id}?`)) return;
+          try {
+            await apiFetch(`/admin/users/${id}`, { method: 'DELETE' });
+            delBtn.closest('tr')?.remove();
+            showToast('User deleted successfully.', 'success');
+          } catch (err: any) {
+            showToast(err.message || 'Failed to delete user.', 'error');
+          }
         }
       });
 
@@ -720,8 +913,9 @@ import MainLayout from "../layouts/MainLayout.astro";
             badge.className = `role-badge text-xs font-semibold px-2 py-1 rounded-full ${styles[newRole] ?? styles.user}`;
             badge.textContent = newRole.charAt(0).toUpperCase() + newRole.slice(1);
           }
+          showToast(`Role updated to "${newRole}".`, 'success');
         } catch (err: any) {
-          alert(err.message);
+          showToast(err.message || 'Failed to update role.', 'error');
           select.value = prev; // revert on failure
         }
       });
@@ -742,11 +936,15 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
     try {
-      const { data: artists } = await apiFetch('/admin/artists?limit=20');
+      const { data: artists } = await apiFetch('/admin/artists?limit=100');
       if (!artists?.length) {
         tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No artists found.</td></tr>';
         return;
       }
+      // Update stat-artists counter
+      const statEl = document.getElementById('stat-artists');
+      if (statEl) statEl.textContent = artists.length.toLocaleString();
+
       tbody.innerHTML = artists.map((a: any) => `
         <tr class="hover:bg-white/3 transition-colors group" data-artist-id="${a.id}">
           <td class="px-6 py-4">
@@ -757,7 +955,9 @@ import MainLayout from "../layouts/MainLayout.astro";
               </div>
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-100 truncate">${a.name}</p>
-                ${a.bio ? `<p class="text-xs text-gray-500 truncate">${a.bio}</p>` : ''}
+                ${a.linked_username
+                  ? `<p class="text-xs text-indigo-400 truncate">@${a.linked_username}</p>`
+                  : (a.bio ? `<p class="text-xs text-gray-500 truncate">${a.bio}</p>` : '')}
               </div>
             </div>
           </td>
@@ -765,8 +965,13 @@ import MainLayout from "../layouts/MainLayout.astro";
           <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-right font-medium">${(a.followers_count || 0).toLocaleString()}</td>
           <td class="px-6 py-4">
             <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              ${a.user_id && a.linked_user_role === 'artist' ? `
+              <button class="btn-revoke-artist flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 transition-all"
+                      data-id="${a.id}" data-name="${a.name}" title="Revoke artist role">
+                <span class="material-symbols-outlined text-[15px]">person_remove</span>Revoke
+              </button>` : ''}
               <button class="btn-delete-artist w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
-                      data-id="${a.id}" title="Xóa">
+                      data-id="${a.id}" title="Delete">
                 <span class="material-symbols-outlined text-[17px]">delete</span>
               </button>
             </div>
@@ -774,11 +979,47 @@ import MainLayout from "../layouts/MainLayout.astro";
         </tr>`).join('');
 
       tbody.addEventListener('click', async (e: Event) => {
-        const btn = (e.target as HTMLElement).closest('.btn-delete-artist') as HTMLElement | null;
-        if (!btn) return;
-        const id = btn.dataset.id;
-        if (!id || !confirm(`Xóa nghệ sĩ #${id}? Thao tác này sẽ xóa tất cả bài hát liên quan.`)) return;
-        try { await apiFetch(`/artists/${id}`, { method: 'DELETE' }); btn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
+        const revokeBtn = (e.target as HTMLElement).closest('.btn-revoke-artist') as HTMLElement | null;
+        const delBtn    = (e.target as HTMLElement).closest('.btn-delete-artist') as HTMLElement | null;
+
+        // Click on row (not a button) → open artist detail
+        if (!revokeBtn && !delBtn && !(e.target as HTMLElement).closest('button')) {
+          const row = (e.target as HTMLElement).closest('tr[data-artist-id]') as HTMLElement | null;
+          if (row?.dataset.artistId) openArtistDetail(row.dataset.artistId);
+          return;
+        }
+
+        if (revokeBtn) {
+          const id   = revokeBtn.dataset.id;
+          const name = revokeBtn.dataset.name || `#${id}`;
+          if (!id || !confirm(`Revoke the artist role for "${name}"? The user will be downgraded to a regular user.`)) return;
+          revokeBtn.setAttribute('disabled', 'true');
+          try {
+            await apiFetch(`/admin/artists/${id}/revoke-role`, { method: 'PATCH' });
+            revokeBtn.remove();
+            showToast(`Artist role revoked for "${name}".`, 'success');
+            loadStats();
+          } catch (err: any) {
+            showToast(err.message || 'Failed to revoke artist role.', 'error');
+            revokeBtn.removeAttribute('disabled');
+          }
+          return;
+        }
+
+        if (delBtn) {
+          const id = delBtn.dataset.id;
+          if (!id || !confirm(`Delete artist #${id}? This will remove all related songs.`)) return;
+          try {
+            await apiFetch(`/artists/${id}`, { method: 'DELETE' });
+            delBtn.closest('tr')?.remove();
+            showToast('Artist deleted successfully.', 'success');
+            // Update stat
+            const statEl = document.getElementById('stat-artists');
+            if (statEl) statEl.textContent = String(Math.max(0, parseInt(statEl.textContent || '0') - 1));
+          } catch (err: any) {
+            showToast(err.message || 'Failed to delete artist.', 'error');
+          }
+        }
       });
     } catch {
       tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
@@ -834,12 +1075,13 @@ import MainLayout from "../layouts/MainLayout.astro";
         }
         if (delBtn) {
           const id = delBtn.dataset.id;
-          if (!id || !confirm(`Xóa bài hát #${id}?`)) return;
+          if (!id || !confirm(`Delete song #${id}?`)) return;
           try {
             await apiFetch(`/songs/${id}`, { method: 'DELETE' });
             delBtn.closest('tr')?.remove();
+            showToast('Song deleted successfully.', 'success');
           } catch (err: any) {
-            alert(err.message || 'Xóa thất bại');
+            showToast(err.message || 'Failed to delete song.', 'error');
           }
         }
       }, { once: false });
@@ -987,9 +1229,10 @@ import MainLayout from "../layouts/MainLayout.astro";
         }),
       });
       editModal?.classList.add('hidden');
+      showToast('Song updated successfully.', 'success');
       loadSongs();
     } catch (err: any) {
-      editErrDiv.textContent = err.message || 'Lưu thất bại.';
+      editErrDiv.textContent = err.message || 'Failed to save changes.';
       editErrDiv.classList.remove('hidden');
     } finally {
       submitBtn.disabled = false;
@@ -1181,10 +1424,11 @@ import MainLayout from "../layouts/MainLayout.astro";
       const newId: number = json.data.id;
       newGenreNameInput.value = '';
       newGenreForm.classList.add('hidden');
+      showToast('Genre created successfully.', 'success');
       // Reload checkboxes and auto-check the new genre
       await reloadGenresBox(newId);
     } catch (err: any) {
-      newGenreError.textContent = err.message || 'Tạo thể loại thất bại';
+      newGenreError.textContent = err.message || 'Failed to create genre.';
       newGenreError.classList.remove('hidden');
     } finally {
       createGenreBtn.disabled = false;
@@ -1195,6 +1439,62 @@ import MainLayout from "../layouts/MainLayout.astro";
   // Allow Enter key in input to trigger create
   newGenreNameInput?.addEventListener('keydown', (e: KeyboardEvent) => {
     if (e.key === 'Enter') { e.preventDefault(); createGenreBtn?.click(); }
+  });
+
+  // ── Inline "Create new album" handler ────────────────────────────────────────
+  const toggleNewAlbumBtn  = document.getElementById('btn-toggle-new-album') as HTMLButtonElement;
+  const newAlbumForm       = document.getElementById('new-album-form') as HTMLElement;
+  const newAlbumTitleInput = document.getElementById('new-album-title') as HTMLInputElement;
+  const createAlbumBtn     = document.getElementById('btn-create-album') as HTMLButtonElement;
+  const cancelNewAlbumBtn  = document.getElementById('btn-cancel-new-album') as HTMLButtonElement;
+  const newAlbumError      = document.getElementById('new-album-error') as HTMLElement;
+
+  toggleNewAlbumBtn?.addEventListener('click', () => {
+    newAlbumForm.classList.toggle('hidden');
+    if (!newAlbumForm.classList.contains('hidden')) newAlbumTitleInput?.focus();
+  });
+
+  cancelNewAlbumBtn?.addEventListener('click', () => {
+    newAlbumForm.classList.add('hidden');
+    newAlbumTitleInput.value = '';
+    newAlbumError.classList.add('hidden');
+  });
+
+  createAlbumBtn?.addEventListener('click', async () => {
+    const title = newAlbumTitleInput.value.trim();
+    newAlbumError.classList.add('hidden');
+    if (!title) {
+      newAlbumError.textContent = 'Album title is required.';
+      newAlbumError.classList.remove('hidden');
+      return;
+    }
+    createAlbumBtn.disabled = true;
+    const origHTML = createAlbumBtn.innerHTML;
+    createAlbumBtn.innerHTML = '<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span>';
+    try {
+      const { data: album } = await apiFetch('/admin/albums', {
+        method: 'POST',
+        body: JSON.stringify({ title }),
+      });
+      const opt = document.createElement('option');
+      opt.value = String(album.id);
+      opt.textContent = album.title;
+      opt.selected = true;
+      upAlbum.appendChild(opt);
+      newAlbumForm.classList.add('hidden');
+      newAlbumTitleInput.value = '';
+      showToast(`Album "${title}" created successfully.`, 'success');
+    } catch (err: any) {
+      newAlbumError.textContent = err.message || 'Failed to create album.';
+      newAlbumError.classList.remove('hidden');
+    } finally {
+      createAlbumBtn.disabled = false;
+      createAlbumBtn.innerHTML = origHTML;
+    }
+  });
+
+  newAlbumTitleInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter') { e.preventDefault(); createAlbumBtn?.click(); }
   });
 
   form?.addEventListener('submit', async (e) => {
@@ -1237,10 +1537,11 @@ import MainLayout from "../layouts/MainLayout.astro";
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Upload thất bại');
       if (uploadBar) uploadBar.style.width = '100%';
-      if (uploadStatus) uploadStatus.textContent = 'Upload thành công!';
+      if (uploadStatus) uploadStatus.textContent = 'Upload successful!';
+      showToast('Song uploaded successfully.', 'success');
       setTimeout(() => { closeModal(); loadSongs(); }, 1200);
     } catch (err: any) {
-      showErr(err.message || 'Upload thất bại');
+      showErr(err.message || 'Upload failed.');
       progressEl?.classList.add('hidden');
     } finally {
       submitBtn.disabled = false;
@@ -1312,9 +1613,10 @@ import MainLayout from "../layouts/MainLayout.astro";
         container.innerHTML = '<p class="px-6 py-6 text-sm text-gray-500 text-center">No pending artist requests.</p>';
         if (badge) badge.classList.add('hidden');
       } else if (badge) { badge.textContent = String(remaining); }
+      showToast(approveBtn ? 'Artist request approved.' : 'Artist request rejected.', 'success');
       if (approveBtn) loadUsers(_userPage);
     } catch (err: any) {
-      alert(err.message);
+      showToast(err.message || 'Action failed.', 'error');
       (btn as HTMLButtonElement).disabled = false;
       btn.innerHTML = origHTML;
     }
@@ -1368,6 +1670,121 @@ import MainLayout from "../layouts/MainLayout.astro";
     }
   }
 
+  // ── Playlists table ──────────────────────────────────────────────────────────
+  async function loadPlaylists() {
+    const tbody = document.getElementById('admin-playlists-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: playlists } = await apiFetch('/playlists?limit=50');
+      if (!playlists?.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No playlists found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = playlists.map((p: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-playlist-id="${p.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg shrink-0 overflow-hidden flex items-center justify-center" style="background:${grad(p.id)}">
+                ${p.cover_url
+                  ? `<img src="${p.cover_url}" class="w-full h-full object-cover" alt=""/>`
+                  : '<span class="material-symbols-outlined text-white/50 text-[18px]">queue_music</span>'}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-100 truncate">${p.name || p.title || '—'}</p>
+                <p class="text-xs text-gray-500 truncate">${p.description || '—'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">${p.owner_name || p.username || '—'}</td>
+          <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400 text-center">${p.songs_count ?? 0}</td>
+          <td class="px-6 py-4">
+            <span class="text-xs font-semibold px-2 py-1 rounded-full ${p.is_public ? 'bg-green-500/15 text-green-400' : 'bg-white/5 text-gray-400'}">
+              ${p.is_public ? 'Public' : 'Private'}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-delete-playlist w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${p.id}" title="Delete">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      tbody.addEventListener('click', async (e: Event) => {
+        const delBtn = (e.target as HTMLElement).closest('.btn-delete-playlist') as HTMLElement | null;
+        if (!delBtn) return;
+        const id = delBtn.dataset.id;
+        if (!id || !confirm(`Delete playlist #${id}?`)) return;
+        try {
+          await apiFetch(`/playlists/${id}`, { method: 'DELETE' });
+          delBtn.closest('tr')?.remove();
+          showToast('Playlist deleted successfully.', 'success');
+        } catch (err: any) {
+          showToast(err.message || 'Failed to delete playlist.', 'error');
+        }
+      });
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load playlists.</td></tr>';
+    }
+  }
+
+  // ── Albums table ─────────────────────────────────────────────────────────────
+  async function loadAlbums() {
+    const tbody = document.getElementById('admin-albums-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: albums } = await apiFetch('/admin/albums?limit=50');
+      if (!albums?.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No albums found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = albums.map((al: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-album-id="${al.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg shrink-0 overflow-hidden flex items-center justify-center" style="background:${grad(al.id)}">
+                ${al.cover_url
+                  ? `<img src="${al.cover_url}" class="w-full h-full object-cover" alt=""/>`
+                  : '<span class="material-symbols-outlined text-white/50 text-[18px]">album</span>'}
+              </div>
+              <p class="text-sm font-semibold text-gray-100 truncate">${al.title}</p>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">${al.artist_name || '—'}</td>
+          <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400 text-center">${al.songs_count ?? 0}</td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-delete-album w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${al.id}" data-title="${al.title}" title="Delete">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      tbody.addEventListener('click', async (e: Event) => {
+        const delBtn = (e.target as HTMLElement).closest('.btn-delete-album') as HTMLElement | null;
+        if (!delBtn) return;
+        const id    = delBtn.dataset.id;
+        const title = delBtn.dataset.title || `#${id}`;
+        if (!id || !confirm(`Delete album "${title}"?`)) return;
+        try {
+          await apiFetch(`/admin/albums/${id}`, { method: 'DELETE' });
+          delBtn.closest('tr')?.remove();
+          showToast('Album deleted successfully.', 'success');
+        } catch (err: any) {
+          showToast(err.message || 'Failed to delete album.', 'error');
+        }
+      });
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load albums.</td></tr>';
+    }
+  }
+
   // Task status change — delegated listener, survives innerHTML replacements
   document.getElementById('admin-tasks-tbody')?.addEventListener('change', async (e: Event) => {
     const sel = (e.target as HTMLElement).closest('.select-task-status') as HTMLSelectElement | null;
@@ -1387,7 +1804,8 @@ import MainLayout from "../layouts/MainLayout.astro";
         badge.className = `task-status-badge inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${ss[newStatus] ?? 'bg-white/5 text-gray-400'}`;
         badge.textContent = sl[newStatus] ?? newStatus;
       }
-    } catch (err: any) { alert(err.message); sel.value = prev; }
+      showToast('Task status updated.', 'success');
+    } catch (err: any) { showToast(err.message || 'Failed to update task status.', 'error'); sel.value = prev; }
   });
 
   // Task assignment modal
@@ -1435,6 +1853,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       });
       taskModal?.classList.add('hidden');
       taskForm?.reset();
+      showToast('Task assigned successfully.', 'success');
       loadTasks();
     } catch (err: any) {
       taskErrDiv.textContent = err.message || 'Failed to assign task';
@@ -1469,14 +1888,79 @@ import MainLayout from "../layouts/MainLayout.astro";
       await apiFetch('/artists', { method: 'POST', body: JSON.stringify({ name, bio: bio || undefined, image_url: imageUrl || undefined }) });
       artistModal?.classList.add('hidden');
       artistForm?.reset();
+      showToast('Artist added successfully.', 'success');
       loadArtists();
     } catch (err: any) {
-      artistErrDiv.textContent = err.message || 'Thêm nghệ sĩ thất bại';
+      artistErrDiv.textContent = err.message || 'Failed to add artist.';
       artistErrDiv.classList.remove('hidden');
     } finally {
       submitArtistBtn.disabled = false;
     }
   });
+
+  // ── Artist Detail Modal ──────────────────────────────────────────────────
+  const artistDetailModal   = document.getElementById('modal-artist-detail') as HTMLElement;
+  const artistDetailModalBg = document.getElementById('modal-artist-detail-bg') as HTMLElement;
+  const artistDetailClose   = document.getElementById('modal-artist-detail-close') as HTMLElement;
+
+  artistDetailModalBg?.addEventListener('click', () => artistDetailModal?.classList.add('hidden'));
+  artistDetailClose?.addEventListener('click',   () => artistDetailModal?.classList.add('hidden'));
+
+  async function openArtistDetail(artistId: string | number) {
+    artistDetailModal?.classList.remove('hidden');
+    const nameEl   = document.getElementById('artist-detail-name') as HTMLElement;
+    const metaEl   = document.getElementById('artist-detail-meta') as HTMLElement;
+    const avatarEl = document.getElementById('artist-detail-avatar') as HTMLElement;
+    const albumsEl = document.getElementById('artist-detail-albums') as HTMLElement;
+    const songsEl  = document.getElementById('artist-detail-songs') as HTMLElement;
+    if (nameEl)   nameEl.textContent = 'Loading...';
+    if (metaEl)   metaEl.textContent = '';
+    if (avatarEl) avatarEl.innerHTML = '';
+    if (albumsEl) albumsEl.innerHTML = '<p class="text-gray-500 text-xs col-span-full text-center py-4">Loading...</p>';
+    if (songsEl)  songsEl.innerHTML  = '<p class="text-gray-500 text-xs text-center py-4">Loading...</p>';
+    try {
+      const { data } = await apiFetch(`/admin/artists/${artistId}/content`);
+      const { artist, albums, songs, total_songs } = data;
+      if (nameEl) nameEl.textContent = artist.name;
+      if (metaEl) metaEl.textContent = `${total_songs} song${total_songs !== 1 ? 's' : ''} · ${(artist.followers_count || 0).toLocaleString()} followers`;
+      if (avatarEl) {
+        avatarEl.style.background = colorFor(artist.id);
+        avatarEl.innerHTML = artist.image_url
+          ? `<img src="${artist.image_url}" class="w-full h-full object-cover" alt="" />`
+          : `<span>${(artist.name || '?').charAt(0).toUpperCase()}</span>`;
+      }
+      if (albumsEl) albumsEl.innerHTML = albums.length
+        ? albums.map((al: any) => `
+            <div class="bg-white/5 rounded-xl p-3 hover:bg-white/8 transition-colors">
+              <div class="w-full aspect-square rounded-lg bg-white/10 overflow-hidden mb-2 flex items-center justify-center">
+                ${al.cover_url
+                  ? `<img src="${al.cover_url}" class="w-full h-full object-cover" alt="" />`
+                  : `<span class="material-symbols-outlined text-gray-600 text-3xl">album</span>`}
+              </div>
+              <p class="text-xs font-semibold text-gray-200 truncate">${al.title}</p>
+            </div>`).join('')
+        : '<p class="text-gray-500 text-xs col-span-full text-center py-4">No albums.</p>';
+      if (songsEl) songsEl.innerHTML = songs.length
+        ? songs.map((s: any, i: number) => `
+            <div class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors">
+              <span class="text-xs text-gray-600 w-5 text-right shrink-0">${i + 1}</span>
+              <div class="w-8 h-8 rounded shrink-0 overflow-hidden bg-white/10 flex items-center justify-center">
+                ${s.cover_url
+                  ? `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="" />`
+                  : `<span class="material-symbols-outlined text-gray-600 text-[16px]">music_note</span>`}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-gray-200 truncate">${s.title}</p>
+                ${s.album_title ? `<p class="text-xs text-gray-500 truncate">${s.album_title}</p>` : ''}
+              </div>
+              <span class="text-xs text-gray-500 shrink-0">${fmt(s.duration)}</span>
+            </div>`).join('')
+        : '<p class="text-gray-500 text-xs text-center py-4">No songs.</p>';
+    } catch (err: any) {
+      if (albumsEl) albumsEl.innerHTML = `<p class="text-red-400 text-xs col-span-full text-center py-4">${err.message}</p>`;
+      if (songsEl)  songsEl.innerHTML  = '';
+    }
+  }
 
   // ── Boot ─────────────────────────────────────────────────────────────────────
   // Verify admin session before loading any data
@@ -1511,13 +1995,10 @@ import MainLayout from "../layouts/MainLayout.astro";
       });
     }
 
-    // Token is valid and user is admin — load all sections
+    // Token is valid — load dashboard stats and show default section
     loadStats();
-    loadUsers();
-    loadArtists();
-    loadSongs();
-    loadArtistRequests();
-    loadTasks();
+    _loadedSections.add('dashboard');
+    // Keep dashboard visible (already shown by default in HTML)
   })();
 </script>
 
@@ -1558,6 +2039,39 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="material-symbols-outlined text-[18px]">add_task</span>Assign Task
       </button>
     </form>
+  </div>
+</div>
+
+<!-- ── Artist Detail Modal ─────────────────────────────────────────────── -->
+<div id="modal-artist-detail" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-detail-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl z-10 mx-4 max-h-[85vh] flex flex-col overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5 shrink-0">
+      <div class="flex items-center gap-3">
+        <div id="artist-detail-avatar" class="w-12 h-12 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-white font-bold text-lg"></div>
+        <div>
+          <h2 id="artist-detail-name" class="text-lg font-bold text-white">Artist</h2>
+          <p id="artist-detail-meta" class="text-xs text-gray-500"></p>
+        </div>
+      </div>
+      <button id="modal-artist-detail-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-6 custom-scrollbar">
+      <div>
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Albums</h3>
+        <div id="artist-detail-albums" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <p class="text-gray-500 text-xs col-span-full text-center py-4">Loading...</p>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Songs</h3>
+        <div id="artist-detail-songs" class="space-y-1">
+          <p class="text-gray-500 text-xs text-center py-4">Loading...</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

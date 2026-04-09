@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import config from './config/env.js';
-import { testConnection } from './config/database.js';
+import { testConnection, pool } from './config/database.js';
 import { logger } from './middleware/logger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
@@ -23,6 +23,17 @@ const app = express();
 
 // Test database connection on startup
 testConnection();
+
+// ── Auto-run safe schema migrations ──────────────────────────────────────────
+(async () => {
+  const migrations = [
+    `ALTER TABLE artists ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
+    `ALTER TABLE albums   ALTER COLUMN artist_id DROP NOT NULL`,
+  ];
+  for (const sql of migrations) {
+    try { await pool.query(sql); } catch (e) { console.warn('Auto-migration note:', e.message); }
+  }
+})();
 
 // Middleware
 app.use(logger);

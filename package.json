@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\" --names \"frontend,backend\" --prefix-colors \"cyan,yellow\"",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -20,6 +22,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "prisma": "^7.6.0"
   }
 }
