@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import Subscription from '../models/Subscription.js';
-import { generateToken } from '../utils/jwt.js';
+import { generateToken, revokeToken, decodeToken } from '../utils/jwt.js';
 import { validateEmail, validatePassword, validateUsername } from '../utils/validators.js';
 import { pool } from '../config/database.js';
 
@@ -71,8 +71,8 @@ export const register = async (req, res) => {
         // Create free subscription
         await Subscription.create(userId, 'free', new Date(), null);
 
-        // Generate token
-        const token = generateToken({ id: userId, username, email, is_admin: false });
+        // Generate token — role defaults to 'user' on registration
+        const token = generateToken({ id: userId, username, email, role: 'user', is_admin: false });
 
         return res.status(201).json({
             success: true,
@@ -123,11 +123,15 @@ export const login = async (req, res) => {
             });
         }
 
-        // Generate token
+        // Generate token — role is embedded so middleware can check it without a DB round-trip.
+        // ⚠ Known limitation: if the user's role is changed, their existing token stays valid
+        // until expiry. Use PATCH /api/admin/users/:id/role + ask the user to re-login, or
+        // configure a short JWT expiry and use refresh tokens.
         const token = generateToken({
             id: user.id,
             username: user.username,
             email: user.email,
+            role: user.role ?? 'user',
             is_admin: user.is_admin,
         });
 
@@ -139,6 +143,7 @@ export const login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 avatar_url: user.avatar_url,
+                role: user.role ?? 'user',
                 is_admin: user.is_admin,
                 token,
             },
@@ -228,6 +233,15 @@ export const updateProfile = async (req, res) => {
             message: 'Failed to update profile',
         });
     }
+};
+
+export const logout = (req, res) => {
+    const token = req._token;
+    if (token) {
+        const decoded = decodeToken(token);
+        revokeToken(token, decoded);
+    }
+    return res.json({ success: true, message: 'Logged out successfully' });
 };
 
 export const uploadAvatar = async (req, res) => {

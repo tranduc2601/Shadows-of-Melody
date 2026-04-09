@@ -1,9 +1,4 @@
-﻿---
-// PlayerBar â€” functional music player bar
-// Listens to events from src/lib/player.js
----
-
-<div id="playerBar" class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+﻿<div id="playerBar" class="absolute bottom-0 left-0 w-full h-24 bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-between px-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
 
   <!-- Track Info -->
   <div class="flex items-center gap-4 w-1/4 min-w-[180px]">
@@ -15,7 +10,7 @@
     </div>
     <div class="flex flex-col justify-center min-w-0 flex-1">
       <span id="pb-title" class="font-bold text-white text-[15px] truncate">No Music Playing</span>
-      <span id="pb-artist" class="text-xs text-gray-400 truncate mt-0.5">â€”</span>
+      <span id="pb-artist" class="text-xs text-gray-400 truncate mt-0.5">-</span>
     </div>
     <button id="pb-fav" type="button" aria-label="YÃªu thÃ­ch" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
       <span class="material-symbols-outlined">favorite_border</span>
@@ -55,15 +50,15 @@
 
   <!-- Secondary Controls -->
   <div class="w-1/4 min-w-[180px] hidden md:flex items-center justify-end gap-4">
-    <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors">
+    <!-- <button type="button" aria-label="Lyrics" class="text-gray-400 hover:text-white transition-colors">
       <span class="material-symbols-outlined text-xl">mic</span>
-    </button>
-    <button type="button" aria-label="HÃ ng chá»" class="text-gray-400 hover:text-white transition-colors">
+    </button> -->
+    <!-- <button type="button" aria-label="HÃ ng chá»" class="text-gray-400 hover:text-white transition-colors">
       <span class="material-symbols-outlined text-xl">queue_music</span>
     </button>
     <button type="button" aria-label="Thiáº¿t bá»‹" class="text-gray-400 hover:text-white transition-colors">
       <span class="material-symbols-outlined text-xl">devices</span>
-    </button>
+    </button> -->
     <div class="flex items-center gap-2 w-24">
       <button id="pb-volbtn" type="button" class="text-gray-400 hover:text-white transition-colors shrink-0">
         <span class="material-symbols-outlined text-xl">volume_up</span>
@@ -157,12 +152,12 @@
     }).catch(() => {});
   });
 
-  // â”€â”€ Player events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Player events ─────────────────────────────────────────────────────────
   window.addEventListener('player:songchange', (e: any) => {
     const song = e.detail.song;
     if (!song) return;
-    if (pbTitle)  pbTitle.textContent  = song.title || 'â€”';
-    if (pbArtist) pbArtist.textContent = song.artist_names || 'â€”';
+    if (pbTitle)  pbTitle.textContent  = song.title || '—';
+    if (pbArtist) pbArtist.textContent = song.artist_names || '—';
     if (pbCover) {
       const bg = grad(song.id);
       if (song.cover_url) {
@@ -179,15 +174,15 @@
     if (pbCurtime)  pbCurtime.textContent  = '0:00';
     updatePlayIcon(true);
     startRaf();
-    const favIcon = pbFav?.querySelector('.material-symbols-outlined');
-    if (favIcon) favIcon.textContent = 'favorite_border';
+    // Check favorite status from API
+    setFavUI(false);
+    checkFavoriteStatus(song.id);
     // End previous session, start new
     submitSessionIfValid();
     _sessionSongId = song.id;
     _sessionStart = Date.now();
   });
 
-  // â”€â”€ rAF progress loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let _rafId = 0;
   let _lastSec = -1;
   let _isDragging = false;
@@ -228,7 +223,6 @@
     updatePlayIcon(false);
   });
 
-  // â”€â”€ Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   pbPlay?.addEventListener('click', () => player.toggle());
   pbPrev?.addEventListener('click', () => player.prev());
   pbNext?.addEventListener('click', () => player.next());
@@ -249,7 +243,6 @@
     if (icon) icon.textContent = mode === 'one' ? 'repeat_one' : 'repeat';
   });
 
-  // â”€â”€ Seek bar drag â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function applySeekVisual(clientX: number) {
     const rect = pbSeek!.getBoundingClientRect();
     const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
@@ -290,7 +283,6 @@
     window.addEventListener('touchend',  onEnd);
   }, { passive: true });
 
-  // â”€â”€ Volume â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   pbVolTrack?.addEventListener('click', (e) => {
     const rect = pbVolTrack.getBoundingClientRect();
     const v    = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -313,20 +305,42 @@
     }
   });
 
-  // â”€â”€ Favorite â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Favorite helpers ─────────────────────────────────────────────────────────
+  function setFavUI(isFav: boolean) {
+    const icon = pbFav?.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = isFav ? 'favorite' : 'favorite_border';
+    pbFav?.classList.toggle('text-pink-500', isFav);
+    pbFav?.classList.toggle('text-gray-400', !isFav);
+  }
+
+  async function checkFavoriteStatus(songId: number) {
+    const token = localStorage.getItem('auth_token');
+    if (!token) { setFavUI(false); return; }
+    try {
+      const res = await apiFetch(`/favorites/${songId}/is-favorite`);
+      setFavUI(!!res.data?.isFavorite);
+    } catch { setFavUI(false); }
+  }
+
   pbFav?.addEventListener('click', async () => {
     const song = player.current;
     if (!song) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) { window.location.href = '/login'; return; }
     const icon = pbFav.querySelector('.material-symbols-outlined');
     const isFav = icon?.textContent === 'favorite';
     try {
       if (isFav) {
         await apiFetch(`/favorites/${song.id}`, { method: 'DELETE' });
-        if (icon) icon.textContent = 'favorite_border';
+        setFavUI(false);
       } else {
         await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: song.id }) });
-        if (icon) icon.textContent = 'favorite';
+        setFavUI(true);
       }
+      // Notify other components that a favorite status changed
+      window.dispatchEvent(new CustomEvent('favorites:changed', {
+        detail: { songId: song.id, isFavorite: !isFav },
+      }));
     } catch {}
   });
 </script>

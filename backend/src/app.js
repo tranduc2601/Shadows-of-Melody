@@ -17,6 +17,7 @@ import historyRoutes from './routes/history.js';
 import streamRoutes from './routes/stream.js';
 import subscriptionRoutes from './routes/subscriptions.js';
 import adminRoutes from './routes/admin.js';
+import roleRoutes from './routes/roles.js';
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/history', historyRoutes);
 app.use('/api/stream', streamRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/roles', roleRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

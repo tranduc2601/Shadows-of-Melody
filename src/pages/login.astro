@@ -39,14 +39,24 @@ import MainLayout from "../layouts/MainLayout.astro";
             <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
-              placeholder="••••••••"
-            />
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="w-full px-4 py-3 pr-12 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                aria-label="Toggle password visibility"
+                class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <span class="material-symbols-outlined text-[20px]" id="toggle-password-icon">visibility</span>
+              </button>
+            </div>
           </div>
 
           <!-- Remember Me & Forgot Password -->
@@ -129,6 +139,16 @@ import MainLayout from "../layouts/MainLayout.astro";
   const reason = new URLSearchParams(window.location.search).get('reason');
   if (reason === 'session_expired' && banner) banner.classList.remove('hidden');
 
+  // Password show/hide toggle
+  const togglePwdBtn  = document.getElementById('toggle-password') as HTMLButtonElement;
+  const togglePwdIcon = document.getElementById('toggle-password-icon') as HTMLElement;
+  const pwdInput      = document.getElementById('password') as HTMLInputElement;
+  togglePwdBtn?.addEventListener('click', () => {
+    const hidden = pwdInput.type === 'password';
+    pwdInput.type = hidden ? 'text' : 'password';
+    togglePwdIcon.textContent = hidden ? 'visibility_off' : 'visibility';
+  });
+
   // If already logged in with a valid token, skip the login page
   const existingToken = localStorage.getItem('auth_token');
   if (existingToken && reason !== 'session_expired') {
@@ -142,7 +162,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
     errDiv.classList.add('hidden');
     btn.disabled = true;
-    btn.textContent = 'Đang đăng nhập...';
+    btn.textContent = 'Login...';
 
     try {
       const res = await fetch('http://localhost:5000/api/auth/login', {

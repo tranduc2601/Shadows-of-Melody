@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/', artistController.getAllArtists);
+router.get('/members', artistController.getArtistMembers);
 router.get('/search', searchLimiter, artistController.searchArtists);
 router.get('/:id', artistController.getArtistById);
 

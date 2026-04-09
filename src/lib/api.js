@@ -22,6 +22,44 @@ export function clearAuth() {
   localStorage.removeItem('auth_user');
 }
 
+// ── Role helpers ─────────────────────────────────────────────────────────────
+const ROLE_RANK = { user: 0, artist: 1, manager: 2, admin: 3 };
+
+/** Returns the current user's role string, or null if not logged in. */
+export function getUserRole() {
+  return getUser()?.role ?? null;
+}
+
+/** True when the logged-in user has at least the given role level. */
+export function hasRole(...roles) {
+  const role = getUserRole();
+  return role !== null && roles.includes(role);
+}
+
+/** True when the user's role rank is >= the required rank. */
+export function hasMinRole(minRole) {
+  const rank = ROLE_RANK[getUserRole()] ?? -1;
+  return rank >= (ROLE_RANK[minRole] ?? 0);
+}
+
+/**
+ * Guard helper for Astro/vanilla pages.
+ * Call at the top of your <script> block.
+ * @param {string} [minRole]  Minimum role required. Omit to require only auth.
+ */
+export function requireAuthClient(minRole) {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/login?reason=auth_required';
+    return false;
+  }
+  if (minRole && !hasMinRole(minRole)) {
+    window.location.href = '/403';
+    return false;
+  }
+  return true;
+}
+
 export async function apiFetch(path, options = {}) {
   const token = getToken();
   const res = await fetch(`${API_BASE}${path}`, {

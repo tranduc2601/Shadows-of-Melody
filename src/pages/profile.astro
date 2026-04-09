@@ -132,6 +132,11 @@ import PlayerBar from "../components/PlayerBar.astro";
                 <span class="material-symbols-outlined text-[18px]">edit</span>
                 Edit Profile
               </a>
+              <!-- Artist request button — hidden by JS until role is 'user' -->
+              <button id="artist-request-btn" type="button" class="hidden items-center gap-2 px-5 py-2.5 bg-indigo-500/15 border border-indigo-500/30 hover:bg-indigo-500/25 text-indigo-300 rounded-full font-semibold text-sm transition-all">
+                <span class="material-symbols-outlined text-[18px]">star</span>
+                <span id="artist-request-label">Request Artist Access</span>
+              </button>
             </div>
           </div>
 
@@ -232,7 +237,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   </style>
 
 <script>
-  import { apiFetch } from '../lib/api.js';
+  import { apiFetch, getUserRole, setAuth, getToken, getUser } from '../lib/api.js';
 
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
@@ -419,11 +424,94 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   });
 
-  document.getElementById('logout-btn')?.addEventListener('click', () => {
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
+    try {
+      const token = getToken();
+      if (token) {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {}
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
     window.location.href = '/login';
   });
+
+  // ── Artist request button ──────────────────────────────────────────────────
+  (async () => {
+    const role = getUserRole();
+    if (role !== 'user') return; // only 'user' role sees the button
+
+    const btn   = document.getElementById('artist-request-btn') as HTMLButtonElement;
+    const label = document.getElementById('artist-request-label') as HTMLElement;
+    if (!btn) return;
+
+    // Check existing request state
+    try {
+      const { data: req } = await apiFetch('/roles/my-request');
+      if (req?.status === 'pending') {
+        label.textContent = 'Pending approval…';
+        btn.disabled = true;
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+      } else if (req?.status === 'approved') {
+        // Role was approved — refresh user data and skip showing button
+        const { data: fresh } = await apiFetch('/auth/me');
+        const stored = getUser();
+        if (stored) setAuth(getToken()!, { ...stored, role: fresh.role ?? 'artist' });
+        return; // don't show button
+      }
+    } catch {}
+
+    btn.classList.remove('hidden');
+    btn.classList.add('flex');
+
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      label.textContent = 'Submitting…';
+      try {
+        await apiFetch('/roles/request-artist', { method: 'POST' });
+        label.textContent = 'Pending approval…';
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+        // Poll every 15 s until approved/rejected
+        const poll = setInterval(async () => {
+          try {
+            const { data: req } = await apiFetch('/roles/my-request');
+            if (req?.status === 'approved') {
+              clearInterval(poll);
+              // Re-fetch profile to get updated role
+              const { data: fresh } = await apiFetch('/auth/me');
+              const stored = getUser();
+              if (stored) setAuth(getToken()!, { ...stored, role: fresh.role ?? 'artist' });
+              btn.classList.add('hidden');
+              // Briefly notify the user
+              const notice = document.createElement('span');
+              notice.textContent = '🎵 Artist access granted! Reload to see all features.';
+              notice.className = 'px-4 py-2 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-full';
+              btn.parentElement?.appendChild(notice);
+            } else if (req?.status === 'rejected') {
+              clearInterval(poll);
+              label.textContent = 'Request Artist Access';
+              btn.disabled = false;
+              btn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
+          } catch {}
+        }, 15_000);
+        // Stop polling when the user navigates away to prevent API spam
+        window.addEventListener('pagehide', () => clearInterval(poll), { once: true });
+      } catch (err: any) {
+        label.textContent = err.message.includes('pending')
+          ? 'Pending approval…'
+          : 'Request Artist Access';
+        if (!label.textContent.startsWith('Pending')) btn.disabled = false;
+        btn.classList.toggle('opacity-60', btn.disabled);
+        btn.classList.toggle('cursor-not-allowed', btn.disabled);
+      }
+    });
+  })();
 </script>
 
 </MainLayout>

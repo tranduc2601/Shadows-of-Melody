@@ -140,6 +140,82 @@ export const adminUploadSong = async (req, res) => {
 };
 
 /**
+ * PATCH /api/admin/songs/:id
+ * JSON body: { title?, cover_url?, album_id?, genre_ids?, artist_ids? }
+ */
+export const adminUpdateSong = async (req, res) => {
+    const { id } = req.params;
+    const { title, cover_url, album_id, genre_ids, artist_ids } = req.body;
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // Build dynamic SET clause for scalar fields
+        const setClauses = [];
+        const setValues  = [];
+        if (title?.trim())          { setClauses.push(`title = $${setValues.length + 1}`);     setValues.push(title.trim()); }
+        if (cover_url !== undefined) { setClauses.push(`cover_url = $${setValues.length + 1}`); setValues.push(cover_url || null); }
+        if (album_id  !== undefined) { setClauses.push(`album_id = $${setValues.length + 1}`);  setValues.push(album_id ? parseInt(album_id, 10) : null); }
+
+        if (setClauses.length > 0) {
+            setClauses.push('updated_at = NOW()');
+            setValues.push(id);
+            await client.query(
+                `UPDATE songs SET ${setClauses.join(', ')} WHERE id = $${setValues.length}`,
+                setValues
+            );
+        }
+
+        // Replace genres
+        if (Array.isArray(genre_ids)) {
+            await client.query('DELETE FROM song_genres WHERE song_id = $1', [id]);
+            for (const gid of genre_ids) {
+                const g = parseInt(gid, 10);
+                if (!isNaN(g)) await client.query('INSERT INTO song_genres (song_id, genre_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [id, g]);
+            }
+        }
+
+        // Replace artists
+        if (Array.isArray(artist_ids)) {
+            await client.query('DELETE FROM song_artists WHERE song_id = $1', [id]);
+            for (const aid of artist_ids) {
+                const a = parseInt(aid, 10);
+                if (!isNaN(a)) await client.query('INSERT INTO song_artists (song_id, artist_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [id, a]);
+            }
+        }
+
+        await client.query('COMMIT');
+
+        const { rows: [song] } = await client.query(
+            `SELECT s.*,
+                    STRING_AGG(DISTINCT a.id::text, ',') as artist_ids_str,
+                    STRING_AGG(DISTINCT a.name, ', ')    as artist_names,
+                    STRING_AGG(DISTINCT g.id::text, ',') as genre_ids_str,
+                    STRING_AGG(DISTINCT g.name, ', ')    as genre_names,
+                    al.title                             as album_title
+             FROM songs s
+             LEFT JOIN song_artists sa ON s.id = sa.song_id
+             LEFT JOIN artists a ON sa.artist_id = a.id
+             LEFT JOIN song_genres sg ON s.id = sg.song_id
+             LEFT JOIN genres g ON sg.genre_id = g.id
+             LEFT JOIN albums al ON s.album_id = al.id
+             WHERE s.id = $1
+             GROUP BY s.id, al.title`,
+            [id]
+        );
+
+        return res.status(200).json({ success: true, data: song });
+    } catch (err) {
+        await client.query('ROLLBACK').catch(() => {});
+        console.error('[adminUpdateSong] error:', err.message);
+        return res.status(500).json({ success: false, message: 'Failed to update song' });
+    } finally {
+        client.release();
+    }
+};
+
+/**
  * POST /api/admin/upload/cover
  * Multipart field: cover (image/jpeg | image/png | image/webp, max 5 MB)
  * Returns: { success: true, data: { url: string } }

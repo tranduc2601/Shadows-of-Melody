@@ -1,9 +1,9 @@
 import rateLimit from 'express-rate-limit';
 
-// General rate limiter: 100 requests per 15 minutes
+// General rate limiter: 300 requests per 15 minutes (increased from 100 to prevent 429 on normal usage)
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 300,
     message: 'Too many requests, please try again later',
     standardHeaders: true,
     legacyHeaders: false,
@@ -37,4 +37,13 @@ const searchLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-export { generalLimiter, authLimiter, uploadLimiter, searchLimiter };
+// Role request rate limiter: max 3 requests per hour — prevents spamming artist requests
+const roleRequestLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 3,
+    message: 'Too many role requests submitted, please try again later',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+export { generalLimiter, authLimiter, uploadLimiter, searchLimiter, roleRequestLimiter };

@@ -1,27 +1,33 @@
 import { pool } from '../config/database.js';
 import User from '../models/User.js';
 import Artist from '../models/Artist.js';
+import { revokeToken } from '../utils/jwt.js';
 
 // GET /api/admin/stats
 export const getStats = async (req, res) => {
     try {
-        const [[{ users }], [{ songs }], [{ artists }], recentUsers] = await Promise.all([
+        // pool.query returns [rows, fields] — unwrap rows[0] for scalar counts
+        const [usersRes, songsRes, artistsRes, recentRes] = await Promise.all([
             pool.query('SELECT COUNT(*)::int AS users FROM users WHERE deleted_at IS NULL'),
             pool.query('SELECT COUNT(*)::int AS songs FROM songs'),
             pool.query('SELECT COUNT(*)::int AS artists FROM artists'),
             pool.query(
-                `SELECT id, full_name, email, is_admin, created_at
+                `SELECT id, username, full_name, email, is_admin, created_at
                  FROM users WHERE deleted_at IS NULL
                  ORDER BY created_at DESC LIMIT 5`
             ),
         ]);
+        const users   = usersRes[0][0]?.users   ?? 0;
+        const songs   = songsRes[0][0]?.songs   ?? 0;
+        const artists = artistsRes[0][0]?.artists ?? 0;
+        const recentUsers = recentRes[0];
         return res.json({
             success: true,
             data: {
                 users_count: users,
                 songs_count: songs,
                 artists_count: artists,
-                recent_users: recentUsers[0],
+                recent_users: recentUsers,
             },
         });
     } catch (err) {
@@ -37,19 +43,22 @@ export const getUsers = async (req, res) => {
         const limit = Math.min(100, parseInt(req.query.limit) || 10);
         const offset = (page - 1) * limit;
 
-        const [[{ total }], users] = await Promise.all([
+        // pool.query returns [rows, fields]; unwrap scalar count and row array
+        const [totalRes, usersRes] = await Promise.all([
             pool.query('SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL'),
             pool.query(
-                `SELECT id, username, email, full_name, is_admin, is_verified, created_at
+                `SELECT id, username, email, full_name, avatar_url, is_admin, role, is_verified, created_at
                  FROM users WHERE deleted_at IS NULL
                  ORDER BY created_at DESC LIMIT ? OFFSET ?`,
                 [limit, offset]
             ),
         ]);
+        const total = parseInt(totalRes[0][0]?.total ?? 0, 10);
+        const users = usersRes[0];
 
         return res.json({
             success: true,
-            data: users[0],
+            data: users,
             pagination: { page, limit, total },
         });
     } catch (err) {
@@ -134,6 +143,39 @@ export const getGenres = async (req, res) => {
     }
 };
 
+// POST /api/admin/genres
+export const createGenre = async (req, res) => {
+    try {
+        const { name, description } = req.body;
+        if (!name?.trim()) {
+            return res.status(400).json({ success: false, message: 'Genre name is required' });
+        }
+
+        // Check for duplicate
+        const [existing] = await pool.query(
+            'SELECT id FROM genres WHERE LOWER(name) = LOWER(?)',
+            [name.trim()]
+        );
+        if (existing.length > 0) {
+            return res.status(409).json({ success: false, message: 'Genre already exists', data: existing[0] });
+        }
+
+        const [result] = await pool.query(
+            'INSERT INTO genres (name, description) VALUES (?, ?) RETURNING id',
+            [name.trim(), description?.trim() || null]
+        );
+        const id = result[0]?.id ?? result.insertId;
+
+        return res.status(201).json({
+            success: true,
+            data: { id, name: name.trim(), description: description?.trim() || null },
+        });
+    } catch (err) {
+        console.error('Admin createGenre error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to create genre' });
+    }
+};
+
 // GET /api/admin/albums
 export const getAlbums = async (req, res) => {
     try {
@@ -147,5 +189,56 @@ export const getAlbums = async (req, res) => {
     } catch (err) {
         console.error('Admin getAlbums error:', err);
         return res.status(500).json({ success: false, message: 'Failed to load albums' });
+    }
+};
+
+// PATCH /api/admin/users/:id/role
+// Admin: set any role.  Manager: can only promote to 'artist'.
+export const updateUserRole = async (req, res) => {
+    const requesterId = req.user.id;
+    const requesterRole = req.user.role;
+    const { id } = req.params;
+    const { role: newRole } = req.body;
+
+    const validRoles = ['user', 'artist', 'manager', 'admin'];
+    if (!validRoles.includes(newRole)) {
+        return res.status(400).json({ success: false, message: `role must be one of: ${validRoles.join(', ')}` });
+    }
+
+    // No self-role-change
+    if (parseInt(id) === requesterId) {
+        return res.status(400).json({ success: false, message: 'You cannot change your own role' });
+    }
+
+    // Manager can only promote to artist
+    if (requesterRole === 'manager' && newRole !== 'artist') {
+        return res.status(403).json({
+            success: false,
+            message: 'Managers can only promote users to the "artist" role',
+        });
+    }
+
+    try {
+        const target = await User.findById(id);
+        if (!target) return res.status(404).json({ success: false, message: 'User not found' });
+
+        // Sync is_admin when changing to/from admin role
+        const isAdmin = newRole === 'admin';
+        await pool.query(
+            `UPDATE users SET role = $1, is_admin = $2 WHERE id = $3`,
+            [newRole, isAdmin, id],
+        );
+
+        // Revoke the affected user's current token so they must re-login
+        // (best-effort: we can only revoke through Authorization header if the
+        //  user's token is passed in, so we flag it in the response instead)
+        return res.json({
+            success: true,
+            message: `User role updated to "${newRole}". Their current token remains valid until expiry — they must re-login for the new role to take effect.`,
+            data: { id: Number(id), role: newRole },
+        });
+    } catch (err) {
+        console.error('updateUserRole error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update role' });
     }
 };

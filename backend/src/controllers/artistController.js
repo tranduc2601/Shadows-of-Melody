@@ -1,5 +1,25 @@
 import Artist from '../models/Artist.js';
+import { pool } from '../config/database.js';
 import { sanitizeSearchQuery } from '../utils/validators.js';
+
+// GET /api/artists/members — returns users with role='artist' for public display
+export const getArtistMembers = async (req, res) => {
+    try {
+        const limit = Math.min(50, parseInt(req.query.limit) || 20);
+        const [rows] = await pool.query(
+            `SELECT id, username, full_name, avatar_url
+             FROM users
+             WHERE role = 'artist' AND deleted_at IS NULL
+             ORDER BY created_at DESC
+             LIMIT ?`,
+            [limit]
+        );
+        return res.json({ success: true, data: rows });
+    } catch (err) {
+        console.error('getArtistMembers error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to fetch artist members' });
+    }
+};
 
 export const getAllArtists = async (req, res) => {
     try {

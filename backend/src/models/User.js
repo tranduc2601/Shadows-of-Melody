@@ -22,7 +22,7 @@ class User {
     }
 
     static async findById(id) {
-        const [rows] = await pool.query('SELECT id, username, email, avatar_url, bio, is_admin, is_verified, created_at FROM users WHERE id = ? AND deleted_at IS NULL', [id]);
+        const [rows] = await pool.query('SELECT id, username, email, avatar_url, bio, is_admin, role, is_verified, created_at FROM users WHERE id = ? AND deleted_at IS NULL', [id]);
         return rows[0];
     }
 

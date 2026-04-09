@@ -79,7 +79,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
           <div class="flex-1 min-w-0">
             <p id="sidebar-admin-name" class="text-sm font-semibold text-white truncate">Admin</p>
-            <p class="text-xs text-indigo-400 font-medium">Super Admin</p>
+            <p id="sidebar-admin-role" class="text-xs text-indigo-400 font-medium">Super Admin</p>
           </div>
           <span class="material-symbols-outlined text-gray-500 text-[18px]">more_vert</span>
         </div>
@@ -194,11 +194,8 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
         </div>
 
-        <!-- Management Section + Activity Feed -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-          <!-- Management Tables (left, 2 cols wide) -->
-          <div class="xl:col-span-2 space-y-6">
+        <!-- Management Section -->
+        <div class="space-y-6">
 
             <!-- Tab Header -->
             <div class="flex items-center gap-1 bg-white/3 border border-white/5 rounded-2xl p-1.5 w-fit">
@@ -304,11 +301,117 @@ import MainLayout from "../layouts/MainLayout.astro";
               </div>
             </div>
 
+            <!-- ── Pending Artist Requests ───────────────────────────────── -->
+            <div class="bg-white/3 border border-amber-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="material-symbols-outlined text-amber-400 text-[18px]">star_rate</span>
+                  Pending Artist Requests
+                  <span id="requests-count-badge" class="hidden text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold">0</span>
+                </h2>
+                <button id="btn-refresh-requests" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[16px]">refresh</span>Refresh
+                </button>
+              </div>
+              <div id="artist-requests-list" class="divide-y divide-white/5">
+                <p class="px-6 py-6 text-sm text-gray-500 text-center">Loading...</p>
+              </div>
+            </div>
+
+            <!-- ── Manager Tasks ─────────────────────────────────────────── -->
+            <div class="bg-white/3 border border-indigo-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="material-symbols-outlined text-indigo-400 text-[18px]">assignment</span>
+                  Manager Tasks
+                </h2>
+                <button id="btn-assign-task" class="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 rounded-xl text-xs font-semibold transition-all">
+                  <span class="material-symbols-outlined text-[16px]">add_task</span>Assign Task
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                      <th class="px-6 py-3">Task</th>
+                      <th class="px-6 py-3 hidden sm:table-cell">Assigned To</th>
+                      <th class="px-6 py-3 hidden md:table-cell">Status</th>
+                      <th class="px-6 py-3 hidden lg:table-cell">Created</th>
+                      <th class="px-6 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-tasks-tbody" class="divide-y divide-white/3">
+                    <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
-        </div>
       </div>
     </main>
   </div>
+
+<!-- ── Edit Song Modal ────────────────────────────────────────────────────── -->
+<div id="modal-edit-song" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-edit-song-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-lg shadow-2xl z-10 mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-purple-400">edit_note</span>Chỉnh Sửa Bài Hát
+      </h2>
+      <button id="modal-edit-song-close" class="text-gray-400 hover:text-white transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form id="form-edit-song" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Tên bài hát <span class="text-rose-400">*</span></label>
+        <input id="edit-title" type="text" required placeholder="Tên bài hát"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Album <span class="text-gray-500">(không bắt buộc)</span></label>
+        <select id="edit-album"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+          <option value="">— Không thuộc album —</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Nghệ sĩ</label>
+        <div id="edit-artists-checkboxes" class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
+          <p class="text-gray-500 text-xs">Đang tải...</p>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Thể loại</label>
+        <div id="edit-genres-checkboxes" class="grid grid-cols-2 gap-2 max-h-28 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
+          <p class="text-gray-500 text-xs">Đang tải...</p>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Ảnh bìa <span class="text-gray-500 font-normal">(jpg, png, webp · tối đa 5MB)</span></label>
+        <div id="edit-cover-dropzone" class="border-2 border-dashed border-white/20 rounded-xl p-4 flex items-center gap-4 hover:border-purple-500/50 transition-colors cursor-pointer">
+          <div id="edit-cover-preview" class="w-16 h-16 rounded-lg shrink-0 bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+            <span class="material-symbols-outlined text-gray-500 text-2xl">image</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-400 mb-0.5">Click để chọn ảnh bìa mới</p>
+            <p id="edit-cover-filename" class="text-xs text-purple-400 hidden truncate"></p>
+            <p id="edit-cover-status" class="text-xs text-gray-500 hidden"></p>
+          </div>
+          <input id="edit-cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
+        </div>
+        <input id="edit-cover-url" type="hidden" />
+      </div>
+      <div id="edit-song-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <button type="submit" id="btn-edit-song-submit"
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">save</span>Lưu Thay Đổi
+      </button>
+    </form>
+  </div>
+</div>
 
 <!-- ── Upload Song Modal ───────────────────────────────────────────────────── -->
 <div id="modal-upload" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
@@ -327,7 +430,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="material-symbols-outlined text-4xl text-gray-500 block mb-2">audio_file</span>
         <p class="text-sm text-gray-400 mb-1">Select audio file</p>
         <p class="text-xs text-gray-600">MP3, WAV, FLAC, AAC, OGG, M4A · up to 500MB</p>
-        <input id="audio-file" type="file" accept=".mp3,.wav,.flac,.aac,.ogg,.m4a" class="hidden" required />
+        <input id="audio-file" type="file" accept=".mp3,.wav,.flac,.aac,.ogg,.m4a" class="hidden" />
         <p id="audio-filename" class="mt-2 text-xs text-purple-400 hidden"></p>
       </div>
 
@@ -356,7 +459,28 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
         </div>
         <div class="col-span-2">
-          <label class="block text-sm font-medium text-gray-300 mb-2">Genre</label>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-gray-300">Genre</label>
+            <button type="button" id="btn-toggle-new-genre"
+              class="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold">
+              <span class="material-symbols-outlined text-[14px]">add_circle</span>
+              Create new
+            </button>
+          </div>
+          <!-- Inline new-genre form (hidden by default) -->
+          <div id="new-genre-form" class="hidden mb-2 flex items-center gap-2">
+            <input id="new-genre-name" type="text" placeholder="Genre name"
+              class="flex-1 px-3 py-2 bg-[#0e1835] border border-indigo-500/40 rounded-lg text-white text-xs placeholder-gray-500 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 transition-all" />
+            <button type="button" id="btn-create-genre"
+              class="px-3 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all shrink-0 flex items-center gap-1 disabled:opacity-50">
+              <span class="material-symbols-outlined text-[13px]">add</span>Add
+            </button>
+            <button type="button" id="btn-cancel-new-genre"
+              class="px-2 py-2 text-xs text-gray-500 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          </div>
+          <p id="new-genre-error" class="hidden text-xs text-rose-400 mb-1"></p>
           <div id="genres-checkboxes" class="grid grid-cols-2 gap-2 max-h-28 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
             <p class="text-gray-500 text-xs">Loading...</p>
           </div>
@@ -397,7 +521,13 @@ import MainLayout from "../layouts/MainLayout.astro";
 </div>
 
 <script>
-  import { apiFetch, getToken, getUser, colorFor } from '../lib/api.js';
+  import { apiFetch, getToken, getUser, colorFor, requireAuthClient, hasMinRole } from '../lib/api.js';
+
+  // ── Route guard: minimum manager role ──────────────────────────────────────
+  if (!requireAuthClient('manager')) {
+    // requireAuthClient already redirected; stop executing
+    throw new Error('redirecting');
+  }
 
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
@@ -421,13 +551,18 @@ import MainLayout from "../layouts/MainLayout.astro";
     return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
-  // ── Admin profile name ───────────────────────────────────────────────────────
+  // ── Admin profile name + role ────────────────────────────────────────────────
   const _me = getUser();
   if (_me) {
     const name = _me.username || 'Admin';
-    document.getElementById('sidebar-admin-name')?.textContent && (document.getElementById('sidebar-admin-name')!.textContent = name);
+    const nameEl = document.getElementById('sidebar-admin-name');
+    if (nameEl) nameEl.textContent = name;
     const hdr = document.getElementById('header-admin-name');
     if (hdr) hdr.textContent = name;
+    // Dynamic role label
+    const roleLabels: Record<string, string> = { admin: 'Super Admin', manager: 'Manager', artist: 'Artist', user: 'User' };
+    const roleEl = document.getElementById('sidebar-admin-role');
+    if (roleEl) roleEl.textContent = roleLabels[_me?.role as string] ?? (_me?.is_admin ? 'Super Admin' : 'Member');
   }
 
   // ── Stats ────────────────────────────────────────────────────────────────────
@@ -456,7 +591,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             <span class="text-[11px] text-gray-600 shrink-0">${fmtDate(u.created_at)}</span>
           </div>`).join('');
       } else if (recentEl) {
-        recentEl.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Chưa có người dùng nào.</p>';
+        recentEl.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">No recent users.</p>';
       }
     } catch (err: any) {
       console.error('loadStats error:', err.message);
@@ -476,16 +611,18 @@ import MainLayout from "../layouts/MainLayout.astro";
     try {
       const { data: users, pagination } = await apiFetch(`/admin/users?page=${page}&limit=10`);
       if (!users?.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Chưa có người dùng.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No users found.</td></tr>';
         return;
       }
       tbody.innerHTML = users.map((u: any) => `
         <tr class="hover:bg-white/3 transition-colors group" data-user-id="${u.id}">
           <td class="px-6 py-4">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-white text-sm font-bold"
+              <div class="w-9 h-9 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-white text-sm font-bold"
                    style="background:${colorFor(u.id)}">
-                ${(u.username || u.email || '?').charAt(0).toUpperCase()}
+                ${u.avatar_url
+                  ? `<img src="${u.avatar_url}" class="w-full h-full object-cover" alt="" />`
+                  : (u.username || u.email || '?').charAt(0).toUpperCase()}
               </div>
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-100 truncate">${u.username || '—'}</p>
@@ -494,9 +631,16 @@ import MainLayout from "../layouts/MainLayout.astro";
             </div>
           </td>
           <td class="px-6 py-4 hidden sm:table-cell">
-            <span class="text-xs font-semibold px-2 py-1 rounded-full ${u.is_admin ? 'bg-purple-500/20 text-purple-300' : 'bg-white/5 text-gray-400'}">
-              ${u.is_admin ? 'Admin' : 'User'}
-            </span>
+            ${(() => {
+              const r = u.role || (u.is_admin ? 'admin' : 'user');
+              const styles: Record<string,string> = {
+                admin:   'bg-purple-500/20 text-purple-300',
+                manager: 'bg-yellow-500/20 text-yellow-300',
+                artist:  'bg-green-500/20  text-green-300',
+                user:    'bg-white/5       text-gray-400',
+              };
+              return `<span class="role-badge text-xs font-semibold px-2 py-1 rounded-full ${styles[r] ?? styles.user}">${r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
+            })()}
           </td>
           <td class="px-6 py-4 hidden md:table-cell">
             <span class="text-xs font-semibold px-2 py-1 rounded-full bg-white/5 text-gray-400">Free</span>
@@ -508,11 +652,14 @@ import MainLayout from "../layouts/MainLayout.astro";
             </span>
           </td>
           <td class="px-6 py-4">
-            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button class="btn-toggle-admin w-8 h-8 rounded-lg hover:bg-amber-500/20 hover:text-amber-400 text-gray-500 flex items-center justify-center transition-all"
-                      data-id="${u.id}" title="${u.is_admin ? 'Gỡ Admin' : 'Đặt Admin'}">
-                <span class="material-symbols-outlined text-[17px]">${u.is_admin ? 'shield' : 'shield_person'}</span>
-              </button>
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <select class="select-role bg-[#1a2847] border border-white/10 text-xs text-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-purple-500 transition-all cursor-pointer"
+                      data-id="${u.id}" data-current="${u.role || (u.is_admin ? 'admin' : 'user')}">
+                <option value="user"    ${(!u.role || u.role === 'user')    ? 'selected' : ''}>User</option>
+                <option value="artist"  ${u.role === 'artist'   ? 'selected' : ''}>Artist</option>
+                <option value="manager" ${u.role === 'manager'  ? 'selected' : ''}>Manager</option>
+                <option value="admin"   ${(u.role === 'admin' || (!u.role && u.is_admin)) ? 'selected' : ''}>Admin</option>
+              </select>
               <button class="btn-delete-user w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
                       data-id="${u.id}" title="Xóa">
                 <span class="material-symbols-outlined text-[17px]">delete</span>
@@ -539,17 +686,43 @@ import MainLayout from "../layouts/MainLayout.astro";
       // Delegated handlers
       tbody.addEventListener('click', async (e: Event) => {
         const target = e.target as HTMLElement;
-        const delBtn    = target.closest('.btn-delete-user')    as HTMLElement | null;
-        const adminBtn  = target.closest('.btn-toggle-admin')   as HTMLElement | null;
+        const delBtn = target.closest('.btn-delete-user') as HTMLElement | null;
         if (delBtn) {
           const id = delBtn.dataset.id;
           if (!id || !confirm(`Xóa người dùng #${id}?`)) return;
           try { await apiFetch(`/admin/users/${id}`, { method: 'DELETE' }); delBtn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
         }
-        if (adminBtn) {
-          const id = adminBtn.dataset.id;
-          if (!id) return;
-          try { await apiFetch(`/admin/users/${id}/toggle-admin`, { method: 'PATCH' }); loadUsers(_userPage); } catch (err: any) { alert(err.message); }
+      });
+
+      tbody.addEventListener('change', async (e: Event) => {
+        const select = (e.target as HTMLElement).closest('.select-role') as HTMLSelectElement | null;
+        if (!select) return;
+        const id      = select.dataset.id;
+        const newRole = select.value;
+        const prev    = select.dataset.current!;
+        if (!id || newRole === prev) return;
+        try {
+          await apiFetch(`/admin/users/${id}/role`, {
+            method: 'PATCH',
+            body: JSON.stringify({ role: newRole }),
+          });
+          select.dataset.current = newRole;
+          // Update the badge in the same row without reloading the table
+          const row = select.closest('tr');
+          const badge = row?.querySelector('.role-badge') as HTMLElement | null;
+          if (badge) {
+            const styles: Record<string,string> = {
+              admin:   'bg-purple-500/20 text-purple-300',
+              manager: 'bg-yellow-500/20 text-yellow-300',
+              artist:  'bg-green-500/20  text-green-300',
+              user:    'bg-white/5       text-gray-400',
+            };
+            badge.className = `role-badge text-xs font-semibold px-2 py-1 rounded-full ${styles[newRole] ?? styles.user}`;
+            badge.textContent = newRole.charAt(0).toUpperCase() + newRole.slice(1);
+          }
+        } catch (err: any) {
+          alert(err.message);
+          select.value = prev; // revert on failure
         }
       });
       btns?.addEventListener('click', (e: Event) => {
@@ -571,7 +744,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     try {
       const { data: artists } = await apiFetch('/admin/artists?limit=20');
       if (!artists?.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Chưa có nghệ sĩ nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No artists found.</td></tr>';
         return;
       }
       tbody.innerHTML = artists.map((a: any) => `
@@ -608,7 +781,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         try { await apiFetch(`/artists/${id}`, { method: 'DELETE' }); btn.closest('tr')?.remove(); } catch (err: any) { alert(err.message); }
       });
     } catch {
-      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
     }
   }
 
@@ -619,7 +792,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     try {
       const { data: songs } = await apiFetch('/songs?limit=20');
       if (!songs?.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No songs found.</td></tr>';
         return;
       }
       tbody.innerHTML = songs.map((s: any) => `
@@ -641,6 +814,10 @@ import MainLayout from "../layouts/MainLayout.astro";
           <td class="px-6 py-4"><span class="bg-green-500/15 text-green-400 text-xs font-semibold px-2.5 py-1 rounded-full">Published</span></td>
           <td class="px-6 py-4">
             <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-edit-song w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${s.id}" data-song="${encodeURIComponent(JSON.stringify(s))}" title="Chỉnh sửa">
+                <span class="material-symbols-outlined text-[17px]">edit</span>
+              </button>
               <button class="btn-delete-song w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" data-id="${s.id}" title="Xóa">
                 <span class="material-symbols-outlined text-[17px]">delete</span>
               </button>
@@ -648,23 +825,177 @@ import MainLayout from "../layouts/MainLayout.astro";
           </td>
         </tr>`).join('');
 
-      // Delete handler (delegated)
+      // Delete + Edit handler (delegated)
       tbody.addEventListener('click', async (e) => {
-        const btn = (e.target as HTMLElement).closest('.btn-delete-song') as HTMLElement;
-        if (!btn) return;
-        const id = btn.dataset.id;
-        if (!id || !confirm(`Xóa bài hát #${id}?`)) return;
-        try {
-          await apiFetch(`/songs/${id}`, { method: 'DELETE' });
-          btn.closest('tr')?.remove();
-        } catch (err: any) {
-          alert(err.message || 'Xóa thất bại');
+        const editBtn = (e.target as HTMLElement).closest('.btn-edit-song') as HTMLElement;
+        const delBtn  = (e.target as HTMLElement).closest('.btn-delete-song') as HTMLElement;
+        if (editBtn) {
+          openEditSongModal(editBtn.dataset.id!, editBtn.dataset.song!);
+        }
+        if (delBtn) {
+          const id = delBtn.dataset.id;
+          if (!id || !confirm(`Xóa bài hát #${id}?`)) return;
+          try {
+            await apiFetch(`/songs/${id}`, { method: 'DELETE' });
+            delBtn.closest('tr')?.remove();
+          } catch (err: any) {
+            alert(err.message || 'Xóa thất bại');
+          }
         }
       }, { once: false });
     } catch {
       tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
     }
   }
+
+  // ── Edit Song Modal ──────────────────────────────────────────────────────────
+  const editModal      = document.getElementById('modal-edit-song') as HTMLElement;
+  const editModalBg    = document.getElementById('modal-edit-song-bg') as HTMLElement;
+  const editModalClose = document.getElementById('modal-edit-song-close') as HTMLElement;
+  const editForm       = document.getElementById('form-edit-song') as HTMLFormElement;
+  const editErrDiv     = document.getElementById('edit-song-error') as HTMLElement;
+  const editCoverFile  = document.getElementById('edit-cover-file') as HTMLInputElement;
+  const editCoverDropzone = document.getElementById('edit-cover-dropzone') as HTMLElement;
+  const editCoverPreview  = document.getElementById('edit-cover-preview') as HTMLElement;
+  const editCoverFilename = document.getElementById('edit-cover-filename') as HTMLElement;
+  const editCoverStatus   = document.getElementById('edit-cover-status') as HTMLElement;
+  const editCoverUrl      = document.getElementById('edit-cover-url') as HTMLInputElement;
+
+  let _editSongId: string | null = null;
+
+  async function openEditSongModal(songId: string, songJson: string) {
+    _editSongId = songId;
+    let song: any = {};
+    try { song = JSON.parse(decodeURIComponent(songJson)); } catch { try { song = JSON.parse(songJson); } catch {} }
+
+    (document.getElementById('edit-title') as HTMLInputElement).value = song.title || '';
+    editCoverUrl.value = song.cover_url || '';
+    if (song.cover_url) {
+      editCoverPreview.innerHTML = `<img src="${song.cover_url}" class="w-full h-full object-cover" alt="" />`;
+    } else {
+      editCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
+    }
+    editCoverFilename.classList.add('hidden');
+    editCoverStatus.classList.add('hidden');
+    editErrDiv?.classList.add('hidden');
+
+    // Load albums dropdown
+    const albumSel = document.getElementById('edit-album') as HTMLSelectElement;
+    try {
+      const { data: albums } = await apiFetch('/admin/albums');
+      albumSel.innerHTML = '<option value="">— Không thuộc album —</option>' +
+        (albums || []).map((al: any) => `<option value="${al.id}" ${al.id == song.album_id ? 'selected' : ''}>${al.title}${al.artist_name ? ' — ' + al.artist_name : ''}</option>`).join('');
+    } catch { albumSel.innerHTML = '<option value="">— Không thuộc album —</option>'; }
+
+    // Load artists
+    const editArtistsBox = document.getElementById('edit-artists-checkboxes') as HTMLElement;
+    const currentArtistIds = (song.artist_ids || '').split(',').map((x: string) => x.trim()).filter(Boolean);
+    try {
+      const { data: artists } = await apiFetch('/artists?limit=100');
+      editArtistsBox.innerHTML = (artists || []).map((a: any) => `
+        <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
+          <input type="checkbox" value="${a.id}" class="accent-purple-500 w-3.5 h-3.5" name="edit_artist_ids"${currentArtistIds.includes(String(a.id)) ? ' checked' : ''} />
+          <span class="text-xs text-gray-300 truncate">${a.name}</span>
+        </label>`).join('');
+    } catch { editArtistsBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load artists.</p>'; }
+
+    // Load genres
+    const editGenresBox = document.getElementById('edit-genres-checkboxes') as HTMLElement;
+    const currentGenreIds = (song.genre_ids || '').split(',').map((x: string) => x.trim()).filter(Boolean);
+    try {
+      const { data: genres } = await apiFetch('/admin/genres');
+      editGenresBox.innerHTML = (genres || []).map((g: any) => `
+        <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
+          <input type="checkbox" value="${g.id}" class="accent-indigo-500 w-3.5 h-3.5" name="edit_genre_ids"${currentGenreIds.includes(String(g.id)) ? ' checked' : ''} />
+          <span class="text-xs text-gray-300 truncate">${g.name}</span>
+        </label>`).join('');
+    } catch { editGenresBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load genres.</p>'; }
+
+    editModal?.classList.remove('hidden');
+  }
+
+  editModalBg?.addEventListener('click',    () => editModal?.classList.add('hidden'));
+  editModalClose?.addEventListener('click', () => editModal?.classList.add('hidden'));
+
+  // Cover upload for edit modal
+  editCoverDropzone?.addEventListener('click', () => editCoverFile?.click());
+  editCoverFile?.addEventListener('change', async () => {
+    const file = editCoverFile.files?.[0];
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type) || file.size > 5 * 1024 * 1024) {
+      editErrDiv.textContent = 'Ảnh phải là JPG/PNG/WebP, tối đa 5MB.';
+      editErrDiv.classList.remove('hidden');
+      editCoverFile.value = '';
+      return;
+    }
+    editCoverFilename.textContent = file.name;
+    editCoverFilename.classList.remove('hidden');
+    editCoverStatus.textContent = 'Đang tải lên...';
+    editCoverStatus.classList.remove('hidden');
+    const objUrl = URL.createObjectURL(file);
+    editCoverPreview.innerHTML = `<img src="${objUrl}" class="w-full h-full object-cover" alt="" />`;
+    try {
+      const fd = new FormData();
+      fd.append('cover', file);
+      const token = getToken();
+      const res = await fetch('http://localhost:5000/api/admin/upload/cover', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: fd,
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      editCoverUrl.value = json.data.url;
+      editCoverStatus.textContent = '✓ Tải lên thành công';
+      URL.revokeObjectURL(objUrl);
+    } catch (err: any) {
+      editCoverStatus.textContent = `Lỗi: ${err.message}`;
+      editCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
+      editCoverUrl.value = '';
+      URL.revokeObjectURL(objUrl);
+    }
+  });
+
+  editForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!_editSongId) return;
+    editErrDiv?.classList.add('hidden');
+
+    const title    = (document.getElementById('edit-title') as HTMLInputElement).value.trim();
+    const albumId  = (document.getElementById('edit-album') as HTMLSelectElement).value;
+    const coverUrl = editCoverUrl.value;
+    const artistIds = Array.from(editForm.querySelectorAll('input[name="edit_artist_ids"]:checked')).map((cb: any) => cb.value);
+    const genreIds  = Array.from(editForm.querySelectorAll('input[name="edit_genre_ids"]:checked')).map((cb: any) => cb.value);
+
+    if (!title) { editErrDiv.textContent = 'Vui lòng nhập tên bài hát.'; editErrDiv.classList.remove('hidden'); return; }
+
+    const submitBtn = document.getElementById('btn-edit-song-submit') as HTMLButtonElement;
+    submitBtn.disabled = true;
+    const origText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Đang lưu...';
+
+    try {
+      await apiFetch(`/admin/songs/${_editSongId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          title,
+          cover_url: coverUrl || undefined,
+          album_id:  albumId  || undefined,
+          artist_ids: artistIds,
+          genre_ids:  genreIds,
+        }),
+      });
+      editModal?.classList.add('hidden');
+      loadSongs();
+    } catch (err: any) {
+      editErrDiv.textContent = err.message || 'Lưu thất bại.';
+      editErrDiv.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = origText;
+    }
+  });
 
   // ── Upload Modal ─────────────────────────────────────────────────────────────
   const modal       = document.getElementById('modal-upload') as HTMLElement;
@@ -780,27 +1111,16 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (artistsBox) {
       try {
         const { data: artists } = await apiFetch('/artists?limit=100');
-        if (!artists?.length) { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Không có nghệ sĩ.</p>'; }
+        if (!artists?.length) { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">No artists available.</p>'; }
         else artistsBox.innerHTML = artists.map((a: any) => `
           <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
             <input type="checkbox" value="${a.id}" class="accent-purple-500 w-3.5 h-3.5" name="artist_ids" />
             <span class="text-xs text-gray-300 truncate">${a.name}</span>
           </label>`).join('');
-      } catch { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Lỗi tải nghệ sĩ.</p>'; }
+      } catch { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load artists.</p>'; }
     }
 
-    // Genres checkboxes
-    if (genresBox) {
-      try {
-        const { data: genres } = await apiFetch('/admin/genres');
-        if (!genres?.length) { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Không có thể loại.</p>'; }
-        else genresBox.innerHTML = genres.map((g: any) => `
-          <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
-            <input type="checkbox" value="${g.id}" class="accent-indigo-500 w-3.5 h-3.5" name="genre_ids" />
-            <span class="text-xs text-gray-300 truncate">${g.name}</span>
-          </label>`).join('');
-      } catch { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Lỗi tải thể loại.</p>'; }
-    }
+    await reloadGenresBox();
 
     // Albums dropdown
     try {
@@ -811,6 +1131,71 @@ import MainLayout from "../layouts/MainLayout.astro";
       }
     } catch {}
   }
+
+  async function reloadGenresBox(autoCheckId?: number) {
+    if (!genresBox) return;
+    try {
+      const { data: genres } = await apiFetch('/admin/genres');
+      if (!genres?.length) { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Không có thể loại.</p>'; return; }
+      genresBox.innerHTML = genres.map((g: any) => `
+        <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
+          <input type="checkbox" value="${g.id}" class="accent-indigo-500 w-3.5 h-3.5" name="genre_ids"${autoCheckId === g.id ? ' checked' : ''} />
+          <span class="text-xs text-gray-300 truncate">${g.name}</span>
+        </label>`).join('');
+    } catch { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load genres.</p>'; }
+  }
+
+  // ── Inline "Create new genre" handler ────────────────────────────────────────
+  const toggleNewGenreBtn  = document.getElementById('btn-toggle-new-genre') as HTMLButtonElement;
+  const newGenreForm       = document.getElementById('new-genre-form') as HTMLElement;
+  const newGenreNameInput  = document.getElementById('new-genre-name') as HTMLInputElement;
+  const createGenreBtn     = document.getElementById('btn-create-genre') as HTMLButtonElement;
+  const cancelNewGenreBtn  = document.getElementById('btn-cancel-new-genre') as HTMLButtonElement;
+  const newGenreError      = document.getElementById('new-genre-error') as HTMLElement;
+
+  toggleNewGenreBtn?.addEventListener('click', () => {
+    newGenreForm.classList.toggle('hidden');
+    if (!newGenreForm.classList.contains('hidden')) newGenreNameInput?.focus();
+  });
+
+  cancelNewGenreBtn?.addEventListener('click', () => {
+    newGenreForm.classList.add('hidden');
+    newGenreNameInput.value = '';
+    newGenreError.classList.add('hidden');
+  });
+
+  createGenreBtn?.addEventListener('click', async () => {
+    const name = newGenreNameInput.value.trim();
+    newGenreError.classList.add('hidden');
+    if (!name) { newGenreError.textContent = 'Vui lòng nhập tên thể loại.'; newGenreError.classList.remove('hidden'); return; }
+
+    createGenreBtn.disabled = true;
+    const origHTML = createGenreBtn.innerHTML;
+    createGenreBtn.innerHTML = '<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span>';
+
+    try {
+      const json = await apiFetch('/admin/genres', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      });
+      const newId: number = json.data.id;
+      newGenreNameInput.value = '';
+      newGenreForm.classList.add('hidden');
+      // Reload checkboxes and auto-check the new genre
+      await reloadGenresBox(newId);
+    } catch (err: any) {
+      newGenreError.textContent = err.message || 'Tạo thể loại thất bại';
+      newGenreError.classList.remove('hidden');
+    } finally {
+      createGenreBtn.disabled = false;
+      createGenreBtn.innerHTML = origHTML;
+    }
+  });
+
+  // Allow Enter key in input to trigger create
+  newGenreNameInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Enter') { e.preventDefault(); createGenreBtn?.click(); }
+  });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -866,6 +1251,200 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (errDiv) { errDiv.textContent = msg; errDiv.classList.remove('hidden'); }
   }
 
+  // ── Artist Role Requests ─────────────────────────────────────────────────────
+  async function loadArtistRequests() {
+    const container = document.getElementById('artist-requests-list');
+    const badge = document.getElementById('requests-count-badge') as HTMLElement | null;
+    if (!container) return;
+    container.innerHTML = '<p class="px-6 py-6 text-sm text-gray-500 text-center">Loading...</p>';
+    try {
+      const { data: requests } = await apiFetch('/roles/requests?status=pending');
+      if (!requests?.length) {
+        container.innerHTML = '<p class="px-6 py-6 text-sm text-gray-500 text-center">No pending artist requests.</p>';
+        if (badge) badge.classList.add('hidden');
+        return;
+      }
+      if (badge) { badge.textContent = String(requests.length); badge.classList.remove('hidden'); }
+      container.innerHTML = requests.map((r: any) => `
+        <div class="flex items-center gap-4 px-6 py-4 hover:bg-white/3 transition-colors" data-req-id="${r.id}">
+          <div class="w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-white text-sm font-bold"
+               style="background:${colorFor(r.user_id)}">
+            ${(r.username || r.email || '?').charAt(0).toUpperCase()}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-100">${r.username || '—'}</p>
+            <p class="text-xs text-gray-500 truncate">${r.email} · ${fmtDate(r.created_at)}</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button class="btn-approve-req flex items-center gap-1 px-3 py-1.5 text-xs font-semibold bg-green-500/15 hover:bg-green-500/25 text-green-400 rounded-lg transition-all"
+                    data-id="${r.id}">
+              <span class="material-symbols-outlined text-[14px]">check_circle</span>Approve
+            </button>
+            <button class="btn-reject-req flex items-center gap-1 px-3 py-1.5 text-xs font-semibold bg-red-500/15 hover:bg-red-500/25 text-red-400 rounded-lg transition-all"
+                    data-id="${r.id}">
+              <span class="material-symbols-outlined text-[14px]">cancel</span>Reject
+            </button>
+          </div>
+        </div>`).join('');
+    } catch (err: any) {
+      container.innerHTML = `<p class="px-6 py-6 text-sm text-red-400 text-center">Failed to load: ${err.message}</p>`;
+    }
+  }
+
+  // Artist requests — single delegated click listener (setup once)
+  document.getElementById('artist-requests-list')?.addEventListener('click', async (e: Event) => {
+    const approveBtn = (e.target as HTMLElement).closest('.btn-approve-req') as HTMLButtonElement | null;
+    const rejectBtn  = (e.target as HTMLElement).closest('.btn-reject-req')  as HTMLButtonElement | null;
+    const btn = approveBtn || rejectBtn;
+    if (!btn || btn.disabled) return;
+    const id     = btn.dataset.id;
+    const action = approveBtn ? 'approve' : 'reject';
+    const container = document.getElementById('artist-requests-list')!;
+    const badge = document.getElementById('requests-count-badge') as HTMLElement | null;
+    (btn as HTMLButtonElement).disabled = true;
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span>';
+    try {
+      await apiFetch(`/roles/requests/${id}`, { method: 'PATCH', body: JSON.stringify({ action }) });
+      container.querySelector(`[data-req-id="${id}"]`)?.remove();
+      const remaining = container.querySelectorAll('[data-req-id]').length;
+      if (!remaining) {
+        container.innerHTML = '<p class="px-6 py-6 text-sm text-gray-500 text-center">No pending artist requests.</p>';
+        if (badge) badge.classList.add('hidden');
+      } else if (badge) { badge.textContent = String(remaining); }
+      if (approveBtn) loadUsers(_userPage);
+    } catch (err: any) {
+      alert(err.message);
+      (btn as HTMLButtonElement).disabled = false;
+      btn.innerHTML = origHTML;
+    }
+  });
+
+  document.getElementById('btn-refresh-requests')?.addEventListener('click', () => loadArtistRequests());
+
+  // ── Manager Tasks ─────────────────────────────────────────────────────────────
+  async function loadTasks() {
+    const tbody = document.getElementById('admin-tasks-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: tasks } = await apiFetch('/admin/tasks');
+      if (!tasks?.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No tasks assigned yet.</td></tr>';
+        return;
+      }
+      const sStyles: Record<string,string> = {
+        pending:     'bg-amber-500/15 text-amber-300',
+        in_progress: 'bg-blue-500/15 text-blue-300',
+        completed:   'bg-green-500/15 text-green-300',
+      };
+      const sLabels: Record<string,string> = { pending: 'Pending', in_progress: 'In Progress', completed: 'Completed' };
+      tbody.innerHTML = tasks.map((t: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-task-id="${t.id}">
+          <td class="px-6 py-4">
+            <p class="text-sm font-semibold text-gray-100">${t.title}</p>
+            ${t.description ? `<p class="text-xs text-gray-500 truncate mt-0.5 max-w-xs">${t.description}</p>` : ''}
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-300">${t.assigned_to_name || '—'}</td>
+          <td class="px-6 py-4 hidden md:table-cell">
+            <span class="task-status-badge inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${sStyles[t.status] ?? 'bg-white/5 text-gray-400'}">
+              ${sLabels[t.status] ?? t.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 hidden lg:table-cell text-xs text-gray-400">${fmtDate(t.created_at)}</td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+              <select class="select-task-status text-xs bg-[#1a2847] border border-white/10 text-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500 cursor-pointer transition-all"
+                      data-id="${t.id}" data-current="${t.status}">
+                <option value="pending"     ${t.status === 'pending'     ? 'selected' : ''}>Pending</option>
+                <option value="in_progress" ${t.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                <option value="completed"   ${t.status === 'completed'   ? 'selected' : ''}>Completed</option>
+              </select>
+            </div>
+          </td>
+        </tr>`).join('');
+    } catch (err: any) {
+      tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-400 text-sm">Failed: ${err.message}</td></tr>`;
+    }
+  }
+
+  // Task status change — delegated listener, survives innerHTML replacements
+  document.getElementById('admin-tasks-tbody')?.addEventListener('change', async (e: Event) => {
+    const sel = (e.target as HTMLElement).closest('.select-task-status') as HTMLSelectElement | null;
+    if (!sel) return;
+    const id = sel.dataset.id;
+    const newStatus = sel.value;
+    const prev = sel.dataset.current!;
+    if (!id || newStatus === prev) return;
+    try {
+      await apiFetch(`/admin/tasks/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
+      sel.dataset.current = newStatus;
+      const row = sel.closest('tr');
+      const badge = row?.querySelector('.task-status-badge') as HTMLElement | null;
+      if (badge) {
+        const ss: Record<string,string> = { pending: 'bg-amber-500/15 text-amber-300', in_progress: 'bg-blue-500/15 text-blue-300', completed: 'bg-green-500/15 text-green-300' };
+        const sl: Record<string,string> = { pending: 'Pending', in_progress: 'In Progress', completed: 'Completed' };
+        badge.className = `task-status-badge inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${ss[newStatus] ?? 'bg-white/5 text-gray-400'}`;
+        badge.textContent = sl[newStatus] ?? newStatus;
+      }
+    } catch (err: any) { alert(err.message); sel.value = prev; }
+  });
+
+  // Task assignment modal
+  const taskModal      = document.getElementById('modal-assign-task')   as HTMLElement;
+  const taskModalBg    = document.getElementById('modal-task-bg')       as HTMLElement;
+  const taskModalClose = document.getElementById('modal-task-close')    as HTMLElement;
+  const taskForm       = document.getElementById('form-assign-task')    as HTMLFormElement;
+  const taskErrDiv     = document.getElementById('task-error')          as HTMLElement;
+  const taskManagerSel = document.getElementById('task-manager-select') as HTMLSelectElement;
+
+  document.getElementById('btn-assign-task')?.addEventListener('click', async () => {
+    taskErrDiv?.classList.add('hidden');
+    taskForm?.reset();
+    taskManagerSel.innerHTML = '<option value="">Loading managers...</option>';
+    taskModal?.classList.remove('hidden');
+    try {
+      const { data: managers } = await apiFetch('/admin/managers');
+      taskManagerSel.innerHTML = managers?.length
+        ? '<option value="">— Select a manager —</option>' + managers.map((m: any) => `<option value="${m.id}">${m.username}</option>`).join('')
+        : '<option value="">— No managers available —</option>';
+    } catch {
+      taskManagerSel.innerHTML = '<option value="">— Failed to load —</option>';
+    }
+  });
+
+  taskModalBg?.addEventListener('click',    () => { taskModal?.classList.add('hidden'); });
+  taskModalClose?.addEventListener('click', () => { taskModal?.classList.add('hidden'); taskForm?.reset(); });
+
+  taskForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    taskErrDiv?.classList.add('hidden');
+    const title      = (document.getElementById('task-title')       as HTMLInputElement).value.trim();
+    const desc       = (document.getElementById('task-description') as HTMLTextAreaElement).value.trim();
+    const assignedTo = taskManagerSel.value;
+    if (!title)      { taskErrDiv.textContent = 'Task title is required.';  taskErrDiv.classList.remove('hidden'); return; }
+    if (!assignedTo) { taskErrDiv.textContent = 'Please select a manager.'; taskErrDiv.classList.remove('hidden'); return; }
+    const subBtn = document.getElementById('btn-task-submit') as HTMLButtonElement;
+    subBtn.disabled = true;
+    const orig = subBtn.innerHTML;
+    subBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Assigning...';
+    try {
+      await apiFetch('/admin/tasks', {
+        method: 'POST',
+        body: JSON.stringify({ title, description: desc || undefined, assigned_to: Number(assignedTo) }),
+      });
+      taskModal?.classList.add('hidden');
+      taskForm?.reset();
+      loadTasks();
+    } catch (err: any) {
+      taskErrDiv.textContent = err.message || 'Failed to assign task';
+      taskErrDiv.classList.remove('hidden');
+    } finally {
+      subBtn.disabled = false;
+      subBtn.innerHTML = orig;
+    }
+  });
+
   // ── Add Artist Modal ─────────────────────────────────────────────────────────
   const artistModal      = document.getElementById('modal-add-artist') as HTMLElement;
   const artistModalBg    = document.getElementById('modal-artist-bg') as HTMLElement;
@@ -919,7 +1498,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       return;
     }
 
-    if (!meData?.is_admin) {
+    if (!meData?.is_admin && !['manager', 'admin'].includes(meData?.role)) {
       window.location.href = '/?reason=forbidden';
       return;
     }
@@ -937,8 +1516,51 @@ import MainLayout from "../layouts/MainLayout.astro";
     loadUsers();
     loadArtists();
     loadSongs();
+    loadArtistRequests();
+    loadTasks();
   })();
 </script>
+
+<!-- ── Assign Task Modal ────────────────────────────────────────────────── -->
+<div id="modal-assign-task" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-task-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg font-bold text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-indigo-400">add_task</span>
+        Assign Task to Manager
+      </h2>
+      <button id="modal-task-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+    <form id="form-assign-task" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Task Title <span class="text-rose-400">*</span></label>
+        <input id="task-title" type="text" placeholder="e.g. Review new song uploads"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+        <textarea id="task-description" rows="3" placeholder="Task details..."
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Assign To (Manager) <span class="text-rose-400">*</span></label>
+        <select id="task-manager-select"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+          <option value="">— Select a manager —</option>
+        </select>
+      </div>
+      <div id="task-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <button type="submit" id="btn-task-submit"
+        class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">add_task</span>Assign Task
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- ── Add Artist Modal ──────────────────────────────────────────────────── -->
 <div id="modal-add-artist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-bg"></div>

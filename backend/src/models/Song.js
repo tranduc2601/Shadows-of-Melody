@@ -36,10 +36,14 @@ class Song {
             `SELECT s.*,
                     STRING_AGG(DISTINCT a.id::text, ',') as artist_ids,
                     STRING_AGG(DISTINCT a.name, ',')     as artist_names,
+                    STRING_AGG(DISTINCT g.id::text, ',') as genre_ids,
+                    STRING_AGG(DISTINCT g.name, ',')     as genre_names,
                     al.title as album_title
              FROM songs s
              LEFT JOIN song_artists sa ON s.id = sa.song_id
              LEFT JOIN artists a ON sa.artist_id = a.id
+             LEFT JOIN song_genres sg ON s.id = sg.song_id
+             LEFT JOIN genres g ON sg.genre_id = g.id
              LEFT JOIN albums al ON s.album_id = al.id
              GROUP BY s.id, al.title
              ORDER BY s.created_at DESC

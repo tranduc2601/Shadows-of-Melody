@@ -56,12 +56,20 @@ const libItems = [
     <!-- User playlists (populated by JS) -->
     <div class="mt-4 space-y-0.5" id="sidebar-user-playlists"></div>
 
-    <!-- Admin link (shown for admin users only) -->
+    <!-- Admin link (shown for manager/admin users only) -->
     <a id="sidebar-admin-link" href="/admin" class="hidden mt-3 flex items-center gap-3 px-3 py-2 text-purple-400 hover:text-white hover:bg-purple-500/10 w-full rounded-lg transition-all text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-purple-500/20 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-purple-400 text-base">admin_panel_settings</span>
       </span>
       Admin Panel
+    </a>
+
+    <!-- Upload button (shown for artist/admin users only) -->
+    <a id="sidebar-upload-link" href="/upload" class="hidden mt-3 flex items-center gap-3 px-3 py-2 text-indigo-400 hover:text-white hover:bg-indigo-500/10 w-full rounded-lg transition-all text-sm font-semibold">
+      <span class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-indigo-400 text-base">upload_file</span>
+      </span>
+      Upload Song
     </a>
 
     <!-- Create Playlist button (shown when logged in) -->
@@ -132,10 +140,11 @@ const libItems = [
 </div>
 
 <script>
-  import { getUser, apiFetch } from '../lib/api.js';
+  import { getUser, apiFetch, getUserRole, hasMinRole } from '../lib/api.js';
 
   // ── Auth state ──────────────────────────────────────────────────────────────
   const user = getUser();
+  const role = getUserRole();
 
   const guestEl   = document.getElementById('sidebar-guest') as HTMLElement;
   const userEl    = document.getElementById('sidebar-user') as HTMLElement;
@@ -153,16 +162,46 @@ const libItems = [
     btnNew?.classList.add('flex');
 
     if (nameEl) nameEl.textContent = user.full_name || user.username || user.email;
-    if (planEl) planEl.textContent = user.subscription?.plan_name || 'Free';
+    if (planEl) {
+      const roleLabels: Record<string, string> = {
+        admin: 'Administrator',
+        manager: 'Manager',
+        artist: 'Artist',
+      };
+      if (role && roleLabels[role]) {
+        planEl.textContent = roleLabels[role];
+        planEl.className = role === 'admin'
+          ? 'text-xs text-indigo-300 font-semibold'
+          : role === 'manager'
+          ? 'text-xs text-yellow-300 font-semibold'
+          : 'text-xs text-green-400 font-semibold';
+      } else if (user.is_admin) {
+        planEl.textContent = 'Administrator';
+        planEl.className = 'text-xs text-indigo-300 font-semibold';
+      } else {
+        const plan = (user.subscription?.plan_name || 'Free').toLowerCase();
+        planEl.textContent = plan === 'premium' ? '✦ Premium' : 'Free';
+        planEl.className = plan === 'premium'
+          ? 'text-xs text-yellow-400 font-semibold'
+          : 'text-xs text-purple-400 font-medium';
+      }
+    }
     if (user.avatar_url && avatarInner) {
       avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
     }
 
-    // Show admin link for admin users
-    if (user.is_admin) {
+    // Show admin link for manager/admin
+    if (hasMinRole('manager') || user.is_admin) {
       const adminLink = document.getElementById('sidebar-admin-link') as HTMLElement;
       adminLink?.classList.remove('hidden');
       adminLink?.classList.add('flex');
+    }
+
+    // Show upload link for artist/admin (not manager unless also admin)
+    if (role === 'artist' || role === 'admin' || user.is_admin) {
+      const uploadLink = document.getElementById('sidebar-upload-link') as HTMLElement;
+      uploadLink?.classList.remove('hidden');
+      uploadLink?.classList.add('flex');
     }
 
     loadPlaylists();
