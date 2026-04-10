@@ -1,5 +1,7 @@
 # Astro Starter Kit: Basics
 
+hello 
+
 ```sh
 npm create astro@latest -- --template basics
 ```
