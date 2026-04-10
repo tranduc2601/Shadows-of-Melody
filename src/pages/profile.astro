@@ -113,7 +113,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               <div class="flex items-center gap-6 mt-3 text-sm">
                 <div>
                   <span class="font-bold text-white" id="profile-followers">0</span>
-                  <span class="text-gray-500 ml-1">followed</span>
+                  <span class="text-gray-500 ml-1">followers</span>
                 </div>
                 <div>
                   <span class="font-bold text-white" id="profile-following">0</span>
@@ -211,13 +211,21 @@ import PlayerBar from "../components/PlayerBar.astro";
                 <span class="material-symbols-outlined text-purple-400 text-[20px]">queue_music</span>
                 Playlists
               </h2>
-              <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">Xem tất cả</a>
+              <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">SEE ALL</a>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="user-playlists-grid">
               <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <!-- Toast notification -->
+      <div id="profile-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md whitespace-nowrap">
+          <span id="profile-toast-icon" class="material-symbols-outlined text-[18px]">info</span>
+          <span id="profile-toast-msg"></span>
         </div>
       </div>
 
@@ -239,6 +247,24 @@ import PlayerBar from "../components/PlayerBar.astro";
 <script>
   import { apiFetch, getUserRole, setAuth, getToken, getUser } from '../lib/api.js';
 
+  // ── Toast helper ─────────────────────────────────────────────────────────────
+  let _toastTimer: ReturnType<typeof setTimeout> | null = null;
+  function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
+    const toast   = document.getElementById('profile-toast')!;
+    const msgEl   = document.getElementById('profile-toast-msg')!;
+    const iconEl  = document.getElementById('profile-toast-icon')!;
+    msgEl.textContent = msg;
+    iconEl.textContent = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+    iconEl.className = `material-symbols-outlined text-[18px] ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-blue-400'}`;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0');
+    }, 3000);
+  }
+
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
     'linear-gradient(135deg,#f43f5e,#f97316)',
@@ -256,49 +282,66 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (el) el.textContent = text;
   }
 
+  function applyUserInfo(user: any) {
+    const name = user.full_name || user.username || '—';
+    const plan = user.subscription?.subscription_type || 'Free';
+    setText('sidebar-name', name);
+    setText('sidebar-plan', plan);
+    setText('profile-name', name);
+    setText('profile-plan', plan.charAt(0).toUpperCase() + plan.slice(1));
+    setText('profile-handle', `@${user.username || '—'}`);
+    setText('profile-bio', user.bio || 'Không có mô tả.');
+    const avatarInner = document.getElementById('profile-avatar-inner');
+    if (avatarInner && user.avatar_url) {
+      avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+    }
+  }
+
   async function loadProfile() {
     const token = localStorage.getItem('auth_token');
     if (!token) {
       setText('profile-name', 'Chưa đăng nhập');
       document.getElementById('recent-tracks')!.innerHTML =
         '<p class="text-center py-4"><a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a> để xem hồ sơ.</p>';
+      document.getElementById('top-artists')!.innerHTML = '';
+      document.getElementById('user-playlists-grid')!.innerHTML = '';
       return;
     }
 
+    // Immediately show cached user data, then refresh from API
+    const cached = getUser();
+    if (cached) applyUserInfo(cached);
+
     try {
       const { data: user } = await apiFetch('/auth/me');
+      applyUserInfo(user);
 
-      setText('sidebar-name', user.full_name || user.username);
-      setText('sidebar-plan', user.subscription?.subscription_type || 'free');
-      setText('profile-name', user.full_name || user.username);
-      setText('profile-plan', user.subscription?.subscription_type || 'free');
-      setText('profile-handle', `@${user.username}`);
-      setText('profile-bio', user.bio || 'Không có mô tả.');
-      setText('profile-followers', '0');
-      setText('profile-following', '0');
-      setText('profile-liked', '0');
-
-      // Show avatar
-      const avatarInner = document.getElementById('profile-avatar-inner');
-      if (avatarInner && user.avatar_url) {
-        avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+      // Load liked count
+      try {
+        const { data: liked } = await apiFetch('/favorites?limit=1');
+        if (liked !== undefined) setText('profile-liked', liked.length?.toString() || '0');
+      } catch {}
+    } catch (err: any) {
+      if (!cached) {
+        setText('profile-name', 'Không thể tải thông tin');
       }
-    } catch {}
+    }
 
     // Load history
+    const tracksEl = document.getElementById('recent-tracks')!;
     try {
       const { data: history } = await apiFetch('/history?limit=5');
-      const tracksEl = document.getElementById('recent-tracks')!;
       if (!history?.length) {
-        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Chưa có lịch sử nghe.</p>';
+        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs played yet.</p>';
       } else {
         tracksEl.innerHTML = history.map((h: any, i: number) => {
-          const s = h.song || h;
+          // History rows include song fields directly (title, cover_url, artist_names)
+          const s = h.song ?? h;
           const cover = s.cover_url
             ? `<img src="${s.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md" alt=""/>`
             : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md" style="background:${grad(s.id || i + 1)}"></div>`;
           return `
-            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
+            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer history-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
               <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0 group-hover:hidden">${i + 1}</span>
               <span class="material-symbols-outlined text-purple-400 text-[20px] hidden group-hover:block shrink-0">play_arrow</span>
               ${cover}
@@ -306,32 +349,28 @@ import PlayerBar from "../components/PlayerBar.astro";
                 <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${s.title || '—'}</p>
                 <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
               </div>
-              <button class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white">
-                <span class="material-symbols-outlined text-[20px]">more_horiz</span>
-              </button>
+              <span class="text-xs text-gray-600 hidden group-hover:block">
+                ${h.played_at ? new Date(h.played_at).toLocaleDateString('vi-VN') : ''}
+              </span>
             </div>`;
         }).join('');
+
+        // Play history rows on click
+        tracksEl.addEventListener('click', (e) => {
+          const row = (e.target as HTMLElement).closest('.history-row') as HTMLElement | null;
+          if (!row?.dataset.song) return;
+          try {
+            const song = JSON.parse(decodeURIComponent(row.dataset.song));
+            const allRows = Array.from(tracksEl.querySelectorAll('.history-row'));
+            const queue = allRows.map(r => {
+              try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
+            }).filter(Boolean);
+            import('../lib/player.js').then(({ player }) => player.playSong(song, queue));
+          } catch {}
+        }, { once: true });
       }
     } catch {
-      try {
-        // Fallback: show recent songs
-        const { data: songs } = await apiFetch('/songs?limit=5');
-        const tracksEl = document.getElementById('recent-tracks')!;
-        tracksEl.innerHTML = (songs || []).map((s: any, i: number) => {
-          const cover = s.cover_url
-            ? `<img src="${s.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md" alt=""/>`
-            : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
-          return `
-            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer">
-              <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0">${i + 1}</span>
-              ${cover}
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold text-gray-100 group-hover:text-purple-400 truncate text-sm">${s.title}</p>
-                <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
-              </div>
-            </div>`;
-        }).join('');
-      } catch {}
+      tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs played yet.</p>';
     }
 
     // Load artists
@@ -367,7 +406,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             <p class="text-xs text-gray-500 mt-0.5">${pl.description || 'Playlist'}</p>
           </a>`).join('');
       } else {
-        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Chưa có playlist.</p>';
+        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No playlists available.</p>';
       }
     } catch {}
   }
@@ -436,7 +475,8 @@ import PlayerBar from "../components/PlayerBar.astro";
     } catch {}
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
-    window.location.href = '/login';
+    showToast('You have been logged out.', 'info');
+    setTimeout(() => { window.location.href = '/login'; }, 1200);
   });
 
   // ── Artist request button ──────────────────────────────────────────────────

@@ -139,49 +139,21 @@ const categories = [
 
           <!-- Profile Info -->
           <div class="bg-white/3 border border-white/5 rounded-3xl p-6 mb-5">
-            <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-5">Thông tin cá nhân</h3>
+            <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-5">Personal Information</h3>
             <div class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="flex flex-col gap-1.5">
-                  <label for="display-name" class="text-sm font-medium text-gray-400">Tên hiển thị</label>
-                  <input
-                    id="display-name"
-                    type="text"
-                    value="Duy Ho"
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder-gray-600"
-                  />
-                </div>
-                <div class="flex flex-col gap-1.5">
-                  <label for="username" class="text-sm font-medium text-gray-400">Tên người dùng</label>
-                  <input
-                    id="username"
-                    type="text"
-                    value="duyho"
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder-gray-600"
-                  />
-                </div>
-              </div>
               <div class="flex flex-col gap-1.5">
-                <label for="email" class="text-sm font-medium text-gray-400">Email</label>
+                <label for="username" class="text-sm font-medium text-gray-400">Username</label>
                 <input
-                  id="email"
-                  type="email"
-                  value="duyho@example.com"
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  maxlength="32"
                   class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder-gray-600"
                 />
               </div>
-              <div class="flex flex-col gap-1.5">
-                <label for="bio" class="text-sm font-medium text-gray-400">Giới thiệu</label>
-                <textarea
-                  id="bio"
-                  rows="3"
-                  placeholder="Nói điều gì đó về bản thân..."
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all resize-none placeholder-gray-600"
-                >Music lover · Synthwave enthusiast · Night owl 🌙</textarea>
-              </div>
               <div class="flex justify-end">
                 <button id="save-profile-btn" type="button" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-xl py-2.5 px-6 font-semibold text-sm transition-all hover:scale-105 shadow-[0_4px_20px_rgba(168,85,247,0.3)]">
-                  Lưu thay đổi
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -305,6 +277,23 @@ const categories = [
             </div>
           </div>
 
+          <!-- Artist Access Request -->
+          <div id="artist-request-section" class="hidden bg-indigo-950/20 border border-indigo-500/15 rounded-3xl p-6 mb-5">
+            <h3 class="text-sm font-bold text-indigo-400 uppercase tracking-wider mb-1">🎤 Trở thành Nghệ Sĩ</h3>
+            <p class="text-xs text-gray-500 mb-4">Gửi yêu cầu để được phê duyệt tài khoản nghệ sĩ và tải nhạc lên nền tảng.</p>
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <div id="artist-request-status" class="text-sm text-gray-400 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-indigo-400">info</span>
+                Tài khoản của bạn chưa đăng ký làm nghệ sĩ.
+              </div>
+              <button id="settings-artist-request-btn" type="button"
+                class="flex items-center gap-2 px-5 py-2.5 bg-indigo-500/15 border border-indigo-500/30 hover:bg-indigo-500/25 text-indigo-300 rounded-xl font-semibold text-sm transition-all">
+                <span class="material-symbols-outlined text-[18px]">star</span>
+                <span id="settings-artist-label">Gửi yêu cầu</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Danger Zone -->
           <div class="bg-red-950/20 border border-red-500/10 rounded-3xl p-6">
             <h3 class="text-sm font-bold text-red-400 uppercase tracking-wider mb-5">Vùng nguy hiểm</h3>
@@ -335,23 +324,55 @@ const categories = [
   </style>
 
 <script>
-  import { apiFetch, getUser, setAuth, getToken, clearAuth } from '../lib/api.js';
+  import { apiFetch, getUser, setAuth, getToken, clearAuth, getUserRole, getCachedMe, setCachedMe, refreshMe } from '../lib/api.js';
+
+  // ── Toast helper ─────────────────────────────────────────────────────────────
+  let _toastTimer: ReturnType<typeof setTimeout> | null = null;
+  function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
+    let toast = document.getElementById('settings-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'settings-toast';
+      toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300';
+      toast.innerHTML = `<div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md whitespace-nowrap">
+        <span id="settings-toast-icon" class="material-symbols-outlined text-[18px]">info</span>
+        <span id="settings-toast-msg"></span>
+      </div>`;
+      document.body.appendChild(toast);
+    }
+    const msgEl  = document.getElementById('settings-toast-msg')!;
+    const iconEl = document.getElementById('settings-toast-icon')!;
+    msgEl.textContent  = msg;
+    iconEl.textContent = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+    iconEl.className   = `material-symbols-outlined text-[18px] ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-blue-400'}`;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => {
+      toast!.classList.remove('opacity-100');
+      toast!.classList.add('opacity-0');
+    }, 3000);
+  }
 
   // ── Load user data ─────────────────────────────────────────────────────────
+  function applySidebarCache(user: any) {
+    if (!user) return;
+    const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
+    if (sidebarName) sidebarName.textContent = user.full_name || user.username || '—';
+  }
+
   async function loadUser() {
     try {
-      const { data: user } = await apiFetch('/auth/me');
-      const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
-      if (sidebarName) sidebarName.textContent = user.username || '—';
+      // Paint cache first so sidebar doesn't flicker
+      applySidebarCache(getCachedMe());
 
-      const displayNameInput = document.getElementById('display-name') as HTMLInputElement;
-      const usernameInput    = document.getElementById('username') as HTMLInputElement;
-      const emailInput       = document.getElementById('email') as HTMLInputElement;
-      const bioTextarea      = document.getElementById('bio') as HTMLTextAreaElement;
-      if (displayNameInput) displayNameInput.value = user.username || '';
-      if (usernameInput)    usernameInput.value    = user.username || '';
-      if (emailInput)       emailInput.value       = user.email    || '';
-      if (bioTextarea)      bioTextarea.value      = user.bio      || '';
+      const { data: user } = await apiFetch('/auth/me');
+      setCachedMe(user);
+      const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
+      if (sidebarName) sidebarName.textContent = user.full_name || user.username || '—';
+
+      const usernameInput = document.getElementById('username') as HTMLInputElement;
+      if (usernameInput) usernameInput.value = user.username || '';
 
       if (user.avatar_url) setAvatarPreview(user.avatar_url);
     } catch {}
@@ -393,8 +414,9 @@ const categories = [
       setAvatarPreview(json.data.url);
       // Persist avatar_url immediately
       await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ avatar_url: json.data.url }) });
+      showToast('Avatar updated successfully.', 'success');
     } catch (err: any) {
-      alert('Không thể tải ảnh: ' + err.message);
+      showToast('Failed to upload avatar: ' + err.message, 'error');
     } finally {
       uploadBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">upload</span> Tải ảnh lên';
       uploadBtn.disabled = false;
@@ -411,26 +433,27 @@ const categories = [
 
   // ── Save profile ───────────────────────────────────────────────────────────
   document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
-    const btn = document.getElementById('save-profile-btn') as HTMLButtonElement;
+    const btn      = document.getElementById('save-profile-btn') as HTMLButtonElement;
     const username = (document.getElementById('username') as HTMLInputElement)?.value.trim();
-    const bio      = (document.getElementById('bio') as HTMLTextAreaElement)?.value.trim();
-    if (!username) { alert('Tên người dùng không được để trống.'); return; }
-    btn.textContent = 'Đang lưu...';
+    if (!username) { showToast('Username cannot be empty.', 'error'); return; }
+    if (username.length < 3) { showToast('Username must be at least 3 characters.', 'error'); return; }
+    if (username.length > 32) { showToast('Username must be at most 32 characters.', 'error'); return; }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) { showToast('Username can only contain letters, numbers, and underscores.', 'error'); return; }
+    btn.textContent = 'Saving...';
     btn.disabled = true;
     try {
       const { data: user } = await apiFetch('/auth/profile', {
         method: 'PUT',
-        body: JSON.stringify({ username, bio }),
+        body: JSON.stringify({ username }),
       });
       const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
       if (sidebarName) sidebarName.textContent = user.username;
-      const displayNameInput = document.getElementById('display-name') as HTMLInputElement;
-      if (displayNameInput) displayNameInput.value = user.username;
-      btn.textContent = 'Đã lưu!';
-      setTimeout(() => { btn.textContent = 'Lưu thay đổi'; btn.disabled = false; }, 1500);
+      showToast('Profile updated successfully.', 'success');
+      btn.textContent = 'Save Changes';
+      btn.disabled = false;
     } catch (err: any) {
-      alert('Không thể lưu: ' + err.message);
-      btn.textContent = 'Lưu thay đổi';
+      showToast('Failed to save profile: ' + err.message, 'error');
+      btn.textContent = 'Save Changes';
       btn.disabled = false;
     }
   });
@@ -440,28 +463,72 @@ const categories = [
     const current = (document.getElementById('current-password') as HTMLInputElement)?.value;
     const newPwd   = (document.getElementById('new-password') as HTMLInputElement)?.value;
     const confirm  = (document.getElementById('confirm-password') as HTMLInputElement)?.value;
-    if (!current || !newPwd) { alert('Vui lòng điền đầy đủ thông tin.'); return; }
-    if (newPwd !== confirm)  { alert('Mật khẩu mới không khớp.');         return; }
+    if (!current || !newPwd) { showToast('Please fill in all password fields.', 'error'); return; }
+    if (newPwd.length < 8)   { showToast('New password must be at least 8 characters.', 'error'); return; }
+    if (newPwd !== confirm)  { showToast('New passwords do not match.', 'error'); return; }
     const btn = document.getElementById('change-password-btn') as HTMLButtonElement;
-    btn.textContent = 'Đang đổi...';
+    btn.textContent = 'Changing...';
     btn.disabled = true;
     try {
       await apiFetch('/auth/profile', {
         method: 'PUT',
         body: JSON.stringify({ current_password: current, new_password: newPwd }),
       });
-      alert('Đổi mật khẩu thành công!');
+      showToast('Password changed successfully.', 'success');
       (document.getElementById('current-password') as HTMLInputElement).value = '';
       (document.getElementById('new-password') as HTMLInputElement).value = '';
       (document.getElementById('confirm-password') as HTMLInputElement).value = '';
     } catch (err: any) {
-      alert('Không thể đổi mật khẩu: ' + err.message);
+      showToast('Failed to change password: ' + err.message, 'error');
     } finally {
-      btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">lock_reset</span> Đổi mật khẩu';
+      btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">lock_reset</span> Change Password';
       btn.disabled = false;
     }
   });
 
   loadUser();
+
+  // ── Artist request (Account tab) ──────────────────────────────────────────
+  (async () => {
+    const role = getUserRole();
+    if (role !== 'user') return;
+
+    const section = document.getElementById('artist-request-section') as HTMLElement;
+    const btn     = document.getElementById('settings-artist-request-btn') as HTMLButtonElement;
+    const label   = document.getElementById('settings-artist-label') as HTMLElement;
+    const status  = document.getElementById('artist-request-status') as HTMLElement;
+    if (!section || !btn) return;
+
+    try {
+      const { data: req } = await apiFetch('/roles/my-request');
+      if (req?.status === 'approved') return; // already artist — skip
+      if (req?.status === 'pending') {
+        label.textContent = 'Đang chờ duyệt\u2026';
+        if (status) status.textContent = '\u23F3 Yêu cầu của bạn đang được xem xét.';
+        btn.disabled = true;
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+      } else if (req?.status === 'rejected') {
+        if (status) status.textContent = '\u274C Yêu cầu trước bị từ chối. Bạn có thể gửi lại.';
+      }
+    } catch {}
+
+    section.classList.remove('hidden');
+
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      label.textContent = 'Đang gửi\u2026';
+      try {
+        await apiFetch('/roles/request-artist', { method: 'POST' });
+        label.textContent = 'Đang chờ duyệt\u2026';
+        if (status) status.textContent = '\u23F3 Yêu cầu của bạn đang được xem xét.';
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+      } catch (err: any) {
+        label.textContent = 'Gửi yêu cầu';
+        btn.disabled = false;
+        if (status) status.textContent = '\u26A0\uFE0F ' + (err.message || 'Không thể gửi yêu cầu.');
+      }
+    });
+  })();
 </script>
 </MainLayout>

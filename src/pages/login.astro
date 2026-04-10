@@ -130,6 +130,24 @@ import MainLayout from "../layouts/MainLayout.astro";
 
 
 <script>
+  function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'fixed bottom-6 right-6 z-[999] flex flex-col gap-2 pointer-events-none';
+      document.body.appendChild(container);
+    }
+    const colors = { success: 'bg-green-500/20 border-green-500/40 text-green-300', error: 'bg-red-500/20 border-red-500/40 text-red-300', info: 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300' };
+    const icons  = { success: 'check_circle', error: 'error', info: 'info' };
+    const toast = document.createElement('div');
+    toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl shadow-2xl text-sm font-medium transition-all duration-300 translate-y-2 opacity-0 ${colors[type]}`;
+    toast.innerHTML = `<span class="material-symbols-outlined text-[18px] shrink-0">${icons[type]}</span><span>${msg}</span>`;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
+    setTimeout(() => { toast.classList.add('translate-y-2', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+  }
+
   const form    = document.getElementById('loginForm') as HTMLFormElement;
   const errDiv  = document.getElementById('loginError') as HTMLElement;
   const banner  = document.getElementById('sessionBanner') as HTMLElement;
@@ -171,16 +189,30 @@ import MainLayout from "../layouts/MainLayout.astro";
         body: JSON.stringify({ email, password }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Đăng nhập thất bại');
+      if (!res.ok) {
+        const msg = json.message || 'Login failed, try again!';
+        if (json.code === 'ACCOUNT_LOCKED') {
+          errDiv.textContent = msg;
+          errDiv.classList.remove('hidden');
+          showToast(msg, 'error');
+          btn.disabled = false;
+          btn.textContent = 'Login';
+          return;
+        }
+        throw new Error(msg);
+      }
 
       localStorage.setItem('auth_token', json.data.token);
       localStorage.setItem('auth_user', JSON.stringify(json.data));
-      window.location.href = '/';
+      localStorage.setItem('me_cache', JSON.stringify(json.data));
+      showToast('Login successful! Redirecting...', 'success');
+      setTimeout(() => { window.location.href = '/'; }, 800);
     } catch (err: any) {
       errDiv.textContent = err.message;
       errDiv.classList.remove('hidden');
+      showToast(err.message, 'error');
       btn.disabled = false;
-      btn.textContent = 'Đăng Nhập';
+      btn.textContent = 'Login';
     }
   });
 </script>

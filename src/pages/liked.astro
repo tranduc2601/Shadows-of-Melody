@@ -44,14 +44,15 @@ import PlayerBar from "../components/PlayerBar.astro";
       <div class="p-4 border-t border-white/5">
         <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
           <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0">
-            <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
-              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
-                <span class="material-symbols-outlined text-purple-400">person</span>
+            <div id="sidebar-avatar-wrap" class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
+              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
+                <img id="sidebar-avatar-img" src="" alt="" class="w-full h-full object-cover rounded-full hidden" />
+                <span id="sidebar-avatar-icon" class="material-symbols-outlined text-purple-400">person</span>
               </div>
             </div>
             <div class="min-w-0">
               <p id="sidebar-user-name" class="text-sm font-semibold text-white truncate">—</p>
-              <p class="text-xs text-purple-400 font-medium truncate">Premium</p>
+              <p id="sidebar-user-plan" class="text-xs text-purple-400 font-medium truncate">—</p>
             </div>
           </a>
           <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
@@ -93,18 +94,18 @@ import PlayerBar from "../components/PlayerBar.astro";
               <div class="flex items-center gap-2 text-sm text-gray-400 mt-1 flex-wrap">
                 <a href="/profile" id="hero-user-name" class="font-bold text-white hover:underline">—</a>
                 <span class="text-white/30" aria-hidden="true">·</span>
-                <span><span id="total-tracks">0</span> bài hát</span>
+                <span><span id="total-tracks">0</span> songs</span>
                 <span class="text-white/30" aria-hidden="true">·</span>
                 <span class="text-white/50" id="total-duration">—</span>
               </div>
               <div class="flex items-center gap-3 mt-4 flex-wrap">
-                <button type="button" class="bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(244,63,94,0.4)]">
+                <button id="btn-play-all" type="button" class="bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(244,63,94,0.4)]">
                   <span class="material-symbols-outlined text-[22px]">play_arrow</span>
-                  Phát tất cả
+                  Play All
                 </button>
-                <button type="button" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
+                <button id="btn-shuffle-play" type="button" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
                   <span class="material-symbols-outlined text-[18px]">shuffle</span>
-                  Phát ngẫu nhiên
+                  Shuffle Play
                 </button>
               </div>
             </div>
@@ -117,17 +118,46 @@ import PlayerBar from "../components/PlayerBar.astro";
           <div class="relative flex-1 max-w-xs">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]">search</span>
             <input
+              id="liked-search"
               type="text"
-              placeholder="Tìm trong Liked Songs..."
-              class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-600 rounded-full py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:bg-white/10 transition-all"
+              placeholder="Search in Liked Songs..."
+              class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-600 rounded-full py-2 pl-9 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:bg-white/10 transition-all"
             />
-          </div>
-          <div class="flex items-center gap-2 text-sm text-gray-500">
-            <span>Sắp xếp theo:</span>
-            <button type="button" class="flex items-center gap-1 text-gray-300 hover:text-white transition-colors font-medium">
-              Ngày thêm
-              <span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+            <button id="liked-search-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-[16px]">close</span>
             </button>
+          </div>
+          <div class="relative flex items-center gap-2 text-sm text-gray-500">
+            <span>Sort by:</span>
+            <div class="relative">
+              <button id="liked-sort-btn" type="button" class="flex items-center gap-1 text-gray-300 hover:text-white transition-colors font-medium px-2 py-1 rounded-lg hover:bg-white/5">
+                <span id="liked-sort-label">Date Added</span>
+                <span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+              </button>
+              <div id="liked-sort-menu" class="hidden absolute right-0 top-full mt-1 bg-[#0e1835] border border-white/10 rounded-xl shadow-2xl z-50 min-w-[160px] py-1 backdrop-blur-xl">
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_desc">
+                  <span class="material-symbols-outlined text-[15px] text-purple-400 sort-check" data-for="date_desc">check</span>Date Added ↓
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_asc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="date_asc">check</span>Date Added ↑
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_asc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="title_asc">check</span>Title A–Z
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_desc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="title_desc">check</span>Title Z–A
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="artist_asc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="artist_asc">check</span>Artist A–Z
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_asc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="duration_asc">check</span>Duration ↑
+                </button>
+                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_desc">
+                  <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="duration_desc">check</span>Duration ↓
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -138,9 +168,9 @@ import PlayerBar from "../components/PlayerBar.astro";
               <thead>
                 <tr class="text-gray-500 border-b border-white/5">
                   <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Tên bài</th>
+                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Title</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden lg:table-cell uppercase tracking-wider">Album</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-8">Ngày thêm</th>
+                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-8">Date Added</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-16 text-center">
                     <span class="material-symbols-outlined text-[18px]">schedule</span>
                   </th>
@@ -153,6 +183,14 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </div>
 
+      </div>
+
+      <!-- Toast notification -->
+      <div id="liked-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md">
+          <span class="material-symbols-outlined text-rose-400 text-[18px]">info</span>
+          <span id="liked-toast-msg"></span>
+        </div>
       </div>
 
       <!-- Now Playing Bar -->
@@ -171,15 +209,43 @@ import PlayerBar from "../components/PlayerBar.astro";
   </style>
 
 <script>
-  import { apiFetch, formatDuration, getUser } from '../lib/api.js';
+  import { apiFetch, formatDuration, getUser, getCachedMe, setCachedMe, refreshMe } from '../lib/api.js';
+  import { player } from '../lib/player.js';
 
-  // Update user info
-  const user = getUser();
-  if (user) {
+  // ── Populate sidebar + hero — cache first, then refresh silently ──────────
+  function applySidebarUser(me: any) {
+    if (!me) return;
     const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
+    const sidebarPlan = document.getElementById('sidebar-user-plan') as HTMLElement;
+    const avatarIcon  = document.getElementById('sidebar-avatar-icon') as HTMLElement;
+    const avatarImg   = document.getElementById('sidebar-avatar-img') as HTMLImageElement;
     const heroName    = document.getElementById('hero-user-name') as HTMLElement;
-    if (sidebarName) sidebarName.textContent = user.username || '—';
-    if (heroName)    heroName.textContent    = user.username || '—';
+
+    if (sidebarName) sidebarName.textContent = me.full_name || me.username || '—';
+    if (heroName)    heroName.textContent    = me.full_name || me.username || '—';
+
+    if (sidebarPlan) {
+      const plan = me.subscription?.plan;
+      sidebarPlan.textContent = plan === 'premium' ? 'Premium' : plan === 'student' ? 'Student' : 'Free';
+      sidebarPlan.className = `text-xs font-medium truncate ${plan && plan !== 'free' ? 'text-purple-400' : 'text-gray-500'}`;
+    }
+
+    if (me.avatar_url && avatarImg && avatarIcon) {
+      avatarImg.src = me.avatar_url;
+      avatarImg.classList.remove('hidden');
+      avatarIcon.style.display = 'none';
+    }
+  }
+
+  // 1) Paint from cache immediately (no flicker)
+  const _cached = getCachedMe();
+  if (_cached) applySidebarUser(_cached);
+
+  // 2) Refresh from API in background, update cache + UI if data changed
+  if (localStorage.getItem('auth_token')) {
+    refreshMe().then((fresh) => {
+      if (fresh) applySidebarUser(fresh);
+    });
   }
 
   const GRADS = [
@@ -193,6 +259,103 @@ import PlayerBar from "../components/PlayerBar.astro";
     'linear-gradient(135deg,#fb923c,#fb7185)',
   ];
   const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
+
+  // ── Module-level tracks list and display state ───────────────────────────
+  let _tracks: any[] = [];
+  let _searchQuery: string = '';
+  let _sortKey: string = 'date_desc';
+
+  const SORT_LABELS: Record<string, string> = {
+    date_desc:    'Date Added',
+    date_asc:     'Date Added ↑',
+    title_asc:    'Title A–Z',
+    title_desc:   'Title Z–A',
+    artist_asc:   'Artist A–Z',
+    duration_asc: 'Duration ↑',
+    duration_desc:'Duration ↓',
+  };
+
+  function getDisplayTracks(): any[] {
+    let list = [..._tracks];
+    // Filter
+    if (_searchQuery) {
+      const q = _searchQuery.toLowerCase();
+      list = list.filter((t: any) =>
+        t.title.toLowerCase().includes(q) ||
+        (t.artist_names || '').toLowerCase().includes(q) ||
+        (t.album_title  || '').toLowerCase().includes(q)
+      );
+    }
+    // Sort
+    list.sort((a: any, b: any) => {
+      switch (_sortKey) {
+        case 'date_desc': return new Date(b.favorited_at || b.added_at || 0).getTime() - new Date(a.favorited_at || a.added_at || 0).getTime();
+        case 'date_asc':  return new Date(a.favorited_at || a.added_at || 0).getTime() - new Date(b.favorited_at || b.added_at || 0).getTime();
+        case 'title_asc': return a.title.localeCompare(b.title);
+        case 'title_desc':return b.title.localeCompare(a.title);
+        case 'artist_asc':return (a.artist_names || '').localeCompare(b.artist_names || '');
+        case 'duration_asc': return (a.duration || 0) - (b.duration || 0);
+        case 'duration_desc':return (b.duration || 0) - (a.duration || 0);
+        default: return 0;
+      }
+    });
+    return list;
+  }
+
+  function updateStats() {
+    (document.getElementById('total-tracks') as HTMLElement).textContent = String(_tracks.length);
+    const totalSec = _tracks.reduce((s: number, t: any) => s + (parseInt(t.duration) || 0), 0);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    (document.getElementById('total-duration') as HTMLElement).textContent =
+      totalSec === 0 ? '—' : h > 0 ? `${h} hr ${m} min` : `${m} min`;
+  }
+
+  function renderTracks() {
+    const display = getDisplayTracks();
+    const tbody = document.getElementById('liked-tbody')!;
+    if (!_tracks.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">No liked songs.</td></tr>';
+      return;
+    }
+    if (!display.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">Không tìm thấy bài hát nào.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = display.map((t: any, i: number) => {
+      const cover = t.cover_url
+        ? `<img src="${t.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(t.id)}"></div>`;
+      const added = (t.favorited_at || t.added_at)
+        ? new Date(t.favorited_at || t.added_at).toLocaleDateString('en-US') : '—';
+      return `
+        <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-id="${t.id}">
+          <td class="px-4 py-3 text-center rounded-l-xl pointer-events-none">
+            <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
+            <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]">play_arrow</span>
+          </td>
+          <td class="px-4 py-3 pointer-events-none">
+            <div class="flex items-center gap-4">
+              ${cover}
+              <div class="min-w-0">
+                <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${t.title}</p>
+                <p class="text-xs text-gray-500 truncate mt-0.5">${t.artist_names || 'Unknown'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell truncate max-w-40 pointer-events-none">${t.album_title || '—'}</td>
+          <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-8 whitespace-nowrap pointer-events-none">${added}</td>
+          <td class="px-4 py-3 rounded-r-xl">
+            <div class="flex items-center justify-center gap-3">
+              <button class="unlike-btn opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-300 transition-all" data-id="${t.id}" title="Bỏ yêu thích">
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">favorite</span>
+              </button>
+              <span class="text-sm text-gray-500 pointer-events-none">${formatDuration(t.duration)}</span>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
 
   async function loadFavorites() {
     const tbody = document.getElementById('liked-tbody')!;
@@ -208,59 +371,151 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     try {
       const { data: tracks } = await apiFetch('/favorites');
-      if (!tracks?.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">Chưa có bài hát yêu thích.</td></tr>';
-        (document.getElementById('total-tracks') as HTMLElement).textContent = '0';
-        return;
-      }
-
-      (document.getElementById('total-tracks') as HTMLElement).textContent = String(tracks.length);
-      const totalSec = tracks.reduce((s: number, t: any) => s + (parseInt(t.duration) || 0), 0);
-      const h = Math.floor(totalSec / 3600);
-      const m = Math.floor((totalSec % 3600) / 60);
-      (document.getElementById('total-duration') as HTMLElement).textContent = h > 0 ? `${h} giờ ${m} phút` : `${m} phút`;
-
-      tbody.innerHTML = tracks.map((t: any, i: number) => {
-        const cover = t.cover_url
-          ? `<img src="${t.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
-          : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(t.id)}"></div>`;
-        const added = t.added_at ? new Date(t.added_at).toLocaleDateString('vi-VN') : '—';
-        return `
-          <tr class="group hover:bg-white/5 transition-colors cursor-pointer">
-            <td class="px-4 py-3 text-center rounded-l-xl">
-              <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]">play_arrow</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-4">
-                ${cover}
-                <div class="min-w-0">
-                  <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${t.title}</p>
-                  <p class="text-xs text-gray-500 truncate mt-0.5">${t.artist_names || 'Unknown'}</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell truncate max-w-40">${t.album_title || '—'}</td>
-            <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-8 whitespace-nowrap">${added}</td>
-            <td class="px-4 py-3 rounded-r-xl">
-              <div class="flex items-center justify-center gap-3">
-                <button class="opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-300">
-                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">favorite</span>
-                </button>
-                <span class="text-sm text-gray-500">${formatDuration(t.duration)}</span>
-                <button class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white">
-                  <span class="material-symbols-outlined text-[18px]">more_horiz</span>
-                </button>
-              </div>
-            </td>
-          </tr>`;
-      }).join('');
+      _tracks = tracks || [];
+      updateStats();
+      renderTracks();
     } catch (err) {
       tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-red-400">Không thể tải dữ liệu.</td></tr>';
     }
   }
 
+  // ── Event delegation: play row click ─────────────────────────────────────
+  document.getElementById('liked-tbody')!.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+
+    // Unlike button
+    const unlikeBtn = target.closest('.unlike-btn') as HTMLElement | null;
+    if (unlikeBtn) {
+      e.stopPropagation();
+      const songId = unlikeBtn.dataset.id;
+      if (!songId) return;
+      unlikeBtn.style.opacity = '0.4';
+      unlikeBtn.style.pointerEvents = 'none';
+      try {
+        await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
+        _tracks = _tracks.filter((t: any) => String(t.id) !== songId);
+        updateStats();
+        renderTracks();
+        window.dispatchEvent(new CustomEvent('favorites:changed', {
+          detail: { songId: Number(songId), isFavorite: false },
+        }));
+      } catch {
+        unlikeBtn.style.opacity = '';
+        unlikeBtn.style.pointerEvents = '';
+      }
+      return;
+    }
+
+    // Row click → play song
+    const row = target.closest('.song-row') as HTMLElement | null;
+    if (row && _tracks.length) {
+      const songId = Number(row.dataset.id);
+      const song = _tracks.find((t: any) => t.id === songId);
+      if (song) player.playSong(song, _tracks);
+    }
+  });
+
+  // ── Toast helper ─────────────────────────────────────────────────────────
+  let _toastTimer: ReturnType<typeof setTimeout> | null = null;
+  function showToast(msg: string) {
+    const toast = document.getElementById('liked-toast')!;
+    const msgEl = document.getElementById('liked-toast-msg')!;
+    msgEl.textContent = msg;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0');
+    }, 3000);
+  }
+
+  // ── Fisher-Yates shuffle ──────────────────────────────────────────────────
+  function shuffleArray<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ── Play All button ───────────────────────────────────────────────────────
+  document.getElementById('btn-play-all')?.addEventListener('click', () => {
+    if (!_tracks.length) {
+      showToast('Bạn chưa có bài hát yêu thích nào để phát.');
+      return;
+    }
+    // Play in order; disable shuffle if it was on
+    if (player.shuffle) player.toggleShuffle();
+    player.playSong(_tracks[0], _tracks);
+  });
+
+  // ── Shuffle Play button ───────────────────────────────────────────────────
+  document.getElementById('btn-shuffle-play')?.addEventListener('click', () => {
+    if (!_tracks.length) {
+      showToast('Bạn chưa có bài hát yêu thích nào để phát.');
+      return;
+    }
+    // Pre-shuffle the queue so player cycles through all songs without repeats
+    const shuffled = shuffleArray(_tracks);
+    player.playSong(shuffled[0], shuffled);
+  });
+
+  // ── Refresh when a favorite changes in another component ─────────────────
+  window.addEventListener('favorites:changed', (e: any) => {
+    const { songId, isFavorite } = e.detail;
+    if (!isFavorite) {
+      _tracks = _tracks.filter((t: any) => t.id !== songId);
+      updateStats();
+      renderTracks();
+    }
+  });
+
   loadFavorites();
+
+  // ── Search ────────────────────────────────────────────────────────────────
+  const searchInput = document.getElementById('liked-search') as HTMLInputElement;
+  const searchClear = document.getElementById('liked-search-clear') as HTMLElement;
+
+  searchInput?.addEventListener('input', () => {
+    _searchQuery = searchInput.value.trim();
+    searchClear?.classList.toggle('hidden', !_searchQuery);
+    renderTracks();
+  });
+
+  searchClear?.addEventListener('click', () => {
+    searchInput.value = '';
+    _searchQuery = '';
+    searchClear.classList.add('hidden');
+    renderTracks();
+    searchInput.focus();
+  });
+
+  // ── Sort dropdown ─────────────────────────────────────────────────────────
+  const sortBtn   = document.getElementById('liked-sort-btn') as HTMLButtonElement;
+  const sortMenu  = document.getElementById('liked-sort-menu') as HTMLElement;
+  const sortLabel = document.getElementById('liked-sort-label') as HTMLElement;
+
+  sortBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sortMenu?.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', () => sortMenu?.classList.add('hidden'));
+
+  document.querySelectorAll<HTMLElement>('.liked-sort-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      _sortKey = btn.dataset.sort!;
+      if (sortLabel) sortLabel.textContent = SORT_LABELS[_sortKey] ?? _sortKey;
+      // Update checkmarks
+      document.querySelectorAll<HTMLElement>('.sort-check').forEach((icon) => {
+        icon.style.color = icon.dataset.for === _sortKey ? 'rgb(192 132 252)' : 'transparent';
+      });
+      sortMenu?.classList.add('hidden');
+      renderTracks();
+    });
+  });
 </script>
 
 </MainLayout>

@@ -12,7 +12,7 @@
       <span id="pb-title" class="font-bold text-white text-[15px] truncate">No Music Playing</span>
       <span id="pb-artist" class="text-xs text-gray-400 truncate mt-0.5">-</span>
     </div>
-    <button id="pb-fav" type="button" aria-label="YÃªu thÃ­ch" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
+    <button id="pb-fav" type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
       <span class="material-symbols-outlined">favorite_border</span>
     </button>
   </div>
@@ -20,19 +20,19 @@
   <!-- Primary Controls -->
   <div class="flex-1 flex flex-col items-center max-w-2xl px-8">
     <div class="flex items-center gap-6 mb-1.5">
-      <button id="pb-shuffle" type="button" aria-label="Ngáº«u nhiÃªn" class="text-gray-500 hover:text-white transition-colors">
+      <button id="pb-shuffle" type="button" aria-label="Ngẫu nhiên" class="text-gray-500 hover:text-white transition-colors">
         <span class="material-symbols-outlined text-xl">shuffle</span>
       </button>
-      <button id="pb-prev" type="button" aria-label="TrÆ°á»›c" class="text-gray-400 hover:text-white transition-colors">
+      <button id="pb-prev" type="button" aria-label="Trước" class="text-gray-400 hover:text-white transition-colors">
         <span class="material-symbols-outlined text-2xl">skip_previous</span>
       </button>
-      <button id="pb-play" type="button" aria-label="PhÃ¡t / Dá»«ng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+      <button id="pb-play" type="button" aria-label="Phát / Dừng" class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
         <span class="material-symbols-outlined">play_arrow</span>
       </button>
-      <button id="pb-next" type="button" aria-label="Tiáº¿p theo" class="text-gray-400 hover:text-white transition-colors">
+      <button id="pb-next" type="button" aria-label="Tiếp theo" class="text-gray-400 hover:text-white transition-colors">
         <span class="material-symbols-outlined text-2xl">skip_next</span>
       </button>
-      <button id="pb-repeat" type="button" aria-label="Láº·p láº¡i" class="text-gray-500 hover:text-white transition-colors relative">
+      <button id="pb-repeat" type="button" aria-label="Lặp lại" class="text-gray-500 hover:text-white transition-colors relative">
         <span class="material-symbols-outlined text-xl">repeat</span>
         <span id="pb-repeat-dot" class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-current opacity-0"></span>
       </button>
@@ -138,6 +138,9 @@
   }
 
   window.addEventListener('beforeunload', () => {
+    // Save player state for cross-page persistence
+    player.saveState();
+
     if (!_sessionSongId || !_sessionStart) return;
     const token = localStorage.getItem('auth_token');
     if (!token) return;
@@ -151,6 +154,9 @@
       keepalive: true,
     }).catch(() => {});
   });
+
+  // ── Restore player state from previous page ───────────────────────────────
+  player.restoreState();
 
   // ── Player events ─────────────────────────────────────────────────────────
   window.addEventListener('player:songchange', (e: any) => {
@@ -175,7 +181,7 @@
     _lastSec = -1;
     if (pbProgress) pbProgress.style.width = '0%';
     if (pbCurtime)  pbCurtime.textContent  = '0:00';
-    updatePlayIcon(true);
+    updatePlayIcon(player.isPlaying);
     startRaf();
     // Check favorite status from API
     setFavUI(false);

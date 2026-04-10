@@ -8,9 +8,7 @@ const server = app.listen(PORT, () => {
         Shadows of Melody Backend Server Started             
                                                               
    Server: http://localhost:${PORT}                           
-   Status: http://localhost:${PORT}/health                      
-   JWT Secret: ${config.jwt.secret.slice(0, 10)}...             
-   Database: ${config.db.host}:${config.db.port}                
+   Status: http://localhost:${PORT}/health                                            
    CORS Origin: ${config.cors.origin}                           
                                                                 
    API Endpoints:                                               

@@ -197,8 +197,8 @@ const libItems = [
       adminLink?.classList.add('flex');
     }
 
-    // Show upload link for artist/admin (not manager unless also admin)
-    if (role === 'artist' || role === 'admin' || user.is_admin) {
+    // Show upload link for artist only (not admin/manager)
+    if (role === 'artist') {
       const uploadLink = document.getElementById('sidebar-upload-link') as HTMLElement;
       uploadLink?.classList.remove('hidden');
       uploadLink?.classList.add('flex');

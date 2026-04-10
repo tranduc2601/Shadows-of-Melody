@@ -43,10 +43,10 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
 
         <div class="flex items-center gap-4 ml-4">
-          <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md relative group">
+          <!-- <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md relative group">
             <span class="material-symbols-outlined text-gray-300 group-hover:text-white transition-colors">notifications</span>
             <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]"></span>
-          </button>
+          </button> -->
         </div>
       </header>
 
@@ -101,7 +101,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                   Trending Now
                </h2>
-               <button class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">See All</button>
+               <button id="trending-see-all" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">See All</button>
             </div>
 
             <div class="bg-white/2 border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
@@ -214,48 +214,68 @@ import PlayerBar from "../components/PlayerBar.astro";
   ];
 
   async function loadHome() {
-    // Trending songs
+    // Trending songs — top 3 by plays, see all on button click
     const tbody = document.getElementById('trending-tbody');
+    const seeAllBtn = document.getElementById('trending-see-all') as HTMLButtonElement;
+    let _allSongs: any[] = [];
+    let _showingAll = false;
+
+    function renderTrendingRows(songs: any[]) {
+      if (!tbody) return;
+      tbody.innerHTML = songs.map((s: any, i: number) => {
+        const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+        const cover = s.cover_url
+          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover" alt=""/>`
+          : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0" style="background:${grad}"></div>`;
+        return `
+          <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
+            <td class="px-4 py-3 text-center rounded-l-xl">
+              <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
+              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block animate-pulse">play_arrow</span>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-4">
+                ${cover}
+                <div class="min-w-0">
+                  <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-[15px]">${s.title}</p>
+                  <p class="text-xs text-gray-400 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium">${formatCount(s.plays_count)}</td>
+            <td class="px-4 py-3 text-sm text-gray-400 text-center">${formatDuration(s.duration)}</td>
+            <td class="px-4 py-3 rounded-r-xl">
+              <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 transition-all opacity-0 group-hover:opacity-100"
+                      data-id="${s.id}" data-liked="false" title="Yêu thích">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
+              </button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
     try {
-      const { data: songs } = await apiFetch('/songs?limit=10');
+      const { data: songs } = await apiFetch('/songs?limit=50');
       if (tbody) {
         if (!songs?.length) {
-          tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
         } else {
-          tbody.innerHTML = songs.map((s: any, i: number) => {
-            const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-            const cover = s.cover_url
-              ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover" alt=""/>`
-              : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0" style="background:${grad}"></div>`;
-            return `
-              <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-                <td class="px-4 py-3 text-center rounded-l-xl">
-                  <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
-                  <span class="material-symbols-outlined text-purple-400 hidden group-hover:block animate-pulse">play_arrow</span>
-                </td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-4">
-                    ${cover}
-                    <div class="min-w-0">
-                      <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-[15px]">${s.title}</p>
-                      <p class="text-xs text-gray-400 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium">${formatCount(s.plays_count)}</td>
-                <td class="px-4 py-3 text-sm text-gray-400 text-center">${formatDuration(s.duration)}</td>
-                <td class="px-4 py-3 rounded-r-xl">
-                  <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 transition-colors opacity-0 group-hover:opacity-100"
-                          data-id="${s.id}" data-liked="false" title="Yêu thích" onclick="event.stopPropagation()">
-                    <span class="material-symbols-outlined text-[20px]">favorite_border</span>
-                  </button>
-                </td>
-              </tr>`;
-          }).join('');
+          // Sort descending by plays_count, keep top 3 initially
+          _allSongs = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
+          renderTrendingRows(_allSongs.slice(0, 3));
+          // Wire See All toggle
+          if (seeAllBtn) {
+            seeAllBtn.addEventListener('click', () => {
+              _showingAll = !_showingAll;
+              renderTrendingRows(_showingAll ? _allSongs : _allSongs.slice(0, 3));
+              seeAllBtn.textContent = _showingAll ? 'Show Less' : 'See All';
+              setTimeout(loadFavoriteStatuses, 100);
+            });
+          }
         }
       }
     } catch {
-      if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-red-400 text-sm">Cannot fetch data.</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Cannot fetch data.</td></tr>';
     }
 
     // Top artists
@@ -354,30 +374,55 @@ import PlayerBar from "../components/PlayerBar.astro";
   loadArtistMembers();
 
   // ── Favorites helpers ────────────────────────────────────────────────────────
+  const _likingInFlight = new Set<string>();
+
+  function setLikeState(btn: HTMLElement, liked: boolean) {
+    const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+    btn.dataset.liked = String(liked);
+    if (liked) {
+      if (icon) {
+        icon.textContent = 'favorite';
+        icon.style.fontVariationSettings = "'FILL' 1";
+      }
+      btn.classList.add('text-pink-500');
+      btn.classList.remove('text-gray-500', 'opacity-0');
+      btn.classList.add('!opacity-100');
+      btn.title = 'Bỏ yêu thích';
+    } else {
+      if (icon) {
+        icon.textContent = 'favorite_border';
+        icon.style.fontVariationSettings = "'FILL' 0";
+      }
+      btn.classList.remove('text-pink-500', '!opacity-100');
+      btn.classList.add('text-gray-500', 'opacity-0');
+      btn.title = 'Yêu thích';
+    }
+  }
+
   async function toggleLike(btn: HTMLElement) {
     const token = localStorage.getItem('auth_token');
     if (!token) { window.location.href = '/login'; return; }
-    const songId  = btn.dataset.id;
+    const songId  = btn.dataset.id!;
+    if (_likingInFlight.has(songId)) return;
+    _likingInFlight.add(songId);
     const isLiked = btn.dataset.liked === 'true';
-    const icon    = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+    // optimistic update
+    setLikeState(btn, !isLiked);
     try {
       if (isLiked) {
         await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
-        btn.dataset.liked = 'false';
-        if (icon) icon.textContent = 'favorite_border';
-        btn.classList.remove('text-pink-500');
-        btn.classList.add('text-gray-500');
       } else {
-        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: songId }) });
-        btn.dataset.liked = 'true';
-        if (icon) icon.textContent = 'favorite';
-        btn.classList.add('text-pink-500');
-        btn.classList.remove('text-gray-500');
+        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
       }
       window.dispatchEvent(new CustomEvent('favorites:changed', {
         detail: { songId: Number(songId), isFavorite: !isLiked },
       }));
-    } catch {}
+    } catch {
+      // revert on error
+      setLikeState(btn, isLiked);
+    } finally {
+      _likingInFlight.delete(songId);
+    }
   }
 
   // Pre-load favorite status for visible songs
@@ -390,13 +435,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       if (!songId) return;
       try {
         const res = await apiFetch(`/favorites/${songId}/is-favorite`);
-        if (res.data?.isFavorite) {
-          b.dataset.liked = 'true';
-          const icon = b.querySelector('.material-symbols-outlined') as HTMLElement;
-          if (icon) icon.textContent = 'favorite';
-          b.classList.add('text-pink-500');
-          b.classList.remove('text-gray-500');
-        }
+        setLikeState(b, !!res.data?.isFavorite);
       } catch {}
     });
   }
@@ -421,12 +460,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   window.addEventListener('favorites:changed', (e: any) => {
     const { songId, isFavorite } = e.detail;
     document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach((btn) => {
-      const b = btn as HTMLElement;
-      b.dataset.liked = String(isFavorite);
-      const icon = b.querySelector('.material-symbols-outlined') as HTMLElement;
-      if (icon) icon.textContent = isFavorite ? 'favorite' : 'favorite_border';
-      b.classList.toggle('text-pink-500', isFavorite);
-      b.classList.toggle('text-gray-500', !isFavorite);
+      setLikeState(btn as HTMLElement, isFavorite);
     });
   });
 

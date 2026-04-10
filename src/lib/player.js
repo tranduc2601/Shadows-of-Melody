@@ -9,6 +9,7 @@ export const player = (() => {
       get shuffle() { return false; }, get repeat() { return 'none'; },
       playSong() {}, toggle() {}, next() {}, prev() {},
       seek() {}, setVolume() {}, toggleShuffle() { return false; }, cycleRepeat() { return 'none'; },
+      saveState() {}, restoreState() {},
     };
   }
 
@@ -123,6 +124,62 @@ export const player = (() => {
     cycleRepeat() {
       _repeat = _repeat === 'none' ? 'all' : _repeat === 'all' ? 'one' : 'none';
       return _repeat;
+    },
+
+    /** Save current playback state to sessionStorage so it survives page navigation. */
+    saveState() {
+      if (!_current) return;
+      try {
+        sessionStorage.setItem('player_state', JSON.stringify({
+          song: _current,
+          queue: _queue,
+          queueIdx: _queueIdx,
+          currentTime: _audio?.currentTime || 0,
+          isPlaying: _audio ? !_audio.paused : false,
+          volume: _audio?.volume ?? 1,
+          shuffle: _shuffle,
+          repeat: _repeat,
+        }));
+      } catch {}
+    },
+
+    /** Restore saved playback state after a page navigation. */
+    restoreState() {
+      try {
+        const raw = sessionStorage.getItem('player_state');
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (!state?.song) return;
+        // Keep the saved state so a second call (e.g. from another module) doesn't double-restore
+        // Only clear after successfully starting playback
+        _current = state.song;
+        _queue = state.queue || [];
+        _queueIdx = state.queueIdx ?? -1;
+        _shuffle = state.shuffle ?? false;
+        _repeat = state.repeat ?? 'none';
+        const a = getAudio();
+        if (state.volume != null) a.volume = state.volume;
+        _loading = true;
+        a.src = `http://localhost:5000/api/stream/${state.song.id}`;
+        _loading = false;
+        // Seek to saved position once metadata is ready
+        const targetTime = state.currentTime || 0;
+        const doSeek = () => { if (targetTime > 0) a.currentTime = targetTime; };
+        if (isFinite(a.duration) && a.duration > 0) {
+          doSeek();
+        } else {
+          a.addEventListener('loadedmetadata', doSeek, { once: true });
+        }
+        sessionStorage.removeItem('player_state');
+        // Dispatch after current synchronous execution so PlayerBar event
+        // listeners are guaranteed to be registered before the event fires.
+        queueMicrotask(() => {
+          _dispatch('songchange');
+          if (state.isPlaying) {
+            a.play().catch(() => {});
+          }
+        });
+      } catch {}
     },
   };
 })();

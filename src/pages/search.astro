@@ -15,6 +15,14 @@ import PlayerBar from "../components/PlayerBar.astro";
 
       <!-- Search Header -->
       <header class="h-20 flex-shrink-0 flex items-center justify-between px-8 relative z-10 gap-4">
+        <!-- Back to categories button (visible only when category is active) -->
+        <button id="btnBackCategories"
+          class="hidden shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10
+                 text-gray-300 hover:text-white hover:bg-white/10 text-sm font-medium
+                 opacity-0 -translate-x-2 transition-all duration-200 ease-out">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span class="hidden sm:inline">Categories</span>
+        </button>
         <div class="relative flex-1 max-w-2xl group">
           <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors text-2xl">search</span>
           <input
@@ -26,10 +34,10 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
         <!-- Account info -->
         <div class="flex items-center gap-3 shrink-0">
-          <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all relative group">
+          <!-- <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all relative group">
             <span class="material-symbols-outlined text-gray-300 group-hover:text-white transition-colors">notifications</span>
             <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]"></span>
-          </button>
+          </button> -->
           <a href="/profile" id="search-user-avatar" class="hidden w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0 hover:opacity-90 transition-opacity">
             <div id="search-user-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
               <span class="material-symbols-outlined text-purple-400 text-sm">person</span>
@@ -123,6 +131,35 @@ import PlayerBar from "../components/PlayerBar.astro";
     const input = document.getElementById('searchInput') as HTMLInputElement;
     const browseSection = document.getElementById('browseSection');
     const searchResults = document.getElementById('searchResults');
+    const btnBack = document.getElementById('btnBackCategories') as HTMLButtonElement;
+
+    // ── Show/hide transitions ─────────────────────────────────────────────────
+    function showResults(isCategory = false) {
+      browseSection?.classList.add('hidden');
+      searchResults?.classList.remove('hidden');
+      if (isCategory) {
+        btnBack?.classList.remove('hidden');
+        btnBack?.classList.add('flex');
+        requestAnimationFrame(() => {
+          btnBack?.classList.remove('opacity-0', '-translate-x-2');
+        });
+      }
+    }
+
+    function showCategories() {
+      browseSection?.classList.remove('hidden');
+      searchResults?.classList.add('hidden');
+      btnBack?.classList.add('opacity-0', '-translate-x-2');
+      setTimeout(() => {
+        btnBack?.classList.add('hidden');
+        btnBack?.classList.remove('flex');
+      }, 200);
+    }
+
+    btnBack?.addEventListener('click', () => {
+      if (input) input.value = '';
+      showCategories();
+    });
 
     let allArtists: any[] = [];
     let allAlbums: any[] = [];
@@ -243,8 +280,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     input?.addEventListener('input', () => {
       const q = input.value.trim();
       if (q.length > 0) {
-        browseSection?.classList.add('hidden');
-        searchResults?.classList.remove('hidden');
+        showResults(false);
 
         clearTimeout(searchTimer);
         searchTimer = setTimeout(async () => {
@@ -261,8 +297,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           renderAlbums(allAlbums.filter(a => a.title.toLowerCase().includes(ql)));
         }, 300);
       } else {
-        browseSection?.classList.remove('hidden');
-        searchResults?.classList.add('hidden');
+        showCategories();
       }
     });
 
@@ -277,8 +312,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const genreName = card.dataset.genreName || 'Genre';
       if (!genreId) return;
 
-      browseSection?.classList.add('hidden');
-      searchResults?.classList.remove('hidden');
+      showResults(true);
 
       const songsEl = document.getElementById('search-songs');
       const artistsEl = document.getElementById('search-artists');
@@ -291,11 +325,25 @@ import PlayerBar from "../components/PlayerBar.astro";
       try {
         const { data: songs } = await apiFetch(`/songs/by-genre/${genreId}?limit=30`);
         // Show genre header
-        const header = document.querySelector('#tab-tat-ca h3') as HTMLElement;
-        if (header) header.innerHTML = `<span class="material-symbols-outlined text-purple-400">music_note</span>${genreName}`;
+        const headers = document.querySelectorAll<HTMLElement>('#tab-tat-ca h3');
+        if (headers[0]) headers[0].innerHTML = `<span class="material-symbols-outlined text-purple-400">music_note</span>${genreName}`;
         renderSongs(songs || []);
-        if (artistsEl) artistsEl.innerHTML = '';
-        if (albumsEl) albumsEl.innerHTML = '';
+
+        // Derive artists & albums from the songs in this genre
+        const genreSongs: any[] = songs || [];
+        const artistIdSet = new Set<number>();
+        genreSongs.forEach(s => {
+          if (s.artist_ids) {
+            String(s.artist_ids).split(',').forEach(id => { const n = parseInt(id.trim()); if (n) artistIdSet.add(n); });
+          }
+        });
+        const albumIdSet = new Set<number>();
+        genreSongs.forEach(s => { if (s.album_id) albumIdSet.add(Number(s.album_id)); });
+
+        const filteredArtists = allArtists.filter(a => artistIdSet.has(Number(a.id)));
+        const filteredAlbums  = allAlbums.filter(al => albumIdSet.has(Number(al.id)));
+        renderArtists(filteredArtists);
+        renderAlbums(filteredAlbums);
       } catch {
         renderSongs([]);
       }

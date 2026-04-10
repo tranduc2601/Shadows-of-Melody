@@ -120,6 +120,41 @@ export const reviewRequest = async (req, res) => {
                 `UPDATE users SET role = 'artist' WHERE id = $1`,
                 [request.user_id],
             );
+
+            // Create or update artist profile entry linked to this user
+            try {
+                const [userInfo] = await pool.query(
+                    `SELECT username, full_name, avatar_url FROM users WHERE id = $1`,
+                    [request.user_id],
+                );
+                if (userInfo.length > 0) {
+                    const u = userInfo[0];
+                    const artistName = u.full_name || u.username;
+                    // Check if an artist record already exists for this user_id
+                    const [existing] = await pool.query(
+                        `SELECT id FROM artists WHERE user_id = $1`,
+                        [request.user_id],
+                    );
+                    if (existing.length === 0) {
+                        // No existing record — insert a fresh one
+                        await pool.query(
+                            `INSERT INTO artists (name, image_url, user_id)
+                             VALUES ($1, $2, $3)`,
+                            [artistName, u.avatar_url || null, request.user_id],
+                        );
+                    } else {
+                        // Sync name & avatar in case they changed
+                        await pool.query(
+                            `UPDATE artists SET name = $1, image_url = $2, updated_at = NOW()
+                             WHERE user_id = $3`,
+                            [artistName, u.avatar_url || null, request.user_id],
+                        );
+                    }
+                }
+            } catch (innerErr) {
+                // Non-fatal: artist profile creation failed but role was already updated
+                console.warn('Could not create artist profile entry:', innerErr.message);
+            }
         }
 
         return res.json({

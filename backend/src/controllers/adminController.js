@@ -47,9 +47,9 @@ export const getUsers = async (req, res) => {
         const [totalRes, usersRes] = await Promise.all([
             pool.query('SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL'),
             pool.query(
-                `SELECT id, username, email, full_name, avatar_url, is_admin, role, is_verified, created_at
+                `SELECT id, username, email, full_name, avatar_url, is_admin, role, is_verified, is_locked, created_at
                  FROM users WHERE deleted_at IS NULL
-                 ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+                 ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
                 [limit, offset]
             ),
         ]);
@@ -106,25 +106,28 @@ export const getArtists = async (req, res) => {
         const limit = Math.min(100, parseInt(req.query.limit) || 10);
         const offset = (page - 1) * limit;
 
-        const [[{ total }], artists] = await Promise.all([
-            pool.query('SELECT COUNT(*) AS total FROM artists'),
-            pool.query(
-                `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count, a.user_id,
-                        u.username AS linked_username, u.role AS linked_user_role,
-                        COUNT(DISTINCT sa.song_id) AS songs_count
-                 FROM artists a
-                 LEFT JOIN users u ON a.user_id = u.id AND u.deleted_at IS NULL
-                 LEFT JOIN song_artists sa ON a.id = sa.artist_id
-                 GROUP BY a.id, u.username, u.role
-                 ORDER BY a.name ASC LIMIT $1 OFFSET $2`,
-                [limit, offset]
-            ),
-        ]);
+        // Fetch artists from artists table (including linked accounts)
+        // UNION with users who have role='artist' but no artist profile yet
+        const [artists] = await pool.query(
+            `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count, a.user_id,
+                    u.username AS linked_username, u.role AS linked_user_role,
+                    COUNT(DISTINCT sa.song_id)::int AS songs_count
+             FROM artists a
+             LEFT JOIN users u ON a.user_id = u.id AND u.deleted_at IS NULL
+             LEFT JOIN song_artists sa ON a.id = sa.artist_id
+             GROUP BY a.id, a.name, a.bio, a.image_url, a.followers_count, a.user_id, u.username, u.role
+             ORDER BY a.name ASC LIMIT $1 OFFSET $2`,
+            [limit, offset]
+        );
+
+        const [[{ total }]] = await pool.query(
+            'SELECT COUNT(*)::int AS total FROM artists'
+        );
 
         return res.json({
             success: true,
-            data: artists[0],
-            pagination: { page, limit, total },
+            data: artists,
+            pagination: { page, limit, total: total ?? 0 },
         });
     } catch (err) {
         console.error('Admin getArtists error:', err);
@@ -207,15 +210,64 @@ export const createGenre = async (req, res) => {
 export const getAlbums = async (req, res) => {
     try {
         const [albums] = await pool.query(
-            `SELECT al.id, al.title, al.cover_url, ar.name AS artist_name
+            `SELECT al.id, al.title, al.cover_url, al.release_date, al.description,
+                    ar.id AS artist_id, ar.name AS artist_name,
+                    COUNT(DISTINCT s.id)::int AS songs_count
              FROM albums al
              LEFT JOIN artists ar ON al.artist_id = ar.id
+             LEFT JOIN songs s ON s.album_id = al.id
+             GROUP BY al.id, ar.id, ar.name
              ORDER BY al.title ASC`
         );
         return res.json({ success: true, data: albums });
     } catch (err) {
         console.error('Admin getAlbums error:', err);
         return res.status(500).json({ success: false, message: 'Failed to load albums' });
+    }
+};
+
+// PATCH /api/admin/albums/:id
+export const updateAlbum = async (req, res) => {
+    const { id } = req.params;
+    const { title, artist_id, cover_url, release_date, description } = req.body;
+    if (!title?.trim()) {
+        return res.status(400).json({ success: false, message: 'Album title is required' });
+    }
+    try {
+        const [rows] = await pool.query(
+            `UPDATE albums
+             SET title = $1, artist_id = $2, cover_url = $3,
+                 release_date = $4, description = $5, updated_at = NOW()
+             WHERE id = $6
+             RETURNING id, title, artist_id, cover_url, release_date, description`,
+            [title.trim(), artist_id || null, cover_url || null,
+             release_date || null, description?.trim() || null, id]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Album not found' });
+        }
+        return res.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('Admin updateAlbum error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update album' });
+    }
+};
+
+// DELETE /api/admin/albums/:id
+export const deleteAlbum = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await pool.query(
+            `DELETE FROM albums WHERE id = $1 RETURNING id`,
+            [id]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Album not found' });
+        }
+        return res.json({ success: true, message: 'Album deleted successfully' });
+    } catch (err) {
+        console.error('Admin deleteAlbum error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to delete album' });
     }
 };
 
@@ -325,9 +377,42 @@ export const updateUserRole = async (req, res) => {
             [newRole, isAdmin, id],
         );
 
-        // Revoke the affected user's current token so they must re-login
-        // (best-effort: we can only revoke through Authorization header if the
-        //  user's token is passed in, so we flag it in the response instead)
+        // When promoting to artist, ensure an artists table entry exists
+        if (newRole === 'artist') {
+            try {
+                const [userInfo] = await pool.query(
+                    `SELECT username, full_name, avatar_url FROM users WHERE id = $1`,
+                    [id],
+                );
+                if (userInfo.length > 0) {
+                    const u = userInfo[0];
+                    const artistName = u.full_name || u.username;
+                    // Check if an artist record already exists for this user_id
+                    const [existing] = await pool.query(
+                        `SELECT id FROM artists WHERE user_id = $1`,
+                        [id],
+                    );
+                    if (existing.length === 0) {
+                        await pool.query(
+                            `INSERT INTO artists (name, image_url, user_id)
+                             VALUES ($1, $2, $3)`,
+                            [artistName, u.avatar_url || null, id],
+                        );
+                    } else {
+                        // Sync name & avatar in case they changed
+                        await pool.query(
+                            `UPDATE artists SET name = $1, image_url = $2, updated_at = NOW()
+                             WHERE user_id = $3`,
+                            [artistName, u.avatar_url || null, id],
+                        );
+                    }
+                }
+            } catch (innerErr) {
+                // Non-fatal: log but don't fail the role update
+                console.warn('Could not create artist profile for user:', innerErr.message);
+            }
+        }
+
         return res.json({
             success: true,
             message: `User role updated to "${newRole}". Their current token remains valid until expiry — they must re-login for the new role to take effect.`,
@@ -336,5 +421,156 @@ export const updateUserRole = async (req, res) => {
     } catch (err) {
         console.error('updateUserRole error:', err);
         return res.status(500).json({ success: false, message: 'Failed to update role' });
+    }
+};
+
+// PATCH /api/admin/users/:id/lock
+// Lock or unlock a user account (is_locked toggle)
+export const toggleLockUser = async (req, res) => {
+    const { id } = req.params;
+    if (parseInt(id) === req.user.id) {
+        return res.status(400).json({ success: false, message: 'Không thể khóa tài khoản của chính mình' });
+    }
+    try {
+        const [[user]] = await pool.query(
+            `SELECT id, username, is_locked FROM users WHERE id = $1 AND deleted_at IS NULL`, [id]
+        );
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+        const newLocked = !user.is_locked;
+        await pool.query(
+            `UPDATE users SET is_locked = $1, updated_at = NOW() WHERE id = $2`, [newLocked, id]
+        );
+        return res.json({
+            success: true,
+            data: { id: Number(id), is_locked: newLocked },
+            message: newLocked ? `Đã khóa tài khoản "${user.username}"` : `Đã mở khóa tài khoản "${user.username}"`,
+        });
+    } catch (err) {
+        console.error('toggleLockUser error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update account lock status' });
+    }
+};
+
+// PATCH /api/admin/songs/:id/status
+// Toggle status between 'published' and 'suppressed'
+// GET /api/admin/songs?limit=&offset=
+export const getAdminSongs = async (req, res) => {
+    const limit  = Math.min(200, parseInt(req.query.limit)  || 50);
+    const offset = Math.max(0,   parseInt(req.query.offset) || 0);
+    try {
+        const [songs] = await pool.query(
+            `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count, s.status,
+                    STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names,
+                    al.title AS album_title
+             FROM songs s
+             LEFT JOIN song_artists sa ON s.id = sa.song_id
+             LEFT JOIN artists a       ON sa.artist_id = a.id
+             LEFT JOIN albums al       ON s.album_id = al.id
+             GROUP BY s.id, al.title
+             ORDER BY s.created_at DESC
+             LIMIT $1 OFFSET $2`,
+            [limit, offset]
+        );
+        return res.json({ success: true, data: songs });
+    } catch (err) {
+        console.error('getAdminSongs error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load songs' });
+    }
+};
+
+export const toggleSongStatus = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const validStatuses = ['published', 'suppressed'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ success: false, message: `status must be one of: ${validStatuses.join(', ')}` });
+    }
+    try {
+        const [rows] = await pool.query(
+            `UPDATE songs SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING id, title, status`,
+            [status, id]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Song not found' });
+        }
+        return res.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('toggleSongStatus error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update song status' });
+    }
+};
+
+// GET /api/admin/albums/:id/songs
+// Returns songs in this album + all songs (for add/remove UI)
+export const getAlbumSongs = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [[albumRow]] = await pool.query(
+            `SELECT id, title FROM albums WHERE id = $1`, [id]
+        );
+        if (!albumRow) return res.status(404).json({ success: false, message: 'Album not found' });
+
+        const [albumSongs] = await pool.query(
+            `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count,
+                    STRING_AGG(DISTINCT a.name, ', ') AS artist_names
+             FROM songs s
+             LEFT JOIN song_artists sa ON sa.song_id = s.id
+             LEFT JOIN artists a ON a.id = sa.artist_id
+             WHERE s.album_id = $1
+             GROUP BY s.id
+             ORDER BY s.title ASC`,
+            [id]
+        );
+
+        const [allSongs] = await pool.query(
+            `SELECT s.id, s.title, s.duration, s.cover_url, s.album_id,
+                    STRING_AGG(DISTINCT a.name, ', ') AS artist_names,
+                    al.title AS album_title
+             FROM songs s
+             LEFT JOIN song_artists sa ON sa.song_id = s.id
+             LEFT JOIN artists a ON a.id = sa.artist_id
+             LEFT JOIN albums al ON al.id = s.album_id
+             GROUP BY s.id, al.title
+             ORDER BY s.title ASC
+             LIMIT 200`,
+            []
+        );
+
+        return res.json({
+            success: true,
+            data: {
+                album: albumRow,
+                album_songs: albumSongs,
+                all_songs: allSongs,
+            },
+        });
+    } catch (err) {
+        console.error('getAlbumSongs error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load album songs' });
+    }
+};
+
+// PATCH /api/admin/albums/:albumId/songs/:songId
+// Add or remove a song from the album (action: 'add' | 'remove')
+export const updateAlbumSong = async (req, res) => {
+    const { albumId, songId } = req.params;
+    const { action } = req.body; // 'add' | 'remove'
+    if (!['add', 'remove'].includes(action)) {
+        return res.status(400).json({ success: false, message: 'action must be "add" or "remove"' });
+    }
+    try {
+        const newAlbumId = action === 'add' ? parseInt(albumId, 10) : null;
+        const [rows] = await pool.query(
+            `UPDATE songs SET album_id = $1, updated_at = NOW() WHERE id = $2 RETURNING id, title, album_id`,
+            [newAlbumId, songId]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Song not found' });
+        }
+        return res.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('updateAlbumSong error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update album song' });
     }
 };

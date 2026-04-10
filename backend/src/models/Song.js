@@ -45,6 +45,7 @@ class Song {
              LEFT JOIN song_genres sg ON s.id = sg.song_id
              LEFT JOIN genres g ON sg.genre_id = g.id
              LEFT JOIN albums al ON s.album_id = al.id
+             WHERE (s.status IS NULL OR s.status = 'published')
              GROUP BY s.id, al.title
              ORDER BY s.created_at DESC
              LIMIT ? OFFSET ?`,
@@ -93,7 +94,7 @@ class Song {
     }
 
     static async countTotal() {
-        const [rows] = await pool.query('SELECT COUNT(*)::int as count FROM songs');
+        const [rows] = await pool.query("SELECT COUNT(*)::int as count FROM songs WHERE (status IS NULL OR status = 'published')");
         return rows[0].count;
     }
 

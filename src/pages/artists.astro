@@ -41,7 +41,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                 </span>
               </div>
               <h1 id="hero-name" class="text-5xl font-black text-white drop-shadow-xl">—</h1>
-              <p id="hero-monthly" class="text-gray-300 mt-1">— người nghe hàng tháng</p>
+              <p id="hero-monthly" class="text-gray-300 mt-1">— monthly listeners</p>
             </div>
           </div>
         </div>
@@ -135,10 +135,13 @@ import PlayerBar from "../components/PlayerBar.astro";
       (document.getElementById('hero-bg') as HTMLElement).style.background = g;
       const avatar = document.getElementById('hero-avatar') as HTMLElement;
       avatar.style.background = g;
-      if (f.image_url) avatar.innerHTML = `<img src="${f.image_url}" class="w-full h-full object-cover" alt=""/>`;
-      (document.getElementById('hero-name') as HTMLElement).textContent = f.name;
-      (document.getElementById('hero-monthly') as HTMLElement).textContent = `${formatCount(f.followers_count)} người nghe hàng tháng`;
-      (document.getElementById('hero-followers') as HTMLElement).textContent = `${formatCount(f.followers_count)} người theo dõi`;
+      if (f.image_url) avatar.innerHTML = `<img src="${f.image_url}" class="w-full h-full object-cover" alt="${f.name}"/>`;
+      const heroName = document.getElementById('hero-name') as HTMLElement;
+      heroName.textContent = f.name;
+      heroName.style.cursor = 'pointer';
+      heroName.onclick = () => { window.location.href = `/artist?id=${f.id}`; };
+      (document.getElementById('hero-monthly') as HTMLElement).textContent = `${formatCount(f.followers_count)} monthly listeners`;
+      (document.getElementById('hero-followers') as HTMLElement).textContent = `${formatCount(f.followers_count)} followers`;
     }
 
     // Top tracks (from songs)
@@ -177,7 +180,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
           const cover = al.cover_url ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '';
           return `
-            <div class="group cursor-pointer">
+            <div class="group cursor-pointer album-card" data-album-id="${al.id}">
               <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform" style="background:${grad(al.id)}">
                 ${cover}
                 <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
@@ -198,29 +201,36 @@ import PlayerBar from "../components/PlayerBar.astro";
         artistsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No artists available.</p>';
       } else {
         artistsEl.innerHTML = artists.map(a => {
-          const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : '';
+          const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt="${a.name}"/>` : '';
           return `
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 hover:bg-white/6 transition-all cursor-pointer group">
+            <a href="/artist?id=${a.id}" class="artist-card block bg-white/3 border border-white/5 rounded-2xl p-5 transition-all duration-200 cursor-pointer group hover:bg-white/8 hover:border-purple-500/30 hover:scale-[1.03] hover:shadow-xl hover:shadow-purple-900/20">
               <div class="flex items-center gap-4 mb-4">
-                <div class="w-16 h-16 rounded-full shrink-0 shadow-lg overflow-hidden group-hover:scale-110 transition-transform" style="background:${grad(a.id)}">${img}</div>
+                <div class="w-16 h-16 rounded-full shrink-0 shadow-lg overflow-hidden transition-transform duration-200 group-hover:scale-110" style="background:${grad(a.id)}">${img}</div>
                 <div class="min-w-0">
-                  <p class="text-white font-semibold truncate group-hover:text-purple-400">${a.name}</p>
+                  <p class="text-white font-semibold truncate group-hover:text-purple-400 transition-colors">${a.name}</p>
                   <p class="text-gray-500 text-xs truncate">${formatCount(a.followers_count)} người theo dõi</p>
                 </div>
               </div>
               <div class="flex items-center justify-between">
                 <span class="text-xs text-gray-500">${formatCount(a.followers_count)} người theo dõi</span>
-                <button class="px-4 py-1.5 rounded-full text-xs font-semibold border border-white/20 text-gray-300 hover:border-white hover:text-white transition-all">
-                  Follow
-                </button>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold border border-white/20 text-gray-300 group-hover:border-purple-400/60 group-hover:text-purple-300 transition-all">
+                  View
+                </span>
               </div>
-            </div>`;
+            </a>`;
         }).join('');
       }
     }
   }
 
   loadArtists().catch(console.error);
+
+  // Album card click → navigate to album detail
+  document.getElementById('albums-grid')?.addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('.album-card') as HTMLElement | null;
+    if (!card?.dataset.albumId) return;
+    window.location.href = `/album?id=${card.dataset.albumId}`;
+  });
 
   // Song click handler
   document.getElementById('top-tracks')?.addEventListener('click', (e) => {

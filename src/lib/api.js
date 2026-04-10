@@ -20,6 +20,28 @@ export function getUser() {
 export function clearAuth() {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
+  localStorage.removeItem('me_cache');
+}
+
+// ── Me cache (stale-while-revalidate) ────────────────────────────────────────
+export function getCachedMe() {
+  try { return JSON.parse(localStorage.getItem('me_cache') || 'null'); } catch { return null; }
+}
+
+export function setCachedMe(data) {
+  localStorage.setItem('me_cache', JSON.stringify(data));
+}
+
+/**
+ * Fetch fresh user profile and update cache.
+ * Returns the fresh data (or null on error).
+ */
+export async function refreshMe() {
+  try {
+    const { data } = await apiFetch('/auth/me');
+    if (data) setCachedMe(data);
+    return data ?? null;
+  } catch { return null; }
 }
 
 // ── Role helpers ─────────────────────────────────────────────────────────────

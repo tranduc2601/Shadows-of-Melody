@@ -21,14 +21,14 @@ class Favorite {
         const [rows] = await pool.query(
             `SELECT s.*, 
                     STRING_AGG(DISTINCT a.name, ',') as artist_names,
-                    f.created_at as favorited_at
+                    MAX(f.created_at) as favorited_at
              FROM favorites f
              JOIN songs s ON f.song_id = s.id
              LEFT JOIN song_artists sa ON s.id = sa.song_id
              LEFT JOIN artists a ON sa.artist_id = a.id
              WHERE f.user_id = ?
              GROUP BY s.id
-             ORDER BY f.created_at DESC
+             ORDER BY MAX(f.created_at) DESC
              LIMIT ? OFFSET ?`,
             [userId, limit, offset]
         );

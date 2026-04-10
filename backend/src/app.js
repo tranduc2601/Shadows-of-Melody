@@ -29,9 +29,25 @@ testConnection();
   const migrations = [
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
     `ALTER TABLE albums   ALTER COLUMN artist_id DROP NOT NULL`,
+    // Unique constraint required for ON CONFLICT (user_id) upsert to work
+    `CREATE UNIQUE INDEX IF NOT EXISTS artists_user_id_unique ON artists (user_id) WHERE user_id IS NOT NULL`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch (e) { console.warn('Auto-migration note:', e.message); }
+  }
+
+  // Backfill: create artist rows for any users with role='artist' that have no entry yet
+  try {
+    await pool.query(
+      `INSERT INTO artists (name, image_url, user_id)
+       SELECT COALESCE(NULLIF(full_name, ''), username), avatar_url, id
+       FROM users
+       WHERE role = 'artist'
+         AND deleted_at IS NULL
+         AND id NOT IN (SELECT user_id FROM artists WHERE user_id IS NOT NULL)`
+    );
+  } catch (e) {
+    console.warn('Artist backfill note:', e.message);
   }
 })();
 

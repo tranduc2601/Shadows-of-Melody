@@ -123,6 +123,15 @@ export const login = async (req, res) => {
             });
         }
 
+        // Check if account is locked
+        if (user.is_locked) {
+            return res.status(403).json({
+                success: false,
+                message: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.',
+                code: 'ACCOUNT_LOCKED',
+            });
+        }
+
         // Generate token — role is embedded so middleware can check it without a DB round-trip.
         // ⚠ Known limitation: if the user's role is changed, their existing token stays valid
         // until expiry. Use PATCH /api/admin/users/:id/role + ask the user to re-login, or
@@ -190,7 +199,7 @@ export const getMe = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { username, bio, avatar_url, current_password, new_password } = req.body;
+        const { username, full_name, bio, avatar_url, current_password, new_password } = req.body;
 
         // Handle password change
         if (new_password) {
@@ -211,6 +220,7 @@ export const updateProfile = async (req, res) => {
 
         const updateData = {};
         if (username !== undefined) updateData.username = username;
+        if (full_name !== undefined) updateData.full_name = full_name;
         if (bio !== undefined) updateData.bio = bio;
         if (avatar_url !== undefined) updateData.avatar_url = avatar_url;
 
@@ -220,6 +230,19 @@ export const updateProfile = async (req, res) => {
 
         await User.update(userId, updateData);
         const user = await User.findById(userId);
+
+        // Keep artists table in sync if this user is an artist
+        if (user && user.role === 'artist') {
+            try {
+                const artistName = user.full_name || user.username;
+                await pool.query(
+                    `UPDATE artists SET name = $1, image_url = $2, updated_at = NOW() WHERE user_id = $3`,
+                    [artistName, user.avatar_url || null, userId]
+                );
+            } catch (syncErr) {
+                console.warn('Artist sync on profile update failed:', syncErr.message);
+            }
+        }
 
         return res.status(200).json({
             success: true,
@@ -253,6 +276,15 @@ export const uploadAvatar = async (req, res) => {
         const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'avatars', 'image');
         // Persist avatar URL to DB
         await pool.query('UPDATE users SET avatar_url = ?, updated_at = NOW() WHERE id = ?', [secureUrl, req.user.id]);
+        // Sync avatar in artists table if this user is an artist
+        try {
+            await pool.query(
+                `UPDATE artists SET image_url = $1, updated_at = NOW() WHERE user_id = $2`,
+                [secureUrl, req.user.id]
+            );
+        } catch (syncErr) {
+            console.warn('Artist sync on avatar upload failed:', syncErr.message);
+        }
         return res.json({ success: true, data: { url: secureUrl } });
     } catch (error) {
         console.error('UploadAvatar error:', error);
