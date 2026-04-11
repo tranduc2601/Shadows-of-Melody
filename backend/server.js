@@ -5,7 +5,7 @@ const PORT = config.server.port;
 
 const server = app.listen(PORT, () => {
     console.log(`
-        Shadows of Melody Backend Server Started             
+    Shadows of Melody Backend Server Started             
                                                               
    Server: http://localhost:${PORT}                           
    Status: http://localhost:${PORT}/health                                            

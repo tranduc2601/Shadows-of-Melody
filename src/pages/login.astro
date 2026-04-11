@@ -180,7 +180,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
     errDiv.classList.add('hidden');
     btn.disabled = true;
-    btn.textContent = 'Login...';
+    btn.textContent = 'Logging in...';
 
     try {
       const res = await fetch('http://localhost:5000/api/auth/login', {

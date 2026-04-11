@@ -21,6 +21,7 @@ export function clearAuth() {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
   localStorage.removeItem('me_cache');
+  try { sessionStorage.removeItem('player_state'); } catch {}
 }
 
 // ── Me cache (stale-while-revalidate) ────────────────────────────────────────

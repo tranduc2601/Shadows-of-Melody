@@ -1,48 +1,68 @@
 -- ============================================================
--- PostgreSQL Schema cho Shadows of Melody (Fixed)
+-- PostgreSQL Schema — Shadows of Melody
+-- Reverse-engineered from live database: 2026-04-10
+-- Tables: albums, artists, favorites, genres, listening_history,
+--         payments, playlist_songs, playlists, role_requests,
+--         song_artists, song_genres, songs, subscriptions, users
 -- ============================================================
 
--- Bật Extension hỗ trợ bỏ dấu tiếng Việt
+-- ── Extensions ───────────────────────────────────────────────
 CREATE EXTENSION IF NOT EXISTS unaccent;
 
--- TẠO HÀM ÉP UNACCENT THÀNH BẤT BIẾN (IMMUTABLE) ĐỂ FIX LỖI 42P17
+-- Immutable wrapper required for use in indexes / triggers
 CREATE OR REPLACE FUNCTION immutable_unaccent(text)
 RETURNS text AS $$
     SELECT unaccent('unaccent', $1);
 $$ LANGUAGE sql IMMUTABLE STRICT;
 
--- ── Users ────────────────────────────────────────────────────
+-- ── Custom ENUM Types ─────────────────────────────────────────
+DO $$ BEGIN
+    CREATE TYPE user_role AS ENUM ('user', 'artist', 'manager', 'admin');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+    CREATE TYPE subscription_type_enum AS ENUM ('free', 'premium', 'vip');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+    CREATE TYPE payment_status_enum AS ENUM ('pending', 'completed', 'failed', 'refunded');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- ── Users ─────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
     id            SERIAL PRIMARY KEY,
-    username      VARCHAR(50)  UNIQUE NOT NULL,
-    email         VARCHAR(100) UNIQUE NOT NULL,
+    username      VARCHAR(50)  NOT NULL UNIQUE,
+    email         VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     full_name     VARCHAR(100),
     avatar_url    VARCHAR(500),
     bio           TEXT,
-    is_admin      BOOLEAN DEFAULT FALSE,
-    is_verified   BOOLEAN DEFAULT FALSE,
+    is_admin      BOOLEAN   NOT NULL DEFAULT FALSE,
+    is_verified   BOOLEAN   NOT NULL DEFAULT FALSE,
+    role          user_role NOT NULL DEFAULT 'user',
+    is_locked     BOOLEAN   NOT NULL DEFAULT FALSE,
     created_at    TIMESTAMPTZ DEFAULT NOW(),
     updated_at    TIMESTAMPTZ DEFAULT NOW(),
     deleted_at    TIMESTAMPTZ
 );
 
--- ── Artists ──────────────────────────────────────────────────
+-- ── Artists ───────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS artists (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(100) NOT NULL UNIQUE,
     bio             TEXT,
     image_url       VARCHAR(500),
-    followers_count INT DEFAULT 0,
+    followers_count INT         DEFAULT 0,
+    user_id         INT         UNIQUE REFERENCES users(id) ON DELETE SET NULL,
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── Albums ───────────────────────────────────────────────────
+-- ── Albums ────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS albums (
     id           SERIAL PRIMARY KEY,
     title        VARCHAR(150) NOT NULL,
-    artist_id    INT NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
+    artist_id    INT          REFERENCES artists(id) ON DELETE CASCADE,
     cover_url    VARCHAR(500),
     release_date DATE,
     description  TEXT,
@@ -57,27 +77,40 @@ CREATE TABLE IF NOT EXISTS genres (
     description TEXT
 );
 
--- ── Songs (ĐÃ FIX CÚ PHÁP VÀ HÀM IMMUTABLE) ──────────────────
+-- ── Songs ─────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS songs (
     id          SERIAL PRIMARY KEY,
-    title       VARCHAR(150) NOT NULL,
-    album_id    INT REFERENCES albums(id) ON DELETE SET NULL,
-    duration    INT NOT NULL,               
-    file_url    VARCHAR(1000) NOT NULL UNIQUE, 
-    file_path   VARCHAR(500),               
-    file_size   BIGINT,                     
+    title       VARCHAR(150)  NOT NULL,
+    album_id    INT           REFERENCES albums(id) ON DELETE SET NULL,
+    duration    INT           NOT NULL,
+    file_url    VARCHAR(1000) NOT NULL UNIQUE,
+    file_path   VARCHAR(500),
+    file_size   BIGINT,
     cover_url   VARCHAR(500),
-    plays_count INT DEFAULT 0,
-    upload_date TIMESTAMPTZ DEFAULT NOW(),
-    created_at  TIMESTAMPTZ DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ DEFAULT NOW(),
-    
-    -- Đã sửa cú pháp thành GENERATED ALWAYS AS và dùng hàm immutable_unaccent
-    tsv         TSVECTOR GENERATED ALWAYS AS (to_tsvector('simple', immutable_unaccent(title))) STORED
+    plays_count INT           DEFAULT 0,
+    status      VARCHAR(20)   NOT NULL DEFAULT 'published',
+    tsv         TSVECTOR,
+    upload_date TIMESTAMPTZ   DEFAULT NOW(),
+    created_at  TIMESTAMPTZ   DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ   DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_songs_title ON songs(title);
 CREATE INDEX IF NOT EXISTS idx_songs_tsv   ON songs USING GIN(tsv);
+
+-- Trigger to keep tsv in sync with title
+CREATE OR REPLACE FUNCTION songs_tsv_update()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    NEW.tsv = to_tsvector('simple', immutable_unaccent(NEW.title));
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_songs_tsv ON songs;
+CREATE TRIGGER trg_songs_tsv
+    BEFORE INSERT OR UPDATE OF title ON songs
+    FOR EACH ROW EXECUTE FUNCTION songs_tsv_update();
 
 -- ── Song ↔ Artists (n:m) ─────────────────────────────────────
 CREATE TABLE IF NOT EXISTS song_artists (
@@ -134,9 +167,7 @@ CREATE TABLE IF NOT EXISTS listening_history (
 CREATE INDEX IF NOT EXISTS idx_history_user_date ON listening_history(user_id, played_at);
 CREATE INDEX IF NOT EXISTS idx_history_song_date ON listening_history(song_id, played_at);
 
--- ── Subscriptions ────────────────────────────────────────────
-CREATE TYPE subscription_type_enum AS ENUM ('free', 'premium', 'vip');
-
+-- ── Subscriptions ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS subscriptions (
     id                SERIAL PRIMARY KEY,
     user_id           INT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
@@ -149,9 +180,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     updated_at        TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── Payments ─────────────────────────────────────────────────
-CREATE TYPE payment_status_enum AS ENUM ('pending', 'completed', 'failed', 'refunded');
-
+-- ── Payments ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS payments (
     id              SERIAL PRIMARY KEY,
     user_id         INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -168,7 +197,20 @@ CREATE TABLE IF NOT EXISTS payments (
 
 CREATE INDEX IF NOT EXISTS idx_payments_user_date ON payments(user_id, payment_date);
 
--- ── Trigger: tự động cập nhật updated_at ─────────────────────
+-- ── Role Requests ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS role_requests (
+    id          SERIAL PRIMARY KEY,
+    user_id     INT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status      VARCHAR(20) NOT NULL DEFAULT 'pending',
+    reviewed_by INT                  REFERENCES users(id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMPTZ,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_role_requests_user_id ON role_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_role_requests_status  ON role_requests(status);
+
+-- ── updated_at Auto-Trigger ───────────────────────────────────
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
@@ -183,10 +225,11 @@ DECLARE
 BEGIN
     FOREACH t IN ARRAY ARRAY['users','artists','albums','songs','playlists','subscriptions'] LOOP
         EXECUTE format(
-            'CREATE OR REPLACE TRIGGER trg_%s_updated_at
-             BEFORE UPDATE ON %s
+            'DROP TRIGGER IF EXISTS trg_%1$s_updated_at ON %1$s;
+             CREATE TRIGGER trg_%1$s_updated_at
+             BEFORE UPDATE ON %1$s
              FOR EACH ROW EXECUTE FUNCTION set_updated_at()',
-            t, t
+            t
         );
     END LOOP;
 END;

@@ -21,7 +21,11 @@ import PlayerBar from "../components/PlayerBar.astro";
         <!-- Nav Arrows -->
         <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10">
           <div class="flex items-center gap-2">
-            <button class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
+            <!-- Back button (album view only) -->
+            <button id="btn-back-to-artists" class="hidden w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
+              <span class="material-symbols-outlined text-white text-xl">arrow_back</span>
+            </button>
+            <button id="btn-nav-back" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
               <span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span>
             </button>
             <button class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors opacity-50">
@@ -30,8 +34,8 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </header>
 
-        <!-- Artist Info -->
-        <div class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
+        <!-- Artist Info (default) -->
+        <div id="hero-artist-info" class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
           <div class="flex items-end gap-6">
             <div id="hero-avatar" class="w-28 h-28 rounded-full shrink-0 border-4 border-white/10 shadow-2xl overflow-hidden" style="background:linear-gradient(135deg,#f43f5e,#f97316)"></div>
             <div>
@@ -45,56 +49,102 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>
           </div>
         </div>
+
+        <!-- Album Info (album view) -->
+        <div id="hero-album-info" class="hidden absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
+          <div class="flex items-end gap-5">
+            <div id="album-hero-cover" class="w-24 h-24 rounded-xl shrink-0 shadow-2xl overflow-hidden border border-white/10"></div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">Album</p>
+              <h1 id="album-hero-title" class="text-4xl font-black text-white drop-shadow-xl truncate">—</h1>
+              <p id="album-hero-meta" class="text-gray-300 mt-1">—</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Scrollable area -->
-      <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10">
+      <div class="flex-1 overflow-y-auto pb-32 relative z-10" id="main-scroll">
 
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-4 py-6">
-          <button class="w-14 h-14 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
-            <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
-          </button>
-          <button class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-white transition-colors text-sm">
-           Followed
-          </button>
-          <button class="p-2 text-gray-400 hover:text-white transition-colors">
-            <span class="material-symbols-outlined text-2xl">more_horiz</span>
-          </button>
-          <div class="ml-auto flex items-center gap-2 text-sm text-gray-400">
-            <span class="material-symbols-outlined text-purple-400">people</span>
-            <span id="hero-followers">—</span>
+        <!-- ── View: Artists (default) ── -->
+        <div id="view-artists" class="px-8">
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-4 py-6">
+            <button class="w-14 h-14 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
+              <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
+            </button>
+            <button class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-white transition-colors text-sm">
+             Followed
+            </button>
+            <button class="p-2 text-gray-400 hover:text-white transition-colors">
+              <span class="material-symbols-outlined text-2xl">more_horiz</span>
+            </button>
+            <div class="ml-auto flex items-center gap-2 text-sm text-gray-400">
+              <span class="material-symbols-outlined text-purple-400">people</span>
+              <span id="hero-followers">—</span>
+            </div>
+          </div>
+
+          <!-- Top Tracks -->
+          <section class="mb-10">
+            <h2 class="text-xl font-bold text-white mb-4">Most Popular</h2>
+            <div class="space-y-1" id="top-tracks">
+              <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
+            </div>
+          </section>
+
+          <!-- Albums -->
+          <section class="mb-10">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-white">Albums</h2>
+              <button class="text-sm font-semibold text-purple-400 hover:text-purple-300 uppercase tracking-wider">See all</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="albums-grid">
+              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
+            </div>
+          </section>
+
+          <!-- All Artists -->
+          <section>
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold text-white">All Artists</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="artists-grid">
+              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- ── View: Album Detail ── -->
+        <div id="view-album" class="hidden px-6 lg:px-8">
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-4 py-6">
+            <button id="album-play-all" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-900/40">
+              <span class="material-symbols-outlined text-[20px]">play_arrow</span>Play All
+            </button>
+            <button id="album-shuffle" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
+              <span class="material-symbols-outlined text-[18px]">shuffle</span>Shuffle
+            </button>
+            <span id="album-song-count" class="ml-auto text-sm text-gray-500"></span>
+          </div>
+
+          <!-- Track table -->
+          <div class="bg-white/2 border border-white/5 rounded-2xl overflow-hidden">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="text-gray-500 border-b border-white/5">
+                  <th class="font-medium text-xs px-5 py-3 w-12 text-center">#</th>
+                  <th class="font-medium text-xs px-4 py-3 uppercase tracking-wider">Title</th>
+                  <th class="font-medium text-xs px-4 py-3 w-16 text-center"><span class="material-symbols-outlined text-[16px]">schedule</span></th>
+                </tr>
+              </thead>
+              <tbody id="album-songs-tbody">
+                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Top Tracks -->
-        <section class="mb-10">
-          <h2 class="text-xl font-bold text-white mb-4">Most Popular</h2>
-          <div class="space-y-1" id="top-tracks">
-            <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
-          </div>
-        </section>
-
-        <!-- Albums -->
-        <section class="mb-10">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-white">Albums</h2>
-            <button class="text-sm font-semibold text-purple-400 hover:text-purple-300 uppercase tracking-wider">See all</button>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="albums-grid">
-            <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
-          </div>
-        </section>
-
-        <!-- All Artists -->
-        <section>
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-white">All Artists</h2>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="artists-grid">
-            <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
-          </div>
-        </section>
       </div>
 
       <PlayerBar />
@@ -152,19 +202,20 @@ import PlayerBar from "../components/PlayerBar.astro";
       } else {
         tracksEl.innerHTML = songs.slice(0, 5).map((s, i) => {
           const cover = s.cover_url
-            ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover" alt=""/>`
-            : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
+            ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-lg" alt=""/>`
+            : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
           return `
-            <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-              <span class="w-6 text-center text-gray-500 text-sm group-hover:hidden">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 w-6 hidden group-hover:block text-sm">play_arrow</span>
+            <div class="relative flex items-center gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden" data-song="${encodeURIComponent(JSON.stringify(s))}">
+              <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-8 opacity-0 group-hover:opacity-100"></div>
+              <span class="w-6 text-center text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+              <span class="material-symbols-outlined text-purple-400 w-6 text-sm absolute left-3 opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
               ${cover}
               <div class="flex-1 min-w-0">
-                <p class="text-white font-medium truncate group-hover:text-purple-300">${s.title}</p>
-                <p class="text-gray-500 text-sm">${formatCount(s.plays_count)} listens</p>
+                <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
+                <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
               </div>
-              <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100">favorite_border</span>
-              <span class="text-gray-500 text-sm">${formatDuration(s.duration)}</span>
+              <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 hover:scale-110 opacity-0 group-hover:opacity-100 transition-all duration-200">favorite_border</span>
+              <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
             </div>`;
         }).join('');
       }
@@ -225,11 +276,183 @@ import PlayerBar from "../components/PlayerBar.astro";
 
   loadArtists().catch(console.error);
 
-  // Album card click → navigate to album detail
+  // ── View switching ──────────────────────────────────────────────────────────
+  let _savedHeroBg = 'linear-gradient(135deg,#f43f5e,#f97316)';
+
+  function showArtistsView() {
+    document.getElementById('view-artists')!.classList.remove('hidden');
+    document.getElementById('view-album')!.classList.add('hidden');
+    document.getElementById('hero-artist-info')!.classList.remove('hidden');
+    document.getElementById('hero-album-info')!.classList.add('hidden');
+    document.getElementById('btn-back-to-artists')!.classList.add('hidden');
+    document.getElementById('btn-nav-back')!.classList.remove('hidden');
+    (document.getElementById('hero-bg') as HTMLElement).style.background = _savedHeroBg;
+    document.getElementById('main-scroll')!.scrollTop = 0;
+  }
+
+  async function showAlbumView(albumId: string) {
+    // Switch panels
+    document.getElementById('view-artists')!.classList.add('hidden');
+    const albumView = document.getElementById('view-album')!;
+    albumView.classList.remove('hidden');
+    document.getElementById('hero-artist-info')!.classList.add('hidden');
+    document.getElementById('hero-album-info')!.classList.remove('hidden');
+    document.getElementById('btn-back-to-artists')!.classList.remove('hidden');
+    document.getElementById('btn-nav-back')!.classList.add('hidden');
+    document.getElementById('main-scroll')!.scrollTop = 0;
+
+    // Loading state
+    (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Loading...';
+    (document.getElementById('album-hero-meta') as HTMLElement).textContent = '';
+    (document.getElementById('album-hero-cover') as HTMLElement).innerHTML = '';
+    (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
+      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    (document.getElementById('album-song-count') as HTMLElement).textContent = '';
+
+    try {
+      const { data: album } = await apiFetch(`/albums/${albumId}`);
+      const g = grad(album.id);
+
+      // Update hero
+      (document.getElementById('hero-bg') as HTMLElement).style.background = g;
+      const coverEl = document.getElementById('album-hero-cover') as HTMLElement;
+      coverEl.style.background = g;
+      if (album.cover_url) coverEl.innerHTML = `<img src="${album.cover_url}" class="w-full h-full object-cover" alt=""/>`;
+      (document.getElementById('album-hero-title') as HTMLElement).textContent = album.title;
+      const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
+      const songCount = (album.songs || []).length;
+      (document.getElementById('album-hero-meta') as HTMLElement).textContent =
+        [album.artist?.name, year, `${songCount} song${songCount !== 1 ? 's' : ''}`].filter(Boolean).join(' · ');
+      (document.getElementById('album-song-count') as HTMLElement).textContent =
+        `${songCount} song${songCount !== 1 ? 's' : ''}`;
+
+      _albumSongs = album.songs || [];
+
+      // Load favorites for logged-in user
+      _albumFavorites = new Set();
+      const token = localStorage.getItem('auth_token');
+      if (token && _albumSongs.length) {
+        try {
+          const { data: favs } = await apiFetch('/favorites');
+          const favSet = new Set<number>((favs || []).map((f: any) => Number(f.id)));
+          _albumSongs.forEach((s: any) => { if (favSet.has(s.id)) _albumFavorites.add(s.id); });
+        } catch {}
+      }
+
+      renderAlbumSongs();
+    } catch {
+      (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Failed to load';
+      (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
+        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Failed to load album.</td></tr>';
+    }
+  }
+
+  document.getElementById('btn-back-to-artists')?.addEventListener('click', showArtistsView);
+
+  // Album card click → show full album view
   document.getElementById('albums-grid')?.addEventListener('click', (e) => {
     const card = (e.target as HTMLElement).closest('.album-card') as HTMLElement | null;
     if (!card?.dataset.albumId) return;
-    window.location.href = `/album?id=${card.dataset.albumId}`;
+    showAlbumView(card.dataset.albumId);
+  });
+
+  // ── Album songs ─────────────────────────────────────────────────────────────
+  let _albumSongs: any[] = [];
+  let _albumFavorites = new Set<number>();
+
+  function shuffleArr<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function renderAlbumSongs() {
+    const tbody = document.getElementById('album-songs-tbody') as HTMLElement;
+    if (!_albumSongs.length) {
+      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">No songs in this album.</td></tr>';
+      return;
+    }
+    const token = localStorage.getItem('auth_token');
+    tbody.innerHTML = _albumSongs.map((s: any, i: number) => {
+      const cover = s.cover_url
+        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
+      const isFav = _albumFavorites.has(s.id);
+      const favBtn = token ? `
+        <button class="album-fav-btn ml-2 shrink-0 opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200 ${isFav ? 'text-rose-400 !opacity-100' : 'text-gray-600 hover:text-rose-400'}"
+          data-id="${s.id}" data-fav="${isFav ? '1' : '0'}" title="${isFav ? 'Remove from liked' : 'Add to liked'}">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' ${isFav ? 1 : 0}">favorite</span>
+        </button>` : '';
+      return `
+        <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer album-song-row" data-idx="${i}">
+          <td class="px-5 py-3 text-center relative overflow-hidden">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
+            <span class="text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75 inline-block">${i + 1}</span>
+            <span class="material-symbols-outlined text-purple-400 text-[20px] absolute inset-0 flex items-center justify-center opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              ${cover}
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-100 group-hover:text-purple-300 truncate transition-colors duration-200">${s.title}</p>
+                <p class="text-xs text-gray-500 truncate transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'}</p>
+              </div>
+              ${favBtn}
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('album-songs-tbody')?.addEventListener('click', async (e: Event) => {
+    const target = e.target as HTMLElement;
+    const favBtn = target.closest('.album-fav-btn') as HTMLElement | null;
+    if (favBtn) {
+      e.stopPropagation();
+      const id = Number(favBtn.dataset.id);
+      const wasFav = favBtn.dataset.fav === '1';
+      favBtn.dataset.fav = wasFav ? '0' : '1';
+      const icon = favBtn.querySelector('.material-symbols-outlined') as HTMLElement;
+      if (wasFav) {
+        _albumFavorites.delete(id);
+        favBtn.classList.remove('text-rose-400', '!opacity-100');
+        favBtn.classList.add('text-gray-600', 'hover:text-rose-400');
+        if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+        favBtn.title = 'Add to liked';
+        try {
+          await apiFetch(`/favorites/${id}`, { method: 'DELETE' });
+          window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: id, isFavorite: false } }));
+        } catch { _albumFavorites.add(id); favBtn.dataset.fav = '1'; renderAlbumSongs(); }
+      } else {
+        _albumFavorites.add(id);
+        favBtn.classList.add('text-rose-400', '!opacity-100');
+        favBtn.classList.remove('text-gray-600', 'hover:text-rose-400');
+        if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+        favBtn.title = 'Remove from liked';
+        try {
+          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: id }) });
+          window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: id, isFavorite: true } }));
+        } catch { _albumFavorites.delete(id); favBtn.dataset.fav = '0'; renderAlbumSongs(); }
+      }
+      return;
+    }
+    const row = target.closest('.album-song-row') as HTMLElement | null;
+    if (row && _albumSongs.length) {
+      player.playSong(_albumSongs[Number(row.dataset.idx)], _albumSongs);
+    }
+  });
+
+  document.getElementById('album-play-all')?.addEventListener('click', () => {
+    if (_albumSongs.length) player.playSong(_albumSongs[0], _albumSongs);
+  });
+  document.getElementById('album-shuffle')?.addEventListener('click', () => {
+    if (!_albumSongs.length) return;
+    const s = shuffleArr(_albumSongs);
+    player.playSong(s[0], s);
   });
 
   // Song click handler
@@ -245,6 +468,8 @@ import PlayerBar from "../components/PlayerBar.astro";
       player.playSong(song, queue);
     } catch {}
   });
+
+
 </script>
 
 </MainLayout>

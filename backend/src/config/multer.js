@@ -23,9 +23,11 @@ export const uploadAudio = multer({
 });
 
 function imageFilter(_req, file, cb) {
-    const allowed = ['.jpg', '.jpeg', '.png', '.webp'];
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (allowed.includes(ext)) {
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedExts  = ['.jpg', '.jpeg', '.png', '.webp'];
+    const ext  = path.extname(file.originalname).toLowerCase();
+    const mime = file.mimetype?.toLowerCase();
+    if (allowedMimes.includes(mime) || allowedExts.includes(ext)) {
         cb(null, true);
     } else {
         cb(new Error('Only image files are allowed (jpg, png, webp)'));

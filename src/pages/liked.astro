@@ -1,66 +1,14 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import PlayerBar from "../components/PlayerBar.astro";
+import Sidebar from "../components/Sidebar.astro";
 ---
 
 <MainLayout title="Liked Songs - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <!-- Sidebar -->
-    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Melody
-        </a>
-      </div>
-
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Search
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Artists
-          </a>
-        </nav>
-
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <!-- Active: Liked Songs -->
-          <a href="/liked" class="flex items-center gap-4 px-4 py-3 bg-linear-to-r from-purple-500/20 to-transparent text-white rounded-xl font-medium transition-all shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
-            <span class="material-symbols-outlined text-rose-400">favorite</span>Favorite Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-        </nav>
-      </div>
-
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
-          <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0">
-            <div id="sidebar-avatar-wrap" class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
-              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
-                <img id="sidebar-avatar-img" src="" alt="" class="w-full h-full object-cover rounded-full hidden" />
-                <span id="sidebar-avatar-icon" class="material-symbols-outlined text-purple-400">person</span>
-              </div>
-            </div>
-            <div class="min-w-0">
-              <p id="sidebar-user-name" class="text-sm font-semibold text-white truncate">—</p>
-              <p id="sidebar-user-plan" class="text-xs text-purple-400 font-medium truncate">—</p>
-            </div>
-          </a>
-          <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
-            <span class="material-symbols-outlined text-[20px]">settings</span>
-          </a>
-        </div>
-      </div>
-    </aside>
+    <Sidebar currentPage="liked" />
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
@@ -209,45 +157,20 @@ import PlayerBar from "../components/PlayerBar.astro";
   </style>
 
 <script>
-  import { apiFetch, formatDuration, getUser, getCachedMe, setCachedMe, refreshMe } from '../lib/api.js';
+  import { apiFetch, formatDuration, getCachedMe, refreshMe } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
-  // ── Populate sidebar + hero — cache first, then refresh silently ──────────
-  function applySidebarUser(me: any) {
+  // ── Populate hero username ─────────────────────────────────────────────
+  function applyHeroUser(me: any) {
     if (!me) return;
-    const sidebarName = document.getElementById('sidebar-user-name') as HTMLElement;
-    const sidebarPlan = document.getElementById('sidebar-user-plan') as HTMLElement;
-    const avatarIcon  = document.getElementById('sidebar-avatar-icon') as HTMLElement;
-    const avatarImg   = document.getElementById('sidebar-avatar-img') as HTMLImageElement;
-    const heroName    = document.getElementById('hero-user-name') as HTMLElement;
-
-    if (sidebarName) sidebarName.textContent = me.full_name || me.username || '—';
-    if (heroName)    heroName.textContent    = me.full_name || me.username || '—';
-
-    if (sidebarPlan) {
-      const plan = me.subscription?.plan;
-      sidebarPlan.textContent = plan === 'premium' ? 'Premium' : plan === 'student' ? 'Student' : 'Free';
-      sidebarPlan.className = `text-xs font-medium truncate ${plan && plan !== 'free' ? 'text-purple-400' : 'text-gray-500'}`;
-    }
-
-    if (me.avatar_url && avatarImg && avatarIcon) {
-      avatarImg.src = me.avatar_url;
-      avatarImg.classList.remove('hidden');
-      avatarIcon.style.display = 'none';
-    }
+    const heroName = document.getElementById('hero-user-name') as HTMLElement;
+    if (heroName) heroName.textContent = me.full_name || me.username || '—';
   }
-
-  // 1) Paint from cache immediately (no flicker)
   const _cached = getCachedMe();
-  if (_cached) applySidebarUser(_cached);
-
-  // 2) Refresh from API in background, update cache + UI if data changed
+  if (_cached) applyHeroUser(_cached);
   if (localStorage.getItem('auth_token')) {
-    refreshMe().then((fresh) => {
-      if (fresh) applySidebarUser(fresh);
-    });
+    refreshMe().then((fresh: any) => { if (fresh) applyHeroUser(fresh); });
   }
-
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
     'linear-gradient(135deg,#f43f5e,#f97316)',

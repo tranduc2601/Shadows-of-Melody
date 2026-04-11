@@ -53,6 +53,9 @@ import MainLayout from "../layouts/MainLayout.astro";
           <button data-section="albums" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">album</span>Albums
           </button>
+          <button data-section="genres" class="nav-btn w-full flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">label</span>Genres
+          </button>
         </nav>
 
         <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">System</p>
@@ -61,7 +64,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">assignment</span>Tasks
           </button> -->
           <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">arrow_back</span>Back to App
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">arrow_back</span>Go Back
           </a>
         </nav>
       </div>
@@ -143,10 +146,10 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <div class="w-11 h-11 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined text-white text-[20px]">group</span>
                 </div>
-                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <!-- <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
                   <span class="material-symbols-outlined text-[14px]">trending_up</span>
                   <span id="stat-users-change">—</span>
-                </span>
+                </span> -->
               </div>
               <p id="stat-users" class="text-2xl font-black text-white mb-1">—</p>
               <p class="text-xs text-gray-400 font-medium">Total Users</p>
@@ -157,10 +160,10 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <div class="w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined text-white text-[20px]">music_note</span>
                 </div>
-                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <!-- <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
                   <span class="material-symbols-outlined text-[14px]">library_music</span>
                   Live
-                </span>
+                </span> -->
               </div>
               <p id="stat-songs" class="text-2xl font-black text-white mb-1">—</p>
               <p class="text-xs text-gray-400 font-medium">Total Songs</p>
@@ -171,10 +174,10 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <div class="w-11 h-11 rounded-xl bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined text-white text-[20px]">mic</span>
                 </div>
-                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <!-- <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
                   <span class="material-symbols-outlined text-[14px]">trending_up</span>
                   Live
-                </span>
+                </span> -->
               </div>
               <p id="stat-artists" class="text-2xl font-black text-white mb-1">—</p>
               <p class="text-xs text-gray-400 font-medium">Total Artists</p>
@@ -185,10 +188,10 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <div class="w-11 h-11 rounded-xl bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined text-white text-[20px]">queue_music</span>
                 </div>
-                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
+                <!-- <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-0.5">
                   <span class="material-symbols-outlined text-[14px]">trending_up</span>
                   Live
-                </span>
+                </span> -->
               </div>
               <p id="stat-playlists" class="text-2xl font-black text-white mb-1">—</p>
               <p class="text-xs text-gray-400 font-medium">Total Playlists</p>
@@ -201,7 +204,12 @@ import MainLayout from "../layouts/MainLayout.astro";
           <!-- Users Table -->
           <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-              <h2 class="text-base font-bold text-white">User Management</h2>
+              <div class="flex items-center gap-3">
+                <h2 class="text-base font-bold text-white">User Management</h2>
+                <span id="users-admin-badge" class="hidden items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/20">
+                  <span class="material-symbols-outlined text-[12px]">admin_panel_settings</span>Includes Managers
+                </span>
+              </div>
               <div class="flex items-center gap-2">
                 <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all">
                   <span class="material-symbols-outlined text-[16px]">filter_list</span>Filter
@@ -365,7 +373,31 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
         </div>
 
-        <!-- ── Tasks Section ─────────────────────────────────────────────── -->
+        <!-- ── Genres Section ───────────────────────────────────────────── -->
+        <div id="section-genres" class="hidden space-y-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">Genre Management</h2>
+              <button id="btn-add-genre" class="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-500/20 to-indigo-500/10 hover:from-purple-500/30 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-semibold transition-all">
+                <span class="material-symbols-outlined text-[16px]">add</span>Add Genre
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">Genre</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Description</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-genres-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <div id="section-tasks" class="hidden space-y-6">
           <div class="bg-white/3 border border-indigo-500/10 rounded-2xl backdrop-blur-sm overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
@@ -399,6 +431,30 @@ import MainLayout from "../layouts/MainLayout.astro";
       </div>
     </main>
   </div>
+
+<!-- ── Confirm Action Modal ──────────────────────────────────────────────────── -->
+<div id="modal-confirm" class="hidden fixed inset-0 z-[300] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-confirm-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-7 w-full max-w-md shadow-2xl z-10 mx-4">
+    <div class="flex items-start gap-4 mb-5">
+      <div id="modal-confirm-icon-wrap" class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-rose-500/15">
+        <span id="modal-confirm-icon" class="material-symbols-outlined text-rose-400 text-[22px]">warning</span>
+      </div>
+      <div>
+        <h3 id="modal-confirm-title" class="text-base font-bold text-white mb-1">Confirm Action</h3>
+        <p id="modal-confirm-body" class="text-sm text-gray-400 leading-relaxed"></p>
+      </div>
+    </div>
+    <div class="flex items-center justify-end gap-3">
+      <button id="modal-confirm-cancel" class="px-4 py-2 text-sm font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-all">
+        Cancel
+      </button>
+      <button id="modal-confirm-ok" class="px-4 py-2 text-sm font-semibold text-white rounded-xl transition-all bg-rose-600 hover:bg-rose-500">
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- ── Album Songs Modal ─────────────────────────────────────────────────────── -->
 <div id="modal-album-songs" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
@@ -578,10 +634,11 @@ import MainLayout from "../layouts/MainLayout.astro";
         </select>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">Artists</label>
-        <div id="edit-artists-checkboxes" class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
-          <p class="text-gray-500 text-xs">Loading...</p>
-        </div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Artist</label>
+        <select id="edit-artists-select"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+          <option value="">— No artist —</option>
+        </select>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Genres</label>
@@ -647,13 +704,16 @@ import MainLayout from "../layouts/MainLayout.astro";
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-300 mb-2">Album <span class="text-gray-500">(optional)</span></label>
-          <div class="flex gap-2">
-            <select id="up-album"
-              class="flex-1 px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
-              <option value="">— No Album —</option>
-            </select>
+          <div class="grid grid-cols-[1fr_auto] gap-2">
+            <div class="relative">
+              <select id="up-album"
+                class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all appearance-none pr-10">
+                <option value="">— No Album —</option>
+              </select>
+              <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-base">expand_more</span>
+            </div>
             <button type="button" id="btn-toggle-new-album"
-              class="shrink-0 px-3 py-3 text-xs font-semibold bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-gray-400 hover:text-indigo-300 rounded-lg transition-all flex items-center gap-1"
+              class="h-full px-3 py-2 text-xs font-semibold bg-white/5 hover:bg-indigo-500/20 border border-white/10 hover:border-indigo-500/40 text-gray-400 hover:text-indigo-300 rounded-lg transition-all flex items-center gap-1"
               title="Create new album">
               <span class="material-symbols-outlined text-[16px]">add</span>
             </button>
@@ -677,8 +737,12 @@ import MainLayout from "../layouts/MainLayout.astro";
         </div>
         <div class="col-span-2">
           <label class="block text-sm font-medium text-gray-300 mb-2">Artist</label>
-          <div id="artists-checkboxes" class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
-            <p class="text-gray-500 text-xs">Loading...</p>
+          <div class="relative">
+            <select id="artists-checkboxes"
+              class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all appearance-none pr-10">
+              <option value="">— No artist —</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-base">expand_more</span>
           </div>
         </div>
         <div class="col-span-2">
@@ -704,9 +768,13 @@ import MainLayout from "../layouts/MainLayout.astro";
             </button>
           </div>
           <p id="new-genre-error" class="hidden text-xs text-rose-400 mb-1"></p>
-          <div id="genres-checkboxes" class="grid grid-cols-2 gap-2 max-h-28 overflow-y-auto p-3 bg-[#1a2847] border border-white/10 rounded-lg">
-            <p class="text-gray-500 text-xs">Loading...</p>
+          <div class="relative">
+            <select id="genres-checkboxes" multiple
+              class="w-full bg-[#1a2847] border border-white/10 rounded-lg text-white text-sm px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all min-h-[80px] max-h-36 custom-select">
+              <option disabled value="">Loading...</option>
+            </select>
           </div>
+          <p class="text-xs text-gray-600 mt-1">Hold Ctrl / Cmd to select multiple</p>
         </div>
         <div class="col-span-2">
           <label class="block text-sm font-medium text-gray-300 mb-2">
@@ -780,6 +848,53 @@ import MainLayout from "../layouts/MainLayout.astro";
     }, 3500);
   }
 
+  // ── Confirm Modal ────────────────────────────────────────────────────────────
+  type ConfirmOptions = {
+    title?: string;
+    body: string;
+    confirmLabel?: string;
+    confirmClass?: string;
+    icon?: string;
+    iconClass?: string;
+    iconWrapClass?: string;
+  };
+
+  function showConfirm(opts: ConfirmOptions): Promise<boolean> {
+    return new Promise((resolve) => {
+      const modal      = document.getElementById('modal-confirm')!;
+      const titleEl    = document.getElementById('modal-confirm-title')!;
+      const bodyEl     = document.getElementById('modal-confirm-body')!;
+      const okBtn      = document.getElementById('modal-confirm-ok') as HTMLButtonElement;
+      const cancelBtn  = document.getElementById('modal-confirm-cancel') as HTMLButtonElement;
+      const iconEl     = document.getElementById('modal-confirm-icon')!;
+      const iconWrap   = document.getElementById('modal-confirm-icon-wrap')!;
+
+      titleEl.textContent  = opts.title ?? 'Confirm Action';
+      bodyEl.textContent   = opts.body;
+      okBtn.textContent    = opts.confirmLabel ?? 'Confirm';
+      okBtn.className      = `px-4 py-2 text-sm font-semibold text-white rounded-xl transition-all ${opts.confirmClass ?? 'bg-rose-600 hover:bg-rose-500'}`;
+      iconEl.textContent   = opts.icon ?? 'warning';
+      iconEl.className     = `material-symbols-outlined text-[22px] ${opts.iconClass ?? 'text-rose-400'}`;
+      iconWrap.className   = `w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${opts.iconWrapClass ?? 'bg-rose-500/15'}`;
+
+      modal.classList.remove('hidden');
+
+      const cleanup = (result: boolean) => {
+        modal.classList.add('hidden');
+        okBtn.removeEventListener('click', onOk);
+        cancelBtn.removeEventListener('click', onCancel);
+        document.getElementById('modal-confirm-bg')!.removeEventListener('click', onCancel);
+        resolve(result);
+      };
+      const onOk     = () => cleanup(true);
+      const onCancel = () => cleanup(false);
+
+      okBtn.addEventListener('click', onOk);
+      cancelBtn.addEventListener('click', onCancel);
+      document.getElementById('modal-confirm-bg')!.addEventListener('click', onCancel);
+    });
+  }
+
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
     'linear-gradient(135deg,#f43f5e,#f97316)',
@@ -803,7 +918,10 @@ import MainLayout from "../layouts/MainLayout.astro";
   }
 
   // ── Section Navigation ────────────────────────────────────────────────────────
-  const ALL_SECTIONS = ['dashboard', 'users', 'songs', 'artists', 'playlists', 'albums', 'tasks'] as const;
+  // Forward declarations so switchSection can reference them regardless of definition order
+  let loadGenres: () => Promise<void>;
+
+  const ALL_SECTIONS = ['dashboard', 'users', 'songs', 'artists', 'playlists', 'albums', 'tasks', 'genres'] as const;
   type Section = typeof ALL_SECTIONS[number];
 
   const SECTION_TITLES: Record<string, string> = {
@@ -814,6 +932,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     playlists: 'Playlist Management',
     albums:    'Album Management',
     tasks:     'Manager Tasks',
+    genres:    'Genre Management',
   };
 
   let _activeSection: string = 'dashboard';
@@ -857,8 +976,11 @@ import MainLayout from "../layouts/MainLayout.astro";
         case 'playlists': loadPlaylists(); break;
         case 'albums':    loadAlbums(); break;
         case 'tasks':     loadTasks(); break;
+        case 'genres':    break;
       }
     }
+    // Genres should always show the latest rows from DB (no stale cache between visits)
+    if (section === 'genres') loadGenres();
   }
 
   // Wire sidebar nav buttons
@@ -871,6 +993,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (_activeSection === 'songs')   { document.getElementById('btn-open-upload')?.click(); return; }
     if (_activeSection === 'artists') { document.getElementById('btn-add-artist')?.click(); return; }
     if (_activeSection === 'tasks')   { document.getElementById('btn-assign-task')?.click(); return; }
+    if (_activeSection === 'genres')  { document.getElementById('btn-add-genre')?.click(); return; }
   });
 
   // Refresh buttons
@@ -943,11 +1066,19 @@ import MainLayout from "../layouts/MainLayout.astro";
     tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
     try {
       const { data: users, pagination } = await apiFetch(`/admin/users?page=${page}&limit=10`);
-      // Hide admin and manager accounts from the users table
+      const _currentRole = getUser()?.role;
+      const _isAdmin = _currentRole === 'admin';
+      // Admins can also see and manage manager accounts; managers only see regular/artist users
       const filteredUsers = (users || []).filter((u: any) => {
         const r = u.role || (u.is_admin ? 'admin' : 'user');
-        return r !== 'admin' && r !== 'manager';
+        if (r === 'admin') return false;
+        if (r === 'manager' && !_isAdmin) return false;
+        return true;
       });
+      // Show admin badge in users table header if current user is admin
+      const _adminBadge = document.getElementById('users-admin-badge');
+      if (_adminBadge && _isAdmin) _adminBadge.classList.replace('hidden', 'inline-flex');
+
       if (!filteredUsers.length) {
         tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No users found.</td></tr>';
         return;
@@ -999,11 +1130,11 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <option value="admin"   ${(u.role === 'admin' || (!u.role && u.is_admin)) ? 'selected' : ''}>Admin</option>
               </select>
               <button class="btn-lock-user w-8 h-8 rounded-lg transition-all flex items-center justify-center ${u.is_locked ? 'hover:bg-green-500/20 hover:text-green-400 text-amber-400' : 'hover:bg-amber-500/20 hover:text-amber-400 text-gray-500'}"
-                      data-id="${u.id}" data-locked="${u.is_locked ? '1' : '0'}" title="${u.is_locked ? 'Mở khóa' : 'Khóa tài khoản'}">
+                      data-id="${u.id}" data-locked="${u.is_locked ? '1' : '0'}" data-name="${encodeURIComponent(u.username || u.email || `#${u.id}`)}" title="${u.is_locked ? 'Unlock account' : 'Lock account'}">
                 <span class="material-symbols-outlined text-[17px]">${u.is_locked ? 'lock_open' : 'lock'}</span>
               </button>
               <button class="btn-delete-user w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
-                      data-id="${u.id}" title="Xóa">
+                      data-id="${u.id}" data-name="${encodeURIComponent(u.username || u.email || `#${u.id}`)}" title="Delete user">
                 <span class="material-symbols-outlined text-[17px]">delete</span>
               </button>
             </div>
@@ -1035,6 +1166,14 @@ import MainLayout from "../layouts/MainLayout.astro";
         if (lockBtn) {
           const id = lockBtn.dataset.id!;
           if (_lockingUsers.has(id)) return; // spam guard
+          const isLocked = lockBtn.dataset.locked === '1';
+          const name = decodeURIComponent(lockBtn.dataset.name || `#${id}`);
+          const confirmed = await showConfirm(
+            isLocked
+              ? { title: 'Unlock Account', body: `Unlock "${name}"? They will regain full access to their account.`, confirmLabel: 'Unlock', confirmClass: 'bg-green-600 hover:bg-green-500', icon: 'lock_open', iconClass: 'text-green-400', iconWrapClass: 'bg-green-500/15' }
+              : { title: 'Lock Account', body: `Lock "${name}"? They will be unable to log in until unlocked.`, confirmLabel: 'Lock', confirmClass: 'bg-amber-600 hover:bg-amber-500', icon: 'lock', iconClass: 'text-amber-400', iconWrapClass: 'bg-amber-500/15' }
+          );
+          if (!confirmed) return;
           _lockingUsers.add(id);
           const origHTML = lockBtn.innerHTML;
           lockBtn.innerHTML = '<span class="material-symbols-outlined text-[17px] animate-spin">refresh</span>';
@@ -1043,7 +1182,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             const { data, message } = await apiFetch(`/admin/users/${id}/lock`, { method: 'PATCH' });
             const nowLocked = data.is_locked;
             lockBtn.dataset.locked = nowLocked ? '1' : '0';
-            lockBtn.title = nowLocked ? 'Mở khóa' : 'Khóa tài khoản';
+            lockBtn.title = nowLocked ? 'Unlock account' : 'Lock account';
             lockBtn.className = `btn-lock-user w-8 h-8 rounded-lg transition-all flex items-center justify-center ${nowLocked ? 'hover:bg-green-500/20 hover:text-green-400 text-amber-400' : 'hover:bg-amber-500/20 hover:text-amber-400 text-gray-500'}`;
             lockBtn.innerHTML = `<span class="material-symbols-outlined text-[17px]">${nowLocked ? 'lock_open' : 'lock'}</span>`;
             // Update status badge in same row
@@ -1053,10 +1192,10 @@ import MainLayout from "../layouts/MainLayout.astro";
               statusBadge.className = `user-status-badge inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${nowLocked ? 'bg-red-500/15 text-red-400' : 'bg-green-500/15 text-green-400'}`;
               statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${nowLocked ? 'bg-red-400' : 'bg-green-400'}"></span>${nowLocked ? 'Locked' : 'Active'}`;
             }
-            showToast(message || (nowLocked ? 'Đã khóa tài khoản.' : 'Đã mở khóa tài khoản.'), nowLocked ? 'info' : 'success');
+            showToast(message || (nowLocked ? `Account "${name}" has been locked.` : `Account "${name}" has been unlocked.`), nowLocked ? 'info' : 'success');
           } catch (err: any) {
             lockBtn.innerHTML = origHTML;
-            showToast(err.message || 'Thao tác thất bại.', 'error');
+            showToast(err.message || 'Action failed. Please try again.', 'error');
           } finally {
             lockBtn.disabled = false;
             _lockingUsers.delete(id);
@@ -1066,11 +1205,22 @@ import MainLayout from "../layouts/MainLayout.astro";
 
         if (delBtn) {
           const id = delBtn.dataset.id;
-          if (!id || !confirm(`Delete user #${id}?`)) return;
+          const name = decodeURIComponent((delBtn as HTMLElement).dataset.name || `#${id}`);
+          if (!id) return;
+          const confirmed = await showConfirm({
+            title: 'Delete User',
+            body: `Permanently delete "${name}"? This action cannot be undone.`,
+            confirmLabel: 'Delete',
+            confirmClass: 'bg-rose-600 hover:bg-rose-500',
+            icon: 'delete_forever',
+            iconClass: 'text-rose-400',
+            iconWrapClass: 'bg-rose-500/15',
+          });
+          if (!confirmed) return;
           try {
             await apiFetch(`/admin/users/${id}`, { method: 'DELETE' });
             delBtn.closest('tr')?.remove();
-            showToast('User deleted successfully.', 'success');
+            showToast(`User "${name}" has been deleted.`, 'success');
           } catch (err: any) {
             showToast(err.message || 'Failed to delete user.', 'error');
           }
@@ -1116,7 +1266,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         if (p > 0) loadUsers(p);
       });
     } catch {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load users.</td></tr>';
     }
   }
 
@@ -1247,7 +1397,7 @@ import MainLayout from "../layouts/MainLayout.astro";
               ${(s.status || 'published') === 'suppressed'
                 ? 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
                 : 'bg-green-500/15 text-green-400 hover:bg-green-500/25'}"
-              data-id="${s.id}" data-status="${s.status || 'published'}" title="Nhấn để thay đổi trạng thái">
+              data-id="${s.id}" data-status="${s.status || 'published'}" data-title="${encodeURIComponent(s.title)}" title="Nhấn để thay đổi trạng thái">
               <span class="material-symbols-outlined text-[13px]">${(s.status || 'published') === 'suppressed' ? 'visibility_off' : 'visibility'}</span>
               ${(s.status || 'published') === 'suppressed' ? 'Suppressed' : 'Published'}
             </button>
@@ -1281,6 +1431,14 @@ import MainLayout from "../layouts/MainLayout.astro";
           if (_toggleStatusInFlight.has(id)) return; // spam guard
           const current = statusBtn.dataset.status!;
           const next = current === 'suppressed' ? 'published' : 'suppressed';
+          const title = decodeURIComponent(statusBtn.dataset.title ?? '');
+          const songLabel = title || `Song #${id}`;
+          const confirmed = await showConfirm(
+            next === 'suppressed'
+              ? { title: 'Suppress Song', body: `Suppress "${songLabel}"? It will be hidden from all users.`, confirmLabel: 'Suppress', confirmClass: 'bg-amber-600 hover:bg-amber-500', icon: 'visibility_off', iconClass: 'text-amber-400', iconWrapClass: 'bg-amber-500/15' }
+              : { title: 'Publish Song', body: `Publish "${songLabel}"? It will become visible to all users.`, confirmLabel: 'Publish', confirmClass: 'bg-green-600 hover:bg-green-500', icon: 'visibility', iconClass: 'text-green-400', iconWrapClass: 'bg-green-500/15' }
+          );
+          if (!confirmed) return;
           _toggleStatusInFlight.add(id);
           statusBtn.setAttribute('disabled', 'true');
           const origHTML = statusBtn.innerHTML;
@@ -1360,21 +1518,21 @@ import MainLayout from "../layouts/MainLayout.astro";
     const albumSel = document.getElementById('edit-album') as HTMLSelectElement;
     try {
       const { data: albums } = await apiFetch('/admin/albums');
-      albumSel.innerHTML = '<option value="">— Không thuộc album —</option>' +
+      albumSel.innerHTML = '<option value="">— No album —</option>' +
         (albums || []).map((al: any) => `<option value="${al.id}" ${al.id == song.album_id ? 'selected' : ''}>${al.title}${al.artist_name ? ' — ' + al.artist_name : ''}</option>`).join('');
-    } catch { albumSel.innerHTML = '<option value="">— Không thuộc album —</option>'; }
+    } catch { albumSel.innerHTML = '<option value="">— No album —</option>'; }
 
     // Load artists
-    const editArtistsBox = document.getElementById('edit-artists-checkboxes') as HTMLElement;
+    const editArtistsSel = document.getElementById('edit-artists-select') as HTMLSelectElement;
     const currentArtistIds = (song.artist_ids || '').split(',').map((x: string) => x.trim()).filter(Boolean);
     try {
       const { data: artists } = await apiFetch('/artists?limit=100');
-      editArtistsBox.innerHTML = (artists || []).map((a: any) => `
-        <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
-          <input type="checkbox" value="${a.id}" class="accent-purple-500 w-3.5 h-3.5" name="edit_artist_ids"${currentArtistIds.includes(String(a.id)) ? ' checked' : ''} />
-          <span class="text-xs text-gray-300 truncate">${a.name}</span>
-        </label>`).join('');
-    } catch { editArtistsBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load artists.</p>'; }
+      const selectedArtistId = currentArtistIds[0] ?? '';
+      editArtistsSel.innerHTML = '<option value="">— No artist —</option>' +
+        (artists as any[]).map((a: any) =>
+          `<option value="${a.id}"${String(a.id) === selectedArtistId ? ' selected' : ''}>${a.name}</option>`
+        ).join('');
+    } catch { editArtistsSel.innerHTML = '<option value="" disabled selected>Cannot load artists</option>'; }
 
     // Load genres
     const editGenresBox = document.getElementById('edit-genres-checkboxes') as HTMLElement;
@@ -1442,7 +1600,8 @@ import MainLayout from "../layouts/MainLayout.astro";
     const title    = (document.getElementById('edit-title') as HTMLInputElement).value.trim();
     const albumId  = (document.getElementById('edit-album') as HTMLSelectElement).value;
     const coverUrl = editCoverUrl.value;
-    const artistIds = Array.from(editForm.querySelectorAll('input[name="edit_artist_ids"]:checked')).map((cb: any) => cb.value);
+    const editArtistSelVal = (document.getElementById('edit-artists-select') as HTMLSelectElement)?.value;
+    const artistIds = editArtistSelVal ? [editArtistSelVal] : [];
     const genreIds  = Array.from(editForm.querySelectorAll('input[name="edit_genre_ids"]:checked')).map((cb: any) => cb.value);
 
     if (!title) { editErrDiv.textContent = 'Vui lòng nhập tên bài hát.'; editErrDiv.classList.remove('hidden'); return; }
@@ -1585,17 +1744,16 @@ import MainLayout from "../layouts/MainLayout.astro";
   });
 
   async function loadFormDropdowns() {
-    // Artists checkboxes
-    if (artistsBox) {
+    // Artists select
+    const artistsSel = artistsBox as unknown as HTMLSelectElement;
+    if (artistsSel) {
       try {
         const { data: artists } = await apiFetch('/artists?limit=100');
-        if (!artists?.length) { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">No artists available.</p>'; }
-        else artistsBox.innerHTML = artists.map((a: any) => `
-          <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
-            <input type="checkbox" value="${a.id}" class="accent-purple-500 w-3.5 h-3.5" name="artist_ids" />
-            <span class="text-xs text-gray-300 truncate">${a.name}</span>
-          </label>`).join('');
-      } catch { artistsBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load artists.</p>'; }
+        artistsSel.innerHTML = '<option value="">— No artist —</option>' +
+          (artists?.length
+            ? artists.map((a: any) => `<option value="${a.id}">${a.name}</option>`).join('')
+            : '');
+      } catch { artistsSel.innerHTML = '<option value="">— No artist —</option>'; }
     }
 
     await reloadGenresBox();
@@ -1611,16 +1769,18 @@ import MainLayout from "../layouts/MainLayout.astro";
   }
 
   async function reloadGenresBox(autoCheckId?: number) {
-    if (!genresBox) return;
+    const genresSel = genresBox as unknown as HTMLSelectElement;
+    if (!genresSel) return;
     try {
       const { data: genres } = await apiFetch('/admin/genres');
-      if (!genres?.length) { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Không có thể loại.</p>'; return; }
-      genresBox.innerHTML = genres.map((g: any) => `
-        <label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 rounded px-2 py-1">
-          <input type="checkbox" value="${g.id}" class="accent-indigo-500 w-3.5 h-3.5" name="genre_ids"${autoCheckId === g.id ? ' checked' : ''} />
-          <span class="text-xs text-gray-300 truncate">${g.name}</span>
-        </label>`).join('');
-    } catch { genresBox.innerHTML = '<p class="text-gray-500 text-xs">Cannot load genres.</p>'; }
+      if (!genres?.length) { genresSel.innerHTML = '<option disabled value="">No genres available.</option>'; return; }
+      genresSel.innerHTML = genres.map((g: any) =>
+        `<option value="${g.id}">${g.name}</option>`).join('');
+      if (autoCheckId != null) {
+        const opt = genresSel.querySelector(`option[value="${autoCheckId}"]`) as HTMLOptionElement | null;
+        if (opt) opt.selected = true;
+      }
+    } catch { genresSel.innerHTML = '<option disabled value="">Cannot load genres.</option>'; }
   }
 
   // ── Inline "Create new genre" handler ────────────────────────────────────────
@@ -1741,10 +1901,10 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (!upTitle.value.trim()) { showErr('Vui lòng nhập tiêu đề.'); return; }
     if (!upDuration.value || parseInt(upDuration.value) <= 0) { showErr('Vui lòng nhập thời lượng hợp lệ.'); return; }
 
-    const checkedArtists = Array.from(form.querySelectorAll('input[name="artist_ids"]:checked'))
-      .map((cb: any) => cb.value);
-    const checkedGenres = Array.from(form.querySelectorAll('input[name="genre_ids"]:checked'))
-      .map((cb: any) => cb.value);
+    const artistsSel = document.getElementById('artists-checkboxes') as HTMLSelectElement;
+    const genresSel  = document.getElementById('genres-checkboxes') as HTMLSelectElement;
+    const checkedArtists = artistsSel?.value ? [artistsSel.value] : [];
+    const checkedGenres  = genresSel  ? Array.from(genresSel.selectedOptions).map((o: any) => o.value)  : [];
 
     const fd = new FormData();
     fd.append('audio', file);
@@ -1890,11 +2050,11 @@ import MainLayout from "../layouts/MainLayout.astro";
     const artistSel = document.getElementById('edit-album-artist') as HTMLSelectElement;
     try {
       const { data: artists } = await apiFetch('/artists?limit=100');
-      artistSel.innerHTML = '<option value="">— Không có nghệ sĩ —</option>' +
+      artistSel.innerHTML = '<option value="">— No artists —</option>' +
         (artists || []).map((a: any) =>
           `<option value="${a.id}"${a.id == al.artist_id ? ' selected' : ''}>${a.name}</option>`
         ).join('');
-    } catch { artistSel.innerHTML = '<option value="">— Không có nghệ sĩ —</option>'; }
+    } catch { artistSel.innerHTML = '<option value="">— No artists —</option>'; }
 
     editAlbumModal?.classList.remove('hidden');
   }
@@ -1993,9 +2153,9 @@ import MainLayout from "../layouts/MainLayout.astro";
     const artistSel = document.getElementById('add-album-artist') as HTMLSelectElement;
     try {
       const { data: artists } = await apiFetch('/artists?limit=100');
-      artistSel.innerHTML = '<option value="">— Không có nghệ sĩ —</option>' +
+      artistSel.innerHTML = '<option value="">— No artists —</option>' +
         (artists || []).map((a: any) => `<option value="${a.id}">${a.name}</option>`).join('');
-    } catch { artistSel.innerHTML = '<option value="">— Không có nghệ sĩ —</option>'; }
+    } catch { artistSel.innerHTML = '<option value="">— No artists —</option>'; }
     addAlbumModal?.classList.remove('hidden');
   }
 
@@ -2253,6 +2413,128 @@ import MainLayout from "../layouts/MainLayout.astro";
       tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load albums.</td></tr>';
     }
   }
+
+  // ── Genres ──────────────────────────────────────────────────────────────────
+  loadGenres = async function () {
+    const tbody = document.getElementById('admin-genres-tbody') as HTMLElement;
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: genres } = await apiFetch('/admin/genres');
+      if (!genres?.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">No genres found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = genres.map((g: any) => `
+        <tr class="group hover:bg-white/3 transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-indigo-400 text-[16px]">label</span>
+              </div>
+              <span class="text-sm font-semibold text-gray-100">${g.name}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">${g.description || '—'}</td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-edit-genre w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${g.id}" data-name="${encodeURIComponent(g.name)}" data-description="${encodeURIComponent(g.description || '')}" title="Edit">
+                <span class="material-symbols-outlined text-[17px]">edit</span>
+              </button>
+              <button class="btn-delete-genre w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${g.id}" data-name="${g.name}" title="Delete">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load genres.</td></tr>';
+    }
+  }
+
+  document.getElementById('admin-genres-tbody')?.addEventListener('click', async (e: Event) => {
+    const editBtn = (e.target as HTMLElement).closest('.btn-edit-genre') as HTMLElement | null;
+    const delBtn  = (e.target as HTMLElement).closest('.btn-delete-genre') as HTMLElement | null;
+    if (editBtn) {
+      openGenreModal(editBtn.dataset.id!, decodeURIComponent(editBtn.dataset.name!), decodeURIComponent(editBtn.dataset.description ?? ''));
+    } else if (delBtn) {
+      const id   = delBtn.dataset.id!;
+      const name = delBtn.dataset.name!;
+      if (!confirm(`Delete genre "${name}"? Songs using this genre will lose it.`)) return;
+      try {
+        await apiFetch(`/admin/genres/${id}`, { method: 'DELETE' });
+        loadGenres();
+        showToast('Genre deleted.', 'success');
+      } catch (err: any) {
+        showToast(err.message || 'Failed to delete genre.', 'error');
+      }
+    }
+  });
+
+  // ── Genre Modal ──────────────────────────────────────────────────────────────
+  const genreModal      = document.getElementById('modal-genre') as HTMLElement;
+  const genreModalBg    = document.getElementById('modal-genre-bg') as HTMLElement;
+  const genreModalClose = document.getElementById('modal-genre-close') as HTMLElement;
+  const genreForm       = document.getElementById('form-genre') as HTMLFormElement;
+  const genreIdInput    = document.getElementById('genre-id') as HTMLInputElement;
+  const genreNameInput  = document.getElementById('genre-name-input') as HTMLInputElement;
+  const genreDescInput  = document.getElementById('genre-desc-input') as HTMLTextAreaElement;
+  const genreNameErr    = document.getElementById('genre-name-err') as HTMLElement;
+  const genreErrDiv     = document.getElementById('genre-error') as HTMLElement;
+  const genreModalTitle = document.getElementById('modal-genre-title') as HTMLElement;
+  const genreSubmitLabel = document.getElementById('btn-genre-submit-label') as HTMLElement;
+
+  function openGenreModal(id: string | null, name = '', description = '') {
+    genreIdInput.value   = id ?? '';
+    genreNameInput.value = name;
+    genreDescInput.value = description;
+    genreNameErr.classList.add('hidden');
+    genreErrDiv.classList.add('hidden');
+    genreModalTitle.textContent   = id ? 'Edit Genre' : 'Add Genre';
+    genreSubmitLabel.textContent  = id ? 'Save Changes' : 'Create Genre';
+    genreModal.classList.remove('hidden');
+    genreNameInput.focus();
+  }
+
+  document.getElementById('btn-add-genre')?.addEventListener('click', () => openGenreModal(null));
+  genreModalBg?.addEventListener('click',    () => genreModal.classList.add('hidden'));
+  genreModalClose?.addEventListener('click', () => genreModal.classList.add('hidden'));
+
+  genreForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = genreNameInput.value.trim();
+    genreNameErr.classList.add('hidden');
+    genreErrDiv.classList.add('hidden');
+    if (!name) { genreNameErr.classList.remove('hidden'); genreNameInput.focus(); return; }
+
+    const id = genreIdInput.value;
+    const btn = document.getElementById('btn-genre-submit') as HTMLButtonElement;
+    const origLabel = genreSubmitLabel.textContent!;
+    btn.disabled = true;
+    genreSubmitLabel.textContent = 'Saving…';
+
+    try {
+      const description = genreDescInput.value.trim() || null;
+      if (id) {
+        await apiFetch(`/admin/genres/${id}`, { method: 'PUT', body: JSON.stringify({ name, description }) });
+        showToast('Genre updated.', 'success');
+      } else {
+        await apiFetch('/admin/genres', { method: 'POST', body: JSON.stringify({ name, description }) });
+        showToast('Genre created.', 'success');
+      }
+      genreModal.classList.add('hidden');
+      _loadedSections.delete('genres');
+      loadGenres();
+    } catch (err: any) {
+      genreErrDiv.textContent = err.message || 'Failed to save genre.';
+      genreErrDiv.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      genreSubmitLabel.textContent = origLabel;
+    }
+  });
 
   // Task status change — delegated listener, survives innerHTML replacements
   document.getElementById('admin-tasks-tbody')?.addEventListener('change', async (e: Event) => {
@@ -2628,6 +2910,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         });
       }
     } catch {}
+    import('../lib/player.js').then(({ player }) => player?.reset?.());
     import('../lib/api.js').then(({ clearAuth }) => {
       clearAuth();
       window.location.href = '/login';
@@ -2635,6 +2918,21 @@ import MainLayout from "../layouts/MainLayout.astro";
   });
 </script>
 
+<style>
+  .custom-select option {
+    background-color: #1a2847;
+    color: #d1d5db;
+    padding: 6px 10px;
+  }
+  .custom-select option:hover,
+  .custom-select option:focus {
+    background-color: #312e81;
+  }
+  .custom-select option:checked {
+    background-color: #7c3aed;
+    color: #fff;
+  }
+</style>
 <!-- ── Assign Task Modal ────────────────────────────────────────────────── -->
 <div id="modal-assign-task" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-task-bg"></div>
@@ -2738,6 +3036,39 @@ import MainLayout from "../layouts/MainLayout.astro";
       <button type="submit" id="btn-artist-submit"
         class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-[18px]">add</span>Thêm Nghệ Sĩ
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── Add / Edit Genre Modal ────────────────────────────────────────────── -->
+<div id="modal-genre" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-genre-bg"></div>
+  <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-sm shadow-2xl z-10 mx-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 id="modal-genre-title" class="text-lg font-bold text-white">Add Genre</h2>
+      <button id="modal-genre-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+    <form id="form-genre" class="space-y-4">
+      <input id="genre-id" type="hidden" value="" />
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Genre Name <span class="text-rose-400">*</span></label>
+        <input id="genre-name-input" type="text" maxlength="100" placeholder="e.g. Pop, Rock, Jazz…"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+        <p id="genre-name-err" class="hidden mt-1 text-xs text-red-400">Genre name is required.</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Description <span class="text-gray-500 font-normal">(optional)</span></label>
+        <textarea id="genre-desc-input" maxlength="300" rows="3" placeholder="Short description of this genre…"
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"></textarea>
+      </div>
+      <div id="genre-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
+      <button type="submit" id="btn-genre-submit"
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">save</span>
+        <span id="btn-genre-submit-label">Create Genre</span>
       </button>
     </form>
   </div>

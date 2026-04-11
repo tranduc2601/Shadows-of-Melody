@@ -7,10 +7,11 @@ import { revokeToken } from '../utils/jwt.js';
 export const getStats = async (req, res) => {
     try {
         // pool.query returns [rows, fields] — unwrap rows[0] for scalar counts
-        const [usersRes, songsRes, artistsRes, recentRes] = await Promise.all([
+        const [usersRes, songsRes, artistsRes, playlistsRes, recentRes] = await Promise.all([
             pool.query('SELECT COUNT(*)::int AS users FROM users WHERE deleted_at IS NULL'),
             pool.query('SELECT COUNT(*)::int AS songs FROM songs'),
             pool.query('SELECT COUNT(*)::int AS artists FROM artists'),
+            pool.query('SELECT COUNT(*)::int AS playlists FROM playlists'),
             pool.query(
                 `SELECT id, username, full_name, email, is_admin, created_at
                  FROM users WHERE deleted_at IS NULL
@@ -20,6 +21,7 @@ export const getStats = async (req, res) => {
         const users   = usersRes[0][0]?.users   ?? 0;
         const songs   = songsRes[0][0]?.songs   ?? 0;
         const artists = artistsRes[0][0]?.artists ?? 0;
+        const playlists = playlistsRes[0][0]?.playlists ?? 0;
         const recentUsers = recentRes[0];
         return res.json({
             success: true,
@@ -27,6 +29,7 @@ export const getStats = async (req, res) => {
                 users_count: users,
                 songs_count: songs,
                 artists_count: artists,
+                playlists_count: playlists,
                 recent_users: recentUsers,
             },
         });
@@ -203,6 +206,56 @@ export const createGenre = async (req, res) => {
     } catch (err) {
         console.error('Admin createGenre error:', err);
         return res.status(500).json({ success: false, message: 'Failed to create genre' });
+    }
+};
+
+// PUT /api/admin/genres/:id
+export const updateGenre = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description } = req.body;
+        if (!name?.trim()) {
+            return res.status(400).json({ success: false, message: 'Genre name is required' });
+        }
+
+        // Check for duplicate (exclude self)
+        const [existing] = await pool.query(
+            'SELECT id FROM genres WHERE LOWER(name) = LOWER(?) AND id != ?',
+            [name.trim(), id]
+        );
+        if (existing.length > 0) {
+            return res.status(409).json({ success: false, message: 'Genre name already in use' });
+        }
+
+        const [result] = await pool.query(
+            'UPDATE genres SET name = ?, description = ? WHERE id = ? RETURNING id, name, description',
+            [name.trim(), description?.trim() || null, id]
+        );
+        if (!result.length) {
+            return res.status(404).json({ success: false, message: 'Genre not found' });
+        }
+        return res.json({ success: true, data: result[0] });
+    } catch (err) {
+        console.error('Admin updateGenre error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update genre' });
+    }
+};
+
+// DELETE /api/admin/genres/:id
+export const deleteGenre = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [result] = await pool.query(
+            'DELETE FROM genres WHERE id = ? RETURNING id',
+            [id]
+        );
+        if (!result.length) {
+            return res.status(404).json({ success: false, message: 'Genre not found' });
+        }
+        return res.json({ success: true, message: 'Genre deleted' });
+    } catch (err) {
+        console.error('Admin deleteGenre error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to delete genre' });
     }
 };
 

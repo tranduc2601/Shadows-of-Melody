@@ -88,7 +88,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>
 
             <!-- Absolute decorative visual (like a floating vinyl or element) -->
-            <div class="absolute right-12 top-1/2 -translate-y-1/2 w-64 h-64 bg-linear-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl group-hover:blur-[60px] transition-all duration-700 pointer-events-none"></div>
+            <div class="absolute right-12 top-1/2 -translate-y-1/2 w-64 h-64 bg-linear-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
           </div>
         </section>
 
@@ -101,7 +101,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                   Trending Now
                </h2>
-               <button id="trending-see-all" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">See All</button>
+               <button id="trending-see-all" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">View All</button>
             </div>
 
             <div class="bg-white/2 border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
@@ -167,6 +167,55 @@ import PlayerBar from "../components/PlayerBar.astro";
 
       </div>
 
+      <!-- Album Detail Overlay -->
+      <div id="album-overlay" class="hidden absolute inset-0 z-20 flex flex-col bg-[#060e20] overflow-hidden">
+        <!-- Hero -->
+        <div class="relative shrink-0 h-56 overflow-hidden">
+          <div id="album-overlay-bg" class="absolute inset-0 opacity-60" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
+          <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10 gap-3">
+            <button id="album-overlay-back" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
+              <span class="material-symbols-outlined text-white text-xl">arrow_back</span>
+            </button>
+          </header>
+          <div class="absolute bottom-0 left-0 right-0 px-8 pb-5 z-10 flex items-end gap-5">
+            <div id="album-overlay-cover" class="w-20 h-20 rounded-xl shrink-0 shadow-2xl overflow-hidden border border-white/10"></div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">Album</p>
+              <h2 id="album-overlay-title" class="text-3xl font-black text-white truncate">—</h2>
+              <p id="album-overlay-meta" class="text-gray-300 mt-1 text-sm">—</p>
+            </div>
+          </div>
+        </div>
+        <!-- Action bar -->
+        <div class="flex items-center gap-4 px-8 py-5 shrink-0">
+          <button id="album-overlay-play" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-900/40">
+            <span class="material-symbols-outlined text-[20px]">play_arrow</span>Play All
+          </button>
+          <button id="album-overlay-shuffle" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
+            <span class="material-symbols-outlined text-[18px]">shuffle</span>Shuffle
+          </button>
+          <span id="album-overlay-count" class="ml-auto text-sm text-gray-500"></span>
+        </div>
+        <!-- Songs -->
+        <div class="flex-1 overflow-y-auto px-8 pb-32 custom-scrollbar">
+          <div class="bg-white/2 border border-white/5 rounded-2xl overflow-hidden">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="text-gray-500 border-b border-white/5">
+                  <th class="font-medium text-xs px-5 py-3 w-12 text-center">#</th>
+                  <th class="font-medium text-xs px-4 py-3 uppercase tracking-wider">Title</th>
+                  <th class="font-medium text-xs px-4 py-3 w-16 text-center"><span class="material-symbols-outlined text-[16px]">schedule</span></th>
+                </tr>
+              </thead>
+              <tbody id="album-overlay-tbody">
+                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <PlayerBar />
     </main>
   </div>
@@ -225,30 +274,39 @@ import PlayerBar from "../components/PlayerBar.astro";
       tbody.innerHTML = songs.map((s: any, i: number) => {
         const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
         const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover" alt=""/>`
-          : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0" style="background:${grad}"></div>`;
+          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
+          : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad}"></div>`;
         return `
-          <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <td class="px-4 py-3 text-center rounded-l-xl">
-              <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block animate-pulse">play_arrow</span>
+          <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer song-row translate-x-0 hover:translate-x-px" data-song="${encodeURIComponent(JSON.stringify(s))}">
+            <td class="px-4 py-3 text-center rounded-l-xl relative overflow-hidden">
+              <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100"></div>
+              <div class="relative w-5 h-5 mx-auto">
+                <span class="absolute inset-0 flex items-center justify-center text-gray-500 font-medium transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+                <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+              </div>
             </td>
             <td class="px-4 py-3">
               <div class="flex items-center gap-4">
                 ${cover}
                 <div class="min-w-0">
-                  <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-[15px]">${s.title}</p>
-                  <p class="text-xs text-gray-400 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
+                  <p class="font-semibold text-gray-100 transition-colors duration-200 group-hover:text-purple-300 truncate text-[15px]">${s.title}</p>
+                  <p class="text-xs text-gray-400 truncate mt-0.5 transition-colors duration-200 group-hover:text-gray-300">${s.artist_names || 'Unknown'}</p>
                 </div>
               </div>
             </td>
-            <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium">${formatCount(s.plays_count)}</td>
-            <td class="px-4 py-3 text-sm text-gray-400 text-center">${formatDuration(s.duration)}</td>
+            <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium transition-colors duration-200 group-hover:text-gray-300">${formatCount(s.plays_count)}</td>
+            <td class="px-4 py-3 text-sm text-gray-400 text-center transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
             <td class="px-4 py-3 rounded-r-xl">
-              <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 transition-all opacity-0 group-hover:opacity-100"
-                      data-id="${s.id}" data-liked="false" title="Yêu thích">
-                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
-              </button>
+              <div class="flex items-center gap-1 justify-end">
+                <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to Playlist">
+                  <span class="material-symbols-outlined text-[20px]">playlist_add</span>
+                </button>
+                <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                        data-id="${s.id}" data-liked="false" title="Yêu thích">
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
+                </button>
+              </div>
             </td>
           </tr>`;
       }).join('');
@@ -268,7 +326,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             seeAllBtn.addEventListener('click', () => {
               _showingAll = !_showingAll;
               renderTrendingRows(_showingAll ? _allSongs : _allSongs.slice(0, 3));
-              seeAllBtn.textContent = _showingAll ? 'Show Less' : 'See All';
+              seeAllBtn.textContent = _showingAll ? 'Show Less' : 'View All';
               setTimeout(loadFavoriteStatuses, 100);
             });
           }
@@ -289,10 +347,10 @@ import PlayerBar from "../components/PlayerBar.astro";
             ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
             : '';
           return `
-            <div class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/8 hover:border-white/10 transition-all cursor-pointer group">
-              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg" style="background:${grad}">
+            <div class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/[0.07] hover:border-white/[0.08] transition-[background,border-color] duration-200 cursor-pointer group">
+              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-shadow duration-300" style="background:${grad}">
                 ${img}
-                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/40 flex items-center justify-center transition-opacity">
+                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 flex items-center justify-center transition-opacity duration-200">
                   <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
                 </div>
               </div>
@@ -316,17 +374,19 @@ import PlayerBar from "../components/PlayerBar.astro";
             : '';
           const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
           return `
-            <div class="group cursor-pointer">
-              <div class="w-full aspect-square rounded-2xl shadow-lg mb-4 relative overflow-hidden" style="background:${grad}">
+            <div class="group cursor-pointer block release-album-card" data-album-id="${al.id}">
+              <div class="w-full aspect-square rounded-2xl shadow-lg mb-4 relative overflow-hidden transition-transform duration-200 group-hover:scale-105 group-hover:shadow-purple-500/20 group-hover:shadow-xl" style="background:${grad}">
                 ${cover}
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-all duration-200"></div>
                 <div class="absolute top-3 left-3 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white/90 uppercase tracking-widest border border-white/10">Album</div>
-                <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 z-10">
-                  <button class="w-12 h-12 rounded-full bg-purple-500 text-white flex items-center justify-center hover:scale-110 shadow-lg">
+                <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-2 group-hover:translate-y-0 z-10">
+                  <button class="release-play-btn w-12 h-12 rounded-full bg-purple-500 hover:bg-purple-400 hover:scale-110 text-white flex items-center justify-center shadow-lg transition-all duration-200"
+                          data-album-id="${al.id}">
                     <span class="material-symbols-outlined text-[24px]">play_arrow</span>
                   </button>
                 </div>
               </div>
-              <h3 class="font-bold text-[15px] text-gray-100 truncate group-hover:text-purple-400 transition-colors">${al.title}</h3>
+              <h3 class="font-bold text-[15px] text-gray-100 truncate group-hover:text-purple-400 transition-colors duration-200">${al.title}</h3>
               <p class="text-[13px] text-gray-400 truncate mt-0.5">${year}</p>
             </div>`;
         }).join('');
@@ -372,6 +432,126 @@ import PlayerBar from "../components/PlayerBar.astro";
   }
 
   loadArtistMembers();
+
+  // ── New Releases: open album overlay or play ────────────────────────────────
+  let _overlaySongs: any[] = [];
+
+  function shuffleOverlay<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function renderOverlaySongs(songs: any[]) {
+    const tbody = document.getElementById('album-overlay-tbody')!;
+    const grad = (id: number) => GRADIENTS_HEX[(id - 1) % GRADIENTS_HEX.length];
+    if (!songs.length) {
+      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">No songs in this album.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = songs.map((s: any, i: number) => {
+      const cover = s.cover_url
+        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
+      return `
+        <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer overlay-song-row" data-idx="${i}">
+          <td class="px-5 py-3 text-center relative overflow-hidden">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
+            <span class="text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75 inline-block">${i + 1}</span>
+            <span class="material-symbols-outlined text-purple-400 text-[20px] absolute inset-0 flex items-center justify-center opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              ${cover}
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-gray-100 group-hover:text-purple-300 truncate transition-colors duration-200">${s.title}</p>
+                <p class="text-xs text-gray-500 truncate transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function openAlbumOverlay(albumId: string) {
+    const overlay = document.getElementById('album-overlay')!;
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex', 'flex-col');
+    // Reset
+    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Loading...';
+    (document.getElementById('album-overlay-meta') as HTMLElement).textContent = '';
+    (document.getElementById('album-overlay-cover') as HTMLElement).innerHTML = '';
+    (document.getElementById('album-overlay-count') as HTMLElement).textContent = '';
+    (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
+      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const { data: album } = await apiFetch(`/albums/${albumId}`);
+      const g = GRADIENTS_HEX[(album.id - 1) % GRADIENTS_HEX.length];
+      (document.getElementById('album-overlay-bg') as HTMLElement).style.background = g;
+      const coverEl = document.getElementById('album-overlay-cover') as HTMLElement;
+      coverEl.style.background = g;
+      if (album.cover_url) coverEl.innerHTML = `<img src="${album.cover_url}" class="w-full h-full object-cover" alt=""/>`;
+      (document.getElementById('album-overlay-title') as HTMLElement).textContent = album.title;
+      const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
+      _overlaySongs = album.songs || [];
+      const count = _overlaySongs.length;
+      (document.getElementById('album-overlay-meta') as HTMLElement).textContent =
+        [album.artist?.name, year, `${count} song${count !== 1 ? 's' : ''}`].filter(Boolean).join(' · ');
+      (document.getElementById('album-overlay-count') as HTMLElement).textContent =
+        `${count} song${count !== 1 ? 's' : ''}`;
+      renderOverlaySongs(_overlaySongs);
+    } catch {
+      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Failed to load';
+      (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
+        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Failed to load album.</td></tr>';
+    }
+  }
+
+  function closeAlbumOverlay() {
+    const overlay = document.getElementById('album-overlay')!;
+    overlay.classList.add('hidden');
+    overlay.classList.remove('flex', 'flex-col');
+    _overlaySongs = [];
+  }
+
+  document.getElementById('album-overlay-back')?.addEventListener('click', closeAlbumOverlay);
+
+  document.getElementById('album-overlay-play')?.addEventListener('click', () => {
+    if (_overlaySongs.length) player.playSong(_overlaySongs[0], _overlaySongs);
+  });
+  document.getElementById('album-overlay-shuffle')?.addEventListener('click', () => {
+    if (!_overlaySongs.length) return;
+    const s = shuffleOverlay(_overlaySongs);
+    player.playSong(s[0], s);
+  });
+
+  document.getElementById('album-overlay-tbody')?.addEventListener('click', (e) => {
+    const row = (e.target as HTMLElement).closest('.overlay-song-row') as HTMLElement | null;
+    if (row && _overlaySongs.length) player.playSong(_overlaySongs[Number(row.dataset.idx)], _overlaySongs);
+  });
+
+  document.getElementById('releases-grid')?.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('.release-play-btn') as HTMLElement | null;
+    if (btn) {
+      e.stopPropagation();
+      const albumId = btn.dataset.albumId;
+      if (!albumId) return;
+      // If overlay already open with this album, just play
+      if (_overlaySongs.length) { player.playSong(_overlaySongs[0], _overlaySongs); return; }
+      try {
+        const { data: album } = await apiFetch(`/albums/${albumId}`);
+        const songs: any[] = album?.songs || [];
+        if (songs.length) player.playSong(songs[0], songs);
+      } catch {}
+      return;
+    }
+    const card = (e.target as HTMLElement).closest('.release-album-card') as HTMLElement | null;
+    if (card?.dataset.albumId) openAlbumOverlay(card.dataset.albumId);
+  });
 
   // ── Favorites helpers ────────────────────────────────────────────────────────
   const _likingInFlight = new Set<string>();
@@ -442,6 +622,12 @@ import PlayerBar from "../components/PlayerBar.astro";
 
   // Song click handlers (delegated)
   document.getElementById('trending-tbody')?.addEventListener('click', (e) => {
+    const atpBtn  = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
+    if (atpBtn) {
+      e.stopPropagation();
+      try { const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
+      return;
+    }
     const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement;
     if (likeBtn) { toggleLike(likeBtn); return; }
     const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;

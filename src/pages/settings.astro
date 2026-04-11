@@ -96,7 +96,7 @@ const categories = [
         <!-- Danger zone -->
         <div class="mt-auto pt-8">
           <div class="border-t border-white/5 pt-6">
-            <button type="button" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all text-left">
+            <button type="button" id="settings-logout-btn" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all text-left">
               <span class="material-symbols-outlined text-[20px]">logout</span>
               Đăng xuất
             </button>
@@ -528,7 +528,23 @@ const categories = [
         btn.disabled = false;
         if (status) status.textContent = '\u26A0\uFE0F ' + (err.message || 'Không thể gửi yêu cầu.');
       }
-    });
+});
   })();
+
+  // ── Logout ──────────────────────────────────────────────────────────────────
+  document.getElementById('settings-logout-btn')?.addEventListener('click', async () => {
+    try {
+      const token = getToken();
+      if (token) {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {}
+    import('../lib/player.js').then(({ player }) => player?.reset?.());
+    clearAuth();
+    window.location.href = '/login';
+  });
 </script>
 </MainLayout>

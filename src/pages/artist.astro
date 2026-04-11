@@ -83,6 +83,21 @@ import PlayerBar from "../components/PlayerBar.astro";
     </main>
   </div>
 
+  <!-- Add to Playlist Modal -->
+  <div id="atp-backdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div id="atp-modal" class="bg-[#0f1a2e] border border-white/10 rounded-2xl shadow-2xl w-80 max-h-[70vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+        <h3 class="text-white font-semibold text-base">Add to Playlist</h3>
+        <button id="atp-close" class="text-gray-400 hover:text-white transition-colors">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+      <div id="atp-list" class="overflow-y-auto flex-1 p-3 space-y-1 custom-scrollbar">
+        <p class="text-gray-500 text-sm text-center py-4">Loading playlists…</p>
+      </div>
+    </div>
+  </div>
+
 <script>
   import { apiFetch, formatCount, formatDuration } from '../lib/api.js';
   import { player } from '../lib/player.js';
@@ -153,20 +168,23 @@ import PlayerBar from "../components/PlayerBar.astro";
     } else {
       songsEl.innerHTML = songs.map((s: any, i: number) => {
         const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover" alt=""/>`
-          : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
+          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-lg" alt=""/>`
+          : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
         return `
-          <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors song-row"
+          <div class="relative flex items-center gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden"
                data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <span class="w-6 text-center text-gray-500 text-sm group-hover:hidden">${i + 1}</span>
-            <span class="material-symbols-outlined text-purple-400 w-6 hidden group-hover:block text-sm">play_arrow</span>
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-8 opacity-0 group-hover:opacity-100"></div>
+            <span class="w-6 text-center text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+            <span class="material-symbols-outlined text-purple-400 w-6 text-sm absolute left-3 opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 scale-50">play_arrow</span>
             ${cover}
             <div class="flex-1 min-w-0">
-              <p class="text-white font-medium truncate group-hover:text-purple-300">${s.title}</p>
-              <p class="text-gray-500 text-sm">${formatCount(s.plays_count)} listens</p>
+              <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
+              <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
             </div>
-            <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">favorite_border</span>
-            <span class="text-gray-500 text-sm">${formatDuration(s.duration)}</span>
+            <button class="add-to-playlist-btn material-symbols-outlined text-gray-600 hover:text-purple-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
+                    title="Add to playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
+            <span class="material-symbols-outlined text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110">favorite_border</span>
+            <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
           </div>`;
       }).join('');
     }
@@ -203,6 +221,12 @@ import PlayerBar from "../components/PlayerBar.astro";
 
   // Song row click handler
   document.getElementById('songs-list')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.add-to-playlist-btn') as HTMLElement | null;
+    if (btn) {
+      e.stopPropagation();
+      openAddToPlaylist(btn.dataset.songId!, decodeURIComponent(btn.dataset.songTitle || ''));
+      return;
+    }
     const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
     if (!row) return;
     try {
@@ -214,6 +238,92 @@ import PlayerBar from "../components/PlayerBar.astro";
       player.playSong(song, queue);
     } catch {}
   });
+
+  // ── Add-to-Playlist Modal ──────────────────────────────────────────────────
+  let atpSongId: string | null = null;
+
+  function openAddToPlaylist(songId: string, songTitle: string) {
+    atpSongId = songId;
+    const backdrop = document.getElementById('atp-backdrop')!;
+    const listEl = document.getElementById('atp-list')!;
+    backdrop.classList.remove('hidden');
+    backdrop.classList.add('flex');
+    listEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Loading playlists…</p>';
+
+    apiFetch('/playlists/me').then(res => {
+      const playlists: any[] = res?.data || [];
+      if (!playlists.length) {
+        listEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No playlists found.</p>';
+        return;
+      }
+      listEl.innerHTML = playlists.map((pl: any) => `
+        <button class="atp-playlist-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/8 transition-colors text-left group"
+                data-playlist-id="${pl.id}" data-playlist-name="${encodeURIComponent(pl.name)}">
+          <span class="material-symbols-outlined text-purple-400 text-lg">queue_music</span>
+          <span class="flex-1 text-white text-sm truncate group-hover:text-purple-300">${pl.name}</span>
+          <span class="text-gray-600 text-xs">${pl.song_count ?? ''}</span>
+        </button>`).join('');
+      listEl.querySelectorAll('.atp-playlist-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const playlistId = (btn as HTMLElement).dataset.playlistId!;
+          const playlistName = decodeURIComponent((btn as HTMLElement).dataset.playlistName || '');
+          addSongToPlaylist(playlistId, playlistName);
+        });
+      });
+    }).catch(() => {
+      listEl.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Failed to load playlists.</p>';
+    });
+  }
+
+  async function addSongToPlaylist(playlistId: string, playlistName: string) {
+    if (!atpSongId) return;
+    try {
+      const res = await apiFetch(`/playlists/${playlistId}/songs`, {
+        method: 'POST',
+        body: JSON.stringify({ songId: atpSongId }),
+      });
+      closeAtpModal();
+      if (res?.success) {
+        showToast(`Added to "${playlistName}"`, 'success');
+      } else {
+        showToast(res?.message || 'Failed to add song.', 'error');
+      }
+    } catch (err: any) {
+      closeAtpModal();
+      const msg = err?.message || '';
+      if (msg.includes('409') || msg.toLowerCase().includes('already')) {
+        showToast(`Song is already in "${playlistName}"`, 'warn');
+      } else {
+        showToast('Failed to add song.', 'error');
+      }
+    }
+  }
+
+  function closeAtpModal() {
+    const backdrop = document.getElementById('atp-backdrop')!;
+    backdrop.classList.add('hidden');
+    backdrop.classList.remove('flex');
+    atpSongId = null;
+  }
+
+  document.getElementById('atp-close')?.addEventListener('click', closeAtpModal);
+  document.getElementById('atp-backdrop')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('atp-backdrop')) closeAtpModal();
+  });
+
+  // ── Toast ──────────────────────────────────────────────────────────────────
+  function showToast(message: string, type: 'success' | 'error' | 'warn' = 'success') {
+    const colors = { success: 'bg-purple-600', error: 'bg-red-600', warn: 'bg-yellow-600' };
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-28 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-xl text-white text-sm font-medium shadow-xl transition-all duration-300 opacity-0 ${colors[type]}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 300);
+    }, 2800);
+  }
 </script>
 
 <style>

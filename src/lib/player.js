@@ -9,7 +9,7 @@ export const player = (() => {
       get shuffle() { return false; }, get repeat() { return 'none'; },
       playSong() {}, toggle() {}, next() {}, prev() {},
       seek() {}, setVolume() {}, toggleShuffle() { return false; }, cycleRepeat() { return 'none'; },
-      saveState() {}, restoreState() {},
+      saveState() {}, restoreState() {}, reset() {},
     };
   }
 
@@ -180,6 +180,21 @@ export const player = (() => {
           }
         });
       } catch {}
+    },
+
+    /** Stop playback and clear all player state (e.g. on logout). */
+    reset() {
+      if (_audio) {
+        _audio.pause();
+        _audio.src = '';
+      }
+      _current = null;
+      _queue = [];
+      _queueIdx = -1;
+      _shuffle = false;
+      _repeat = 'none';
+      try { sessionStorage.removeItem('player_state'); } catch {}
+      _dispatch('songchange');
     },
   };
 })();

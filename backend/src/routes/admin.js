@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth, requireRole } from '../middleware/auth.js';
-import { getStats, getUsers, deleteUser, toggleAdmin, getArtists, revokeArtistRole, getArtistContent, getGenres, createGenre, getAlbums, createAlbum, updateAlbum, deleteAlbum, updateUserRole, toggleSongStatus, getAlbumSongs, updateAlbumSong, toggleLockUser, getAdminSongs } from '../controllers/adminController.js';
+import { getStats, getUsers, deleteUser, toggleAdmin, getArtists, revokeArtistRole, getArtistContent, getGenres, createGenre, updateGenre, deleteGenre, getAlbums, createAlbum, updateAlbum, deleteAlbum, updateUserRole, toggleSongStatus, getAlbumSongs, updateAlbumSong, toggleLockUser, getAdminSongs } from '../controllers/adminController.js';
 import { adminUploadSong, adminUploadCover, adminUpdateSong } from '../controllers/adminSongController.js';
 import { listTasks, createTask, updateTaskStatus, getManagers } from '../controllers/taskController.js';
 import { uploadAudio, uploadImage } from '../config/multer.js';
@@ -21,6 +21,8 @@ router.get('/artists/:id/content',       getArtistContent);
 router.patch('/artists/:id/revoke-role', requireRole('admin'), revokeArtistRole);
 router.get('/genres',                   getGenres);
 router.post('/genres',                  requireRole('admin'), createGenre);
+router.put('/genres/:id',               requireRole('admin'), updateGenre);
+router.delete('/genres/:id',            requireRole('admin'), deleteGenre);
 router.get('/albums',                   getAlbums);
 router.post('/albums',                  requireRole('admin'), createAlbum);
 router.patch('/albums/:id',             requireRole('admin'), updateAlbum);

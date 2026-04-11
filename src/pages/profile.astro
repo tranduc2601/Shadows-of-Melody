@@ -45,7 +45,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         <div class="flex items-center gap-3 p-2 rounded-xl transition-colors">
           <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0 bg-linear-to-r from-purple-500/20 to-transparent rounded-xl px-2 py-1 shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
             <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
-              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
+              <div id="sidebar-profile-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
                 <span class="material-symbols-outlined text-purple-400">person</span>
               </div>
             </div>
@@ -211,7 +211,12 @@ import PlayerBar from "../components/PlayerBar.astro";
                 <span class="material-symbols-outlined text-purple-400 text-[20px]">queue_music</span>
                 Playlists
               </h2>
-              <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">SEE ALL</a>
+              <div class="flex items-center gap-3">
+                <button id="profile-btn-new-pl" type="button" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 rounded-full text-xs font-semibold transition-all">
+                  <span class="material-symbols-outlined text-[15px]">add</span>New
+                </button>
+                <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">SEE ALL</a>
+              </div>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="user-playlists-grid">
               <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
@@ -294,6 +299,10 @@ import PlayerBar from "../components/PlayerBar.astro";
     const avatarInner = document.getElementById('profile-avatar-inner');
     if (avatarInner && user.avatar_url) {
       avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
+    }
+    const sidebarAvatarInner = document.getElementById('sidebar-profile-avatar-inner');
+    if (sidebarAvatarInner && user.avatar_url) {
+      sidebarAvatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
     }
   }
 
@@ -391,22 +400,22 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     // Load playlists
     try {
-      const { data: playlists } = await apiFetch('/playlists?limit=4');
+      const { data: playlists } = await apiFetch('/playlists/me?limit=4');
       const plEl = document.getElementById('user-playlists-grid')!;
       if (playlists?.length) {
         plEl.innerHTML = playlists.slice(0, 4).map((pl: any) => `
           <a href="/playlist" class="group cursor-pointer">
             <div class="aspect-square rounded-2xl mb-3 shadow-lg flex items-center justify-center relative overflow-hidden group-hover:scale-[1.03] transition-all duration-300" style="background:${grad(pl.id)}">
-              ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span>'}
+              ${(pl.cover_url || pl.first_cover_url) ? `<img src="${pl.cover_url || pl.first_cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span>'}
               <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
               </div>
             </div>
             <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">${pl.name}</p>
-            <p class="text-xs text-gray-500 mt-0.5">${pl.description || 'Playlist'}</p>
+            <p class="text-xs text-gray-500 mt-0.5">${pl.songs_count != null ? pl.songs_count + ' songs' : (pl.description || 'Playlist')}</p>
           </a>`).join('');
       } else {
-        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No playlists available.</p>';
+        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No playlists yet. <a href="/playlist" class="text-purple-400 hover:text-purple-300">Create one</a>.</p>';
       }
     } catch {}
   }
@@ -448,6 +457,10 @@ import PlayerBar from "../components/PlayerBar.astro";
       if (avatarInner) {
         avatarInner.innerHTML = `<img src="${newUrl}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
       }
+      const sidebarAvatarInner = document.getElementById('sidebar-profile-avatar-inner');
+      if (sidebarAvatarInner) {
+        sidebarAvatarInner.innerHTML = `<img src="${newUrl}" class="w-full h-full object-cover rounded-full" alt="" />`;
+      }
 
       // Update localStorage so sidebar and other pages reflect the change
       try {
@@ -463,6 +476,11 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   });
 
+  // ── New Playlist button on profile ─────────────────────────────────────────
+  document.getElementById('profile-btn-new-pl')?.addEventListener('click', () => {
+    window.location.href = '/playlist?create=1';
+  });
+
   document.getElementById('logout-btn')?.addEventListener('click', async () => {
     try {
       const token = getToken();
@@ -473,8 +491,10 @@ import PlayerBar from "../components/PlayerBar.astro";
         });
       }
     } catch {}
+    import('../lib/player.js').then(({ player }) => player?.reset?.());
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    sessionStorage.removeItem('player_state');
     showToast('You have been logged out.', 'info');
     setTimeout(() => { window.location.href = '/login'; }, 1200);
   });

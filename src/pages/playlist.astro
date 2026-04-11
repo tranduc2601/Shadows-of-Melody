@@ -1,4 +1,4 @@
----
+﻿---
 import MainLayout from "../layouts/MainLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import PlayerBar from "../components/PlayerBar.astro";
@@ -14,38 +14,82 @@ import PlayerBar from "../components/PlayerBar.astro";
       <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none"></div>
 
       <!-- Header -->
-      <header class="h-20 flex-shrink-0 flex items-center justify-between px-8 relative z-10">
-        <h1 class="text-2xl font-bold text-white">My Playlists</h1>
-        <button id="btn-open-create" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-full transition-all hover:scale-105 shadow-lg shadow-purple-500/25">
-          <span class="material-symbols-outlined">add</span>
-          New Playlist
-        </button>
+      <header class="h-20 flex-shrink-0 flex items-center px-8 relative z-10">
+        <h1 id="playlists-heading" class="text-2xl font-bold text-white">My Playlists</h1>
       </header>
 
       <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10 custom-scrollbar">
 
         <!-- Playlist Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-5 mb-12" id="playlists-grid">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-5 mb-12" id="playlists-grid" style="">
           <p class="col-span-6 text-gray-500 text-sm text-center py-10">Loading...</p>
         </div>
 
         <!-- Featured Playlist Detail -->
         <div id="featured-section" class="hidden">
-          <div class="flex flex-col md:flex-row gap-8 mb-8 p-6 bg-white/[0.02] rounded-3xl border border-white/5" id="featured-header"></div>
-          <div class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
+          <!-- Back button -->
+          <button id="btn-back-to-playlists" class="flex items-center gap-2 mb-5 text-sm text-gray-400 hover:text-white transition-colors duration-150 group">
+            <span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:-translate-x-0.5">arrow_back</span>
+            <span class="font-medium">My Playlists</span>
+          </button>
+          <!-- Header -->
+          <div class="flex flex-col md:flex-row gap-8 mb-6 p-6 bg-white/[0.02] rounded-3xl border border-white/5" id="featured-header"></div>
+
+          <!-- Tabs + Search -->
+          <div class="flex items-center gap-2 mb-4 flex-wrap">
+            <button id="tab-in-pl" class="pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 text-white transition-all">
+              <span class="material-symbols-outlined text-[16px]">queue_music</span>
+              In Playlist
+              <span id="in-pl-count" class="ml-1 bg-white/20 text-white text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center">0</span>
+            </button>
+            <button id="tab-add-songs" class="pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              All Songs
+              <span id="all-songs-count" class="ml-1 bg-white/10 text-gray-400 text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center">0</span>
+            </button>
+            <div id="add-songs-search-wrap" class="hidden ml-auto">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]">search</span>
+                <input id="add-songs-search" type="text" placeholder="Search songs..."
+                  class="bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 w-56 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: In Playlist -->
+          <div id="panel-in-pl" class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
             <table class="w-full text-left">
               <thead>
                 <tr class="border-b border-white/5">
                   <th class="px-6 py-4 text-gray-500 text-xs font-medium w-12 text-center">#</th>
                   <th class="px-4 py-4 text-gray-500 text-xs font-medium uppercase tracking-wider">Title</th>
                   <th class="px-4 py-4 text-gray-500 text-xs font-medium uppercase tracking-wider hidden md:table-cell">Album</th>
-                  <th class="px-4 py-4 text-gray-500 text-xs font-medium text-right w-20">
+                  <th class="px-4 py-4 text-gray-500 text-xs font-medium text-right w-28">
                     <span class="material-symbols-outlined text-[18px]">schedule</span>
                   </th>
                 </tr>
               </thead>
               <tbody id="featured-tbody">
                 <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Select a playlist to view songs.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Panel: All Songs -->
+          <div id="panel-add-songs" class="hidden bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b border-white/5">
+                  <th class="px-6 py-4 text-gray-500 text-xs font-medium w-12 text-center">#</th>
+                  <th class="px-4 py-4 text-gray-500 text-xs font-medium uppercase tracking-wider">Title</th>
+                  <th class="px-4 py-4 text-gray-500 text-xs font-medium uppercase tracking-wider hidden md:table-cell">Album</th>
+                  <th class="px-4 py-4 text-gray-500 text-xs font-medium text-right w-28">
+                    <span class="material-symbols-outlined text-[18px]">schedule</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="all-songs-tbody">
+                <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -64,55 +108,68 @@ import PlayerBar from "../components/PlayerBar.astro";
       </div>
     </div>
 
-    <!-- Create Playlist Modal -->
-    <div id="modal-create-pl" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <!-- Edit Playlist Modal -->
+    <div id="modal-edit-pl" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="bg-[#0f1b35] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-8 relative">
-        <button id="modal-close" type="button" class="absolute top-5 right-5 text-gray-500 hover:text-white transition-colors">
+        <button id="edit-modal-close" type="button" class="absolute top-5 right-5 text-gray-500 hover:text-white transition-colors">
           <span class="material-symbols-outlined">close</span>
         </button>
-
         <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400">queue_music</span>
-          Create New Playlist
+          <span class="material-symbols-outlined text-purple-400">edit</span>
+          Edit Playlist
         </h2>
-
-        <form id="form-create-pl" class="space-y-4" novalidate>
-          <!-- Name (required) -->
+        <form id="form-edit-pl" class="space-y-4" novalidate>
+          <!-- Cover Image -->
           <div class="flex flex-col gap-1.5">
-            <label for="pl-name" class="text-sm font-medium text-gray-300">
+            <label class="text-sm font-medium text-gray-300">Cover Image</label>
+            <div class="flex items-start gap-4">
+              <div id="edit-cover-preview"
+                   class="w-20 h-20 rounded-xl bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center shrink-0 overflow-hidden relative group cursor-pointer"
+                   title="Click to upload cover">
+                <span id="edit-cover-placeholder" class="material-symbols-outlined text-gray-500 text-3xl">add_photo_alternate</span>
+                <img id="edit-cover-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-xl" alt="" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                  <span class="material-symbols-outlined text-white text-xl">edit</span>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <input id="edit-cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
+                <button type="button" id="edit-cover-btn"
+                  class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all text-left flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">upload</span>
+                  Choose image…
+                </button>
+                <p class="text-xs text-gray-500 mt-2">JPG, PNG or WebP · max 5 MB</p>
+                <button type="button" id="edit-cover-remove" class="hidden mt-1 text-xs text-red-400 hover:text-red-300 transition-colors">Remove</button>
+              </div>
+            </div>
+            <p id="edit-cover-err" class="hidden mt-1 text-xs text-red-400"></p>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-pl-name" class="text-sm font-medium text-gray-300">
               Playlist Name <span class="text-red-400">*</span>
             </label>
-            <input
-              id="pl-name" name="name" type="text" maxlength="100"
-              placeholder="My awesome playlist"
-              class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all placeholder-gray-600"
-            />
-            <p class="text-xs text-red-400 hidden" id="pl-name-err">Name is required.</p>
+            <input id="edit-pl-name" name="name" type="text" maxlength="100"
+              class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all placeholder-gray-600" />
+            <p class="text-xs text-red-400 hidden" id="edit-pl-name-err">Name is required.</p>
           </div>
-
-          <!-- Description (optional) -->
           <div class="flex flex-col gap-1.5">
-            <label for="pl-desc" class="text-sm font-medium text-gray-300">Description</label>
-            <textarea
-              id="pl-desc" name="description" rows="3" maxlength="300"
-              placeholder="What's this playlist about?"
-              class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all resize-none placeholder-gray-600"
-            ></textarea>
+            <label for="edit-pl-desc" class="text-sm font-medium text-gray-300">Description</label>
+            <textarea id="edit-pl-desc" name="description" rows="3" maxlength="300"
+              class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all resize-none placeholder-gray-600"></textarea>
           </div>
-
-          <!-- Visibility -->
           <div class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-gray-300">Visibility</label>
             <div class="flex gap-3">
               <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="is_public" value="true" checked
+                <input type="radio" name="edit_is_public" value="true"
                   class="accent-purple-500 w-4 h-4 cursor-pointer" />
                 <span class="text-sm text-gray-300 flex items-center gap-1">
                   <span class="material-symbols-outlined text-[16px] text-green-400">public</span>Public
                 </span>
               </label>
               <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="is_public" value="false"
+                <input type="radio" name="edit_is_public" value="false"
                   class="accent-purple-500 w-4 h-4 cursor-pointer" />
                 <span class="text-sm text-gray-300 flex items-center gap-1">
                   <span class="material-symbols-outlined text-[16px] text-gray-400">lock</span>Private
@@ -120,13 +177,12 @@ import PlayerBar from "../components/PlayerBar.astro";
               </label>
             </div>
           </div>
-
           <div class="flex gap-3 pt-2">
-            <button type="button" id="modal-cancel" class="flex-1 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl font-semibold text-sm transition-all">
+            <button type="button" id="edit-modal-cancel" class="flex-1 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl font-semibold text-sm transition-all">
               Cancel
             </button>
-            <button type="submit" id="btn-create-pl" class="flex-1 py-2.5 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-sm transition-all hover:scale-[1.02] shadow-lg shadow-purple-500/20">
-              Create
+            <button type="submit" id="btn-save-pl" class="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl font-bold text-sm transition-all hover:scale-[1.02] shadow-lg shadow-purple-500/20">
+              Save Changes
             </button>
           </div>
         </form>
@@ -146,7 +202,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   </style>
 
 <script>
-  import { apiFetch, formatDuration, getUser } from '../lib/api.js';
+  import { apiFetch, formatDuration, getUser, API_BASE } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
   const GRADS = [
@@ -161,7 +217,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   ];
   const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
 
-  // ── Toast ──────────────────────────────────────────────────────────────────
+  // â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let _toastTimer: ReturnType<typeof setTimeout> | null = null;
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
     const toast  = document.getElementById('pl-toast')!;
@@ -179,81 +235,371 @@ import PlayerBar from "../components/PlayerBar.astro";
     }, 3000);
   }
 
-  // ── Modal ──────────────────────────────────────────────────────────────────
-  const modal     = document.getElementById('modal-create-pl')!;
-  const openBtn   = document.getElementById('btn-open-create')!;
-  const closeBtn  = document.getElementById('modal-close')!;
-  const cancelBtn = document.getElementById('modal-cancel')!;
+  // ── Edit Playlist Modal ──────────────────────────────────────────────────
+  const editModal     = document.getElementById('modal-edit-pl')!;
+  const editCloseBtn  = document.getElementById('edit-modal-close')!;
+  const editCancelBtn = document.getElementById('edit-modal-cancel')!;
+  const editNameInput = document.getElementById('edit-pl-name') as HTMLInputElement;
+  const editDescInput = document.getElementById('edit-pl-desc') as HTMLTextAreaElement;
+  const editNameErr   = document.getElementById('edit-pl-name-err')!;
 
-  function openModal() {
-    modal.classList.remove('hidden');
-    (document.getElementById('pl-name') as HTMLInputElement).focus();
+  // Cover image elements for edit modal
+  const editCoverFile        = document.getElementById('edit-cover-file') as HTMLInputElement;
+  const editCoverBtn         = document.getElementById('edit-cover-btn') as HTMLButtonElement;
+  const editCoverPreview     = document.getElementById('edit-cover-preview') as HTMLElement;
+  const editCoverImg         = document.getElementById('edit-cover-img') as HTMLImageElement;
+  const editCoverPlaceholder = document.getElementById('edit-cover-placeholder') as HTMLElement;
+  const editCoverRemove      = document.getElementById('edit-cover-remove') as HTMLButtonElement;
+  const editCoverErr         = document.getElementById('edit-cover-err') as HTMLElement;
+
+  let _editCoverRemoved = false; // track if user explicitly removed the existing cover
+
+  function showEditCoverPreview(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      editCoverImg.src = e.target?.result as string;
+      editCoverImg.classList.remove('hidden');
+      editCoverPlaceholder.classList.add('hidden');
+      editCoverRemove.classList.remove('hidden');
+      editCoverBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">check_circle</span><span class="truncate">${file.name}</span>`;
+    };
+    reader.readAsDataURL(file);
   }
-  function closeModal() {
-    modal.classList.add('hidden');
-    (document.getElementById('form-create-pl') as HTMLFormElement).reset();
-    document.getElementById('pl-name-err')!.classList.add('hidden');
-    (document.getElementById('pl-name') as HTMLInputElement).classList.remove('border-red-500/60');
+
+  function setEditCoverFromUrl(url: string | null) {
+    if (url) {
+      editCoverImg.src = url;
+      editCoverImg.classList.remove('hidden');
+      editCoverPlaceholder.classList.add('hidden');
+      editCoverRemove.classList.remove('hidden');
+    } else {
+      editCoverImg.src = '';
+      editCoverImg.classList.add('hidden');
+      editCoverPlaceholder.classList.remove('hidden');
+      editCoverRemove.classList.add('hidden');
+    }
+    editCoverFile.value = '';
+    _editCoverRemoved = false;
   }
 
-  openBtn.addEventListener('click', openModal);
-  closeBtn.addEventListener('click', closeModal);
-  cancelBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  function clearEditCover() {
+    editCoverFile.value = '';
+    editCoverImg.src = '';
+    editCoverImg.classList.add('hidden');
+    editCoverPlaceholder.classList.remove('hidden');
+    editCoverRemove.classList.add('hidden');
+    editCoverErr.classList.add('hidden');
+    editCoverBtn.innerHTML = `<span class="material-symbols-outlined text-[18px]">upload</span>Choose image…`;
+    _editCoverRemoved = true;
+  }
 
-  // ── Create playlist form ──────────────────────────────────────────────────
-  document.getElementById('form-create-pl')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  editCoverBtn.addEventListener('click', () => editCoverFile.click());
+  editCoverPreview.addEventListener('click', () => editCoverFile.click());
+  editCoverRemove.addEventListener('click', clearEditCover);
 
-    const nameInput = document.getElementById('pl-name') as HTMLInputElement;
-    const descInput = document.getElementById('pl-desc') as HTMLTextAreaElement;
-    const isPublic  = (document.querySelector('input[name="is_public"]:checked') as HTMLInputElement)?.value === 'true';
-    const nameErr   = document.getElementById('pl-name-err')!;
-    const submitBtn = document.getElementById('btn-create-pl') as HTMLButtonElement;
-
-    const name = nameInput.value.trim();
-    if (!name) {
-      nameErr.classList.remove('hidden');
-      nameInput.classList.add('border-red-500/60');
-      nameInput.focus();
+  editCoverFile.addEventListener('change', () => {
+    editCoverErr.classList.add('hidden');
+    const file = editCoverFile.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      editCoverErr.textContent = 'Image must be under 5 MB.';
+      editCoverErr.classList.remove('hidden');
+      editCoverFile.value = '';
       return;
     }
-    nameErr.classList.add('hidden');
-    nameInput.classList.remove('border-red-500/60');
+    _editCoverRemoved = false;
+    showEditCoverPreview(file);
+  });
 
-    const token = localStorage.getItem('auth_token');
-    if (!token) { showToast('You must be logged in to create a playlist.', 'error'); return; }
+  function openEditModal(pl: any) {
+    editNameInput.value = pl.name || '';
+    editDescInput.value = pl.description || '';
+    const pub = pl.is_public !== false;
+    (document.querySelector(`input[name="edit_is_public"][value="${pub}"]`) as HTMLInputElement).checked = true;
+    editNameErr.classList.add('hidden');
+    editNameInput.classList.remove('border-red-500/60');
+    setEditCoverFromUrl(pl.cover_url || null);
+    editModal.classList.remove('hidden');
+    editNameInput.focus();
+  }
+  function closeEditModal() { editModal.classList.add('hidden'); }
 
-    submitBtn.textContent = 'Creating...';
-    submitBtn.disabled = true;
+  editCloseBtn.addEventListener('click', closeEditModal);
+  editCancelBtn.addEventListener('click', closeEditModal);
+  editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+  editNameInput?.addEventListener('input', () => {
+    editNameErr.classList.add('hidden');
+    editNameInput.classList.remove('border-red-500/60');
+  });
 
+  document.getElementById('form-edit-pl')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = editNameInput.value.trim();
+    if (!name) {
+      editNameErr.classList.remove('hidden');
+      editNameInput.classList.add('border-red-500/60');
+      editNameInput.focus();
+      return;
+    }
+    const isPublic = (document.querySelector('input[name="edit_is_public"]:checked') as HTMLInputElement)?.value === 'true';
+    const newCoverFile = editCoverFile.files?.[0];
+    const saveBtn  = document.getElementById('btn-save-pl') as HTMLButtonElement;
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
     try {
-      const { data: pl } = await apiFetch('/playlists', {
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-          description: descInput.value.trim(),
-          is_public: isPublic,
-        }),
+      const token = localStorage.getItem('auth_token');
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('description', editDescInput.value.trim());
+      fd.append('is_public', String(isPublic));
+      if (newCoverFile) {
+        fd.append('cover', newCoverFile);
+      } else if (_editCoverRemoved) {
+        fd.append('remove_cover', 'true');
+      }
+      const res = await fetch(`${API_BASE}/playlists/${_activePlId}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
       });
-      closeModal();
-      showToast(`Playlist "${pl.name}" created!`, 'success');
-      await loadPlaylists();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || `Error ${res.status}`);
+      closeEditModal();
+      showToast('Playlist updated!', 'success');
+      await loadPlaylists(true);
     } catch (err: any) {
-      showToast('Failed to create playlist: ' + (err.message || 'Unknown error'), 'error');
+      showToast('Failed to update: ' + (err.message || 'Unknown error'), 'error');
     } finally {
-      submitBtn.textContent = 'Create';
-      submitBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+      saveBtn.disabled = false;
     }
   });
 
-  document.getElementById('pl-name')?.addEventListener('input', () => {
-    document.getElementById('pl-name-err')!.classList.add('hidden');
-    (document.getElementById('pl-name') as HTMLInputElement).classList.remove('border-red-500/60');
+  // â”€â”€ Module-level state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  let _activePlId: number   = 0;
+  let _plSongs: any[]       = [];  // songs currently in the playlist
+  let _plSongIds: Set<number> = new Set();
+  let _allSongs: any[]      = [];  // every song in DB
+  let _activeTab: 'in-pl' | 'add' = 'in-pl';
+  let _allSongsLoaded       = false;
+
+  // DOM refs
+  const tabInPl       = document.getElementById('tab-in-pl') as HTMLButtonElement;
+  const tabAddSongs   = document.getElementById('tab-add-songs') as HTMLButtonElement;
+  const panelInPl     = document.getElementById('panel-in-pl')!;
+  const panelAdd      = document.getElementById('panel-add-songs')!;
+  const searchWrap    = document.getElementById('add-songs-search-wrap')!;
+  const searchInput   = document.getElementById('add-songs-search') as HTMLInputElement;
+  const inPlCount     = document.getElementById('in-pl-count')!;
+  const allSongsCount = document.getElementById('all-songs-count')!;
+  const featuredTbody = document.getElementById('featured-tbody')!;
+  const allSongsTbody = document.getElementById('all-songs-tbody')!;
+
+  function setActiveTab(tab: 'in-pl' | 'add') {
+    _activeTab = tab;
+    const activeClass   = 'pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 text-white transition-all';
+    const inactiveClass = 'pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all';
+    tabInPl.className     = tab === 'in-pl' ? activeClass : inactiveClass;
+    tabAddSongs.className = tab === 'add'   ? activeClass : inactiveClass;
+    panelInPl.classList.toggle('hidden', tab !== 'in-pl');
+    panelAdd.classList.toggle('hidden',  tab !== 'add');
+    searchWrap.classList.toggle('hidden', tab !== 'add');
+    if (tab === 'add') {
+      searchInput.value = '';
+      renderAllSongs();
+    }
+  }
+
+  tabInPl.addEventListener('click',   () => setActiveTab('in-pl'));
+  tabAddSongs.addEventListener('click', () => setActiveTab('add'));
+  searchInput.addEventListener('input', () => renderAllSongs());
+
+  // â”€â”€ Render: songs in playlist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  function renderInPlaylist() {
+    inPlCount.textContent = String(_plSongs.length);
+    if (!_plSongs.length) {
+      featuredTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-10 text-center"><div class="flex flex-col items-center gap-3"><span class="material-symbols-outlined text-gray-600" style="font-size:3rem">library_music</span><p class="text-gray-500 text-sm">This playlist is empty.</p><button id="go-add-songs-btn" class="mt-1 text-sm text-purple-400 hover:text-purple-300 font-semibold">+ Add songs</button></div></td></tr>';
+      document.getElementById('go-add-songs-btn')?.addEventListener('click', () => setActiveTab('add'));
+      return;
+    }
+    featuredTbody.innerHTML = _plSongs.map((s: any, i: number) => {
+      const cover = s.cover_url
+        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
+      return `
+        <tr class="group hover:bg-white/[0.04] transition-[background] duration-200 cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}" data-song-id="${s.id}">
+          <td class="px-6 py-3 text-center w-12">
+            <div class="relative w-5 h-5 mx-auto">
+              <span class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm transition-opacity duration-200 group-hover:opacity-0">${i + 1}</span>
+              <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 transition-opacity duration-200 group-hover:opacity-100">play_arrow</span>
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              ${cover}
+              <div class="min-w-0">
+                <p class="text-white font-medium text-sm transition-colors duration-200 group-hover:text-purple-300 truncate">${s.title}</p>
+                <p class="text-gray-500 text-xs truncate">${s.artist_names || 'Unknown'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-gray-500 text-sm hidden md:table-cell truncate max-w-xs">${s.album_title || '\u2014'}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <span class="text-gray-500 text-sm shrink-0">${formatDuration(s.duration)}</span>
+              <button class="btn-remove-song shrink-0 opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-400 transition-[opacity,color] duration-200"
+                      data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}" title="Remove from playlist">
+                <span class="material-symbols-outlined text-[18px]">remove_circle</span>
+              </button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // â”€â”€ Render: all songs (add panel) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  function renderAllSongs() {
+    const q = searchInput.value.trim().toLowerCase();
+    let songs = _allSongs;
+    if (q) songs = songs.filter((s: any) =>
+      s.title.toLowerCase().includes(q) ||
+      (s.artist_names || '').toLowerCase().includes(q) ||
+      (s.album_title  || '').toLowerCase().includes(q)
+    );
+    allSongsCount.textContent = String(_allSongs.length);
+    if (!songs.length) {
+      allSongsTbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500 text-sm">${q ? 'No songs match your search.' : 'No songs available.'}</td></tr>`;
+      return;
+    }
+    allSongsTbody.innerHTML = songs.map((s: any, i: number) => {
+      const inPlaylist = _plSongIds.has(Number(s.id));
+      const cover = s.cover_url
+        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
+      return `
+        <tr class="group hover:bg-white/[0.04] transition-[background] duration-150" data-song-id="${s.id}">
+          <td class="px-6 py-3 text-center">
+            <span class="text-gray-500 text-sm">${i + 1}</span>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              ${cover}
+              <div class="min-w-0">
+                <p class="text-white font-medium text-sm truncate">${s.title}</p>
+                <p class="text-gray-500 text-xs truncate">${s.artist_names || 'Unknown'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-gray-500 text-sm hidden md:table-cell truncate max-w-xs">${s.album_title || '\u2014'}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <span class="text-gray-500 text-sm shrink-0">${formatDuration(s.duration)}</span>
+              ${inPlaylist
+                ? `<span class="shrink-0 w-8 h-8 flex items-center justify-center text-green-500 opacity-0 group-hover:opacity-100" title="Already in playlist"><span class="material-symbols-outlined text-[22px]">check_circle</span></span>`
+                : `<button class="btn-add-song shrink-0 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-green-400 opacity-0 group-hover:opacity-100 transition-all"
+                        data-song="${encodeURIComponent(JSON.stringify(s))}" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}" title="Add to playlist">
+                    <span class="material-symbols-outlined text-[22px]">add_circle</span>
+                  </button>`
+              }
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // â”€â”€ Table click handlers (delegated, set once) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  featuredTbody.addEventListener('click', async (e) => {
+    // Remove song
+    const removeBtn = (e.target as HTMLElement).closest('.btn-remove-song') as HTMLButtonElement | null;
+    if (removeBtn && !removeBtn.disabled) {
+      e.stopPropagation();
+      const songId = Number(removeBtn.dataset.songId);
+      const title  = decodeURIComponent(removeBtn.dataset.songTitle || '');
+      removeBtn.disabled = true;
+      const origHTML = removeBtn.innerHTML;
+      removeBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>';
+      try {
+        await apiFetch(`/playlists/${_activePlId}/songs/${songId}`, { method: 'DELETE' });
+        _plSongs    = _plSongs.filter((s: any) => s.id !== songId);
+        _plSongIds.delete(songId);
+        renderInPlaylist();
+        if (_activeTab === 'add') renderAllSongs();
+        updateHeaderSongCount();
+        showToast(`"${title}" removed.`, 'success');
+      } catch (err: any) {
+        showToast(err.message || 'Failed to remove song.', 'error');
+        removeBtn.disabled = false;
+        removeBtn.innerHTML = origHTML;
+      }
+      return;
+    }
+    // Play song
+    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
+    if (!row) return;
+    try {
+      const song  = JSON.parse(decodeURIComponent(row.dataset.song || ''));
+      const queue = _plSongs;
+      player.playSong(song, queue);
+    } catch {}
   });
 
-  // ── Load playlists ────────────────────────────────────────────────────────
-  async function loadPlaylists() {
+  allSongsTbody.addEventListener('click', async (e) => {
+    const addBtn = (e.target as HTMLElement).closest('.btn-add-song') as HTMLButtonElement | null;
+    if (!addBtn || addBtn.disabled) return;
+    const songId = Number(addBtn.dataset.songId);
+    const title  = decodeURIComponent(addBtn.dataset.songTitle || '');
+    addBtn.disabled = true;
+    const origHTML = addBtn.innerHTML;
+    addBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>';
+    try {
+      await apiFetch(`/playlists/${_activePlId}/songs`, {
+        method: 'POST',
+        body: JSON.stringify({ songId }),
+      });
+      const song = _allSongs.find((s: any) => s.id === songId);
+      if (song) { _plSongs.push(song); _plSongIds.add(songId); }
+      renderAllSongs(); // removes song from this panel
+      if (_activeTab === 'in-pl') renderInPlaylist();
+      updateHeaderSongCount();
+      showToast(`"${title}" added to playlist.`, 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to add song.', 'error');
+      addBtn.disabled = false;
+      addBtn.innerHTML = origHTML;
+    }
+  });
+
+  function updateHeaderSongCount() {
+    inPlCount.textContent = String(_plSongs.length);
+    const el = document.getElementById('header-song-count');
+    if (el) el.textContent = `${_plSongs.length} songs`;
+  }
+
+  // â”€â”€ Preload all songs from DB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  async function ensureAllSongs() {
+    if (_allSongsLoaded) return;
+    allSongsTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-gray-500 text-sm">Loading songs...</td></tr>';
+    try {
+      const { data } = await apiFetch('/songs?limit=500');
+      _allSongs = data || [];
+      _allSongsLoaded = true;
+      allSongsCount.textContent = String(_allSongs.length);
+    } catch {
+      allSongsTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-red-400 text-sm">Failed to load songs.</td></tr>';
+    }
+  }
+
+  // â”€â”€ Load playlists â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+  // ── Back button ──────────────────────────────────────────────────────────────
+  document.getElementById('btn-back-to-playlists')?.addEventListener('click', () => {
+    document.getElementById('featured-section')!.classList.add('hidden');
+    document.getElementById('playlists-grid')!.classList.remove('hidden');
+    document.getElementById('playlists-heading')!.classList.remove('hidden');
+    _activePlId = 0;
+    document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('ring-2','ring-purple-500/60'));
+  });
+  async function loadPlaylists(keepActive = false) {
     const grid  = document.getElementById('playlists-grid')!;
     const token = localStorage.getItem('auth_token');
 
@@ -265,7 +611,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     try {
-      const { data: playlists } = await apiFetch('/playlists');
+      const { data: playlists } = await apiFetch('/playlists/me');
 
       if (!playlists?.length) {
         grid.innerHTML = `<div class="col-span-6 flex flex-col items-center gap-4 py-16 text-center">
@@ -273,32 +619,61 @@ import PlayerBar from "../components/PlayerBar.astro";
           <p class="text-gray-400">No playlists yet.</p>
           <button id="empty-create-btn" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-semibold text-sm transition-all">Create your first playlist</button>
         </div>`;
-        document.getElementById('empty-create-btn')?.addEventListener('click', openModal);
+        document.getElementById('empty-create-btn')?.addEventListener('click', () =>
+          window.dispatchEvent(new CustomEvent('open-create-playlist-modal'))
+        );
         document.getElementById('featured-section')!.classList.add('hidden');
         return;
       }
 
       grid.innerHTML = playlists.map((pl: any) => `
-        <div class="group cursor-pointer playlist-card" data-id="${pl.id}">
-          <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform duration-300" style="background:${grad(pl.id)}">
-            ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span></div>'}
+        <div class="group cursor-pointer playlist-card ${pl.id === _activePlId ? 'ring-2 ring-purple-500/60' : ''}" data-id="${pl.id}">
+          <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden transition-[box-shadow] duration-200 group-hover:shadow-[0_4px_24px_rgba(139,92,246,0.18)]" style="background:${grad(pl.id)}">
+            ${(pl.cover_url || pl.first_cover_url) ? `<img src="${pl.cover_url || pl.first_cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span></div>'}
             <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
-              <button class="w-12 h-12 rounded-full bg-green-500 hover:bg-green-400 flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all play-pl-btn" data-id="${pl.id}">
+              <button class="w-12 h-12 rounded-full bg-green-500 hover:bg-green-400 flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 play-pl-btn" data-id="${pl.id}">
                 <span class="material-symbols-outlined text-black">play_arrow</span>
               </button>
             </div>
             ${!pl.is_public ? '<span class="absolute top-2 left-2 material-symbols-outlined text-white/60 text-[18px]">lock</span>' : ''}
           </div>
           <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400 transition-colors">${pl.name}</p>
-          <p class="text-gray-500 text-xs mt-0.5 truncate">${pl.description || 'Playlist'}</p>
+          <p class="text-gray-500 text-xs mt-0.5 truncate">${pl.songs_count != null ? pl.songs_count + ' songs' : (pl.description || 'Playlist')}</p>
         </div>`).join('');
 
-      loadPlaylistDetail(playlists[0].id);
+      // Auto-select playlist from URL ?id= param or previously active one
+      const urlId = Number(new URLSearchParams(window.location.search).get('id'));
+      if (urlId && playlists.some((p: any) => p.id === urlId)) {
+        loadPlaylistDetail(urlId);
+      } else if (_activePlId && playlists.some((p: any) => p.id === _activePlId)) {
+        loadPlaylistDetail(_activePlId);
+      } else {
+        // Don't auto-open any playlist — user must click one
+        document.getElementById('featured-section')!.classList.add('hidden');
+        document.getElementById('playlists-grid')!.classList.remove('hidden');
+        document.getElementById('playlists-heading')!.classList.remove('hidden');
+      }
 
       grid.addEventListener('click', (e) => {
         const card    = (e.target as HTMLElement).closest('.playlist-card') as HTMLElement | null;
         const playBtn = (e.target as HTMLElement).closest('.play-pl-btn');
-        if (card && !playBtn) loadPlaylistDetail(Number(card.dataset.id));
+        if (playBtn) {
+          const id = (playBtn as HTMLElement).dataset.id;
+          if (id) {
+            _activePlId = Number(id);
+            document.getElementById('playlists-grid')!.classList.add('hidden');
+            document.getElementById('playlists-heading')!.classList.add('hidden');
+            loadPlaylistDetail(Number(id));
+          }
+          return;
+        }
+        if (card) {
+          document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('ring-2','ring-purple-500/60'));
+          card.classList.add('ring-2','ring-purple-500/60');
+          document.getElementById('playlists-grid')!.classList.add('hidden');
+          document.getElementById('playlists-heading')!.classList.add('hidden');
+          loadPlaylistDetail(Number(card.dataset.id));
+        }
       });
 
     } catch {
@@ -306,26 +681,31 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   }
 
-  // ── Playlist detail ───────────────────────────────────────────────────────
+  // â”€â”€ Playlist detail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async function loadPlaylistDetail(playlistId: number) {
+    _activePlId = playlistId;
     const featured = document.getElementById('featured-section')!;
     const headerEl = document.getElementById('featured-header')!;
-    const tbody    = document.getElementById('featured-tbody')!;
     featured.classList.remove('hidden');
     headerEl.innerHTML = '<p class="text-gray-500 text-sm py-4">Loading...</p>';
-    tbody.innerHTML    = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Loading...</td></tr>';
+    featuredTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Loading...</td></tr>';
+
+    // Ensure all songs are loaded in background
+    ensureAllSongs();
 
     try {
       const { data: pl } = await apiFetch(`/playlists/${playlistId}`);
-      const songs    = pl?.songs || [];
+      _plSongs   = pl?.songs || [];
+      _plSongIds = new Set(_plSongs.map((s: any) => Number(s.id)));
+
       const user     = getUser();
-      const totalSec = songs.reduce((s: number, t: any) => s + (parseInt(t.duration) || 0), 0);
+      const totalSec = _plSongs.reduce((sum: number, t: any) => sum + (parseInt(t.duration) || 0), 0);
       const durText  = totalSec > 0
         ? (totalSec >= 3600 ? `${Math.floor(totalSec / 3600)}h ${Math.floor((totalSec % 3600) / 60)}m` : `${Math.floor(totalSec / 60)} min`)
-        : '—';
+        : '\u2014';
 
       headerEl.innerHTML = `
-        <div class="w-48 h-48 flex-shrink-0 rounded-2xl shadow-2xl relative overflow-hidden" style="background:${grad(pl.id)}">
+        <div class="w-44 h-44 flex-shrink-0 rounded-2xl shadow-2xl relative overflow-hidden" style="background:${grad(pl.id)}">
           ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/20 text-7xl">queue_music</span></div>'}
         </div>
         <div class="flex flex-col justify-end flex-1 min-w-0">
@@ -333,84 +713,85 @@ import PlayerBar from "../components/PlayerBar.astro";
           <h2 class="text-4xl font-black text-white mb-2 truncate">${pl.name}</h2>
           ${pl.description ? `<p class="text-gray-400 text-sm mb-3 line-clamp-2">${pl.description}</p>` : ''}
           <div class="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
-            <span class="text-white font-semibold">${user?.username || '—'}</span>
-            <span class="text-white/30">·</span>
-            <span>${songs.length} songs</span>
-            <span class="text-white/30">·</span>
+            <span class="text-white font-semibold">${user?.username || '\u2014'}</span>
+            <span class="text-white/30">\u00b7</span>
+            <span id="header-song-count">${_plSongs.length} songs</span>
+            <span class="text-white/30">\u00b7</span>
             <span>${durText}</span>
           </div>
           <div class="flex items-center gap-3 mt-5">
-            <button id="btn-pl-play" class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30" ${!songs.length ? 'disabled' : ''}>
+            <button id="btn-pl-play" class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30" ${!_plSongs.length ? 'disabled' : ''}>
               <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
             </button>
-            <button id="btn-pl-shuffle" class="p-3 text-gray-400 hover:text-white transition-colors" ${!songs.length ? 'disabled' : ''}>
-              <span class="material-symbols-outlined text-3xl">shuffle</span>
+            <button id="btn-pl-shuffle" class="p-2 text-gray-400 hover:text-white transition-colors" ${!_plSongs.length ? 'disabled' : ''}>
+              <span class="material-symbols-outlined text-2xl">shuffle</span>
+            </button>
+            <button id="btn-pl-edit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-sm font-semibold transition-all border border-white/10"
+                    data-id="${pl.id}">
+              <span class="material-symbols-outlined text-[18px]">edit</span>Edit
+            </button>
+            <button id="btn-pl-delete" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-sm font-semibold transition-all border border-red-500/20"
+                    data-id="${pl.id}" data-name="${encodeURIComponent(pl.name)}">
+              <span class="material-symbols-outlined text-[18px]">delete</span>Delete
             </button>
           </div>
         </div>`;
 
-      const _songs = songs;
+      // Edit playlist
+      document.getElementById('btn-pl-edit')?.addEventListener('click', () => {
+        openEditModal(pl);
+      });
+
+      // Delete playlist
+      document.getElementById('btn-pl-delete')?.addEventListener('click', async (e) => {
+        const btn  = e.currentTarget as HTMLButtonElement;
+        const id   = btn.dataset.id;
+        const name = decodeURIComponent(btn.dataset.name || `#${id}`);
+        if (!confirm(`Delete playlist "${name}"? This cannot be undone.`)) return;
+        btn.disabled = true;
+        try {
+          await apiFetch(`/playlists/${id}`, { method: 'DELETE' });
+          featured.classList.add('hidden');
+          document.getElementById('playlists-grid')!.classList.remove('hidden');
+          document.getElementById('playlists-heading')!.classList.remove('hidden');
+          _activePlId = 0;
+          showToast(`Playlist "${name}" deleted.`, 'success');
+          loadPlaylists();
+        } catch (err: any) {
+          showToast(err.message || 'Failed to delete playlist.', 'error');
+          btn.disabled = false;
+        }
+      });
+
       document.getElementById('btn-pl-play')?.addEventListener('click', () => {
-        if (_songs.length) player.playSong(_songs[0], _songs);
+        if (_plSongs.length) player.playSong(_plSongs[0], _plSongs);
       });
       document.getElementById('btn-pl-shuffle')?.addEventListener('click', () => {
-        if (!_songs.length) return;
-        const shuffled = [..._songs].sort(() => Math.random() - 0.5);
+        if (!_plSongs.length) return;
+        const shuffled = [..._plSongs].sort(() => Math.random() - 0.5);
         player.playSong(shuffled[0], shuffled);
       });
 
-      if (!songs.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">This playlist is empty.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = songs.map((s: any, i: number) => {
-        const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg flex-shrink-0 object-cover shadow-md" alt=""/>`
-          : `<div class="w-10 h-10 rounded-lg flex-shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
-        return `
-          <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <td class="px-6 py-3 text-center">
-              <span class="text-gray-500 group-hover:hidden">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block">play_arrow</span>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
-                ${cover}
-                <div class="min-w-0">
-                  <p class="text-white font-medium text-sm group-hover:text-purple-400 transition-colors truncate">${s.title}</p>
-                  <p class="text-gray-500 text-xs truncate">${s.artist_names || 'Unknown'}</p>
-                </div>
-              </div>
-            </td>
-            <td class="px-4 py-3 text-gray-500 text-sm hidden md:table-cell truncate max-w-xs">${s.album_title || '—'}</td>
-            <td class="px-4 py-3 text-right">
-              <span class="text-gray-500 text-sm">${formatDuration(s.duration)}</span>
-            </td>
-          </tr>`;
-      }).join('');
-
-      tbody.addEventListener('click', (e) => {
-        const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
-        if (!row) return;
-        try {
-          const song  = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-          const queue = Array.from(tbody.querySelectorAll('.song-row')).map(r => {
-            try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
-          }).filter(Boolean);
-          player.playSong(song, queue);
-        } catch {}
-      });
+      renderInPlaylist();
+      setActiveTab('in-pl');
+      if (_allSongsLoaded) renderAllSongs();
 
     } catch {
       headerEl.innerHTML = '<p class="text-red-400 text-sm py-4">Failed to load playlist.</p>';
-      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400">Failed to load songs.</td></tr>';
+      featuredTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400">Failed to load songs.</td></tr>';
     }
   }
 
+  // Listen for new playlist created via sidebar modal
+  window.addEventListener('playlist-created', () => loadPlaylists(false));
+
   loadPlaylists();
+
+  // Auto-open create modal if redirected with ?create=1
+  if (new URLSearchParams(window.location.search).get('create') === '1') {
+    window.dispatchEvent(new CustomEvent('open-create-playlist-modal'));
+    history.replaceState(null, '', '/playlist');
+  }
 </script>
 
-</MainLayout>
----
 </MainLayout>

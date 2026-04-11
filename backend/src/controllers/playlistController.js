@@ -1,5 +1,6 @@
 import Playlist from '../models/Playlist.js';
 import Song from '../models/Song.js';
+import { uploadToCloudinary } from '../utils/cloudinaryStorage.js';
 
 export const getAllPlaylists = async (req, res) => {
     try {
@@ -39,6 +40,14 @@ export const getPlaylistById = async (req, res) => {
             });
         }
 
+        // Privacy check: private playlists are only accessible by their owner
+        if (!playlist.is_public && playlist.user_id !== req.user?.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'This playlist is private.',
+            });
+        }
+
         return res.status(200).json({
             success: true,
             data: playlist,
@@ -52,27 +61,61 @@ export const getPlaylistById = async (req, res) => {
     }
 };
 
+export const getMyPlaylists = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const limit  = Math.min(parseInt(req.query.limit) || 50, 100);
+        const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+        const playlists = await Playlist.findByUserIdWithMeta(userId, limit, offset);
+        return res.status(200).json({ success: true, data: playlists });
+    } catch (error) {
+        console.error('GetMyPlaylists error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to fetch playlists' });
+    }
+};
+
 export const createPlaylist = async (req, res) => {
     try {
-        const { name, description, cover_url, is_public } = req.body;
+        const { name, description, is_public } = req.body;
         const userId = req.user.id;
 
-        if (!name) {
-            return res.status(400).json({
-                success: false,
-                message: 'Playlist name required',
-            });
+        const trimmedName = (name || '').trim();
+        if (!trimmedName) {
+            return res.status(400).json({ success: false, message: 'Playlist name is required.' });
+        }
+        if (trimmedName.length > 100) {
+            return res.status(400).json({ success: false, message: 'Playlist name must be 100 characters or fewer.' });
+        }
+        if (description && description.length > 500) {
+            return res.status(400).json({ success: false, message: 'Description must be 500 characters or fewer.' });
+        }
+
+        // Upload cover image to Cloudinary if provided
+        let cover_url = null;
+        console.log('[createPlaylist] req.file:', req.file ? `${req.file.fieldname} / ${req.file.originalname} / ${req.file.size}b` : 'NULL');
+        console.log('[createPlaylist] Content-Type:', req.headers['content-type']);
+        if (req.file) {
+            const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'playlist-covers', 'image');
+            cover_url = secureUrl;
+            console.log('[createPlaylist] Cloudinary URL:', cover_url);
         }
 
         const playlistId = await Playlist.create({
             user_id: userId,
-            name,
-            description: description || '',
+            name: trimmedName,
+            description: (description || '').trim(),
             cover_url,
-            is_public: is_public !== undefined ? is_public : true,
+            is_public: is_public === 'false' || is_public === false ? false : true,
         });
 
         const playlist = await Playlist.findById(playlistId);
+        if (!playlist) {
+            return res.status(201).json({
+                success: true,
+                message: 'Playlist created successfully',
+                data: { id: playlistId, name: trimmedName, cover_url, is_public: is_public !== 'false' && is_public !== false },
+            });
+        }
 
         return res.status(201).json({
             success: true,
@@ -109,11 +152,23 @@ export const updatePlaylist = async (req, res) => {
             });
         }
 
+        // Upload new cover image if provided, or remove if flagged
+        let finalCoverUrl = cover_url; // preserve existing unless overridden
+        if (req.file) {
+            const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'playlist-covers', 'image');
+            finalCoverUrl = secureUrl;
+        } else if (req.body.remove_cover === 'true') {
+            finalCoverUrl = null;
+        } else if (finalCoverUrl === undefined) {
+            // cover_url not sent in body → keep existing value, don't update it
+            finalCoverUrl = undefined;
+        }
+
         const updateData = {};
         if (name) updateData.name = name;
         if (description !== undefined) updateData.description = description;
-        if (cover_url) updateData.cover_url = cover_url;
-        if (is_public !== undefined) updateData.is_public = is_public;
+        if (finalCoverUrl !== undefined) updateData.cover_url = finalCoverUrl;
+        if (is_public !== undefined) updateData.is_public = is_public === 'false' || is_public === false ? false : true;
 
         await Playlist.update(id, updateData);
 
@@ -194,6 +249,12 @@ export const addSongToPlaylist = async (req, res) => {
                 success: false,
                 message: 'Unauthorized to modify this playlist',
             });
+        }
+
+        // Prevent duplicates
+        const alreadyIn = await Playlist.isSongInPlaylist(playlistId, songId);
+        if (alreadyIn) {
+            return res.status(409).json({ success: false, message: 'Song is already in this playlist.' });
         }
 
         const song = await Song.findById(songId);

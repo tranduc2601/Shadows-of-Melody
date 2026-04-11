@@ -18,5 +18,136 @@ const { title = "Music App" } = Astro.props;
 
 <body>
   <slot />
+
+  <!-- ── Global: Add to Playlist Modal ─────────────────────────────────── -->
+  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-[#0f1b35] border border-white/10 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative">
+      <button id="global-atp-close" type="button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <h3 class="text-white font-bold text-lg mb-1 flex items-center gap-2">
+        <span class="material-symbols-outlined text-purple-400 text-[20px]">playlist_add</span>
+        Add to Playlist
+      </h3>
+      <p id="global-atp-song-name" class="text-gray-400 text-sm mb-4 truncate"></p>
+      <div id="global-atp-list" class="space-y-1 max-h-72 overflow-y-auto pr-1">
+        <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
+      </div>
+      <p id="global-atp-feedback" class="hidden text-xs mt-2 font-medium"></p>
+      <a href="/playlist" class="mt-4 flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Create new playlist
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const _GRADS_ATP = [
+      'linear-gradient(135deg,#6366f1,#8b5cf6)',
+      'linear-gradient(135deg,#f43f5e,#f97316)',
+      'linear-gradient(135deg,#ec4899,#7c3aed)',
+      'linear-gradient(135deg,#ef4444,#d946ef)',
+      'linear-gradient(135deg,#3b82f6,#06b6d4)',
+      'linear-gradient(135deg,#06b6d4,#10b981)',
+      'linear-gradient(135deg,#d946ef,#7c3aed)',
+      'linear-gradient(135deg,#fb923c,#fb7185)',
+    ];
+
+    const _atpModal    = document.getElementById('global-atp-modal')!;
+    const _atpClose    = document.getElementById('global-atp-close')!;
+    const _atpList     = document.getElementById('global-atp-list')!;
+    const _atpSongName = document.getElementById('global-atp-song-name')!;
+    const _atpFeedback = document.getElementById('global-atp-feedback')!;
+    let _atpSong: any  = null;
+
+    function _atpShowFeedback(msg: string, ok: boolean) {
+      _atpFeedback.textContent = msg;
+      _atpFeedback.className = `text-xs mt-2 font-medium ${ok ? 'text-green-400' : 'text-red-400'}`;
+      _atpFeedback.classList.remove('hidden');
+      setTimeout(() => _atpFeedback.classList.add('hidden'), 2500);
+    }
+
+    _atpClose?.addEventListener('click', () => _atpModal.classList.add('hidden'));
+    _atpModal?.addEventListener('click', (e) => { if (e.target === _atpModal) _atpModal.classList.add('hidden'); });
+
+    async function openAddToPlaylist(song: any) {
+      _atpSong = song;
+      _atpSongName.textContent = `"${song.title}"`;
+      _atpFeedback.classList.add('hidden');
+      _atpModal.classList.remove('hidden');
+      _atpList.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Loading...</p>';
+
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        _atpList.innerHTML = '<p class="text-gray-400 text-sm text-center py-4"><a href="/login" class="text-purple-400">Log in</a> to add to a playlist.</p>';
+        return;
+      }
+
+      try {
+        const res  = await fetch('http://localhost:5000/api/playlists/me', {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+        const json = await res.json();
+        const playlists: any[] = json.data || [];
+
+        if (!playlists.length) {
+          _atpList.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">No playlists yet. <a href="/playlist" class="text-purple-400">Create one</a>.</p>';
+          return;
+        }
+
+        _atpList.innerHTML = playlists.map((pl: any) => {
+          const bg    = _GRADS_ATP[(Number(pl.id) - 1) % _GRADS_ATP.length];
+          const img   = pl.cover_url || pl.first_cover_url;
+          const cover = img ? `<img src="${img}" class="w-full h-full object-cover rounded-lg" alt="" />` : '';
+          return `
+            <button class="atp-pl-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-left group"
+                    data-pl-id="${pl.id}" data-pl-name="${pl.name}" type="button">
+              <div class="w-10 h-10 rounded-lg shrink-0 overflow-hidden flex items-center justify-center" style="background:${bg}">
+                ${cover || '<span class="material-symbols-outlined text-white/30 text-lg">queue_music</span>'}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-200 group-hover:text-white truncate">${pl.name}</p>
+                <p class="text-xs text-gray-500">${pl.songs_count ?? 0} songs</p>
+              </div>
+              <span class="material-symbols-outlined text-gray-600 group-hover:text-green-400 transition-colors text-[20px] shrink-0">add_circle</span>
+            </button>`;
+        }).join('');
+      } catch {
+        _atpList.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Failed to load playlists.</p>';
+      }
+    }
+
+    _atpList?.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest('.atp-pl-item') as HTMLButtonElement | null;
+      if (!btn || !_atpSong || btn.disabled) return;
+      const plId   = btn.dataset.plId;
+      const plName = btn.dataset.plName;
+      const icon   = btn.querySelector('.material-symbols-outlined:last-of-type') as HTMLElement | null;
+      const origIcon = icon?.textContent || 'add_circle';
+      btn.disabled = true;
+      if (icon) icon.textContent = 'pending';
+
+      try {
+        const token = localStorage.getItem('auth_token');
+        const res = await fetch(`http://localhost:5000/api/playlists/${plId}/songs`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songId: _atpSong.id }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message || 'Failed');
+        if (icon) { icon.textContent = 'check_circle'; icon.classList.add('text-green-400'); }
+        _atpShowFeedback(`Added to "${plName}"`, true);
+        setTimeout(() => _atpModal.classList.add('hidden'), 900);
+      } catch (err: any) {
+        btn.disabled = false;
+        if (icon) { icon.textContent = origIcon; icon.classList.remove('text-green-400'); }
+        _atpShowFeedback(err.message || 'Failed to add song.', false);
+      }
+    });
+
+    // Expose globally
+    (window as any).openAddToPlaylist = openAddToPlaylist;
+  </script>
 </body>
 </html>
