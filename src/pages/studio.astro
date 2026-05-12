@@ -1,0 +1,1123 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Artist Studio – Melody">
+
+<div class="min-h-screen bg-[#060d1f] flex">
+
+  <aside id="studio-sidebar"
+    class="w-60 shrink-0 bg-[#080f24] border-r border-white/5 flex flex-col z-40 fixed inset-y-0 left-0 md:static md:translate-x-0 -translate-x-full transition-transform duration-300">
+
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-white/5 shrink-0">
+      <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-white text-[18px]">equalizer</span>
+      </span>
+      <div class="min-w-0">
+        <p class="text-sm font-bold text-white leading-tight">Artist Studio</p>
+        <p class="text-xs text-green-400 truncate" id="studio-artist-name">Loading…</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <button class="studio-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"
+              data-section="dashboard">
+        <span class="material-symbols-outlined text-[20px] shrink-0">dashboard</span>Dashboard
+      </button>
+      <div>
+        <button class="studio-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"
+                data-section="music">
+          <span class="material-symbols-outlined text-[20px] shrink-0">library_music</span>Music
+        </button>
+        <div id="music-subnav" class="hidden pl-10 mt-1 space-y-1">
+          <button class="studio-subnav-btn w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                  data-tab="songs">Songs</button>
+          <button class="studio-subnav-btn w-full text-left px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                  data-tab="albums">Albums</button>
+        </div>
+      </div>
+      <button class="studio-nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5"
+              data-section="profile">
+        <span class="material-symbols-outlined text-[20px] shrink-0">manage_accounts</span>Profile
+      </button>
+    </nav>
+
+    <div class="p-3 border-t border-white/5 shrink-0 space-y-1">
+      <a href="/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-500 hover:text-white hover:bg-white/5 transition-all">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>Back to App
+      </a>
+      <div class="flex items-center gap-2 px-2 py-2">
+        <div id="studio-sidebar-avatar"
+          class="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shrink-0 overflow-hidden">
+          <span class="material-symbols-outlined text-white text-sm">person</span>
+        </div>
+        <div class="min-w-0">
+          <p id="studio-sidebar-display" class="text-xs font-semibold text-gray-200 truncate">—</p>
+          <p class="text-xs text-green-400">Artist</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <button id="studio-sidebar-toggle"
+    class="md:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-xl bg-[#0f1b35] border border-white/10 flex items-center justify-center text-gray-300">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <main class="flex-1 min-w-0 flex flex-col">
+
+    <header class="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-[#060d1f]/80 backdrop-blur-sm shrink-0">
+      <div>
+        <h1 id="studio-page-title" class="text-lg font-bold text-white">Dashboard</h1>
+        <p id="studio-page-sub"   class="text-xs text-gray-500">Your artist analytics &amp; tools</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="btn-quick-upload"
+          class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white text-sm font-semibold rounded-xl transition-all">
+          <span class="material-symbols-outlined text-[18px]">upload</span>Upload Song
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <div id="pane-dashboard">
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Monthly Listeners</p>
+            <p id="stat-monthly" class="text-2xl font-bold text-white">—</p>
+            <p class="text-xs text-green-400 mt-1">Last 30 days</p>
+          </div>
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Plays</p>
+            <p id="stat-plays" class="text-2xl font-bold text-white">—</p>
+            <p class="text-xs text-gray-500 mt-1">All time</p>
+          </div>
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Followers</p>
+            <p id="stat-followers" class="text-2xl font-bold text-white">—</p>
+            <p class="text-xs text-gray-500 mt-1">Total</p>
+          </div>
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">Songs</p>
+            <p id="stat-songs" class="text-2xl font-bold text-white">—</p>
+            <p class="text-xs text-gray-500 mt-1">Published</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-4">
+          <div class="lg:col-span-3 bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-sm font-semibold text-white mb-4">Streams — Last 7 Days</p>
+            <div class="relative h-48">
+              <canvas id="plays-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2 bg-white/3 border border-white/5 rounded-2xl p-5">
+            <p class="text-sm font-semibold text-white mb-4">Top 5 Songs</p>
+            <div id="top-songs-list" class="space-y-3">
+              <p class="text-gray-500 text-sm">Loading…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="pane-music" class="hidden">
+
+        <div class="flex gap-2 mb-5">
+          <button id="music-tab-songs"
+            class="px-4 py-1.5 rounded-lg text-sm font-semibold bg-white/10 text-white transition-all">Songs</button>
+          <button id="music-tab-albums"
+            class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white hover:bg-white/5 transition-all">Albums</button>
+        </div>
+
+        <div id="subpane-songs">
+          <div class="bg-white/3 border border-white/5 rounded-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px] pointer-events-none">search</span>
+                <input id="studio-songs-search" type="text" placeholder="Search your songs…"
+                  class="pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-green-500/50 transition-all w-56" />
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-5 py-3">Song</th>
+                    <th class="px-5 py-3 hidden md:table-cell">Album</th>
+                    <th class="px-5 py-3 hidden sm:table-cell text-right">Plays</th>
+                    <th class="px-5 py-3 hidden lg:table-cell text-center">Duration</th>
+                    <th class="px-5 py-3">Status</th>
+                    <th class="px-5 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="studio-songs-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="6" class="px-5 py-10 text-center text-gray-500">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between px-5 py-3 border-t border-white/5">
+              <p id="songs-page-info" class="text-xs text-gray-500">-</p>
+              <div id="songs-page-btns" class="flex gap-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="subpane-albums" class="hidden">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm text-gray-400"><span id="albums-count">0</span> albums</p>
+            <button id="btn-create-album"
+              class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white text-sm font-semibold rounded-xl transition-all">
+              <span class="material-symbols-outlined text-[18px]">add</span>New Album
+            </button>
+          </div>
+          <div id="albums-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div class="col-span-full text-center text-gray-500 py-10">Loading…</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="pane-profile" class="hidden max-w-2xl">
+        <div class="bg-white/3 border border-white/5 rounded-2xl overflow-hidden">
+          <div id="profile-cover-area" class="relative h-36 bg-gradient-to-r from-green-900/40 to-emerald-900/20 cursor-pointer group overflow-hidden">
+            <img id="profile-cover-img" class="hidden absolute inset-0 w-full h-full object-cover" alt="cover" />
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="material-symbols-outlined text-white text-3xl">add_photo_alternate</span>
+            </div>
+            <input id="cover-file-input" type="file" accept="image/*" class="hidden" />
+          </div>
+
+          <div class="px-6 pt-0 pb-6 -mt-10 relative">
+            <div class="relative inline-block mb-4 group cursor-pointer" id="avatar-wrap">
+              <div id="profile-avatar-preview"
+                class="w-20 h-20 rounded-full border-4 border-[#060d1f] bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center overflow-hidden">
+                <span class="material-symbols-outlined text-white text-3xl">person</span>
+              </div>
+              <div class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="material-symbols-outlined text-white">edit</span>
+              </div>
+              <input id="avatar-file-input" type="file" accept="image/*" class="hidden" />
+            </div>
+
+            <form id="profile-form" class="space-y-4" novalidate>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Artist Name</label>
+                <input id="profile-name" type="text" maxlength="100"
+                  class="w-full px-4 py-3 bg-[#0f1b35] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>
+                <textarea id="profile-bio" rows="4" maxlength="500"
+                  class="w-full px-4 py-3 bg-[#0f1b35] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-all resize-none"
+                  placeholder="Tell your fans about yourself…"></textarea>
+              </div>
+              <div id="profile-error" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3"></div>
+              <div id="profile-success" class="hidden bg-green-500/10 border border-green-500/20 text-green-400 text-sm rounded-xl px-4 py-3">Profile updated!</div>
+              <button type="submit" id="profile-save-btn"
+                class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-xl transition-all">
+                <span class="material-symbols-outlined text-[18px]">save</span>Save Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>  </main></div>
+<div id="modal-upload" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-[#0f1b35] border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <button id="modal-upload-close" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+      <span class="material-symbols-outlined text-green-400">upload_file</span>Upload Song
+    </h3>
+    <form id="upload-song-form" class="space-y-4" novalidate>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Audio File <span class="text-rose-400">*</span></label>
+        <label class="flex flex-col items-center justify-center h-24 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-green-500/50 hover:bg-white/3 transition-all" id="audio-drop-zone">
+          <span class="material-symbols-outlined text-gray-500 text-3xl mb-1">audio_file</span>
+          <span id="audio-file-label" class="text-sm text-gray-500">Click or drag audio file here</span>
+          <input id="audio-file-input" type="file" accept=".mp3,.wav,.flac,.aac,.ogg,.m4a" class="hidden" />
+        </label>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Cover Art</label>
+        <div class="flex items-center gap-3">
+          <div id="upload-cover-preview" class="w-16 h-16 rounded-xl bg-white/5 border border-dashed border-white/15 flex items-center justify-center overflow-hidden shrink-0">
+            <span class="material-symbols-outlined text-gray-600">image</span>
+          </div>
+          <label class="flex-1 flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-all">
+            <span class="material-symbols-outlined text-[18px] text-gray-400">add_photo_alternate</span>
+            <span class="text-sm text-gray-400">Choose image…</span>
+            <input id="cover-upload-input" type="file" accept="image/*" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Title <span class="text-rose-400">*</span></label>
+        <input id="upload-title" type="text" maxlength="150"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-all"
+          placeholder="Song title" />
+      </div>
+
+      <input id="upload-duration" type="hidden" value="0" />
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Album (optional)</label>
+        <select id="upload-album"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-green-500 transition-all cursor-pointer">
+          <option value="">— No album —</option>
+        </select>
+      </div>
+
+      <div id="upload-error" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3"></div>
+
+      <div id="upload-progress-wrap" class="hidden">
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div id="upload-progress-bar" class="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300" style="width:0%"></div>
+        </div>
+        <p id="upload-progress-label" class="text-xs text-gray-500 mt-1">Uploading…</p>
+      </div>
+
+      <button type="submit" id="upload-song-btn"
+        class="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">upload</span>Upload
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="modal-edit-song" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-[#0f1b35] border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
+    <button id="modal-edit-song-close" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+      <span class="material-symbols-outlined text-green-400">edit</span>Edit Song
+    </h3>
+    <form id="edit-song-form" class="space-y-4" novalidate>
+      <input id="edit-song-id" type="hidden" />
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Title</label>
+        <input id="edit-song-title" type="text" maxlength="150"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500 transition-all" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</label>
+        <select id="edit-song-status"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-green-500 transition-all cursor-pointer">
+          <option value="published">Published</option>
+          <option value="suppressed">Suppressed</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Cover Art</label>
+        <div class="flex items-center gap-3">
+          <div id="edit-cover-preview" class="w-14 h-14 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+            <span class="material-symbols-outlined text-gray-600 text-xl">image</span>
+          </div>
+          <label class="flex-1 flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-all">
+            <span class="material-symbols-outlined text-[18px] text-gray-400">add_photo_alternate</span>
+            <span class="text-sm text-gray-400">Replace cover…</span>
+            <input id="edit-cover-input" type="file" accept="image/*" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <div id="edit-song-error" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3"></div>
+
+      <button type="submit" id="edit-song-btn"
+        class="w-full py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-xl transition-all">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="modal-album" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-[#0f1b35] border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
+    <button id="modal-album-close" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <h3 id="album-modal-title" class="text-lg font-bold text-white mb-5">New Album</h3>
+    <form id="album-form" class="space-y-4" novalidate>
+      <input id="album-form-id" type="hidden" />
+
+      <div class="flex items-center gap-3">
+        <div id="album-cover-preview" class="w-16 h-16 rounded-xl bg-white/5 border border-dashed border-white/15 flex items-center justify-center overflow-hidden shrink-0">
+          <span class="material-symbols-outlined text-gray-600">album</span>
+        </div>
+        <label class="flex-1 flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-all">
+          <span class="material-symbols-outlined text-[18px] text-gray-400">add_photo_alternate</span>
+          <span class="text-sm text-gray-400">Cover image…</span>
+          <input id="album-cover-input" type="file" accept="image/*" class="hidden" />
+        </label>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Title <span class="text-rose-400">*</span></label>
+        <input id="album-title" type="text" maxlength="150"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-white focus:outline-none focus:border-green-500 transition-all" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Release Date</label>
+        <input id="album-release-date" type="date"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-gray-300 focus:outline-none focus:border-green-500 transition-all" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Description</label>
+        <textarea id="album-description" rows="3" maxlength="300"
+          class="w-full px-4 py-2.5 bg-[#1a2847] border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-all resize-none"></textarea>
+      </div>
+
+      <div id="album-error" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3"></div>
+
+      <button type="submit" id="album-save-btn"
+        class="w-full py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-xl transition-all">
+        Save
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+
+<script>
+  import { requireAuthClient, getUser, getToken, apiFetch, formatCount, formatDuration, API_BASE } from '../lib/api.js';
+
+  if (!requireAuthClient('artist')) throw new Error('redirect');
+  const me = getUser()!;
+
+  let _activeSection  = 'dashboard';
+  let _activeMusicTab = 'songs';
+  let _analyticsLoaded = false;
+  let _songsLoaded     = false;
+  let _albumsLoaded    = false;
+  let _profileLoaded   = false;
+  let _albums: any[]   = [];
+  let _songPage        = 1;
+  let _songSearch      = '';
+  let _editAlbumFile: File | null   = null;
+  let _avatarFile: File | null      = null;
+  let _profileCoverFile: File | null = null;
+
+  const fmt     = (s: any) => formatDuration(s);
+  const fmtNum  = (n: any) => formatCount(n);
+  const fmtDate = (d: any) => d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+
+  function showErr(el: HTMLElement | null, msg: string) {
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+  function hideErr(el: HTMLElement | null) { el?.classList.add('hidden'); }
+
+  function showToast(msg: string, type: 'success'|'error' = 'success') {
+    const t = document.createElement('div');
+    t.className = `fixed bottom-5 right-5 z-[500] px-4 py-3 rounded-xl shadow-lg text-sm font-medium text-white
+                   ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  function paginationBtns(container: HTMLElement, page: number, totalPages: number, onPage: (p: number) => void) {
+    container.innerHTML = '';
+    if (totalPages <= 1) return;
+    const prev = document.createElement('button');
+    prev.className = 'w-7 h-7 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all';
+    prev.innerHTML = '<span class="material-symbols-outlined text-[17px]">chevron_left</span>';
+    prev.disabled = page <= 1;
+    prev.onclick = () => onPage(page - 1);
+    container.appendChild(prev);
+    const maxP = Math.min(totalPages, 5);
+    for (let p = 1; p <= maxP; p++) {
+      const btn = document.createElement('button');
+      btn.className = `w-7 h-7 rounded-lg text-xs font-semibold transition-all ${p === page ? 'bg-green-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`;
+      btn.textContent = String(p);
+      btn.onclick = () => onPage(p);
+      container.appendChild(btn);
+    }
+    const next = document.createElement('button');
+    next.className = 'w-7 h-7 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white flex items-center justify-center transition-all';
+    next.innerHTML = '<span class="material-symbols-outlined text-[17px]">chevron_right</span>';
+    next.disabled = page >= totalPages;
+    next.onclick = () => onPage(page + 1);
+    container.appendChild(next);
+  }
+
+  const TITLES: Record<string, [string, string]> = {
+    dashboard: ['Dashboard', 'Your artist analytics & tools'],
+    music:     ['Music',     'Manage your songs and albums'],
+    profile:   ['Profile',   'Edit your public artist profile'],
+  };
+
+  function switchSection(section: string) {
+    _activeSection = section;
+    const [title, sub] = TITLES[section] ?? ['', ''];
+    (document.getElementById('studio-page-title') as HTMLElement).textContent = title;
+    (document.getElementById('studio-page-sub')   as HTMLElement).textContent = sub;
+
+    document.querySelectorAll<HTMLElement>('.studio-nav-btn').forEach(btn => {
+      const active = btn.dataset.section === section;
+      btn.classList.toggle('bg-green-600/20', active);
+      btn.classList.toggle('text-green-300',  active);
+      btn.classList.toggle('text-gray-400',   !active);
+    });
+
+    ['dashboard', 'music', 'profile'].forEach(s => {
+      const el = document.getElementById(`pane-${s}`) as HTMLElement;
+      el?.classList.toggle('hidden', s !== section);
+    });
+
+    const musicSubnav = document.getElementById('music-subnav') as HTMLElement;
+    musicSubnav?.classList.toggle('hidden', section !== 'music');
+
+    if (section === 'dashboard' && !_analyticsLoaded) loadAnalytics();
+    if (section === 'music' && !_songsLoaded) loadSongs();
+    if (section === 'music' && !_albumsLoaded) loadAlbums();
+    if (section === 'profile' && !_profileLoaded) loadProfile();
+  }
+
+  function switchMusicTab(tab: string) {
+    _activeMusicTab = tab;
+    document.getElementById('subpane-songs')?.classList.toggle('hidden',  tab !== 'songs');
+    document.getElementById('subpane-albums')?.classList.toggle('hidden', tab !== 'albums');
+    const songBtn  = document.getElementById('music-tab-songs')  as HTMLElement;
+    const albumBtn = document.getElementById('music-tab-albums') as HTMLElement;
+    songBtn.className  = `px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${tab === 'songs'  ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
+    albumBtn.className = `px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${tab === 'albums' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
+  }
+
+  document.querySelectorAll<HTMLElement>('.studio-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchSection(btn.dataset.section!));
+  });
+  document.querySelectorAll<HTMLElement>('.studio-subnav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchSection('music');
+      switchMusicTab(btn.dataset.tab!);
+    });
+  });
+  document.getElementById('music-tab-songs')?.addEventListener('click',  () => switchMusicTab('songs'));
+  document.getElementById('music-tab-albums')?.addEventListener('click', () => switchMusicTab('albums'));
+  document.getElementById('studio-sidebar-toggle')?.addEventListener('click', () => {
+    document.getElementById('studio-sidebar')?.classList.toggle('-translate-x-full');
+  });
+  document.getElementById('btn-quick-upload')?.addEventListener('click', () => openUploadModal());
+
+  const nameEl = document.getElementById('studio-sidebar-display') as HTMLElement;
+  if (nameEl) nameEl.textContent = me.full_name || me.username;
+  if (me.avatar_url) {
+    const av = document.getElementById('studio-sidebar-avatar') as HTMLElement;
+    av.innerHTML = `<img src="${me.avatar_url}" class="w-full h-full object-cover" alt="">`;
+  }
+
+  let _chart: any = null;
+
+  async function loadAnalytics() {
+    try {
+      const { data } = await apiFetch('/studio/analytics');
+      _analyticsLoaded = true;
+
+      const artistNameEl = document.getElementById('studio-artist-name') as HTMLElement;
+      apiFetch('/studio/profile').then(({ data: p }: any) => {
+        if (artistNameEl) artistNameEl.textContent = p.name;
+      }).catch(() => {});
+
+      (document.getElementById('stat-monthly')   as HTMLElement).textContent = fmtNum(data.monthlyListeners);
+      (document.getElementById('stat-plays')     as HTMLElement).textContent = fmtNum(data.totalPlays);
+      (document.getElementById('stat-followers') as HTMLElement).textContent = fmtNum(data.followersCount);
+      (document.getElementById('stat-songs')     as HTMLElement).textContent = fmtNum(data.songsCount);
+
+      const topList = document.getElementById('top-songs-list') as HTMLElement;
+      if (!data.topSongs?.length) {
+        topList.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs yet</p>';
+      } else {
+        topList.innerHTML = data.topSongs.map((s: any, i: number) => `
+          <div class="flex items-center gap-3 group">
+            <span class="w-5 text-xs font-bold text-gray-600 text-center">${i + 1}</span>
+            <div class="w-9 h-9 rounded-lg shrink-0 overflow-hidden bg-white/5"
+                 style="background:linear-gradient(135deg,#10b981,#059669)">
+              ${s.cover_url ? `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="">` : ''}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-200 truncate">${s.title}</p>
+              <p class="text-xs text-gray-500">${fmtNum(s.plays_count)} plays</p>
+            </div>
+            <span class="w-1.5 h-full min-h-[24px] rounded-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity" style="opacity:${Math.max(0.2, (s.plays_count / (data.topSongs[0]?.plays_count||1)))}"></span>
+          </div>`).join('');
+      }
+
+      const canvas = document.getElementById('plays-chart') as HTMLCanvasElement;
+      const labels = data.chartData.map((d: any) => {
+        const dt = new Date(d.day + 'T00:00:00');
+        return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      });
+      const values = data.chartData.map((d: any) => d.plays);
+      if (_chart) _chart.destroy();
+      _chart = new (window as any).Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Plays',
+            data: values,
+            backgroundColor: 'rgba(16,185,129,0.5)',
+            borderColor: 'rgba(16,185,129,1)',
+            borderWidth: 1,
+            borderRadius: 4,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7280', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#6b7280', precision: 0, font: { size: 10 } }, beginAtZero: true },
+          },
+        },
+      });
+    } catch (err: any) {
+      console.error('loadAnalytics:', err);
+    }
+  }
+
+  async function loadSongs(page = 1) {
+    _songPage = page;
+    const tbody = document.getElementById('studio-songs-tbody') as HTMLElement;
+    const info  = document.getElementById('songs-page-info')    as HTMLElement;
+    const btns  = document.getElementById('songs-page-btns')    as HTMLElement;
+    tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-gray-500">Loading…</td></tr>';
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '20' });
+      if (_songSearch) params.set('keyword', _songSearch);
+      const { data: songs, meta } = await apiFetch(`/studio/songs?${params}`);
+      _songsLoaded = true;
+      if (!songs?.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-gray-500">No songs yet. Upload your first song!</td></tr>';
+        if (info) info.textContent = '0 songs';
+        if (btns) btns.innerHTML = '';
+        return;
+      }
+      tbody.innerHTML = songs.map((s: any) => `
+        <tr class="hover:bg-white/3 transition-colors group" data-song-id="${s.id}">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg shrink-0 overflow-hidden bg-white/5">
+                ${s.cover_url ? `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="">` : '<div class="w-full h-full bg-gradient-to-br from-green-900 to-emerald-700"></div>'}
+              </div>
+              <p class="text-sm font-semibold text-gray-200 truncate max-w-[160px]">${s.title}</p>
+            </div>
+          </td>
+          <td class="px-5 py-4 hidden md:table-cell text-sm text-gray-400">${s.album_title || '—'}</td>
+          <td class="px-5 py-4 hidden sm:table-cell text-sm text-gray-400 text-right font-medium">${fmtNum(s.plays_count)}</td>
+          <td class="px-5 py-4 hidden lg:table-cell text-sm text-gray-400 text-center">${fmt(s.duration)}</td>
+          <td class="px-5 py-4">
+            <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full
+              ${s.status === 'suppressed' ? 'bg-amber-500/15 text-amber-400' : 'bg-green-500/15 text-green-400'}">
+              <span class="w-1.5 h-1.5 rounded-full ${s.status === 'suppressed' ? 'bg-amber-400' : 'bg-green-400'}"></span>
+              ${s.status === 'suppressed' ? 'Hidden' : 'Public'}
+            </span>
+          </td>
+          <td class="px-5 py-4">
+            <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-edit-song w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${s.id}" data-title="${encodeURIComponent(s.title)}" data-status="${s.status || 'published'}" data-cover="${s.cover_url || ''}">
+                <span class="material-symbols-outlined text-[17px]">edit</span>
+              </button>
+              <button class="btn-delete-song w-8 h-8 rounded-lg hover:bg-red-500/20 hover:text-red-400 text-gray-500 flex items-center justify-center transition-all"
+                      data-id="${s.id}" data-title="${encodeURIComponent(s.title)}">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      if (info) info.innerHTML = `<span class="text-white font-semibold">${meta?.totalItems ?? songs.length}</span> songs`;
+      paginationBtns(btns, page, meta?.totalPages || 1, loadSongs);
+    } catch (err: any) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-red-400">Failed to load songs.</td></tr>';
+    }
+  }
+
+  const _songsTbody = document.getElementById('studio-songs-tbody') as HTMLElement;
+  _songsTbody?.addEventListener('click', async (e: Event) => {
+    const editBtn = (e.target as HTMLElement).closest('.btn-edit-song') as HTMLElement | null;
+    const delBtn  = (e.target as HTMLElement).closest('.btn-delete-song') as HTMLElement | null;
+    if (editBtn) openEditSongModal(editBtn);
+    if (delBtn) {
+      const id    = delBtn.dataset.id!;
+      const title = decodeURIComponent(delBtn.dataset.title || `#${id}`);
+      if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+      delBtn.setAttribute('disabled', 'true');
+      try {
+        await apiFetch(`/studio/songs/${id}`, { method: 'DELETE' });
+        delBtn.closest('tr')?.remove();
+        showToast('Song deleted.');
+      } catch (err: any) {
+        showToast(err.message || 'Failed to delete.', 'error');
+        delBtn.removeAttribute('disabled');
+      }
+    }
+  });
+
+  let _songSearchTimer: ReturnType<typeof setTimeout> | null = null;
+  document.getElementById('studio-songs-search')?.addEventListener('input', (e) => {
+    if (_songSearchTimer) clearTimeout(_songSearchTimer);
+    _songSearchTimer = setTimeout(() => {
+      _songSearch = (e.target as HTMLInputElement).value.trim();
+      loadSongs(1);
+    }, 350);
+  });
+
+  async function loadAlbums() {
+    const grid = document.getElementById('albums-grid') as HTMLElement;
+    grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">Loading…</div>';
+    try {
+      const { data } = await apiFetch('/studio/albums');
+      _albums = data ?? [];
+      _albumsLoaded = true;
+      const countEl = document.getElementById('albums-count') as HTMLElement;
+      if (countEl) countEl.textContent = String(_albums.length);
+      renderAlbums();
+      populateAlbumSelect();
+    } catch (err: any) {
+      grid.innerHTML = '<div class="col-span-full text-center text-red-400 py-10">Failed to load albums.</div>';
+    }
+  }
+
+  function renderAlbums() {
+    const grid = document.getElementById('albums-grid') as HTMLElement;
+    if (!_albums.length) {
+      grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">No albums yet.</div>';
+      return;
+    }
+    grid.innerHTML = _albums.map((a: any) => `
+      <div class="group relative bg-white/3 border border-white/5 rounded-2xl overflow-hidden hover:border-green-500/30 transition-all" data-album-id="${a.id}">
+        <div class="aspect-square w-full overflow-hidden bg-gradient-to-br from-green-900/40 to-emerald-900/20">
+          ${a.cover_url ? `<img src="${a.cover_url}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="">` : `<div class="w-full h-full flex items-center justify-center"><span class="material-symbols-outlined text-gray-600 text-4xl">album</span></div>`}
+        </div>
+        <div class="p-3">
+          <p class="text-sm font-semibold text-white truncate">${a.title}</p>
+          <p class="text-xs text-gray-500 mt-0.5">${a.songs_count} song${a.songs_count !== 1 ? 's' : ''} · ${a.release_date ? new Date(a.release_date).getFullYear() : '—'}</p>
+        </div>
+        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button class="btn-edit-album w-7 h-7 rounded-lg bg-black/50 hover:bg-blue-500/30 text-gray-300 hover:text-blue-400 flex items-center justify-center transition-all"
+                  data-album='${JSON.stringify({ id: a.id, title: a.title, release_date: a.release_date, description: a.description, cover_url: a.cover_url })}'>
+            <span class="material-symbols-outlined text-[15px]">edit</span>
+          </button>
+          <button class="btn-delete-album w-7 h-7 rounded-lg bg-black/50 hover:bg-red-500/30 text-gray-300 hover:text-red-400 flex items-center justify-center transition-all"
+                  data-id="${a.id}" data-title="${encodeURIComponent(a.title)}">
+            <span class="material-symbols-outlined text-[15px]">delete</span>
+          </button>
+        </div>
+      </div>`).join('');
+  }
+
+  function populateAlbumSelect() {
+    const sel = document.getElementById('upload-album') as HTMLSelectElement;
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— No album —</option>' +
+      _albums.map((a: any) => `<option value="${a.id}">${a.title}</option>`).join('');
+  }
+
+  const _albumsGrid = document.getElementById('albums-grid') as HTMLElement;
+  _albumsGrid?.addEventListener('click', async (e: Event) => {
+    const editBtn = (e.target as HTMLElement).closest('.btn-edit-album') as HTMLElement | null;
+    const delBtn  = (e.target as HTMLElement).closest('.btn-delete-album') as HTMLElement | null;
+    if (editBtn) {
+      try { openAlbumModal(JSON.parse(editBtn.dataset.album!)); } catch {}
+    }
+    if (delBtn) {
+      const id    = delBtn.dataset.id!;
+      const title = decodeURIComponent(delBtn.dataset.title || `#${id}`);
+      if (!confirm(`Delete album "${title}"? Songs will not be deleted.`)) return;
+      delBtn.setAttribute('disabled', 'true');
+      try {
+        await apiFetch(`/studio/albums/${id}`, { method: 'DELETE' });
+        _albums = _albums.filter((a: any) => String(a.id) !== id);
+        renderAlbums();
+        populateAlbumSelect();
+        showToast('Album deleted.');
+      } catch (err: any) {
+        showToast(err.message || 'Failed.', 'error');
+        delBtn.removeAttribute('disabled');
+      }
+    }
+  });
+
+  document.getElementById('btn-create-album')?.addEventListener('click', () => openAlbumModal(null));
+
+  async function loadProfile() {
+    try {
+      const { data } = await apiFetch('/studio/profile');
+      _profileLoaded = true;
+      const nameInput = document.getElementById('profile-name') as HTMLInputElement;
+      const bioInput  = document.getElementById('profile-bio')  as HTMLTextAreaElement;
+      if (nameInput) nameInput.value = data.name || '';
+      if (bioInput)  bioInput.value  = data.bio  || '';
+
+      const artistNameEl = document.getElementById('studio-artist-name') as HTMLElement;
+      if (artistNameEl) artistNameEl.textContent = data.name;
+
+      const avatarPreview = document.getElementById('profile-avatar-preview') as HTMLElement;
+      if (data.image_url && avatarPreview) {
+        avatarPreview.innerHTML = `<img src="${data.image_url}" class="w-full h-full object-cover" alt="">`;
+      }
+      const coverImg = document.getElementById('profile-cover-img') as HTMLImageElement;
+      if (data.cover_url && coverImg) {
+        coverImg.src = data.cover_url;
+        coverImg.classList.remove('hidden');
+      }
+    } catch (err: any) {
+      console.error('loadProfile:', err);
+    }
+  }
+
+  document.getElementById('avatar-wrap')?.addEventListener('click', () => {
+    (document.getElementById('avatar-file-input') as HTMLInputElement)?.click();
+  });
+  document.getElementById('avatar-file-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    _avatarFile = file;
+    const preview = document.getElementById('profile-avatar-preview') as HTMLElement;
+    const reader = new FileReader();
+    reader.onload = (ev) => { if (preview) preview.innerHTML = `<img src="${ev.target!.result}" class="w-full h-full object-cover" alt="">`; };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('profile-cover-area')?.addEventListener('click', () => {
+    (document.getElementById('cover-file-input') as HTMLInputElement)?.click();
+  });
+  document.getElementById('cover-file-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    _profileCoverFile = file;
+    const coverImg = document.getElementById('profile-cover-img') as HTMLImageElement;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (coverImg) { coverImg.src = ev.target!.result as string; coverImg.classList.remove('hidden'); }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('profile-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl  = document.getElementById('profile-error')   as HTMLElement;
+    const succEl = document.getElementById('profile-success') as HTMLElement;
+    const btn    = document.getElementById('profile-save-btn') as HTMLButtonElement;
+    hideErr(errEl); succEl?.classList.add('hidden');
+
+    const name = (document.getElementById('profile-name') as HTMLInputElement).value.trim();
+    const bio  = (document.getElementById('profile-bio')  as HTMLTextAreaElement).value;
+
+    const fd = new FormData();
+    if (name) fd.append('name', name);
+    fd.append('bio', bio);
+    if (_avatarFile)       fd.append('avatar', _avatarFile);
+    if (_profileCoverFile) fd.append('cover',  _profileCoverFile);
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      await fetch(`${API_BASE}/studio/profile`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      }).then(async r => {
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.message || 'Failed');
+        return d;
+      });
+      succEl?.classList.remove('hidden');
+      _avatarFile = null; _profileCoverFile = null;
+      const artistNameEl = document.getElementById('studio-artist-name') as HTMLElement;
+      if (artistNameEl && name) artistNameEl.textContent = name;
+    } catch (err: any) {
+      showErr(errEl, err.message || 'Failed to save.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span>Save Changes';
+    }
+  });
+
+  function openUploadModal() {
+    (document.getElementById('modal-upload') as HTMLElement).classList.remove('hidden');
+    if (!_albumsLoaded) loadAlbums();
+    else populateAlbumSelect();
+    (document.getElementById('upload-song-form') as HTMLFormElement).reset();
+    (document.getElementById('audio-file-label') as HTMLElement).textContent = 'Click or drag audio file here';
+    (document.getElementById('upload-cover-preview') as HTMLElement).innerHTML = '<span class="material-symbols-outlined text-gray-600">image</span>';
+    (document.getElementById('upload-duration') as HTMLInputElement).value = '0';
+    (document.getElementById('upload-error') as HTMLElement).classList.add('hidden');
+    (document.getElementById('upload-progress-wrap') as HTMLElement).classList.add('hidden');
+  }
+
+  document.getElementById('modal-upload-close')?.addEventListener('click', () => {
+    (document.getElementById('modal-upload') as HTMLElement).classList.add('hidden');
+  });
+  document.getElementById('modal-upload')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) (e.currentTarget as HTMLElement).classList.add('hidden');
+  });
+
+  document.getElementById('audio-file-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    (document.getElementById('audio-file-label') as HTMLElement).textContent = file.name;
+    const audio = document.createElement('audio');
+    const url = URL.createObjectURL(file);
+    audio.src = url;
+    audio.addEventListener('loadedmetadata', () => {
+      (document.getElementById('upload-duration') as HTMLInputElement).value = String(Math.round(audio.duration));
+      URL.revokeObjectURL(url);
+    });
+    const titleInput = document.getElementById('upload-title') as HTMLInputElement;
+    if (!titleInput.value) {
+      titleInput.value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+    }
+  });
+
+  document.getElementById('cover-upload-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const preview = document.getElementById('upload-cover-preview') as HTMLElement;
+    const reader = new FileReader();
+    reader.onload = (ev) => { preview.innerHTML = `<img src="${ev.target!.result}" class="w-full h-full object-cover" alt="">`; };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('upload-song-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl    = document.getElementById('upload-error')         as HTMLElement;
+    const progWrap = document.getElementById('upload-progress-wrap') as HTMLElement;
+    const progBar  = document.getElementById('upload-progress-bar')  as HTMLElement;
+    const progLbl  = document.getElementById('upload-progress-label')as HTMLElement;
+    const btn      = document.getElementById('upload-song-btn')      as HTMLButtonElement;
+    hideErr(errEl);
+
+    const audioInput = document.getElementById('audio-file-input') as HTMLInputElement;
+    const coverInput = document.getElementById('cover-upload-input') as HTMLInputElement;
+    const title      = (document.getElementById('upload-title') as HTMLInputElement).value.trim();
+    const dur        = parseInt((document.getElementById('upload-duration') as HTMLInputElement).value, 10);
+    const albumId    = (document.getElementById('upload-album') as HTMLSelectElement).value;
+
+    if (!audioInput.files?.[0]) { showErr(errEl, 'Please select an audio file.'); return; }
+    if (!title)                  { showErr(errEl, 'Title is required.');           return; }
+    if (!dur || dur <= 0)        { showErr(errEl, 'Could not read audio duration. Try again.'); return; }
+
+    const fd = new FormData();
+    fd.append('audio', audioInput.files[0]);
+    fd.append('title', title);
+    fd.append('duration', String(dur));
+    if (albumId)               fd.append('album_id', albumId);
+    if (coverInput.files?.[0]) fd.append('cover', coverInput.files[0]);
+
+    btn.disabled = true;
+    progWrap.classList.remove('hidden');
+    progBar.style.width  = '30%'; progLbl.textContent = 'Uploading audio to Cloudinary…';
+
+    try {
+      const response = await fetch(`${API_BASE}/studio/songs`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      });
+      progBar.style.width = '80%'; progLbl.textContent = 'Processing…';
+      const d = await response.json();
+      if (!response.ok) throw new Error(d.message || 'Upload failed');
+      progBar.style.width = '100%'; progLbl.textContent = 'Done!';
+      setTimeout(() => {
+        (document.getElementById('modal-upload') as HTMLElement).classList.add('hidden');
+        _songsLoaded = false;
+        loadSongs(1);
+        showToast(`"${title}" uploaded successfully!`);
+      }, 600);
+    } catch (err: any) {
+      showErr(errEl, err.message || 'Upload failed. Please try again.');
+      progWrap.classList.add('hidden');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  let _editCoverFile: File | null = null;
+
+  function openEditSongModal(btn: HTMLElement) {
+    const id     = btn.dataset.id!;
+    const title  = decodeURIComponent(btn.dataset.title || '');
+    const status = btn.dataset.status || 'published';
+    const cover  = btn.dataset.cover  || '';
+
+    (document.getElementById('edit-song-id')     as HTMLInputElement).value  = id;
+    (document.getElementById('edit-song-title')  as HTMLInputElement).value  = title;
+    (document.getElementById('edit-song-status') as HTMLSelectElement).value = status;
+
+    const preview = document.getElementById('edit-cover-preview') as HTMLElement;
+    preview.innerHTML = cover
+      ? `<img src="${cover}" class="w-full h-full object-cover" alt="">`
+      : '<span class="material-symbols-outlined text-gray-600 text-xl">image</span>';
+
+    _editCoverFile = null;
+    (document.getElementById('edit-cover-input') as HTMLInputElement).value = '';
+    (document.getElementById('edit-song-error') as HTMLElement).classList.add('hidden');
+    (document.getElementById('modal-edit-song') as HTMLElement).classList.remove('hidden');
+  }
+
+  document.getElementById('modal-edit-song-close')?.addEventListener('click', () => {
+    (document.getElementById('modal-edit-song') as HTMLElement).classList.add('hidden');
+  });
+  document.getElementById('modal-edit-song')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) (e.currentTarget as HTMLElement).classList.add('hidden');
+  });
+
+  document.getElementById('edit-cover-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    _editCoverFile = file;
+    const preview = document.getElementById('edit-cover-preview') as HTMLElement;
+    const reader = new FileReader();
+    reader.onload = (ev) => { preview.innerHTML = `<img src="${ev.target!.result}" class="w-full h-full object-cover" alt="">`; };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('edit-song-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('edit-song-error') as HTMLElement;
+    const btn   = document.getElementById('edit-song-btn')   as HTMLButtonElement;
+    hideErr(errEl);
+    const id     = (document.getElementById('edit-song-id')     as HTMLInputElement).value;
+    const title  = (document.getElementById('edit-song-title')  as HTMLInputElement).value.trim();
+    const status = (document.getElementById('edit-song-status') as HTMLSelectElement).value;
+
+    if (!title) { showErr(errEl, 'Title is required.'); return; }
+
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('status', status);
+    if (_editCoverFile) fd.append('cover', _editCoverFile);
+
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const response = await fetch(`${API_BASE}/studio/songs/${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      });
+      const d = await response.json();
+      if (!response.ok) throw new Error(d.message || 'Failed');
+      (document.getElementById('modal-edit-song') as HTMLElement).classList.add('hidden');
+      _songsLoaded = false;
+      loadSongs(_songPage);
+      showToast('Song updated!');
+    } catch (err: any) {
+      showErr(errEl, err.message || 'Failed to save.');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save Changes';
+    }
+  });
+
+  function openAlbumModal(album: any) {
+    const titleEl   = document.getElementById('album-modal-title')  as HTMLElement;
+    const idInput   = document.getElementById('album-form-id')      as HTMLInputElement;
+    const titleInput= document.getElementById('album-title')        as HTMLInputElement;
+    const dateInput = document.getElementById('album-release-date') as HTMLInputElement;
+    const descInput = document.getElementById('album-description')  as HTMLTextAreaElement;
+    const preview   = document.getElementById('album-cover-preview')as HTMLElement;
+    const errEl     = document.getElementById('album-error')        as HTMLElement;
+
+    _editAlbumFile = null;
+    (document.getElementById('album-cover-input') as HTMLInputElement).value = '';
+    errEl?.classList.add('hidden');
+
+    if (album) {
+      titleEl.textContent    = 'Edit Album';
+      idInput.value          = String(album.id);
+      titleInput.value       = album.title || '';
+      dateInput.value        = album.release_date ? album.release_date.slice(0, 10) : '';
+      descInput.value        = album.description || '';
+      preview.innerHTML      = album.cover_url
+        ? `<img src="${album.cover_url}" class="w-full h-full object-cover" alt="">`
+        : '<span class="material-symbols-outlined text-gray-600">album</span>';
+    } else {
+      titleEl.textContent  = 'New Album';
+      idInput.value        = '';
+      titleInput.value     = '';
+      dateInput.value      = '';
+      descInput.value      = '';
+      preview.innerHTML    = '<span class="material-symbols-outlined text-gray-600">album</span>';
+    }
+    (document.getElementById('modal-album') as HTMLElement).classList.remove('hidden');
+  }
+
+  document.getElementById('modal-album-close')?.addEventListener('click', () => {
+    (document.getElementById('modal-album') as HTMLElement).classList.add('hidden');
+  });
+  document.getElementById('modal-album')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) (e.currentTarget as HTMLElement).classList.add('hidden');
+  });
+
+  document.getElementById('album-cover-input')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    _editAlbumFile = file;
+    const preview = document.getElementById('album-cover-preview') as HTMLElement;
+    const reader = new FileReader();
+    reader.onload = (ev) => { preview.innerHTML = `<img src="${ev.target!.result}" class="w-full h-full object-cover" alt="">`; };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('album-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('album-error')    as HTMLElement;
+    const btn   = document.getElementById('album-save-btn') as HTMLButtonElement;
+    hideErr(errEl);
+    const id    = (document.getElementById('album-form-id')      as HTMLInputElement).value;
+    const title = (document.getElementById('album-title')        as HTMLInputElement).value.trim();
+    const date  = (document.getElementById('album-release-date') as HTMLInputElement).value;
+    const desc  = (document.getElementById('album-description')  as HTMLTextAreaElement).value;
+
+    if (!title) { showErr(errEl, 'Title is required.'); return; }
+
+    const fd = new FormData();
+    fd.append('title', title);
+    if (date) fd.append('release_date', date);
+    if (desc) fd.append('description', desc);
+    if (_editAlbumFile) fd.append('cover', _editAlbumFile);
+
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const url    = id ? `${API_BASE}/studio/albums/${id}` : `${API_BASE}/studio/albums`;
+      const method = id ? 'PUT' : 'POST';
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      });
+      const d = await response.json();
+      if (!response.ok) throw new Error(d.message || 'Failed');
+      (document.getElementById('modal-album') as HTMLElement).classList.add('hidden');
+      _albumsLoaded = false;
+      loadAlbums();
+      showToast(id ? 'Album updated!' : 'Album created!');
+    } catch (err: any) {
+      showErr(errEl, err.message || 'Failed to save.');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save';
+    }
+  });
+
+  switchSection('dashboard');
+</script>
+
+</Layout>

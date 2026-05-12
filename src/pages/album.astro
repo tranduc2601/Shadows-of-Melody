@@ -40,7 +40,6 @@ const relatedAlbums = [
 <MainLayout title="After Hours - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
-    <!-- Sidebar -->
     <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
       <div class="h-20 flex items-center px-6">
         <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
@@ -94,13 +93,10 @@ const relatedAlbums = [
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <!-- Ambient Glow -->
       <div class="absolute top-0 left-0 w-[55%] h-[55%] bg-red-900/15 blur-[160px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none"></div>
 
-      <!-- Header -->
       <header class="h-16 shrink-0 flex items-center px-6 gap-4 relative z-10">
         <a href="javascript:history.back()" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-gray-400 hover:text-white" aria-label="Quay lại">
           <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
@@ -114,14 +110,11 @@ const relatedAlbums = [
         </nav>
       </header>
 
-      <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
 
-        <!-- Album Hero -->
         <section class="relative overflow-hidden">
           <div class="absolute inset-0 bg-linear-to-b from-red-900/60 via-red-950/40 to-transparent pointer-events-none"></div>
           <div class="relative z-10 flex flex-col sm:flex-row items-end gap-8 px-8 pt-10 pb-12">
-            <!-- Album Art -->
             <div class="w-52 h-52 rounded-2xl shrink-0 bg-linear-to-br from-red-700 via-rose-800 to-gray-900 shadow-2xl shadow-red-900/50 flex items-center justify-center relative overflow-hidden group cursor-pointer">
               <span class="material-symbols-outlined text-white/10 select-none" style="font-size: 8rem;">album</span>
               <div class="absolute inset-0 bg-linear-to-br from-red-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -130,7 +123,6 @@ const relatedAlbums = [
               </div>
             </div>
 
-            <!-- Album Info -->
             <div class="flex flex-col gap-2 min-w-0">
               <span class="text-xs font-bold uppercase tracking-widest text-white/50">{album.type}</span>
               <h1 class="text-4xl sm:text-6xl font-black text-white drop-shadow-xl leading-tight">{album.title}</h1>
@@ -157,11 +149,9 @@ const relatedAlbums = [
               </div>
             </div>
           </div>
-          <!-- Bottom fade -->
           <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none"></div>
         </section>
 
-        <!-- Track List -->
         <div class="px-6 lg:px-8 mt-2">
           <div class="bg-white/2 border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
             <table class="w-full text-left border-collapse">
@@ -200,7 +190,6 @@ const relatedAlbums = [
           <p class="text-xs text-gray-600 mt-4 px-2">{album.year} · {album.label}</p>
         </div>
 
-        <!-- More from Artist -->
         <div class="px-6 lg:px-8 mt-12 mb-6">
           <h2 class="text-xl font-bold text-white mb-6">Thêm từ {album.artist}</h2>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
@@ -220,7 +209,6 @@ const relatedAlbums = [
 
       </div>
 
-      <!-- Now Playing Bar -->
       <PlayerBar />
     </main>
   </div>

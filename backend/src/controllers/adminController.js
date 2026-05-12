@@ -3,6 +3,127 @@ import User from '../models/User.js';
 import Artist from '../models/Artist.js';
 import { revokeToken } from '../utils/jwt.js';
 
+// GET /api/admin/analytics
+export const getAnalytics = async (req, res) => {
+    try {
+        const [
+            userGrowthRes,
+            listeningActivityRes,
+            topSongsRes,
+            topArtistsRes,
+            genreDistRes,
+            revenueTrendsRes,
+            subscriptionStatsRes,
+            summaryRes,
+        ] = await Promise.all([
+            // New user registrations per day — last 30 days
+            pool.query(`
+                SELECT DATE(created_at AT TIME ZONE 'UTC') AS date,
+                       COUNT(*)::int AS count
+                FROM users
+                WHERE deleted_at IS NULL
+                  AND created_at >= NOW() - INTERVAL '30 days'
+                GROUP BY DATE(created_at AT TIME ZONE 'UTC')
+                ORDER BY date ASC
+            `),
+            // Plays per day from listening_history — last 30 days
+            pool.query(`
+                SELECT DATE(played_at AT TIME ZONE 'UTC') AS date,
+                       COUNT(*)::int AS plays
+                FROM listening_history
+                WHERE played_at >= NOW() - INTERVAL '30 days'
+                GROUP BY DATE(played_at AT TIME ZONE 'UTC')
+                ORDER BY date ASC
+            `),
+            // Top 10 songs by plays_count
+            pool.query(`
+                SELECT s.id, s.title, s.cover_url, s.plays_count,
+                       STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names
+                FROM songs s
+                LEFT JOIN song_artists sa ON sa.song_id = s.id
+                LEFT JOIN artists a ON a.id = sa.artist_id
+                GROUP BY s.id
+                ORDER BY s.plays_count DESC
+                LIMIT 10
+            `),
+            // Top 10 artists by total plays of their songs
+            pool.query(`
+                SELECT a.id, a.name, a.image_url,
+                       COALESCE(SUM(s.plays_count), 0)::int AS total_plays,
+                       COUNT(DISTINCT sa.song_id)::int AS songs_count
+                FROM artists a
+                LEFT JOIN song_artists sa ON sa.artist_id = a.id
+                LEFT JOIN songs s ON s.id = sa.song_id
+                GROUP BY a.id
+                ORDER BY total_plays DESC
+                LIMIT 10
+            `),
+            // Genre distribution (songs per genre)
+            pool.query(`
+                SELECT g.name, COUNT(DISTINCT sg.song_id)::int AS count
+                FROM genres g
+                LEFT JOIN song_genres sg ON sg.genre_id = g.id
+                GROUP BY g.id, g.name
+                ORDER BY count DESC
+                LIMIT 15
+            `),
+            // Revenue per month — last 12 months (completed payments only)
+            pool.query(`
+                SELECT TO_CHAR(DATE_TRUNC('month', payment_date), 'YYYY-MM') AS month,
+                       SUM(amount)::float AS total,
+                       COUNT(*)::int AS transactions
+                FROM payments
+                WHERE status = 'completed'
+                  AND payment_date >= NOW() - INTERVAL '12 months'
+                GROUP BY DATE_TRUNC('month', payment_date)
+                ORDER BY month ASC
+            `),
+            // Subscription type distribution
+            pool.query(`
+                SELECT subscription_type, COUNT(*)::int AS count
+                FROM subscriptions
+                WHERE is_active = TRUE
+                GROUP BY subscription_type
+                ORDER BY count DESC
+            `),
+            // Summary aggregates
+            pool.query(`
+                SELECT
+                    (SELECT COALESCE(SUM(plays_count), 0)::int FROM songs)                        AS total_plays,
+                    (SELECT COALESCE(SUM(amount), 0)::float FROM payments WHERE status='completed'
+                       AND payment_date >= DATE_TRUNC('month', NOW()))                            AS revenue_this_month,
+                    (SELECT COUNT(DISTINCT user_id)::int FROM listening_history
+                       WHERE played_at >= NOW() - INTERVAL '30 days')                            AS active_listeners,
+                    (SELECT COALESCE(SUM(duration_played), 0)::bigint FROM listening_history)    AS total_listening_seconds
+            `),
+        ]);
+
+        const summary = summaryRes[0][0] ?? {};
+
+        return res.json({
+            success: true,
+            data: {
+                user_growth:         userGrowthRes[0],
+                listening_activity:  listeningActivityRes[0],
+                top_songs:           topSongsRes[0],
+                top_artists:         topArtistsRes[0],
+                genre_distribution:  genreDistRes[0],
+                revenue_trends:      revenueTrendsRes[0],
+                subscription_stats:  subscriptionStatsRes[0],
+                summary: {
+                    total_plays:            summary.total_plays            ?? 0,
+                    revenue_this_month:     summary.revenue_this_month     ?? 0,
+                    active_listeners:       summary.active_listeners       ?? 0,
+                    total_listening_seconds: summary.total_listening_seconds ?? 0,
+                },
+            },
+        });
+    } catch (err) {
+        console.error('getAnalytics error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load analytics' });
+    }
+};
+
 // GET /api/admin/stats
 export const getStats = async (req, res) => {
     try {
@@ -42,27 +163,51 @@ export const getStats = async (req, res) => {
 // GET /api/admin/users?page=1&limit=10
 export const getUsers = async (req, res) => {
     try {
-        const page  = Math.max(1, parseInt(req.query.page)  || 1);
-        const limit = Math.min(100, parseInt(req.query.limit) || 10);
-        const offset = (page - 1) * limit;
+        const page     = Math.max(1, parseInt(req.query.page)  || 1);
+        const limit    = Math.min(100, parseInt(req.query.limit) || 10);
+        const offset   = (page - 1) * limit;
+        const keyword  = (req.query.keyword || req.query.q || '').trim();
+        const role     = req.query.role || '';
+        const isLocked = req.query.is_locked; // '0', '1', or undefined
 
-        // pool.query returns [rows, fields]; unwrap scalar count and row array
+        const VALID_SORT  = ['created_at', 'username', 'email', 'role'];
+        const VALID_ORDER = ['asc', 'desc'];
+        const sortBy  = VALID_SORT.includes(req.query.sortBy)  ? req.query.sortBy  : 'created_at';
+        const order   = VALID_ORDER.includes((req.query.order || '').toLowerCase()) ? req.query.order.toLowerCase() : 'desc';
+
+        const conditions = ['deleted_at IS NULL'];
+        const params     = [];
+        const addParam   = v => { params.push(v); return `$${params.length}`; };
+
+        if (keyword) {
+            const p = addParam(`%${keyword}%`);
+            conditions.push(`(username ILIKE ${p} OR email ILIKE ${p} OR full_name ILIKE ${p})`);
+        }
+        if (role) conditions.push(`role = ${addParam(role)}`);
+        if (isLocked === '1') conditions.push('is_locked = TRUE');
+        if (isLocked === '0') conditions.push('is_locked = FALSE');
+
+        const where = conditions.join(' AND ');
+        const filterParams = [...params];
+        const limitP  = addParam(limit);
+        const offsetP = addParam(offset);
+
         const [totalRes, usersRes] = await Promise.all([
-            pool.query('SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL'),
+            pool.query(`SELECT COUNT(*)::int AS total FROM users WHERE ${where}`, filterParams),
             pool.query(
                 `SELECT id, username, email, full_name, avatar_url, is_admin, role, is_verified, is_locked, created_at
-                 FROM users WHERE deleted_at IS NULL
-                 ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
-                [limit, offset]
+                 FROM users WHERE ${where}
+                 ORDER BY ${sortBy} ${order} LIMIT ${limitP} OFFSET ${offsetP}`,
+                params
             ),
         ]);
-        const total = parseInt(totalRes[0][0]?.total ?? 0, 10);
+        const totalItems = parseInt(totalRes[0][0]?.total ?? 0, 10);
         const users = usersRes[0];
 
         return res.json({
             success: true,
             data: users,
-            pagination: { page, limit, total },
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
         });
     } catch (err) {
         console.error('Admin getUsers error:', err);
@@ -130,7 +275,7 @@ export const getArtists = async (req, res) => {
         return res.json({
             success: true,
             data: artists,
-            pagination: { page, limit, total: total ?? 0 },
+            meta: { totalItems: total ?? 0, totalPages: Math.ceil((total ?? 0) / limit) || 1, currentPage: page, limit },
         });
     } catch (err) {
         console.error('Admin getArtists error:', err);
@@ -505,27 +650,59 @@ export const toggleLockUser = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/songs/:id/status
-// Toggle status between 'published' and 'suppressed'
-// GET /api/admin/songs?limit=&offset=
+// GET /api/admin/songs?page=&limit=&keyword=&status=&artist_id=&genre_id=&sortBy=&order=
 export const getAdminSongs = async (req, res) => {
-    const limit  = Math.min(200, parseInt(req.query.limit)  || 50);
-    const offset = Math.max(0,   parseInt(req.query.offset) || 0);
+    const page    = Math.max(1, parseInt(req.query.page)   || 1);
+    const limit   = Math.min(200, parseInt(req.query.limit) || 20);
+    const offset  = (page - 1) * limit;
+    const keyword = (req.query.keyword || req.query.q || '').trim();
+    const status  = req.query.status || '';  // 'published' | 'suppressed' | ''
+    const artistId = parseInt(req.query.artist_id) || 0;
+    const genreId  = parseInt(req.query.genre_id)  || 0;
+
+    const VALID_SORT  = ['title', 'plays_count', 'created_at', 'duration'];
+    const VALID_ORDER = ['asc', 'desc'];
+    const sortBy  = VALID_SORT.includes(req.query.sortBy)  ? `s.${req.query.sortBy}`  : 's.created_at';
+    const order   = VALID_ORDER.includes((req.query.order || '').toLowerCase()) ? req.query.order.toLowerCase() : 'desc';
+
     try {
-        const [songs] = await pool.query(
-            `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count, s.status,
-                    STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names,
-                    al.title AS album_title
-             FROM songs s
-             LEFT JOIN song_artists sa ON s.id = sa.song_id
-             LEFT JOIN artists a       ON sa.artist_id = a.id
-             LEFT JOIN albums al       ON s.album_id = al.id
-             GROUP BY s.id, al.title
-             ORDER BY s.created_at DESC
-             LIMIT $1 OFFSET $2`,
-            [limit, offset]
-        );
-        return res.json({ success: true, data: songs });
+        const conditions = [];
+        const params     = [];
+        const addParam   = v => { params.push(v); return `$${params.length}`; };
+
+        if (keyword) conditions.push(`(s.tsv @@ plainto_tsquery('simple', unaccent(${addParam(keyword)})) OR s.title ILIKE ${addParam('%' + keyword + '%')})`);
+        if (status)   conditions.push(`s.status = ${addParam(status)}`);
+        if (artistId) conditions.push(`EXISTS (SELECT 1 FROM song_artists sa2 WHERE sa2.song_id = s.id AND sa2.artist_id = ${addParam(artistId)})`);
+        if (genreId)  conditions.push(`EXISTS (SELECT 1 FROM song_genres sg2 WHERE sg2.song_id = s.id AND sg2.genre_id = ${addParam(genreId)})`);
+
+        const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+        const filterParams = [...params];
+        const limitP  = addParam(limit);
+        const offsetP = addParam(offset);
+
+        const [[countRow], [songs]] = await Promise.all([
+            pool.query(`SELECT COUNT(DISTINCT s.id)::int AS total FROM songs s ${where}`, filterParams),
+            pool.query(
+                `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count, s.status, s.created_at,
+                        STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names,
+                        al.title AS album_title
+                 FROM songs s
+                 LEFT JOIN song_artists sa ON s.id = sa.song_id
+                 LEFT JOIN artists a       ON sa.artist_id = a.id
+                 LEFT JOIN albums al       ON s.album_id = al.id
+                 ${where}
+                 GROUP BY s.id, al.title
+                 ORDER BY ${sortBy} ${order}
+                 LIMIT ${limitP} OFFSET ${offsetP}`,
+                params
+            ),
+        ]);
+        const totalItems = countRow[0]?.total ?? 0;
+        return res.json({
+            success: true,
+            data: songs,
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
+        });
     } catch (err) {
         console.error('getAdminSongs error:', err);
         return res.status(500).json({ success: false, message: 'Failed to load songs' });
@@ -625,5 +802,339 @@ export const updateAlbumSong = async (req, res) => {
     } catch (err) {
         console.error('updateAlbumSong error:', err);
         return res.status(500).json({ success: false, message: 'Failed to update album song' });
+    }
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ADMIN PLAYLISTS MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+
+// GET /api/admin/playlists?page=1&limit=20&keyword=&visibility=&owner_id=
+export const getAdminPlaylists = async (req, res) => {
+    const page    = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit   = Math.min(100, parseInt(req.query.limit) || 20);
+    const offset  = (page - 1) * limit;
+    const keyword = (req.query.keyword || req.query.q || '').trim();
+    const visibility = req.query.visibility || ''; // 'public' | 'private' | ''
+    const ownerId = parseInt(req.query.owner_id) || 0;
+
+    const VALID_SORT  = ['name', 'created_at', 'songs_count'];
+    const VALID_ORDER = ['asc', 'desc'];
+    const sortBy = VALID_SORT.includes(req.query.sortBy) ? req.query.sortBy : 'created_at';
+    const order  = VALID_ORDER.includes((req.query.order || '').toLowerCase()) ? req.query.order.toLowerCase() : 'desc';
+
+    try {
+        const conditions = [];
+        const params     = [];
+        const addParam   = v => { params.push(v); return `$${params.length}`; };
+
+        if (keyword) {
+            const p = addParam(`%${keyword}%`);
+            conditions.push(`(p.name ILIKE ${p} OR u.username ILIKE ${p})`);
+        }
+        if (visibility === 'public')  conditions.push('p.is_public = TRUE');
+        if (visibility === 'private') conditions.push('p.is_public = FALSE');
+        if (ownerId) conditions.push(`p.user_id = ${addParam(ownerId)}`);
+
+        const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+        const filterParams = [...params];
+        const limitP  = addParam(limit);
+        const offsetP = addParam(offset);
+
+        // Handle sorting by songs_count (computed field)
+        let orderClause;
+        if (sortBy === 'songs_count') {
+            orderClause = `songs_count ${order}`;
+        } else {
+            orderClause = `p.${sortBy} ${order}`;
+        }
+
+        const [[countRow], [playlists]] = await Promise.all([
+            pool.query(
+                `SELECT COUNT(*)::int AS total 
+                 FROM playlists p 
+                 LEFT JOIN users u ON p.user_id = u.id 
+                 ${where}`,
+                filterParams
+            ),
+            pool.query(
+                `SELECT p.id, p.name, p.description, p.cover_url, p.is_public, p.created_at, p.updated_at,
+                        p.user_id, u.username AS owner_name, u.avatar_url AS owner_avatar,
+                        COUNT(ps.song_id)::int AS songs_count
+                 FROM playlists p
+                 LEFT JOIN users u ON p.user_id = u.id
+                 LEFT JOIN playlist_songs ps ON p.id = ps.playlist_id
+                 ${where}
+                 GROUP BY p.id, u.username, u.avatar_url
+                 ORDER BY ${orderClause}
+                 LIMIT ${limitP} OFFSET ${offsetP}`,
+                params
+            ),
+        ]);
+
+        const totalItems = countRow[0]?.total ?? 0;
+
+        return res.json({
+            success: true,
+            data: playlists,
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
+        });
+    } catch (err) {
+        console.error('getAdminPlaylists error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load playlists' });
+    }
+};
+
+// PATCH /api/admin/playlists/:id
+export const updateAdminPlaylist = async (req, res) => {
+    const { id } = req.params;
+    const { name, description, is_public } = req.body;
+
+    if (name !== undefined && !name?.trim()) {
+        return res.status(400).json({ success: false, message: 'Playlist name cannot be empty' });
+    }
+
+    try {
+        const [[existing]] = await pool.query(
+            'SELECT id FROM playlists WHERE id = $1',
+            [id]
+        );
+        if (!existing) {
+            return res.status(404).json({ success: false, message: 'Playlist not found' });
+        }
+
+        const setClauses = [];
+        const setValues  = [];
+        if (name?.trim()) {
+            setClauses.push(`name = $${setValues.length + 1}`);
+            setValues.push(name.trim());
+        }
+        if (description !== undefined) {
+            setClauses.push(`description = $${setValues.length + 1}`);
+            setValues.push(description?.trim() || null);
+        }
+        if (is_public !== undefined) {
+            setClauses.push(`is_public = $${setValues.length + 1}`);
+            setValues.push(is_public === true || is_public === 'true');
+        }
+
+        if (setClauses.length === 0) {
+            return res.status(400).json({ success: false, message: 'No fields to update' });
+        }
+
+        setClauses.push('updated_at = NOW()');
+        setValues.push(id);
+
+        const [rows] = await pool.query(
+            `UPDATE playlists SET ${setClauses.join(', ')} WHERE id = $${setValues.length}
+             RETURNING id, name, description, is_public, updated_at`,
+            setValues
+        );
+
+        return res.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('updateAdminPlaylist error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update playlist' });
+    }
+};
+
+// DELETE /api/admin/playlists/:id
+export const deleteAdminPlaylist = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [rows] = await pool.query(
+            'DELETE FROM playlists WHERE id = $1 RETURNING id, name',
+            [id]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Playlist not found' });
+        }
+        return res.json({ success: true, message: `Playlist "${rows[0].name}" deleted successfully` });
+    } catch (err) {
+        console.error('deleteAdminPlaylist error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to delete playlist' });
+    }
+};
+
+// GET /api/admin/playlists/:id/songs
+export const getAdminPlaylistSongs = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [[playlist]] = await pool.query(
+            `SELECT p.id, p.name, p.description, p.cover_url, p.is_public, p.user_id,
+                    u.username AS owner_name
+             FROM playlists p
+             LEFT JOIN users u ON p.user_id = u.id
+             WHERE p.id = $1`,
+            [id]
+        );
+        if (!playlist) {
+            return res.status(404).json({ success: false, message: 'Playlist not found' });
+        }
+
+        const [songs] = await pool.query(
+            `SELECT s.id, s.title, s.duration, s.cover_url, s.plays_count,
+                    STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names,
+                    ps.added_at
+             FROM playlist_songs ps
+             JOIN songs s ON ps.song_id = s.id
+             LEFT JOIN song_artists sa ON s.id = sa.song_id
+             LEFT JOIN artists a ON sa.artist_id = a.id
+             WHERE ps.playlist_id = $1
+             GROUP BY s.id, ps.added_at
+             ORDER BY ps.added_at DESC`,
+            [id]
+        );
+
+        return res.json({
+            success: true,
+            data: {
+                playlist,
+                songs,
+                songs_count: songs.length,
+            },
+        });
+    } catch (err) {
+        console.error('getAdminPlaylistSongs error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load playlist songs' });
+    }
+};
+
+// DELETE /api/admin/playlists/:playlistId/songs/:songId
+export const removeAdminPlaylistSong = async (req, res) => {
+    const { playlistId, songId } = req.params;
+
+    try {
+        const [rows] = await pool.query(
+            'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING playlist_id, song_id',
+            [playlistId, songId]
+        );
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Song not found in playlist' });
+        }
+        return res.json({ success: true, message: 'Song removed from playlist' });
+    } catch (err) {
+        console.error('removeAdminPlaylistSong error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to remove song from playlist' });
+    }
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ADMIN ARTISTS MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+
+// PATCH /api/admin/artists/:id
+export const updateAdminArtist = async (req, res) => {
+    const { id } = req.params;
+    const { name, bio, image_url } = req.body;
+
+    try {
+        // Check artist exists
+        const [[artist]] = await pool.query(
+            'SELECT id, name, bio, image_url, user_id FROM artists WHERE id = $1',
+            [id]
+        );
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
+
+        // Validate name if provided
+        if (name !== undefined && !name?.trim()) {
+            return res.status(400).json({ success: false, message: 'Artist name cannot be empty' });
+        }
+
+        // Check for duplicate name (exclude self)
+        if (name?.trim() && name.trim().toLowerCase() !== artist.name.toLowerCase()) {
+            const [existing] = await pool.query(
+                'SELECT id FROM artists WHERE LOWER(name) = LOWER($1) AND id != $2',
+                [name.trim(), id]
+            );
+            if (existing.length > 0) {
+                return res.status(409).json({ success: false, message: 'An artist with this name already exists' });
+            }
+        }
+
+        // Build update query
+        const setClauses = [];
+        const setValues  = [];
+
+        if (name?.trim()) {
+            setClauses.push(`name = $${setValues.length + 1}`);
+            setValues.push(name.trim());
+        }
+        if (bio !== undefined) {
+            setClauses.push(`bio = $${setValues.length + 1}`);
+            setValues.push(bio?.trim() || null);
+        }
+        if (image_url !== undefined) {
+            setClauses.push(`image_url = $${setValues.length + 1}`);
+            setValues.push(image_url?.trim() || null);
+        }
+
+        if (setClauses.length === 0) {
+            return res.status(400).json({ success: false, message: 'No valid fields to update' });
+        }
+
+        setClauses.push('updated_at = NOW()');
+        setValues.push(id);
+
+        const [rows] = await pool.query(
+            `UPDATE artists SET ${setClauses.join(', ')} WHERE id = $${setValues.length}
+             RETURNING id, name, bio, image_url, followers_count, user_id, updated_at`,
+            setValues
+        );
+
+        // If artist is linked to a user, sync name to user's full_name
+        if (artist.user_id && name?.trim()) {
+            await pool.query(
+                'UPDATE users SET full_name = $1, updated_at = NOW() WHERE id = $2',
+                [name.trim(), artist.user_id]
+            ).catch(() => {}); // Non-fatal if sync fails
+        }
+
+        return res.json({
+            success: true,
+            message: 'Artist updated successfully',
+            data: rows[0],
+        });
+    } catch (err) {
+        console.error('updateAdminArtist error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update artist' });
+    }
+};
+
+// DELETE /api/admin/artists/:id
+export const deleteAdminArtist = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [[artist]] = await pool.query(
+            'SELECT id, name, user_id FROM artists WHERE id = $1',
+            [id]
+        );
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
+
+        // Delete artist
+        await pool.query('DELETE FROM artists WHERE id = $1', [id]);
+
+        // If artist was linked to a user, revert their role to 'user'
+        if (artist.user_id) {
+            await pool.query(
+                `UPDATE users SET role = 'user', updated_at = NOW() WHERE id = $1 AND role = 'artist'`,
+                [artist.user_id]
+            ).catch(() => {}); // Non-fatal
+        }
+
+        return res.json({
+            success: true,
+            message: `Artist "${artist.name}" deleted successfully`,
+        });
+    } catch (err) {
+        console.error('deleteAdminArtist error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to delete artist' });
     }
 };

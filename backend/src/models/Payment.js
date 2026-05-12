@@ -55,7 +55,7 @@ class Payment {
     }
 
     static async getTotalRevenue(startDate = null, endDate = null) {
-        let query = 'SELECT SUM(amount) as total FROM payments WHERE status = "completed"';
+        let query = "SELECT SUM(amount) as total FROM payments WHERE status = 'completed'";
         const params = [];
 
         if (startDate) {

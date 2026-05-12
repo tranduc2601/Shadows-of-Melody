@@ -42,6 +42,8 @@ const { title = "Music App" } = Astro.props;
   </div>
 
   <script>
+    import { API_BASE } from '../lib/api.js';
+
     const _GRADS_ATP = [
       'linear-gradient(135deg,#6366f1,#8b5cf6)',
       'linear-gradient(135deg,#f43f5e,#f97316)',
@@ -84,7 +86,7 @@ const { title = "Music App" } = Astro.props;
       }
 
       try {
-        const res  = await fetch('http://localhost:5000/api/playlists/me', {
+        const res  = await fetch(`${API_BASE}/playlists/me`, {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         });
         const json = await res.json();
@@ -129,7 +131,7 @@ const { title = "Music App" } = Astro.props;
 
       try {
         const token = localStorage.getItem('auth_token');
-        const res = await fetch(`http://localhost:5000/api/playlists/${plId}/songs`, {
+        const res = await fetch(`${API_BASE}/playlists/${plId}/songs`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ songId: _atpSong.id }),

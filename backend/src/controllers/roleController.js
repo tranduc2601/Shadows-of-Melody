@@ -62,18 +62,31 @@ export const getMyRequest = async (req, res) => {
 
 // ── GET /api/roles/requests ───────────────────────────────────────────────────
 export const listRequests = async (req, res) => {
-    const { status = 'pending' } = req.query;
+    const validStatuses = ['pending', 'approved', 'rejected'];
+    const status = validStatuses.includes(req.query.status) ? req.query.status : 'pending';
+    const page   = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit  = Math.min(100, parseInt(req.query.limit) || 20);
+    const offset = (page - 1) * limit;
     try {
-        const [rows] = await pool.query(
-            `SELECT rr.id, rr.user_id, rr.status, rr.reviewed_by, rr.reviewed_at, rr.created_at,
-                    u.username, u.email, u.full_name, u.avatar_url
-             FROM role_requests rr
-             JOIN users u ON u.id = rr.user_id
-             WHERE rr.status = $1
-             ORDER BY rr.created_at ASC`,
-            [status],
-        );
-        return res.json({ success: true, data: rows });
+        const [[countRow], [rows]] = await Promise.all([
+            pool.query(`SELECT COUNT(*)::int AS total FROM role_requests WHERE status = $1`, [status]),
+            pool.query(
+                `SELECT rr.id, rr.user_id, rr.status, rr.reviewed_by, rr.reviewed_at, rr.created_at,
+                        u.username, u.email, u.full_name, u.avatar_url
+                 FROM role_requests rr
+                 JOIN users u ON u.id = rr.user_id
+                 WHERE rr.status = $1
+                 ORDER BY rr.created_at ASC
+                 LIMIT $2 OFFSET $3`,
+                [status, limit, offset],
+            ),
+        ]);
+        const totalItems = countRow[0]?.total ?? 0;
+        return res.json({
+            success: true,
+            data: rows,
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
+        });
     } catch (err) {
         console.error('listRequests error:', err);
         return res.status(500).json({ success: false, message: 'Failed to fetch requests' });

@@ -178,13 +178,33 @@ export const getMe = async (req, res) => {
             });
         }
 
-        const subscription = await Subscription.findByUserId(userId);
+        const [subscription, [statsRows]] = await Promise.all([
+            Subscription.findByUserId(userId),
+            pool.query(
+                `SELECT
+                    (SELECT COUNT(*)::int  FROM artist_follows     WHERE user_id = $1)  AS following_count,
+                    (SELECT COUNT(*)::int  FROM favorites           WHERE user_id = $1)  AS liked_count,
+                    (SELECT COUNT(DISTINCT song_id)::int FROM listening_history WHERE user_id = $1)  AS total_songs_listened,
+                    (SELECT COALESCE(SUM(duration_played),0)::bigint FROM listening_history
+                     WHERE user_id = $1 AND played_at >= DATE_TRUNC('month', NOW()))     AS listening_seconds_month,
+                    (SELECT COUNT(DISTINCT song_id)::int FROM listening_history
+                     WHERE user_id = $1 AND played_at >= DATE_TRUNC('month', NOW()))     AS songs_this_month`,
+                [userId]
+            ),
+        ]);
+
+        const stats = statsRows[0] || {};
 
         return res.status(200).json({
             success: true,
             data: {
                 ...user,
                 subscription,
+                following_count:          stats.following_count           || 0,
+                liked_count:              stats.liked_count                || 0,
+                total_songs_listened:     stats.total_songs_listened       || 0,
+                listening_seconds_month:  Number(stats.listening_seconds_month || 0),
+                songs_this_month:         stats.songs_this_month           || 0,
             },
         });
     } catch (error) {
@@ -265,6 +285,21 @@ export const logout = (req, res) => {
         revokeToken(token, decoded);
     }
     return res.json({ success: true, message: 'Logged out successfully' });
+};
+
+export const uploadBanner = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
+        const { uploadToCloudinary } = await import('../utils/cloudinaryStorage.js');
+        const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'banners', 'image');
+        await pool.query('UPDATE users SET banner_url = ?, updated_at = NOW() WHERE id = ?', [secureUrl, req.user.id]);
+        return res.json({ success: true, data: { url: secureUrl } });
+    } catch (error) {
+        console.error('UploadBanner error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to upload banner' });
+    }
 };
 
 export const uploadAvatar = async (req, res) => {

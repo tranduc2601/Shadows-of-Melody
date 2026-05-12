@@ -1,232 +1,208 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
 import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Hồ sơ - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
-    <!-- Sidebar -->
-    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Melody
-        </a>
-      </div>
+    <Sidebar currentPage="profile" />
 
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Search
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Artists
-          </a>
-        </nav>
-
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <a href="/liked" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-rose-400">favorite</span>Liked Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-        </nav>
-      </div>
-
-      <!-- Active: Profile -->
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl transition-colors">
-          <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0 bg-linear-to-r from-purple-500/20 to-transparent rounded-xl px-2 py-1 shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]">
-            <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
-              <div id="sidebar-profile-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
-                <span class="material-symbols-outlined text-purple-400">person</span>
-              </div>
-            </div>
-            <div class="min-w-0">
-              <p class="text-sm font-semibold text-white truncate" id="sidebar-name">—</p>
-              <p class="text-xs text-purple-400 font-medium truncate" id="sidebar-plan">Free</p>
-            </div>
-          </a>
-          <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
-            <span class="material-symbols-outlined text-[20px]">settings</span>
-          </a>
-          <button id="logout-btn" type="button" title="Đăng xuất" class="shrink-0 text-gray-500 hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-500/10">
-            <span class="material-symbols-outlined text-[20px]">logout</span>
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <!-- Ambient Glow -->
       <div class="absolute top-0 right-0 w-[50%] h-[50%] bg-purple-900/15 blur-[160px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] left-0 w-[35%] h-[40%] bg-indigo-900/10 blur-[130px] rounded-full pointer-events-none"></div>
 
-      <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
 
-        <!-- Profile Banner -->
         <div class="relative h-48 bg-linear-to-r from-purple-900/60 via-indigo-900/50 to-pink-900/30 overflow-hidden">
+          <img id="profile-banner-img" class="hidden absolute inset-0 w-full h-full object-cover" alt="Profile banner" />
           <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(168,85,247,0.3)_0%,transparent_60%)]"></div>
           <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(236,72,153,0.2)_0%,transparent_60%)]"></div>
-          <!-- Edit banner button -->
-          <button type="button" class="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-sm text-white/70 hover:text-white transition-all border border-white/10">
-            <span class="material-symbols-outlined text-[16px]">edit</span>
-            Edit banner
+          <button id="banner-upload-btn" type="button"
+            class="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full text-sm text-white/70 hover:text-white transition-all border border-white/10">
+            <span class="material-symbols-outlined text-[16px]">edit</span>Edit banner
           </button>
+          <input id="banner-file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
         </div>
 
-        <!-- Profile Info -->
         <div class="px-6 lg:px-8">
-          <div class="flex flex-col sm:flex-row sm:items-end gap-5 -mt-14 relative z-10 mb-8">
-            <!-- Avatar -->
+          <div class="flex flex-col sm:flex-row sm:items-end gap-5 mt-4 relative z-10 mb-8">
+
             <div class="relative shrink-0">
               <div class="w-28 h-28 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-1 shadow-2xl shadow-purple-500/30">
                 <div id="profile-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
-                  <span class="material-symbols-outlined text-purple-300" style="font-size: 3.5rem;">person</span>
+                  <span class="material-symbols-outlined text-purple-300" style="font-size:3.5rem">person</span>
                 </div>
               </div>
-              <button id="avatar-upload-btn" type="button" aria-label="Đổi ảnh đại diện" class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
+              <button id="avatar-upload-btn" type="button" aria-label="Đổi ảnh đại diện"
+                class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
                 <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
               </button>
               <input id="avatar-file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
             </div>
 
-            <!-- Name + Stats -->
             <div class="flex-1 min-w-0 pb-2">
               <div class="flex items-center gap-3 flex-wrap">
                 <h1 class="text-3xl font-black text-white" id="profile-name">—</h1>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs font-bold text-purple-300 uppercase tracking-wider">
+                <span id="profile-plan-badge" class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs font-bold text-purple-300 uppercase tracking-wider">
                   <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span id="profile-plan">Free</span>
                 </span>
               </div>
               <p class="text-gray-500 text-sm mt-0.5" id="profile-handle">—</p>
-              <p class="text-gray-400 text-sm mt-2 max-w-md" id="profile-bio">—</p>
-              <div class="flex items-center gap-6 mt-3 text-sm">
-                <div>
-                  <span class="font-bold text-white" id="profile-followers">0</span>
-                  <span class="text-gray-500 ml-1">followers</span>
-                </div>
-                <div>
+              <p class="text-gray-400 text-sm mt-2 max-w-md leading-relaxed" id="profile-bio">—</p>
+              <div class="flex items-center gap-6 mt-3 text-sm flex-wrap">
+                <button id="stat-following-btn" type="button" class="hover:text-white transition-colors text-left">
                   <span class="font-bold text-white" id="profile-following">0</span>
                   <span class="text-gray-500 ml-1">following</span>
-                </div>
+                </button>
                 <div>
                   <span class="font-bold text-white" id="profile-liked">0</span>
-                  <span class="text-gray-500 ml-1">liked</span>
+                  <span class="text-gray-500 ml-1">liked songs</span>
+                </div>
+                <div>
+                  <span class="font-bold text-white" id="profile-total-songs">0</span>
+                  <span class="text-gray-500 ml-1">songs heard</span>
                 </div>
               </div>
             </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-3 shrink-0 pb-2">
-              <a href="/settings" class="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-full font-semibold text-sm transition-all">
-                <span class="material-symbols-outlined text-[18px]">edit</span>
-                Edit Profile
+            <div class="flex items-center gap-3 shrink-0 pb-2 flex-wrap">
+              <a href="/settings"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white rounded-full font-semibold text-sm transition-all">
+                <span class="material-symbols-outlined text-[18px]">edit</span>Edit Profile
               </a>
-              <!-- Artist request button — hidden by JS until role is 'user' -->
-              <button id="artist-request-btn" type="button" class="hidden items-center gap-2 px-5 py-2.5 bg-indigo-500/15 border border-indigo-500/30 hover:bg-indigo-500/25 text-indigo-300 rounded-full font-semibold text-sm transition-all">
+              <button id="logout-btn" type="button"
+                class="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 hover:bg-red-500/10 hover:border-red-500/30 text-gray-400 hover:text-red-400 rounded-full text-sm transition-all">
+                <span class="material-symbols-outlined text-[18px]">logout</span>
+                <span class="font-semibold">Logout</span>
+              </button>
+              <button id="artist-request-btn" type="button"
+                class="hidden items-center gap-2 px-5 py-2.5 bg-indigo-500/15 border border-indigo-500/30 hover:bg-indigo-500/25 text-indigo-300 rounded-full font-semibold text-sm transition-all">
                 <span class="material-symbols-outlined text-[18px]">star</span>
                 <span id="artist-request-label">Request Artist Access</span>
               </button>
             </div>
           </div>
 
-          <!-- Tabs -->
           <div class="flex items-center gap-1 border-b border-white/5 mb-8">
-            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-purple-400 after:rounded-full">Overview</button>
-            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-gray-500 hover:text-gray-300">Playlists</button>
-            <button type="button" class="px-5 py-3 text-sm font-semibold transition-all relative text-gray-500 hover:text-gray-300">Following</button>
+            <button id="tab-btn-overview"   data-tab="overview"  type="button" class="tab-btn px-5 py-3 text-sm font-semibold transition-all relative">Overview</button>
+            <button id="tab-btn-playlists"  data-tab="playlists" type="button" class="tab-btn px-5 py-3 text-sm font-semibold transition-all relative">
+              Playlists <span id="tab-playlists-badge" class="ml-0.5 text-xs opacity-60"></span>
+            </button>
+            <button id="tab-btn-following"  data-tab="following" type="button" class="tab-btn px-5 py-3 text-sm font-semibold transition-all relative">
+              Following <span id="tab-following-badge" class="ml-0.5 text-xs opacity-60"></span>
+            </button>
           </div>
 
-          <!-- Grid Layout -->
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+          <div id="tab-overview" class="tab-content">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
 
-            <!-- Left: Recent Tracks -->
-            <div class="xl:col-span-2">
-              <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
-                <span class="material-symbols-outlined text-purple-400 text-[20px]">history</span>
-                Recent Play
-              </h2>
-              <div class="space-y-1.5" id="recent-tracks">
-                <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
-              </div>
-            </div>
-
-            <!-- Right: Top Artists + Stats -->
-            <div class="flex flex-col gap-8">
-              <!-- Top Artists -->
-              <div>
-                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-purple-400 text-[20px]">star</span>
-                  Favorite Artists
-                </h2>
-                <div class="grid grid-cols-2 gap-3" id="top-artists">
-                  <p class="col-span-2 text-gray-500 text-sm text-center py-2">Loading...</p>
+              <div class="xl:col-span-2">
+                <div class="flex items-center justify-between mb-5">
+                  <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-purple-400 text-[20px]">history</span>Recent Play
+                  </h2>
+                  <button id="clear-history-btn" type="button"
+                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 hover:text-red-400 hover:bg-red-500/8 rounded-full border border-white/5 hover:border-red-500/20 transition-all">
+                    <span class="material-symbols-outlined text-[14px]">delete_sweep</span>Clear all
+                  </button>
+                </div>
+                <div class="space-y-1.5" id="recent-tracks">
+                  <p class="text-gray-500 text-sm text-center py-4">Loading…</p>
                 </div>
               </div>
 
-              <!-- Listening Stats -->
-              <!-- <div>
-                <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-purple-400 text-[20px]">equalizer</span>
-                  Thống kê
-                </h2>
-                <div class="bg-white/3 border border-white/5 rounded-2xl p-5 space-y-4">
-                  {[
-                    { label: "Giờ nghe tháng này", value: "42h", icon: "schedule",  pct: 70  },
-                    { label: "Bài hát đã nghe",    value: "312",  icon: "music_note", pct: 55  },
-                    { label: "Nghệ sĩ khám phá",   value: "28",   icon: "person",     pct: 40  },
-                  ].map((stat) => (
+              <div class="flex flex-col gap-8">
+
+                <div>
+                  <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                      <span class="material-symbols-outlined text-purple-400 text-[20px]">favorite</span>Following
+                    </h2>
+                    <button data-tab="following" type="button" class="tab-btn text-xs text-purple-400 hover:text-purple-300 transition-colors">
+                      View all →
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3" id="top-artists">
+                    <p class="col-span-2 text-gray-500 text-sm text-center py-2">Loading…</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-purple-400 text-[20px]">equalizer</span>This Month
+                  </h2>
+                  <div class="bg-white/3 border border-white/5 rounded-2xl p-5 space-y-4">
                     <div>
                       <div class="flex items-center justify-between mb-1.5">
                         <div class="flex items-center gap-2 text-sm text-gray-400">
-                          <span class="material-symbols-outlined text-[16px] text-purple-400">{stat.icon}</span>
-                          {stat.label}
+                          <span class="material-symbols-outlined text-[16px] text-purple-400">schedule</span>Listening time
                         </div>
-                        <span class="text-sm font-bold text-white">{stat.value}</span>
+                        <span id="stat-listen-time" class="text-sm font-bold text-white">—</span>
                       </div>
-                      <div class="h-1 bg-white/5 rounded-full overflow-hidden">
-                        <div class={`h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full`} style={`width: ${stat.pct}%`}></div>
+                      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div id="stat-listen-bar" class="h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-700" style="width:0%"></div>
                       </div>
                     </div>
-                  ))}
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                          <span class="material-symbols-outlined text-[16px] text-purple-400">music_note</span>Songs this month
+                        </div>
+                        <span id="stat-songs-month" class="text-sm font-bold text-white">—</span>
+                      </div>
+                      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div id="stat-songs-bar" class="h-full bg-linear-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-700" style="width:0%"></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                          <span class="material-symbols-outlined text-[16px] text-purple-400">library_music</span>All-time songs
+                        </div>
+                        <span id="stat-total-songs" class="text-sm font-bold text-white">—</span>
+                      </div>
+                      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div id="stat-total-bar" class="h-full bg-linear-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-700" style="width:0%"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div> -->
+
+              </div>
             </div>
           </div>
 
-          <!-- Playlists Grid -->
-          <div class="mb-6">
+          <div id="tab-playlists" class="tab-content hidden">
             <div class="flex items-end justify-between mb-5">
               <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                <span class="material-symbols-outlined text-purple-400 text-[20px]">queue_music</span>
-                Playlists
+                <span class="material-symbols-outlined text-purple-400 text-[20px]">queue_music</span>My Playlists
               </h2>
-              <div class="flex items-center gap-3">
-                <button id="profile-btn-new-pl" type="button" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 rounded-full text-xs font-semibold transition-all">
-                  <span class="material-symbols-outlined text-[15px]">add</span>New
-                </button>
-                <a href="/playlist" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">SEE ALL</a>
-              </div>
+              <button id="profile-btn-new-pl" type="button"
+                class="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 rounded-full text-xs font-semibold transition-all">
+                <span class="material-symbols-outlined text-[15px]">add</span>New Playlist
+              </button>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="user-playlists-grid">
-              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-10" id="user-playlists-grid">
+              <p class="col-span-5 text-gray-500 text-sm text-center py-4">Loading…</p>
+            </div>
+          </div>
+
+          <div id="tab-following" class="tab-content hidden">
+            <div class="mb-5">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400 text-[20px]">group</span>Artists You Follow
+              </h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-10" id="following-artists-grid">
+              <p class="col-span-5 text-gray-500 text-sm text-center py-4">Loading…</p>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Toast notification -->
       <div id="profile-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
         <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md whitespace-nowrap">
           <span id="profile-toast-icon" class="material-symbols-outlined text-[18px]">info</span>
@@ -234,39 +210,42 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
       </div>
 
-      <!-- Now Playing Bar -->
       <PlayerBar />
     </main>
   </div>
 
   <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar        { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track  { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.1); border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+
+    .tab-btn         { color: rgb(107 114 128); }
+    .tab-btn:hover   { color: rgb(209 213 219); }
+    .tab-btn.active  { color: white; }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 2px; background: rgb(192 132 252); border-radius: 9999px;
     }
   </style>
 
 <script>
-  import { apiFetch, getUserRole, setAuth, getToken, getUser } from '../lib/api.js';
+  import { apiFetch, getUserRole, setAuth, getToken, getUser, API_BASE, formatCount } from '../lib/api.js';
 
-  // ── Toast helper ─────────────────────────────────────────────────────────────
   let _toastTimer: ReturnType<typeof setTimeout> | null = null;
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
-    const toast   = document.getElementById('profile-toast')!;
-    const msgEl   = document.getElementById('profile-toast-msg')!;
-    const iconEl  = document.getElementById('profile-toast-icon')!;
-    msgEl.textContent = msg;
+    const toast  = document.getElementById('profile-toast')!;
+    const msgEl  = document.getElementById('profile-toast-msg')!;
+    const iconEl = document.getElementById('profile-toast-icon')!;
+    msgEl.textContent  = msg;
     iconEl.textContent = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
-    iconEl.className = `material-symbols-outlined text-[18px] ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-blue-400'}`;
-    toast.classList.remove('opacity-0');
-    toast.classList.add('opacity-100');
+    iconEl.className   = `material-symbols-outlined text-[18px] ${type === 'success' ? 'text-green-400' : type === 'error' ? 'text-red-400' : 'text-blue-400'}`;
+    toast.classList.remove('opacity-0'); toast.classList.add('opacity-100');
     if (_toastTimer) clearTimeout(_toastTimer);
     _toastTimer = setTimeout(() => {
-      toast.classList.remove('opacity-100');
-      toast.classList.add('opacity-0');
+      toast.classList.remove('opacity-100'); toast.classList.add('opacity-0');
     }, 3000);
   }
 
@@ -282,28 +261,95 @@ import PlayerBar from "../components/PlayerBar.astro";
   ];
   const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
 
-  function setText(id: string, text: string) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = text;
+  function setText(id: string, v: string) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+  function fmtSeconds(s: number) {
+    s = Math.round(s);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    if (h > 0) return `${h}h ${m}m`;
+    return m > 0 ? `${m}m` : '< 1m';
   }
+
+  const TABS = ['overview', 'playlists', 'following'] as const;
+  function switchTab(tabId: string) {
+    TABS.forEach(t => {
+      const btn     = document.getElementById(`tab-btn-${t}`);
+      const content = document.getElementById(`tab-${t}`);
+      const active  = t === tabId;
+      btn?.classList.toggle('active', active);
+      content?.classList.toggle('hidden', !active);
+    });
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = (btn as HTMLElement).dataset.tab;
+      if (tab) switchTab(tab);
+    });
+  });
+
+  document.getElementById('stat-following-btn')?.addEventListener('click', () => switchTab('following'));
 
   function applyUserInfo(user: any) {
     const name = user.full_name || user.username || '—';
-    const plan = user.subscription?.subscription_type || 'Free';
-    setText('sidebar-name', name);
-    setText('sidebar-plan', plan);
+    setText('sidebar-username', name);
     setText('profile-name', name);
-    setText('profile-plan', plan.charAt(0).toUpperCase() + plan.slice(1));
+
+    const role = user.role;
+    const planBadge = document.getElementById('profile-plan-badge') as HTMLElement | null;
+    if (role === 'admin' || role === 'manager') {
+      const label = role === 'admin' ? 'System Administrator' : 'Manager Access';
+      if (planBadge) {
+        planBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full text-xs font-bold text-amber-300 uppercase tracking-wider';
+        planBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span><span>${label}</span>`;
+      }
+    } else {
+      if (planBadge) {
+        planBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs font-bold text-purple-300 uppercase tracking-wider';
+        const plan = user.subscription?.subscription_type || 'Free';
+        planBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span>${plan.charAt(0).toUpperCase() + plan.slice(1)}</span>`;
+      }
+    }
+
     setText('profile-handle', `@${user.username || '—'}`);
     setText('profile-bio', user.bio || 'Không có mô tả.');
+
+    const bannerImg = document.getElementById('profile-banner-img') as HTMLImageElement | null;
+    if (bannerImg) {
+      if (user.banner_url) { bannerImg.src = user.banner_url; bannerImg.classList.remove('hidden'); }
+      else bannerImg.classList.add('hidden');
+    }
     const avatarInner = document.getElementById('profile-avatar-inner');
-    if (avatarInner && user.avatar_url) {
-      avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
-    }
-    const sidebarAvatarInner = document.getElementById('sidebar-profile-avatar-inner');
-    if (sidebarAvatarInner && user.avatar_url) {
-      sidebarAvatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
-    }
+    if (avatarInner && user.avatar_url)
+      avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="Avatar"/>`;
+    const sidebarAvatar = document.getElementById('sidebar-avatar-inner');
+    if (sidebarAvatar && user.avatar_url)
+      sidebarAvatar.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt=""/>`;
+
+    setText('profile-following',    formatCount(user.following_count    ?? 0));
+    setText('profile-liked',         formatCount(user.liked_count         ?? 0));
+    setText('profile-total-songs',   formatCount(user.total_songs_listened ?? 0));
+
+    const tabFollowingBadge  = document.getElementById('tab-following-badge');
+    if (tabFollowingBadge && (user.following_count ?? 0) > 0)
+      tabFollowingBadge.textContent = `(${user.following_count})`;
+
+    const secMonth   = Number(user.listening_seconds_month ?? 0);
+    const songsMonth = user.songs_this_month        ?? 0;
+    const totalSongs = user.total_songs_listened    ?? 0;
+    setText('stat-listen-time',  fmtSeconds(secMonth));
+    setText('stat-songs-month',  `${songsMonth} songs`);
+    setText('stat-total-songs',  `${formatCount(totalSongs)} songs`);
+
+    requestAnimationFrame(() => {
+      const lb = document.getElementById('stat-listen-bar');
+      const sb = document.getElementById('stat-songs-bar');
+      const tb = document.getElementById('stat-total-bar');
+      if (lb) lb.style.width = `${Math.min(100, (secMonth  / (200 * 3600)) * 100).toFixed(1)}%`;
+      if (sb) sb.style.width = `${Math.min(100, (songsMonth / 500)         * 100).toFixed(1)}%`;
+      if (tb) tb.style.width = `${Math.min(100, (totalSongs / 2000)        * 100).toFixed(1)}%`;
+    });
   }
 
   async function loadProfile() {
@@ -312,171 +358,203 @@ import PlayerBar from "../components/PlayerBar.astro";
       setText('profile-name', 'Chưa đăng nhập');
       document.getElementById('recent-tracks')!.innerHTML =
         '<p class="text-center py-4"><a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a> để xem hồ sơ.</p>';
-      document.getElementById('top-artists')!.innerHTML = '';
-      document.getElementById('user-playlists-grid')!.innerHTML = '';
+      ['top-artists','user-playlists-grid','following-artists-grid'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.innerHTML = '';
+      });
       return;
     }
 
-    // Immediately show cached user data, then refresh from API
     const cached = getUser();
     if (cached) applyUserInfo(cached);
 
     try {
       const { data: user } = await apiFetch('/auth/me');
       applyUserInfo(user);
+    } catch { if (!cached) setText('profile-name', 'Không thể tải thông tin'); }
 
-      // Load liked count
-      try {
-        const { data: liked } = await apiFetch('/favorites?limit=1');
-        if (liked !== undefined) setText('profile-liked', liked.length?.toString() || '0');
-      } catch {}
-    } catch (err: any) {
-      if (!cached) {
-        setText('profile-name', 'Không thể tải thông tin');
-      }
-    }
-
-    // Load history
-    const tracksEl = document.getElementById('recent-tracks')!;
-    try {
-      const { data: history } = await apiFetch('/history?limit=5');
-      if (!history?.length) {
-        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs played yet.</p>';
-      } else {
-        tracksEl.innerHTML = history.map((h: any, i: number) => {
-          // History rows include song fields directly (title, cover_url, artist_names)
-          const s = h.song ?? h;
-          const cover = s.cover_url
-            ? `<img src="${s.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md" alt=""/>`
-            : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md" style="background:${grad(s.id || i + 1)}"></div>`;
-          return `
-            <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group cursor-pointer history-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-              <span class="text-gray-600 font-medium text-sm w-5 text-center shrink-0 group-hover:hidden">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 text-[20px] hidden group-hover:block shrink-0">play_arrow</span>
-              ${cover}
-              <div class="flex-1 min-w-0">
-                <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${s.title || '—'}</p>
-                <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || 'Unknown'}</p>
-              </div>
-              <span class="text-xs text-gray-600 hidden group-hover:block">
-                ${h.played_at ? new Date(h.played_at).toLocaleDateString('vi-VN') : ''}
-              </span>
-            </div>`;
-        }).join('');
-
-        // Play history rows on click
-        tracksEl.addEventListener('click', (e) => {
-          const row = (e.target as HTMLElement).closest('.history-row') as HTMLElement | null;
-          if (!row?.dataset.song) return;
-          try {
-            const song = JSON.parse(decodeURIComponent(row.dataset.song));
-            const allRows = Array.from(tracksEl.querySelectorAll('.history-row'));
-            const queue = allRows.map(r => {
-              try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
-            }).filter(Boolean);
-            import('../lib/player.js').then(({ player }) => player.playSong(song, queue));
-          } catch {}
-        }, { once: true });
-      }
-    } catch {
-      tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs played yet.</p>';
-    }
-
-    // Load artists
-    try {
-      const { data: artists } = await apiFetch('/artists?limit=4');
-      const artistsEl = document.getElementById('top-artists')!;
-      if (artists?.length) {
-        artistsEl.innerHTML = artists.slice(0, 4).map((a: any) => {
-          const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : '';
-          return `
-            <a href="/artists" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group cursor-pointer">
-              <div class="w-14 h-14 rounded-full overflow-hidden group-hover:scale-105 transition-transform shadow-lg" style="background:${grad(a.id)}">${img}</div>
-              <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">${a.name}</p>
-            </a>`;
-        }).join('');
-      }
-    } catch {}
-
-    // Load playlists
-    try {
-      const { data: playlists } = await apiFetch('/playlists/me?limit=4');
-      const plEl = document.getElementById('user-playlists-grid')!;
-      if (playlists?.length) {
-        plEl.innerHTML = playlists.slice(0, 4).map((pl: any) => `
-          <a href="/playlist" class="group cursor-pointer">
-            <div class="aspect-square rounded-2xl mb-3 shadow-lg flex items-center justify-center relative overflow-hidden group-hover:scale-[1.03] transition-all duration-300" style="background:${grad(pl.id)}">
-              ${(pl.cover_url || pl.first_cover_url) ? `<img src="${pl.cover_url || pl.first_cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span>'}
-              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
-              </div>
-            </div>
-            <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">${pl.name}</p>
-            <p class="text-xs text-gray-500 mt-0.5">${pl.songs_count != null ? pl.songs_count + ' songs' : (pl.description || 'Playlist')}</p>
-          </a>`).join('');
-      } else {
-        plEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No playlists yet. <a href="/playlist" class="text-purple-400 hover:text-purple-300">Create one</a>.</p>';
-      }
-    } catch {}
+    await Promise.allSettled([loadRecentTracks(), loadFollowedArtists(), loadPlaylists()]);
   }
 
+  async function loadRecentTracks() {
+    const el = document.getElementById('recent-tracks')!;
+    try {
+      const { data: history } = await apiFetch('/history?limit=20');
+      if (!history?.length) {
+        el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Chưa có lịch sử nghe.</p>';
+        return;
+      }
+      el.innerHTML = history.map((h: any, i: number) => {
+        const cover = h.cover_url
+          ? `<img src="${h.cover_url}" class="w-11 h-11 rounded-xl shrink-0 object-cover shadow-md group-hover:scale-105 group-hover:shadow-purple-500/30 transition-transform duration-300" alt=""/>`
+          : `<div class="w-11 h-11 rounded-xl shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300" style="background:${grad(h.id||i+1)}"></div>`;
+        const date = h.played_at ? new Date(h.played_at).toLocaleDateString('vi-VN') : '';
+        return `
+          <div class="group relative flex items-center gap-4 px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all duration-200 cursor-pointer history-row"
+               data-song="${encodeURIComponent(JSON.stringify(h))}">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative w-5 h-5 shrink-0 ml-1">
+              <span class="absolute inset-0 flex items-center justify-center text-gray-500 font-medium text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+              <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+            </div>
+            ${cover}
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-100 group-hover:text-purple-300 transition-colors duration-200 truncate text-sm">${h.title || '—'}</p>
+              <p class="text-xs text-gray-400 group-hover:text-gray-300 truncate mt-0.5">${h.artist_names || 'Unknown'}</p>
+            </div>
+            <span class="text-xs text-gray-600 group-hover:text-gray-500 shrink-0">${date}</span>
+          </div>`;
+      }).join('');
+
+      el.addEventListener('click', (e) => {
+        const row = (e.target as HTMLElement).closest('.history-row') as HTMLElement | null;
+        if (!row?.dataset.song) return;
+        try {
+          const song  = JSON.parse(decodeURIComponent(row.dataset.song));
+          const queue = Array.from(el.querySelectorAll('.history-row'))
+            .map(r => { try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song||'')); } catch { return null; } })
+            .filter(Boolean);
+          import('../lib/player.js').then(({ player }) => player.playSong(song, queue));
+        } catch {}
+      });
+    } catch {
+      el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Không thể tải lịch sử.</p>';
+    }
+  }
+
+  async function loadFollowedArtists() {
+    const previewEl   = document.getElementById('top-artists')!;
+    const followingEl = document.getElementById('following-artists-grid')!;
+    try {
+      const { data: artists } = await apiFetch('/artists/following');
+
+      const badge = document.getElementById('tab-following-badge');
+      if (badge) badge.textContent = artists?.length ? `(${artists.length})` : '';
+
+      if (!artists?.length) {
+        previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Chưa theo dõi nghệ sĩ nào.</p>';
+        followingEl.innerHTML = `<p class="col-span-5 text-gray-500 text-sm text-center py-8">
+          Bạn chưa theo dõi nghệ sĩ nào.
+          <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Khám phá nghệ sĩ →</a></p>`;
+        return;
+      }
+
+      previewEl.innerHTML = artists.slice(0, 4).map((a: any) => {
+        const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : '';
+        return `
+          <a href="/artist?id=${a.id}" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group">
+            <div class="w-14 h-14 rounded-full overflow-hidden group-hover:scale-105 transition-transform shadow-lg" style="background:${grad(a.id)}">${img}</div>
+            <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">${a.name}</p>
+          </a>`;
+      }).join('');
+
+      followingEl.innerHTML = artists.map((a: any) => {
+        const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>` : '';
+        return `
+          <div class="group/card relative bg-white/3 hover:bg-white/8 border border-white/5 hover:border-white/10 rounded-2xl p-5 transition-all flex flex-col items-center gap-3">
+            <a href="/artist?id=${a.id}" class="flex flex-col items-center gap-3 w-full">
+              <div class="w-20 h-20 rounded-full overflow-hidden group-hover/card:scale-105 transition-transform shadow-xl" style="background:${grad(a.id)}">${img}</div>
+              <p class="font-semibold text-gray-100 group-hover/card:text-white transition-colors text-sm text-center truncate w-full">${a.name}</p>
+              <p class="text-xs text-gray-500">${formatCount(a.followers_count || 0)} followers</p>
+            </a>
+            <button class="unfollow-btn flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 rounded-full transition-all"
+                    data-artist-id="${a.id}" data-artist-name="${encodeURIComponent(a.name)}">
+              <span class="material-symbols-outlined text-[13px]">person_remove</span>Unfollow
+            </button>
+          </div>`;
+      }).join('');
+
+      followingEl.querySelectorAll<HTMLButtonElement>('.unfollow-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const aId   = btn.dataset.artistId!;
+          const aName = decodeURIComponent(btn.dataset.artistName || '');
+          btn.disabled = true;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span>';
+          try {
+            await apiFetch(`/artists/${aId}/follow`, { method: 'DELETE' });
+            btn.closest('div.group\\/card')?.remove();
+            const remaining = followingEl.querySelectorAll('.unfollow-btn').length;
+            const badge2 = document.getElementById('tab-following-badge');
+            if (badge2) badge2.textContent = remaining > 0 ? `(${remaining})` : '';
+            setText('profile-following', formatCount(remaining));
+            if (remaining === 0) {
+              previewEl.innerHTML = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Chưa theo dõi nghệ sĩ nào.</p>';
+              followingEl.innerHTML = `<p class="col-span-5 text-gray-500 text-sm text-center py-8">
+                Bạn chưa theo dõi nghệ sĩ nào.
+                <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Khám phá nghệ sĩ →</a></p>`;
+            } else {
+              const keep = Array.from(followingEl.querySelectorAll('div.group\\/card')).slice(0, 4);
+              previewEl.innerHTML = keep.map(card => {
+                const a2    = card.querySelector('a[href^="/artist"]') as HTMLAnchorElement | null;
+                const href  = a2?.href || '#';
+                const imgEl = card.querySelector('img') as HTMLImageElement | null;
+                const div   = card.querySelector('div[style]') as HTMLElement | null;
+                const name  = card.querySelector('p.font-semibold')?.textContent || '';
+                const imgHtml = imgEl ? `<img src="${imgEl.src}" class="w-full h-full object-cover" alt=""/>` : '';
+                const bg    = div?.style.background || '';
+                return `<a href="${href}" class="flex flex-col items-center gap-2 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group">
+                  <div class="w-14 h-14 rounded-full overflow-hidden group-hover:scale-105 transition-transform shadow-lg" style="background:${bg}">${imgHtml}</div>
+                  <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">${name}</p></a>`;
+              }).join('');
+            }
+            showToast(`Đã bỏ theo dõi ${aName}`, 'info');
+          } catch (err: any) {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">person_remove</span>Unfollow';
+            showToast(err.message || 'Thất bại', 'error');
+          }
+        });
+      });
+    } catch {
+      previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Không thể tải.</p>';
+      followingEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-8">Không thể tải.</p>';
+    }
+  }
+
+  async function loadPlaylists() {
+    const plEl  = document.getElementById('user-playlists-grid')!;
+    const badge = document.getElementById('tab-playlists-badge');
+    try {
+      const { data: playlists } = await apiFetch('/playlists/me');
+      if (badge && playlists?.length) badge.textContent = `(${playlists.length})`;
+      if (!playlists?.length) {
+        plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">Chưa có playlist. <a href="/playlist?create=1" class="text-purple-400 hover:text-purple-300">Tạo mới</a>.</p>';
+        return;
+      }
+      plEl.innerHTML = playlists.map((pl: any) => `
+        <a href="/playlist?id=${pl.id}" class="group cursor-pointer">
+          <div class="aspect-square rounded-2xl mb-3 shadow-lg flex items-center justify-center relative overflow-hidden group-hover:scale-[1.03] transition-all duration-300" style="background:${grad(pl.id)}">
+            ${(pl.cover_url || pl.first_cover_url)
+              ? `<img src="${pl.cover_url || pl.first_cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+              : '<span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span>'}
+            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+            </div>
+          </div>
+          <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">${pl.name}</p>
+          <p class="text-xs text-gray-500 mt-0.5">${pl.song_count != null ? pl.song_count + ' songs' : (pl.description || 'Playlist')}</p>
+        </a>`).join('');
+    } catch {
+      plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">Không thể tải playlist.</p>';
+    }
+  }
+
+  switchTab('overview');
   loadProfile();
 
-  // ── Avatar upload ──────────────────────────────────────────────────────────
-  const avatarUploadBtn = document.getElementById('avatar-upload-btn') as HTMLButtonElement;
-  const avatarFileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
-
-  avatarUploadBtn?.addEventListener('click', () => avatarFileInput?.click());
-
-  avatarFileInput?.addEventListener('change', async () => {
-    const file = avatarFileInput.files?.[0];
-    if (!file) return;
-    const token = localStorage.getItem('auth_token');
-    if (!token) { alert('Vui lòng đăng nhập.'); return; }
-
-    const btn = avatarUploadBtn;
-    const origHTML = btn.innerHTML;
-    btn.innerHTML = '<span class="material-symbols-outlined text-white text-[16px] animate-spin">refresh</span>';
+  document.getElementById('clear-history-btn')?.addEventListener('click', async () => {
+    if (!confirm('Xóa toàn bộ lịch sử nghe? Hành động này không thể hoàn tác.')) return;
+    const btn = document.getElementById('clear-history-btn') as HTMLButtonElement;
     btn.disabled = true;
-
     try {
-      const fd = new FormData();
-      fd.append('avatar', file);
-      const res = await fetch(`http://localhost:5000/api/auth/upload-avatar`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
-
-      const newUrl: string = json.data.url;
-
-      // Update avatar display
-      const avatarInner = document.getElementById('profile-avatar-inner');
-      if (avatarInner) {
-        avatarInner.innerHTML = `<img src="${newUrl}" class="w-full h-full object-cover rounded-full" alt="Avatar" />`;
-      }
-      const sidebarAvatarInner = document.getElementById('sidebar-profile-avatar-inner');
-      if (sidebarAvatarInner) {
-        sidebarAvatarInner.innerHTML = `<img src="${newUrl}" class="w-full h-full object-cover rounded-full" alt="" />`;
-      }
-
-      // Update localStorage so sidebar and other pages reflect the change
-      try {
-        const stored = JSON.parse(localStorage.getItem('auth_user') || 'null');
-        if (stored) { stored.avatar_url = newUrl; localStorage.setItem('auth_user', JSON.stringify(stored)); }
-      } catch {}
+      await apiFetch('/history', { method: 'DELETE' });
+      document.getElementById('recent-tracks')!.innerHTML =
+        '<p class="text-gray-500 text-sm text-center py-8">Lịch sử đã được xóa.</p>';
+      showToast('Đã xóa lịch sử nghe.', 'success');
     } catch (err: any) {
-      alert(err.message || 'Upload ảnh thất bại');
-    } finally {
-      btn.innerHTML = origHTML;
-      btn.disabled = false;
-      avatarFileInput.value = '';
-    }
+      showToast(err.message || 'Xóa thất bại.', 'error');
+    } finally { btn.disabled = false; }
   });
 
-  // ── New Playlist button on profile ─────────────────────────────────────────
   document.getElementById('profile-btn-new-pl')?.addEventListener('click', () => {
     window.location.href = '/playlist?create=1';
   });
@@ -484,12 +562,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   document.getElementById('logout-btn')?.addEventListener('click', async () => {
     try {
       const token = getToken();
-      if (token) {
-        await fetch('http://localhost:5000/api/auth/logout', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
+      if (token) await fetch(`${API_BASE}/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
     } catch {}
     import('../lib/player.js').then(({ player }) => player?.reset?.());
     localStorage.removeItem('auth_token');
@@ -499,73 +572,106 @@ import PlayerBar from "../components/PlayerBar.astro";
     setTimeout(() => { window.location.href = '/login'; }, 1200);
   });
 
-  // ── Artist request button ──────────────────────────────────────────────────
+  const bannerUploadBtn = document.getElementById('banner-upload-btn') as HTMLButtonElement;
+  const bannerFileInput = document.getElementById('banner-file-input') as HTMLInputElement;
+  bannerUploadBtn?.addEventListener('click', () => bannerFileInput?.click());
+  bannerFileInput?.addEventListener('change', async () => {
+    const file = bannerFileInput.files?.[0];
+    if (!file) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) { showToast('Vui lòng đăng nhập.', 'error'); return; }
+    const orig = bannerUploadBtn.innerHTML;
+    bannerUploadBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>';
+    bannerUploadBtn.disabled = true;
+    try {
+      const fd = new FormData(); fd.append('banner', file);
+      const res  = await fetch(`${API_BASE}/auth/upload-banner`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      const url: string = json.data.url;
+      const img = document.getElementById('profile-banner-img') as HTMLImageElement | null;
+      if (img) { img.src = url; img.classList.remove('hidden'); }
+      try { const s = JSON.parse(localStorage.getItem('auth_user')||'null'); if(s){s.banner_url=url;localStorage.setItem('auth_user',JSON.stringify(s));} } catch {}
+      showToast('Banner đã được cập nhật!', 'success');
+    } catch (err: any) { showToast(err.message || 'Upload banner thất bại', 'error'); }
+    finally { bannerUploadBtn.innerHTML = orig; bannerUploadBtn.disabled = false; bannerFileInput.value = ''; }
+  });
+
+  const avatarUploadBtn = document.getElementById('avatar-upload-btn') as HTMLButtonElement;
+  const avatarFileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
+  avatarUploadBtn?.addEventListener('click', () => avatarFileInput?.click());
+  avatarFileInput?.addEventListener('change', async () => {
+    const file = avatarFileInput.files?.[0];
+    if (!file) return;
+    const token = localStorage.getItem('auth_token');
+    if (!token) { showToast('Vui lòng đăng nhập.', 'error'); return; }
+    const orig = avatarUploadBtn.innerHTML;
+    avatarUploadBtn.innerHTML = '<span class="material-symbols-outlined text-white text-[16px] animate-spin">refresh</span>';
+    avatarUploadBtn.disabled = true;
+    try {
+      const fd = new FormData(); fd.append('avatar', file);
+      const res  = await fetch(`${API_BASE}/auth/upload-avatar`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      const url: string = json.data.url;
+      const inner = document.getElementById('profile-avatar-inner');
+      if (inner) inner.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-full" alt="Avatar"/>`;
+      const sidebarInner = document.getElementById('sidebar-avatar-inner');
+      if (sidebarInner) sidebarInner.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-full" alt=""/>`;
+      try { const s = JSON.parse(localStorage.getItem('auth_user')||'null'); if(s){s.avatar_url=url;localStorage.setItem('auth_user',JSON.stringify(s));} } catch {}
+      showToast('Ảnh đại diện đã được cập nhật!', 'success');
+    } catch (err: any) { showToast(err.message || 'Upload ảnh thất bại', 'error'); }
+    finally { avatarUploadBtn.innerHTML = orig; avatarUploadBtn.disabled = false; avatarFileInput.value = ''; }
+  });
+
   (async () => {
     const role = getUserRole();
-    if (role !== 'user') return; // only 'user' role sees the button
-
+    if (role !== 'user') return;
     const btn   = document.getElementById('artist-request-btn') as HTMLButtonElement;
     const label = document.getElementById('artist-request-label') as HTMLElement;
     if (!btn) return;
-
-    // Check existing request state
     try {
       const { data: req } = await apiFetch('/roles/my-request');
       if (req?.status === 'pending') {
-        label.textContent = 'Pending approval…';
-        btn.disabled = true;
+        label.textContent = 'Pending approval…'; btn.disabled = true;
         btn.classList.add('opacity-60', 'cursor-not-allowed');
       } else if (req?.status === 'approved') {
-        // Role was approved — refresh user data and skip showing button
         const { data: fresh } = await apiFetch('/auth/me');
         const stored = getUser();
         if (stored) setAuth(getToken()!, { ...stored, role: fresh.role ?? 'artist' });
-        return; // don't show button
+        return;
       }
     } catch {}
-
-    btn.classList.remove('hidden');
-    btn.classList.add('flex');
-
+    btn.classList.remove('hidden'); btn.classList.add('flex');
     btn.addEventListener('click', async () => {
       if (btn.disabled) return;
-      btn.disabled = true;
-      label.textContent = 'Submitting…';
+      btn.disabled = true; label.textContent = 'Submitting…';
       try {
         await apiFetch('/roles/request-artist', { method: 'POST' });
-        label.textContent = 'Pending approval…';
-        btn.classList.add('opacity-60', 'cursor-not-allowed');
-
-        // Poll every 15 s until approved/rejected
+        label.textContent = 'Pending approval…'; btn.classList.add('opacity-60', 'cursor-not-allowed');
         const poll = setInterval(async () => {
           try {
             const { data: req } = await apiFetch('/roles/my-request');
             if (req?.status === 'approved') {
               clearInterval(poll);
-              // Re-fetch profile to get updated role
               const { data: fresh } = await apiFetch('/auth/me');
               const stored = getUser();
               if (stored) setAuth(getToken()!, { ...stored, role: fresh.role ?? 'artist' });
               btn.classList.add('hidden');
-              // Briefly notify the user
               const notice = document.createElement('span');
               notice.textContent = '🎵 Artist access granted! Reload to see all features.';
               notice.className = 'px-4 py-2 text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-full';
               btn.parentElement?.appendChild(notice);
             } else if (req?.status === 'rejected') {
               clearInterval(poll);
-              label.textContent = 'Request Artist Access';
-              btn.disabled = false;
+              label.textContent = 'Request Artist Access'; btn.disabled = false;
               btn.classList.remove('opacity-60', 'cursor-not-allowed');
             }
           } catch {}
         }, 15_000);
-        // Stop polling when the user navigates away to prevent API spam
         window.addEventListener('pagehide', () => clearInterval(poll), { once: true });
       } catch (err: any) {
-        label.textContent = err.message.includes('pending')
-          ? 'Pending approval…'
-          : 'Request Artist Access';
+        label.textContent = err.message.includes('pending') ? 'Pending approval…' : 'Request Artist Access';
         if (!label.textContent.startsWith('Pending')) btn.disabled = false;
         btn.classList.toggle('opacity-60', btn.disabled);
         btn.classList.toggle('cursor-not-allowed', btn.disabled);

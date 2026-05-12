@@ -14,6 +14,7 @@ router.post('/login', authLimiter, authController.login);
 router.get('/me', requireAuth, authController.getMe);
 router.put('/profile', requireAuth, authController.updateProfile);
 router.post('/upload-avatar', requireAuth, uploadImage.single('avatar'), authController.uploadAvatar);
+router.post('/upload-banner', requireAuth, uploadImage.single('banner'), authController.uploadBanner);
 router.post('/logout', requireAuth, authController.logout);
 
 export default router;

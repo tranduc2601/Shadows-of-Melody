@@ -29,9 +29,20 @@ class Artist {
         return artist;
     }
 
-    static async findAll(limit = 20, offset = 0) {
+    static async findAll(limit = 20, offset = 0, keyword = '', sortBy = 'name', order = 'asc') {
+        const VALID_SORT  = ['name', 'followers_count', 'created_at'];
+        const VALID_ORDER = ['asc', 'desc'];
+        const col = VALID_SORT.includes(sortBy)  ? sortBy : 'name';
+        const dir = VALID_ORDER.includes(order)  ? order  : 'asc';
+        if (keyword) {
+            const [rows] = await pool.query(
+                `SELECT * FROM artists WHERE name ILIKE ? ORDER BY ${col} ${dir} LIMIT ? OFFSET ?`,
+                [`%${keyword}%`, limit, offset]
+            );
+            return rows;
+        }
         const [rows] = await pool.query(
-            'SELECT * FROM artists ORDER BY name ASC LIMIT ? OFFSET ?',
+            `SELECT * FROM artists ORDER BY ${col} ${dir} LIMIT ? OFFSET ?`,
             [limit, offset]
         );
         return rows;

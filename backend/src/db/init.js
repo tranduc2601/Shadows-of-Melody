@@ -10,7 +10,7 @@ const initDb = async () => {
         console.log('Initializing database...');
 
         // Read SQL schema
-        const schemaPath = path.join(__dirname, 'schema.sql');
+        const schemaPath = path.join(__dirname, 'schema.postgresql.sql');
         const schemaSql = fs.readFileSync(schemaPath, 'utf-8');
 
         // Split SQL statements

@@ -1,6 +1,8 @@
 // Global audio player singleton — browser-only
 // Events dispatched on window: player:songchange, player:play, player:pause, player:timeupdate, player:ended
 
+import { API_BASE } from './api.js';
+
 export const player = (() => {
   if (typeof window === 'undefined') {
     return {
@@ -20,6 +22,7 @@ export const player = (() => {
   let _shuffle = false;
   let _repeat = 'none'; // 'none' | 'all' | 'one'
   let _loading = false; // true while src is being changed — suppresses spurious pause event
+  let _historyTimer = null; // 10-second timer for logging plays
 
   function getAudio() {
     if (!_audio) {
@@ -68,10 +71,26 @@ export const player = (() => {
     _current = song;
     const a = getAudio();
     _loading = true;
-    a.src = `http://localhost:5000/api/stream/${song.id}`;
+    a.src = `${API_BASE}/stream/${song.id}`;
     _loading = false;
     _dispatch('songchange');
     try { await a.play(); } catch { /* autoplay blocked */ }
+
+    // Cancel any pending history log from the previous song
+    if (_historyTimer) { clearTimeout(_historyTimer); _historyTimer = null; }
+
+    // Log to history after 10 seconds of listening
+    const songId = song.id;
+    _historyTimer = setTimeout(() => {
+      _historyTimer = null;
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      if (!token || !songId) return;
+      fetch(`${API_BASE}/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ song_id: songId }),
+      }).catch(() => {});
+    }, 10_000);
   }
 
   return {
@@ -81,6 +100,10 @@ export const player = (() => {
     get duration() { return _audio?.duration || 0; },
     get shuffle() { return _shuffle; },
     get repeat() { return _repeat; },
+    /** Read-only snapshot of the current play queue. */
+    get queue() { return [..._queue]; },
+    /** Index of the currently playing song within the queue (-1 if none). */
+    get queueIndex() { return _queueIdx; },
 
     /** @param {any} song @param {any[] | null} [queue] */
     playSong(song, queue = null) {
@@ -160,7 +183,7 @@ export const player = (() => {
         const a = getAudio();
         if (state.volume != null) a.volume = state.volume;
         _loading = true;
-        a.src = `http://localhost:5000/api/stream/${state.song.id}`;
+        a.src = `${API_BASE}/stream/${state.song.id}`;
         _loading = false;
         // Seek to saved position once metadata is ready
         const targetTime = state.currentTime || 0;
@@ -184,6 +207,7 @@ export const player = (() => {
 
     /** Stop playback and clear all player state (e.g. on logout). */
     reset() {
+      if (_historyTimer) { clearTimeout(_historyTimer); _historyTimer = null; }
       if (_audio) {
         _audio.pause();
         _audio.src = '';

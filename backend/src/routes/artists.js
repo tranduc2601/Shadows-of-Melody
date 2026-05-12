@@ -1,6 +1,6 @@
 import express from 'express';
 import * as artistController from '../controllers/artistController.js';
-import { authMiddleware, adminMiddleware } from '../middleware/auth.js';
+import { authMiddleware, adminMiddleware, requireAuth } from '../middleware/auth.js';
 import { searchLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
@@ -9,7 +9,16 @@ const router = express.Router();
 router.get('/', artistController.getAllArtists);
 router.get('/members', artistController.getArtistMembers);
 router.get('/search', searchLimiter, artistController.searchArtists);
+
+// Authenticated user's followed artists (must be before /:id)
+router.get('/following', requireAuth, artistController.getFollowedArtists);
+
 router.get('/:id', artistController.getArtistById);
+
+// Follow routes (require auth)
+router.get('/:id/follow',    requireAuth, artistController.getFollowStatus);
+router.post('/:id/follow',   requireAuth, artistController.followArtist);
+router.delete('/:id/follow', requireAuth, artistController.unfollowArtist);
 
 // Admin routes
 router.post('/', authMiddleware, adminMiddleware, artistController.createArtist);

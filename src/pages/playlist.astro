@@ -9,33 +9,26 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <Sidebar currentPage="playlist" />
 
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
       <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none"></div>
 
-      <!-- Header -->
       <header class="h-20 flex-shrink-0 flex items-center px-8 relative z-10">
         <h1 id="playlists-heading" class="text-2xl font-bold text-white">My Playlists</h1>
       </header>
 
       <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10 custom-scrollbar">
 
-        <!-- Playlist Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-5 mb-12" id="playlists-grid" style="">
           <p class="col-span-6 text-gray-500 text-sm text-center py-10">Loading...</p>
         </div>
 
-        <!-- Featured Playlist Detail -->
         <div id="featured-section" class="hidden">
-          <!-- Back button -->
           <button id="btn-back-to-playlists" class="flex items-center gap-2 mb-5 text-sm text-gray-400 hover:text-white transition-colors duration-150 group">
             <span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:-translate-x-0.5">arrow_back</span>
             <span class="font-medium">My Playlists</span>
           </button>
-          <!-- Header -->
           <div class="flex flex-col md:flex-row gap-8 mb-6 p-6 bg-white/[0.02] rounded-3xl border border-white/5" id="featured-header"></div>
 
-          <!-- Tabs + Search -->
           <div class="flex items-center gap-2 mb-4 flex-wrap">
             <button id="tab-in-pl" class="pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 text-white transition-all">
               <span class="material-symbols-outlined text-[16px]">queue_music</span>
@@ -56,7 +49,6 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>
           </div>
 
-          <!-- Panel: In Playlist -->
           <div id="panel-in-pl" class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
             <table class="w-full text-left">
               <thead>
@@ -75,7 +67,6 @@ import PlayerBar from "../components/PlayerBar.astro";
             </table>
           </div>
 
-          <!-- Panel: All Songs -->
           <div id="panel-add-songs" class="hidden bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
             <table class="w-full text-left">
               <thead>
@@ -100,7 +91,6 @@ import PlayerBar from "../components/PlayerBar.astro";
       <PlayerBar />
     </main>
 
-    <!-- Toast -->
     <div id="pl-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
       <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md whitespace-nowrap">
         <span id="pl-toast-icon" class="material-symbols-outlined text-[18px] text-blue-400">info</span>
@@ -108,7 +98,6 @@ import PlayerBar from "../components/PlayerBar.astro";
       </div>
     </div>
 
-    <!-- Edit Playlist Modal -->
     <div id="modal-edit-pl" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div class="bg-[#0f1b35] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-8 relative">
         <button id="edit-modal-close" type="button" class="absolute top-5 right-5 text-gray-500 hover:text-white transition-colors">
@@ -119,7 +108,6 @@ import PlayerBar from "../components/PlayerBar.astro";
           Edit Playlist
         </h2>
         <form id="form-edit-pl" class="space-y-4" novalidate>
-          <!-- Cover Image -->
           <div class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-gray-300">Cover Image</label>
             <div class="flex items-start gap-4">
@@ -217,7 +205,6 @@ import PlayerBar from "../components/PlayerBar.astro";
   ];
   const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
 
-  // â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let _toastTimer: ReturnType<typeof setTimeout> | null = null;
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
     const toast  = document.getElementById('pl-toast')!;
@@ -235,7 +222,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }, 3000);
   }
 
-  // ── Edit Playlist Modal ──────────────────────────────────────────────────
   const editModal     = document.getElementById('modal-edit-pl')!;
   const editCloseBtn  = document.getElementById('edit-modal-close')!;
   const editCancelBtn = document.getElementById('edit-modal-cancel')!;
@@ -243,7 +229,6 @@ import PlayerBar from "../components/PlayerBar.astro";
   const editDescInput = document.getElementById('edit-pl-desc') as HTMLTextAreaElement;
   const editNameErr   = document.getElementById('edit-pl-name-err')!;
 
-  // Cover image elements for edit modal
   const editCoverFile        = document.getElementById('edit-cover-file') as HTMLInputElement;
   const editCoverBtn         = document.getElementById('edit-cover-btn') as HTMLButtonElement;
   const editCoverPreview     = document.getElementById('edit-cover-preview') as HTMLElement;
@@ -375,7 +360,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   });
 
-  // â”€â”€ Module-level state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let _activePlId: number   = 0;
   let _plSongs: any[]       = [];  // songs currently in the playlist
   let _plSongIds: Set<number> = new Set();
@@ -383,7 +367,6 @@ import PlayerBar from "../components/PlayerBar.astro";
   let _activeTab: 'in-pl' | 'add' = 'in-pl';
   let _allSongsLoaded       = false;
 
-  // DOM refs
   const tabInPl       = document.getElementById('tab-in-pl') as HTMLButtonElement;
   const tabAddSongs   = document.getElementById('tab-add-songs') as HTMLButtonElement;
   const panelInPl     = document.getElementById('panel-in-pl')!;
@@ -414,7 +397,6 @@ import PlayerBar from "../components/PlayerBar.astro";
   tabAddSongs.addEventListener('click', () => setActiveTab('add'));
   searchInput.addEventListener('input', () => renderAllSongs());
 
-  // â”€â”€ Render: songs in playlist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function renderInPlaylist() {
     inPlCount.textContent = String(_plSongs.length);
     if (!_plSongs.length) {
@@ -457,7 +439,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }).join('');
   }
 
-  // â”€â”€ Render: all songs (add panel) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   function renderAllSongs() {
     const q = searchInput.value.trim().toLowerCase();
     let songs = _allSongs;
@@ -507,9 +488,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     }).join('');
   }
 
-  // â”€â”€ Table click handlers (delegated, set once) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   featuredTbody.addEventListener('click', async (e) => {
-    // Remove song
     const removeBtn = (e.target as HTMLElement).closest('.btn-remove-song') as HTMLButtonElement | null;
     if (removeBtn && !removeBtn.disabled) {
       e.stopPropagation();
@@ -533,7 +512,6 @@ import PlayerBar from "../components/PlayerBar.astro";
       }
       return;
     }
-    // Play song
     const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
     if (!row) return;
     try {
@@ -575,7 +553,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (el) el.textContent = `${_plSongs.length} songs`;
   }
 
-  // â”€â”€ Preload all songs from DB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async function ensureAllSongs() {
     if (_allSongsLoaded) return;
     allSongsTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-gray-500 text-sm">Loading songs...</td></tr>';
@@ -589,9 +566,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   }
 
-  // â”€â”€ Load playlists â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-  // ── Back button ──────────────────────────────────────────────────────────────
   document.getElementById('btn-back-to-playlists')?.addEventListener('click', () => {
     document.getElementById('featured-section')!.classList.add('hidden');
     document.getElementById('playlists-grid')!.classList.remove('hidden');
@@ -641,14 +615,12 @@ import PlayerBar from "../components/PlayerBar.astro";
           <p class="text-gray-500 text-xs mt-0.5 truncate">${pl.songs_count != null ? pl.songs_count + ' songs' : (pl.description || 'Playlist')}</p>
         </div>`).join('');
 
-      // Auto-select playlist from URL ?id= param or previously active one
       const urlId = Number(new URLSearchParams(window.location.search).get('id'));
       if (urlId && playlists.some((p: any) => p.id === urlId)) {
         loadPlaylistDetail(urlId);
       } else if (_activePlId && playlists.some((p: any) => p.id === _activePlId)) {
         loadPlaylistDetail(_activePlId);
       } else {
-        // Don't auto-open any playlist — user must click one
         document.getElementById('featured-section')!.classList.add('hidden');
         document.getElementById('playlists-grid')!.classList.remove('hidden');
         document.getElementById('playlists-heading')!.classList.remove('hidden');
@@ -681,7 +653,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   }
 
-  // â”€â”€ Playlist detail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async function loadPlaylistDetail(playlistId: number) {
     _activePlId = playlistId;
     const featured = document.getElementById('featured-section')!;
@@ -690,7 +661,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     headerEl.innerHTML = '<p class="text-gray-500 text-sm py-4">Loading...</p>';
     featuredTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Loading...</td></tr>';
 
-    // Ensure all songs are loaded in background
     ensureAllSongs();
 
     try {
@@ -737,12 +707,10 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </div>`;
 
-      // Edit playlist
       document.getElementById('btn-pl-edit')?.addEventListener('click', () => {
         openEditModal(pl);
       });
 
-      // Delete playlist
       document.getElementById('btn-pl-delete')?.addEventListener('click', async (e) => {
         const btn  = e.currentTarget as HTMLButtonElement;
         const id   = btn.dataset.id;
@@ -782,12 +750,10 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   }
 
-  // Listen for new playlist created via sidebar modal
   window.addEventListener('playlist-created', () => loadPlaylists(false));
 
   loadPlaylists();
 
-  // Auto-open create modal if redirected with ?create=1
   if (new URLSearchParams(window.location.search).get('create') === '1') {
     window.dispatchEvent(new CustomEvent('open-create-playlist-modal'));
     history.replaceState(null, '', '/playlist');

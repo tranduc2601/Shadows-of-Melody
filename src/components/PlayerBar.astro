@@ -72,7 +72,7 @@
 
 <script>
   import { player } from '../lib/player.js';
-  import { apiFetch } from '../lib/api.js';
+  import { apiFetch, API_BASE } from '../lib/api.js';
 
   const pbTitle    = document.getElementById('pb-title') as HTMLElement;
   const pbArtist   = document.getElementById('pb-artist') as HTMLElement;
@@ -147,7 +147,7 @@
     const durationSec = Math.round((Date.now() - _sessionStart) / 1000);
     if (durationSec < 1) return;
     const songId = _sessionSongId;
-    fetch('http://localhost:5000/api/history/play-session', {
+    fetch(`${API_BASE}/history/play-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ song_id: songId, duration_played: durationSec }),

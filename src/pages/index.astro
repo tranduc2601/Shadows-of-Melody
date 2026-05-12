@@ -9,93 +9,104 @@ import PlayerBar from "../components/PlayerBar.astro";
     
     <Sidebar currentPage="home" />
 
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <!-- Background Ambient Glow -->
       <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[150px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-      <!-- Header -->
       <header class="h-20 shrink-0 flex items-center justify-between px-6 lg:px-8 relative z-10 w-full transition-all duration-300">
-        <!-- Mobile Menu Button -->
-        <button class="md:hidden w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mr-4 text-white">
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mr-4 text-white hover:bg-white/10 transition-colors">
            <span class="material-symbols-outlined">menu</span>
         </button>
 
         <div class="flex items-center gap-4 flex-1">
           <div class="hidden sm:flex items-center gap-2 text-gray-400">
-            <button class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md">
+            <button id="nav-back-btn" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md">
               <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
             </button>
-            <button class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md opacity-50 cursor-not-allowed">
+            <button id="nav-forward-btn" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md opacity-50">
               <span class="material-symbols-outlined text-[20px]">arrow_forward_ios</span>
             </button>
           </div>
 
           <div class="relative w-full max-w-md sm:ml-4 group">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors">search</span>
-            <input 
-              type="text" 
-              placeholder="Search for artists, songs, or podcasts..."
+            <input
+              id="header-search-input"
+              type="text"
+              placeholder="Tìm kiếm bài hát, nghệ sĩ..."
               class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-2.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all backdrop-blur-md shadow-inner"
             />
           </div>
         </div>
 
-        <div class="flex items-center gap-4 ml-4">
-          <!-- <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all backdrop-blur-md relative group">
-            <span class="material-symbols-outlined text-gray-300 group-hover:text-white transition-colors">notifications</span>
-            <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]"></span>
-          </button> -->
+        <div class="flex items-center gap-3 ml-4 shrink-0">
+          <div id="header-user" class="hidden sm:flex items-center gap-2.5">
+            <p id="header-greeting" class="text-sm text-gray-400 hidden md:block"></p>
+            <a href="/profile" id="header-avatar-wrap" class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white/10 hover:ring-purple-500/60 transition-all shrink-0 flex items-center justify-center bg-white/5">
+              <img id="header-avatar-img" src="" alt="" class="hidden w-full h-full object-cover" />
+              <span id="header-avatar-initials" class="text-xs font-bold text-gray-300"></span>
+            </a>
+          </div>
+          <a href="/login" id="header-login-btn" class="hidden text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400/50">
+            Đăng nhập
+          </a>
         </div>
       </header>
 
-      <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto px-6 lg:px-8 pb-32 pt-4 relative z-10 custom-scrollbar scroll-smooth">
         
-        <!-- Hero Section -->
-        <section class="mb-10 group cursor-pointer relative z-20">
-          <div class="relative rounded-4xl overflow-hidden bg-linear-to-r from-indigo-900 to-purple-900 shadow-2xl shadow-purple-900/20 p-8 md:p-12 min-h-85 flex flex-col justify-end transition-all duration-500 hover:shadow-purple-900/40">
-            <!-- Decorative abstract background for hero -->
+        <section class="mb-10 group cursor-pointer relative z-20" id="hero-section">
+          <div id="hero-card" class="relative rounded-4xl overflow-hidden shadow-2xl shadow-purple-900/20 p-8 md:p-12 min-h-85 flex flex-col justify-end transition-all duration-500 hover:shadow-purple-900/40"
+               style="background: linear-gradient(135deg, #1e1b4b, #312e81)">
             <div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
                <div class="absolute right-0 top-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-pink-500/60 via-transparent to-transparent"></div>
                <div class="absolute -bottom-24 -right-24 w-125 h-125 bg-indigo-500 rounded-full blur-[100px]"></div>
-               <!-- Hexagon Grid Pattern Overlay (subtle) -->
                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtbDktNS05LTV2LThsOS01IDktNXY4bDkgNSA5IDV2OGwtOSA1LTkgNXY4bC05IDUtOSA1di04bC05LTUtOS01eiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+PC9nPjwvc3ZnPg==')]"></div>
             </div>
-            
+            <div id="hero-cover-bg" class="absolute inset-0 opacity-25 transition-opacity duration-700 bg-cover bg-center pointer-events-none"></div>
+
             <div class="relative z-10 max-w-2xl">
               <div class="flex items-center gap-3 mb-4">
                   <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-bold tracking-widest text-white border border-white/20 uppercase">
                      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                     New Release
+                     Đang hot
                   </span>
-                  <span class="text-sm font-medium text-purple-200">Featured Artist</span>
+                  <span id="hero-artist-label" class="text-sm font-medium text-purple-200">Nổi bật</span>
               </div>
               
-              <h1 class="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight drop-shadow-xl">Midnight<br/><span class="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-300">Reverie</span></h1>
-              <p class="text-lg md:text-xl text-indigo-100/80 mb-8 max-w-lg leading-relaxed font-light">Experience the ultimate sonic journey through neon-lit streets and synthwave dreams.</p>
+              <h1 id="hero-title" class="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight drop-shadow-xl">—</h1>
+              <p id="hero-desc" class="text-lg md:text-xl text-indigo-100/80 mb-8 max-w-lg leading-relaxed font-light opacity-0 transition-opacity duration-500"></p>
               
               <div class="flex items-center gap-4">
-                <button class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3.5 px-8 font-bold flex items-center gap-2 transition-all shadow-[0_8px_30px_rgba(168,85,247,0.4)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.6)]">
+                <button id="hero-play-btn" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3.5 px-8 font-bold flex items-center gap-2 transition-all shadow-[0_8px_30px_rgba(168,85,247,0.4)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.6)]">
                   <span class="material-symbols-outlined fill-current text-[24px]">play_arrow</span>
-                  Play Listen
+                  Phát ngay
                 </button>
-                <button class="bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white rounded-full py-3.5 px-8 font-bold transition-all">
-                  Follow
-                </button>
+                <a id="hero-artist-link" href="/artists" class="bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white rounded-full py-3.5 px-8 font-bold transition-all">
+                  Xem nghệ sĩ
+                </a>
               </div>
             </div>
 
-            <!-- Absolute decorative visual (like a floating vinyl or element) -->
             <div class="absolute right-12 top-1/2 -translate-y-1/2 w-64 h-64 bg-linear-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div id="hero-cover-art" class="absolute right-10 top-1/2 -translate-y-1/2 w-40 h-40 md:w-52 md:h-52 rounded-2xl shadow-2xl overflow-hidden opacity-0 transition-all duration-700 hidden md:block border border-white/10"></div>
           </div>
         </section>
 
-        <!-- Main Content Grid -->
+        <section id="recently-played-section" class="hidden mb-12">
+          <div class="flex items-end justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span class="material-symbols-outlined text-purple-400">history</span>
+              Nghe gần đây
+            </h2>
+          </div>
+          <div id="recently-played-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Đang tải...</div>
+          </div>
+        </section>
+
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
           
-          <!-- Left Column (Trending) -->
           <div class="xl:col-span-2">
             <div class="flex items-end justify-between mb-6">
                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
@@ -112,47 +123,48 @@ import PlayerBar from "../components/PlayerBar.astro";
                     <th class="font-medium text-sm px-4 py-3 pb-4">Title</th>
                     <th class="font-medium text-sm px-4 py-3 hidden sm:table-cell pb-4 text-right pr-12">Plays</th>
                     <th class="font-medium text-sm px-4 py-3 w-20 text-center pb-4"><span class="material-symbols-outlined text-[18px]">schedule</span></th>
+                    <th class="w-20"></th>
                   </tr>
                 </thead>
                 <tbody id="trending-tbody">
-                  <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                  <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">Đang tải...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <!-- Right Column (Top Artists) -->
           <div>
             <div class="flex items-end justify-between mb-6">
                <h2 class="text-xl font-bold text-white">Top Artists</h2>
+               <a href="/artists" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">Xem tất cả</a>
             </div>
 
             <div id="artists-grid" class="grid grid-cols-2 gap-4">
-              <div class="col-span-2 text-gray-500 text-sm text-center py-4">Loading...</div>
+              <div class="col-span-2 text-gray-500 text-sm text-center py-4">Đang tải...</div>
             </div>
           </div>
         </div>
 
-        <!-- New Releases Grid -->
         <div class="mt-14">
             <div class="flex items-end justify-between mb-6">
                <h2 class="text-2xl font-bold text-white">New Releases</h2>
                <div class="flex gap-2">
-                  <button class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                  <button id="releases-prev" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                      <span class="material-symbols-outlined text-sm">arrow_back</span>
                   </button>
-                  <button class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                  <button id="releases-next" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                      <span class="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                </div>
             </div>
 
-            <div id="releases-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              <div class="col-span-5 text-gray-500 text-sm text-center py-4">Loading...</div>
+            <div id="releases-scroll-wrapper" class="overflow-x-auto pb-2 no-scrollbar">
+              <div id="releases-grid" class="flex gap-6 w-max">
+                <div class="text-gray-500 text-sm text-center py-4 w-48">Đang tải...</div>
+              </div>
             </div>
         </div>
 
-        <!-- Artist Members -->
         <div class="mt-14" id="artist-members-section">
           <div class="flex items-end justify-between mb-6">
             <h2 class="text-2xl font-bold text-white flex items-center gap-2">
@@ -161,15 +173,13 @@ import PlayerBar from "../components/PlayerBar.astro";
             </h2>
           </div>
           <div id="artist-members-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</div>
+            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Đang tải...</div>
           </div>
         </div>
 
       </div>
 
-      <!-- Album Detail Overlay -->
       <div id="album-overlay" class="hidden absolute inset-0 z-20 flex flex-col bg-[#060e20] overflow-hidden">
-        <!-- Hero -->
         <div class="relative shrink-0 h-56 overflow-hidden">
           <div id="album-overlay-bg" class="absolute inset-0 opacity-60" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
           <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
@@ -187,7 +197,6 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>
           </div>
         </div>
-        <!-- Action bar -->
         <div class="flex items-center gap-4 px-8 py-5 shrink-0">
           <button id="album-overlay-play" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-900/40">
             <span class="material-symbols-outlined text-[20px]">play_arrow</span>Play All
@@ -197,7 +206,6 @@ import PlayerBar from "../components/PlayerBar.astro";
           </button>
           <span id="album-overlay-count" class="ml-auto text-sm text-gray-500"></span>
         </div>
-        <!-- Songs -->
         <div class="flex-1 overflow-y-auto px-8 pb-32 custom-scrollbar">
           <div class="bg-white/2 border border-white/5 rounded-2xl overflow-hidden">
             <table class="w-full text-left border-collapse">
@@ -209,7 +217,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                 </tr>
               </thead>
               <tbody id="album-overlay-tbody">
-                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>
+                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Đang tải...</td></tr>
               </tbody>
             </table>
           </div>
@@ -221,32 +229,19 @@ import PlayerBar from "../components/PlayerBar.astro";
   </div>
 
   <style>
-    /* Custom Scrollbar */
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-    
-    /* Smooth utilities for outlines */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .material-symbols-outlined {
-      font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 24
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
+
 <script>
-  import { apiFetch, formatDuration, formatCount } from '../lib/api.js';
+  import { apiFetch, formatDuration, formatCount, getUser, getToken } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
   const GRADIENTS_HEX = [
@@ -262,66 +257,300 @@ import PlayerBar from "../components/PlayerBar.astro";
     'linear-gradient(135deg,#f59e0b,#f97316)',
   ];
 
-  async function loadHome() {
-    // Trending songs — top 3 by plays, see all on button click
-    const tbody = document.getElementById('trending-tbody');
-    const seeAllBtn = document.getElementById('trending-see-all') as HTMLButtonElement;
-    let _allSongs: any[] = [];
-    let _showingAll = false;
+  document.getElementById('nav-back-btn')?.addEventListener('click', () => history.back());
+  document.getElementById('nav-forward-btn')?.addEventListener('click', () => history.forward());
 
-    function renderTrendingRows(songs: any[]) {
-      if (!tbody) return;
-      tbody.innerHTML = songs.map((s: any, i: number) => {
+  const headerSearch = document.getElementById('header-search-input') as HTMLInputElement;
+  headerSearch?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const q = headerSearch.value.trim();
+      if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`;
+    }
+  });
+
+  const user = getUser();
+  if (user) {
+    const greetingEl  = document.getElementById('header-greeting');
+    const avatarWrap  = document.getElementById('header-user');
+    const avatarImg   = document.getElementById('header-avatar-img') as HTMLImageElement;
+    const initials    = document.getElementById('header-avatar-initials');
+
+    if (avatarWrap) avatarWrap.classList.remove('hidden');
+    document.getElementById('header-login-btn')?.remove();
+
+    const hour = new Date().getHours();
+    const timeGreeting = hour < 12 ? 'Chào buổi sáng' : hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
+    const displayName = user.full_name || user.username || '';
+    if (greetingEl) greetingEl.textContent = `${timeGreeting}, ${displayName}`;
+
+    if (user.avatar_url && avatarImg) {
+      avatarImg.src = user.avatar_url;
+      avatarImg.classList.remove('hidden');
+      if (initials) initials.textContent = '';
+    } else if (initials) {
+      initials.textContent = (displayName || '?').slice(0, 2).toUpperCase();
+    }
+  } else {
+    document.getElementById('header-user')?.classList.add('hidden');
+    document.getElementById('header-login-btn')?.classList.remove('hidden');
+  }
+
+  let _heroSong: any = null;
+
+  async function loadHero() {
+    try {
+      const { data: songs } = await apiFetch('/songs?limit=50');
+      if (!songs?.length) return;
+      const sorted = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
+      _heroSong = sorted[0];
+      const s = _heroSong;
+
+      const title = document.getElementById('hero-title');
+      const artistLabel = document.getElementById('hero-artist-label');
+      const desc = document.getElementById('hero-desc');
+      const coverBg = document.getElementById('hero-cover-bg');
+      const coverArt = document.getElementById('hero-cover-art');
+      const heroCard = document.getElementById('hero-card');
+      const heroLink = document.getElementById('hero-artist-link') as HTMLAnchorElement;
+
+      if (title) title.textContent = s.title;
+      if (artistLabel) artistLabel.textContent = s.artist_names || 'Nghệ sĩ';
+
+      const plays = formatCount(s.plays_count || 0);
+      const dur   = formatDuration(s.duration);
+      if (desc) {
+        desc.textContent = `${plays} lượt nghe · ${dur}`;
+        desc.classList.remove('opacity-0');
+      }
+
+      if (s.cover_url) {
+        if (coverBg) {
+          coverBg.style.backgroundImage = `url('${s.cover_url}')`;
+          coverBg.style.opacity = '0.3';
+        }
+        if (coverArt) {
+          coverArt.innerHTML = `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="" />`;
+          coverArt.classList.remove('opacity-0');
+          coverArt.classList.remove('hidden');
+          coverArt.style.opacity = '1';
+        }
+      }
+
+      if (heroCard && s.id) {
         const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-        const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
-          : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad}"></div>`;
-        return `
-          <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer song-row translate-x-0 hover:translate-x-px" data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <td class="px-4 py-3 text-center rounded-l-xl relative overflow-hidden">
-              <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100"></div>
-              <div class="relative w-5 h-5 mx-auto">
-                <span class="absolute inset-0 flex items-center justify-center text-gray-500 font-medium transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
-                <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+        heroCard.style.background = `${grad}`;
+      }
+
+      if (s.artist_id && heroLink) {
+        heroLink.href = `/artist?id=${s.artist_id}`;
+      }
+    } catch {}
+  }
+
+  document.getElementById('hero-play-btn')?.addEventListener('click', () => {
+    if (_heroSong) player.playSong(_heroSong);
+  });
+
+  const tbody = document.getElementById('trending-tbody');
+  const seeAllBtn = document.getElementById('trending-see-all') as HTMLButtonElement;
+  let _allSongs: any[] = [];
+  let _showingAll = false;
+
+  function renderTrendingRows(songs: any[]) {
+    if (!tbody) return;
+    tbody.innerHTML = songs.map((s: any, i: number) => {
+      const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+      const cover = s.cover_url
+        ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover transition-transform duration-300 group-hover:scale-105" alt=""/>`
+        : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105" style="background:${grad}"></div>`;
+      return `
+        <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
+          <td class="px-4 py-3 text-center rounded-l-xl relative overflow-hidden">
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100"></div>
+            <div class="relative w-5 h-5 mx-auto">
+              <span class="absolute inset-0 flex items-center justify-center text-gray-500 font-medium transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+              <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-4">
+              ${cover}
+              <div class="min-w-0">
+                <p class="font-semibold text-gray-100 transition-colors duration-200 group-hover:text-purple-300 truncate text-[15px]">${s.title}</p>
+                <p class="text-xs text-gray-400 truncate mt-0.5 transition-colors duration-200 group-hover:text-gray-300">${s.artist_names || 'Unknown'}</p>
               </div>
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-4">
-                ${cover}
-                <div class="min-w-0">
-                  <p class="font-semibold text-gray-100 transition-colors duration-200 group-hover:text-purple-300 truncate text-[15px]">${s.title}</p>
-                  <p class="text-xs text-gray-400 truncate mt-0.5 transition-colors duration-200 group-hover:text-gray-300">${s.artist_names || 'Unknown'}</p>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium transition-colors duration-200 group-hover:text-gray-300">${formatCount(s.plays_count)}</td>
+          <td class="px-4 py-3 text-sm text-gray-400 text-center transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
+          <td class="px-4 py-3 rounded-r-xl">
+            <div class="flex items-center gap-1 justify-end">
+              <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                      data-song="${encodeURIComponent(JSON.stringify(s))}" title="Thêm vào playlist">
+                <span class="material-symbols-outlined text-[20px]">playlist_add</span>
+              </button>
+              <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                      data-id="${s.id}" data-liked="false" title="Yêu thích">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
+              </button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadArtists() {
+    const artistsGrid = document.getElementById('artists-grid');
+    try {
+      const { data: artists } = await apiFetch('/artists?limit=4');
+      if (artistsGrid && artists?.length) {
+        artistsGrid.innerHTML = artists.slice(0, 4).map((a: any) => {
+          const grad = GRADIENTS_HEX[(a.id - 1) % GRADIENTS_HEX.length];
+          const img = a.image_url
+            ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
+            : '';
+          return `
+            <a href="/artist?id=${a.id}" class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/[0.07] hover:border-white/[0.08] transition-[background,border-color] duration-200 cursor-pointer group no-underline">
+              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-shadow duration-300" style="background:${grad}">
+                ${img}
+                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 flex items-center justify-center transition-opacity duration-200">
+                  <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
                 </div>
               </div>
-            </td>
-            <td class="px-4 py-3 text-sm text-gray-400 hidden sm:table-cell text-right pr-12 font-medium transition-colors duration-200 group-hover:text-gray-300">${formatCount(s.plays_count)}</td>
-            <td class="px-4 py-3 text-sm text-gray-400 text-center transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
-            <td class="px-4 py-3 rounded-r-xl">
-              <div class="flex items-center gap-1 justify-end">
-                <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to Playlist">
-                  <span class="material-symbols-outlined text-[20px]">playlist_add</span>
-                </button>
-                <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                        data-id="${s.id}" data-liked="false" title="Yêu thích">
-                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
-                </button>
+              <div class="text-center mt-2">
+                <p class="font-bold text-[15px] text-gray-100 group-hover:text-purple-300 transition-colors">${a.name}</p>
+                <p class="text-xs text-gray-500 mt-0.5">${formatCount(a.followers_count)} fans</p>
               </div>
-            </td>
-          </tr>`;
-      }).join('');
-    }
+            </a>`;
+        }).join('');
+      }
+    } catch {}
+  }
 
+  async function loadReleases() {
+    const releasesGrid = document.getElementById('releases-grid');
+    try {
+      const { data: albums } = await apiFetch('/albums?limit=12');
+      if (releasesGrid && albums?.length) {
+        releasesGrid.innerHTML = albums.map((al: any) => {
+          const grad = GRADIENTS_HEX[(al.id - 1) % GRADIENTS_HEX.length];
+          const cover = al.cover_url
+            ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+            : '';
+          const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
+          const artistName = al.artist_name || al.artist?.name || '';
+          return `
+            <div class="group cursor-pointer block release-album-card w-44 shrink-0" data-album-id="${al.id}">
+              <div class="w-44 h-44 rounded-2xl shadow-lg mb-3 relative overflow-hidden transition-transform duration-200 group-hover:scale-105 group-hover:shadow-purple-500/20 group-hover:shadow-xl" style="background:${grad}">
+                ${cover}
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-all duration-200"></div>
+                <div class="absolute top-2.5 left-2.5 bg-black/30 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] font-bold text-white/90 uppercase tracking-widest border border-white/10">Album</div>
+                <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-2 group-hover:translate-y-0 z-10">
+                  <button class="release-play-btn w-11 h-11 rounded-full bg-purple-500 hover:bg-purple-400 hover:scale-110 text-white flex items-center justify-center shadow-lg transition-all duration-200"
+                          data-album-id="${al.id}">
+                    <span class="material-symbols-outlined text-[22px]">play_arrow</span>
+                  </button>
+                </div>
+              </div>
+              <h3 class="font-bold text-[14px] text-gray-100 truncate group-hover:text-purple-400 transition-colors duration-200">${al.title}</h3>
+              <p class="text-[12px] text-gray-400 truncate mt-0.5">${[artistName, year].filter(Boolean).join(' · ')}</p>
+            </div>`;
+        }).join('');
+      }
+    } catch {}
+  }
+
+  const releasesWrapper = document.getElementById('releases-scroll-wrapper');
+  document.getElementById('releases-prev')?.addEventListener('click', () => {
+    releasesWrapper?.scrollBy({ left: -400, behavior: 'smooth' });
+  });
+  document.getElementById('releases-next')?.addEventListener('click', () => {
+    releasesWrapper?.scrollBy({ left: 400, behavior: 'smooth' });
+  });
+
+  async function loadRecentlyPlayed() {
+    if (!getToken()) return;
+    const section = document.getElementById('recently-played-section');
+    const grid    = document.getElementById('recently-played-grid');
+    if (!section || !grid) return;
+    try {
+      const { data: songs } = await apiFetch('/history/recent?limit=6');
+      if (!songs?.length) return;
+      section.classList.remove('hidden');
+      grid.innerHTML = songs.map((s: any) => {
+        const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+        const cover = s.cover_url
+          ? `<img src="${s.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+          : '';
+        return `
+          <div class="group cursor-pointer recent-song-card" data-song="${encodeURIComponent(JSON.stringify(s))}">
+            <div class="w-full aspect-square rounded-xl relative overflow-hidden mb-2.5 transition-transform duration-200 group-hover:scale-105" style="background:${grad}">
+              ${cover}
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-200">play_circle</span>
+              </div>
+            </div>
+            <p class="text-sm font-semibold text-gray-200 truncate group-hover:text-purple-300 transition-colors">${s.title}</p>
+            <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || '—'}</p>
+          </div>`;
+      }).join('');
+
+      grid.addEventListener('click', (e) => {
+        const card = (e.target as HTMLElement).closest('.recent-song-card') as HTMLElement | null;
+        if (!card) return;
+        try {
+          const song = JSON.parse(decodeURIComponent(card.dataset.song || ''));
+          player.playSong(song);
+        } catch {}
+      });
+    } catch {}
+  }
+
+  async function loadArtistMembers() {
+    const grid    = document.getElementById('artist-members-grid');
+    const section = document.getElementById('artist-members-section');
+    if (!grid) return;
+    try {
+      const { data: members } = await apiFetch('/artists/members?limit=12');
+      if (!members?.length) {
+        if (section) section.classList.add('hidden');
+        return;
+      }
+      grid.innerHTML = members.map((m: any) => {
+        const displayName = m.artist_name || m.full_name || m.username || '—';
+        const initials    = displayName.slice(0, 2).toUpperCase();
+        const grad        = GRADIENTS_HEX[(m.user_id - 1) % GRADIENTS_HEX.length];
+        const href        = m.artist_id ? `/artist?id=${m.artist_id}` : '/artists';
+        return `
+          <a href="${href}" class="flex flex-col items-center gap-3 cursor-pointer group no-underline">
+            <div class="w-20 h-20 rounded-full overflow-hidden shadow-md ring-2 ring-white/5 group-hover:ring-purple-500/40 transition-all"
+                 style="background:${grad}">
+              ${m.avatar_url
+                ? `<img src="${m.avatar_url}" class="w-full h-full object-cover" alt="" />`
+                : `<div class="w-full h-full flex items-center justify-center text-white font-bold text-lg">${initials}</div>`}
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-semibold text-gray-200 group-hover:text-purple-300 transition-colors truncate max-w-[80px]">${displayName}</p>
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full mt-1">
+                <span class="material-symbols-outlined text-[10px]">mic</span>Artist
+              </span>
+            </div>
+          </a>`;
+      }).join('');
+    } catch {
+      if (section) section.classList.add('hidden');
+    }
+  }
+
+  async function loadTrending() {
     try {
       const { data: songs } = await apiFetch('/songs?limit=50');
       if (tbody) {
         if (!songs?.length) {
           tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
         } else {
-          // Sort descending by plays_count, keep top 3 initially
           _allSongs = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
           renderTrendingRows(_allSongs.slice(0, 3));
-          // Wire See All toggle
           if (seeAllBtn) {
             seeAllBtn.addEventListener('click', () => {
               _showingAll = !_showingAll;
@@ -333,110 +562,13 @@ import PlayerBar from "../components/PlayerBar.astro";
         }
       }
     } catch {
-      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Cannot fetch data.</td></tr>';
-    }
-
-    // Top artists
-    const artistsGrid = document.getElementById('artists-grid');
-    try {
-      const { data: artists } = await apiFetch('/artists?limit=4');
-      if (artistsGrid && artists?.length) {
-        artistsGrid.innerHTML = artists.slice(0, 4).map((a: any) => {
-          const grad = GRADIENTS_HEX[(a.id - 1) % GRADIENTS_HEX.length];
-          const img = a.image_url
-            ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
-            : '';
-          return `
-            <div class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/[0.07] hover:border-white/[0.08] transition-[background,border-color] duration-200 cursor-pointer group">
-              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-shadow duration-300" style="background:${grad}">
-                ${img}
-                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 flex items-center justify-center transition-opacity duration-200">
-                  <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
-                </div>
-              </div>
-              <div class="text-center mt-2">
-                <p class="font-bold text-[15px] text-gray-100 group-hover:text-purple-300 transition-colors">${a.name}</p>
-                <p class="text-xs text-gray-500 mt-0.5">${formatCount(a.followers_count)} fans</p>
-              </div>
-            </div>`;
-        }).join('');
-      }
-    } catch {}
-
-    // New releases (albums)
-    const releasesGrid = document.getElementById('releases-grid');    try {
-      const { data: albums } = await apiFetch('/albums?limit=5');
-      if (releasesGrid && albums?.length) {
-        releasesGrid.innerHTML = albums.slice(0, 5).map((al: any) => {
-          const grad = GRADIENTS_HEX[(al.id - 1) % GRADIENTS_HEX.length];
-          const cover = al.cover_url
-            ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
-            : '';
-          const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
-          return `
-            <div class="group cursor-pointer block release-album-card" data-album-id="${al.id}">
-              <div class="w-full aspect-square rounded-2xl shadow-lg mb-4 relative overflow-hidden transition-transform duration-200 group-hover:scale-105 group-hover:shadow-purple-500/20 group-hover:shadow-xl" style="background:${grad}">
-                ${cover}
-                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-all duration-200"></div>
-                <div class="absolute top-3 left-3 bg-black/30 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white/90 uppercase tracking-widest border border-white/10">Album</div>
-                <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-2 group-hover:translate-y-0 z-10">
-                  <button class="release-play-btn w-12 h-12 rounded-full bg-purple-500 hover:bg-purple-400 hover:scale-110 text-white flex items-center justify-center shadow-lg transition-all duration-200"
-                          data-album-id="${al.id}">
-                    <span class="material-symbols-outlined text-[24px]">play_arrow</span>
-                  </button>
-                </div>
-              </div>
-              <h3 class="font-bold text-[15px] text-gray-100 truncate group-hover:text-purple-400 transition-colors duration-200">${al.title}</h3>
-              <p class="text-[13px] text-gray-400 truncate mt-0.5">${year}</p>
-            </div>`;
-        }).join('');
-      }
-    } catch {}
-  }
-
-  loadHome();
-
-  // ── Artist Members ────────────────────────────────────────────────────────────
-  async function loadArtistMembers() {
-    const grid = document.getElementById('artist-members-grid');
-    const section = document.getElementById('artist-members-section');
-    if (!grid) return;
-    try {
-      const { data: members } = await apiFetch('/artists/members?limit=12');
-      if (!members?.length) {
-        if (section) section.classList.add('hidden');
-        return;
-      }
-      grid.innerHTML = members.map((m: any) => {
-        const initials = (m.username || m.full_name || '?').slice(0, 2).toUpperCase();
-        const grad = GRADIENTS_HEX[(m.id - 1) % GRADIENTS_HEX.length];
-        return `
-          <div class="flex flex-col items-center gap-3 cursor-pointer group">
-            <div class="w-20 h-20 rounded-full overflow-hidden shadow-md ring-2 ring-white/5 group-hover:ring-purple-500/40 transition-all"
-                 style="background:${grad}">
-              ${m.avatar_url
-                ? `<img src="${m.avatar_url}" class="w-full h-full object-cover" alt="" />`
-                : `<div class="w-full h-full flex items-center justify-center text-white font-bold text-lg">${initials}</div>`}
-            </div>
-            <div class="text-center">
-              <p class="text-sm font-semibold text-gray-200 group-hover:text-purple-300 transition-colors truncate max-w-[80px]">${m.full_name || m.username || '—'}</p>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full mt-1">
-                <span class="material-symbols-outlined text-[10px]">mic</span>Artist
-              </span>
-            </div>
-          </div>`;
-      }).join('');
-    } catch {
-      if (section) section.classList.add('hidden');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
     }
   }
 
-  loadArtistMembers();
-
-  // ── New Releases: open album overlay or play ────────────────────────────────
   let _overlaySongs: any[] = [];
 
-  function shuffleOverlay<T>(arr: T[]): T[] {
+  function shuffleArr<T>(arr: T[]): T[] {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -446,33 +578,33 @@ import PlayerBar from "../components/PlayerBar.astro";
   }
 
   function renderOverlaySongs(songs: any[]) {
-    const tbody = document.getElementById('album-overlay-tbody')!;
-    const grad = (id: number) => GRADIENTS_HEX[(id - 1) % GRADIENTS_HEX.length];
+    const tb = document.getElementById('album-overlay-tbody')!;
     if (!songs.length) {
-      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">No songs in this album.</td></tr>';
+      tb.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Album chưa có bài hát.</td></tr>';
       return;
     }
-    tbody.innerHTML = songs.map((s: any, i: number) => {
+    tb.innerHTML = songs.map((s: any, i: number) => {
+      const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
       const cover = s.cover_url
-        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
-        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
+        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow" alt=""/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow" style="background:${grad}"></div>`;
       return `
         <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer overlay-song-row" data-idx="${i}">
           <td class="px-5 py-3 text-center relative overflow-hidden">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
-            <span class="text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75 inline-block">${i + 1}</span>
+            <span class="text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 inline-block">${i + 1}</span>
             <span class="material-symbols-outlined text-purple-400 text-[20px] absolute inset-0 flex items-center justify-center opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-3">
               ${cover}
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold text-gray-100 group-hover:text-purple-300 truncate transition-colors duration-200">${s.title}</p>
-                <p class="text-xs text-gray-500 truncate transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'}</p>
+                <p class="text-sm font-semibold text-gray-100 group-hover:text-purple-300 truncate">${s.title}</p>
+                <p class="text-xs text-gray-500 truncate">${s.artist_names || '—'}</p>
               </div>
             </div>
           </td>
-          <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
+          <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap group-hover:text-gray-300">${formatDuration(s.duration)}</td>
         </tr>`;
     }).join('');
   }
@@ -481,13 +613,12 @@ import PlayerBar from "../components/PlayerBar.astro";
     const overlay = document.getElementById('album-overlay')!;
     overlay.classList.remove('hidden');
     overlay.classList.add('flex', 'flex-col');
-    // Reset
-    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Loading...';
+    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Đang tải...';
     (document.getElementById('album-overlay-meta') as HTMLElement).textContent = '';
     (document.getElementById('album-overlay-cover') as HTMLElement).innerHTML = '';
     (document.getElementById('album-overlay-count') as HTMLElement).textContent = '';
     (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
-      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
+      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Đang tải...</td></tr>';
     try {
       const { data: album } = await apiFetch(`/albums/${albumId}`);
       const g = GRADIENTS_HEX[(album.id - 1) % GRADIENTS_HEX.length];
@@ -500,14 +631,11 @@ import PlayerBar from "../components/PlayerBar.astro";
       _overlaySongs = album.songs || [];
       const count = _overlaySongs.length;
       (document.getElementById('album-overlay-meta') as HTMLElement).textContent =
-        [album.artist?.name, year, `${count} song${count !== 1 ? 's' : ''}`].filter(Boolean).join(' · ');
-      (document.getElementById('album-overlay-count') as HTMLElement).textContent =
-        `${count} song${count !== 1 ? 's' : ''}`;
+        [album.artist?.name, year, `${count} bài`].filter(Boolean).join(' · ');
+      (document.getElementById('album-overlay-count') as HTMLElement).textContent = `${count} bài`;
       renderOverlaySongs(_overlaySongs);
     } catch {
-      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Failed to load';
-      (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
-        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Failed to load album.</td></tr>';
+      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Tải thất bại';
     }
   }
 
@@ -519,16 +647,14 @@ import PlayerBar from "../components/PlayerBar.astro";
   }
 
   document.getElementById('album-overlay-back')?.addEventListener('click', closeAlbumOverlay);
-
   document.getElementById('album-overlay-play')?.addEventListener('click', () => {
     if (_overlaySongs.length) player.playSong(_overlaySongs[0], _overlaySongs);
   });
   document.getElementById('album-overlay-shuffle')?.addEventListener('click', () => {
     if (!_overlaySongs.length) return;
-    const s = shuffleOverlay(_overlaySongs);
+    const s = shuffleArr(_overlaySongs);
     player.playSong(s[0], s);
   });
-
   document.getElementById('album-overlay-tbody')?.addEventListener('click', (e) => {
     const row = (e.target as HTMLElement).closest('.overlay-song-row') as HTMLElement | null;
     if (row && _overlaySongs.length) player.playSong(_overlaySongs[Number(row.dataset.idx)], _overlaySongs);
@@ -540,8 +666,6 @@ import PlayerBar from "../components/PlayerBar.astro";
       e.stopPropagation();
       const albumId = btn.dataset.albumId;
       if (!albumId) return;
-      // If overlay already open with this album, just play
-      if (_overlaySongs.length) { player.playSong(_overlaySongs[0], _overlaySongs); return; }
       try {
         const { data: album } = await apiFetch(`/albums/${albumId}`);
         const songs: any[] = album?.songs || [];
@@ -553,76 +677,8 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (card?.dataset.albumId) openAlbumOverlay(card.dataset.albumId);
   });
 
-  // ── Favorites helpers ────────────────────────────────────────────────────────
-  const _likingInFlight = new Set<string>();
-
-  function setLikeState(btn: HTMLElement, liked: boolean) {
-    const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
-    btn.dataset.liked = String(liked);
-    if (liked) {
-      if (icon) {
-        icon.textContent = 'favorite';
-        icon.style.fontVariationSettings = "'FILL' 1";
-      }
-      btn.classList.add('text-pink-500');
-      btn.classList.remove('text-gray-500', 'opacity-0');
-      btn.classList.add('!opacity-100');
-      btn.title = 'Bỏ yêu thích';
-    } else {
-      if (icon) {
-        icon.textContent = 'favorite_border';
-        icon.style.fontVariationSettings = "'FILL' 0";
-      }
-      btn.classList.remove('text-pink-500', '!opacity-100');
-      btn.classList.add('text-gray-500', 'opacity-0');
-      btn.title = 'Yêu thích';
-    }
-  }
-
-  async function toggleLike(btn: HTMLElement) {
-    const token = localStorage.getItem('auth_token');
-    if (!token) { window.location.href = '/login'; return; }
-    const songId  = btn.dataset.id!;
-    if (_likingInFlight.has(songId)) return;
-    _likingInFlight.add(songId);
-    const isLiked = btn.dataset.liked === 'true';
-    // optimistic update
-    setLikeState(btn, !isLiked);
-    try {
-      if (isLiked) {
-        await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
-      } else {
-        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
-      }
-      window.dispatchEvent(new CustomEvent('favorites:changed', {
-        detail: { songId: Number(songId), isFavorite: !isLiked },
-      }));
-    } catch {
-      // revert on error
-      setLikeState(btn, isLiked);
-    } finally {
-      _likingInFlight.delete(songId);
-    }
-  }
-
-  // Pre-load favorite status for visible songs
-  async function loadFavoriteStatuses() {
-    const token = localStorage.getItem('auth_token');
-    if (!token) return;
-    document.querySelectorAll('.btn-like-song').forEach(async (btn) => {
-      const b = btn as HTMLElement;
-      const songId = b.dataset.id;
-      if (!songId) return;
-      try {
-        const res = await apiFetch(`/favorites/${songId}/is-favorite`);
-        setLikeState(b, !!res.data?.isFavorite);
-      } catch {}
-    });
-  }
-
-  // Song click handlers (delegated)
   document.getElementById('trending-tbody')?.addEventListener('click', (e) => {
-    const atpBtn  = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
+    const atpBtn = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
     if (atpBtn) {
       e.stopPropagation();
       try { const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
@@ -642,7 +698,61 @@ import PlayerBar from "../components/PlayerBar.astro";
     } catch {}
   });
 
-  // Sync like button when PlayerBar fires favorites:changed
+  const _likingInFlight = new Set<string>();
+
+  function setLikeState(btn: HTMLElement, liked: boolean) {
+    const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+    btn.dataset.liked = String(liked);
+    if (liked) {
+      if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
+      btn.classList.add('text-pink-500');
+      btn.classList.remove('text-gray-500', 'opacity-0');
+      btn.classList.add('!opacity-100');
+      btn.title = 'Bỏ yêu thích';
+    } else {
+      if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
+      btn.classList.remove('text-pink-500', '!opacity-100');
+      btn.classList.add('text-gray-500', 'opacity-0');
+      btn.title = 'Yêu thích';
+    }
+  }
+
+  async function toggleLike(btn: HTMLElement) {
+    const token = localStorage.getItem('auth_token');
+    if (!token) { window.location.href = '/login'; return; }
+    const songId = btn.dataset.id!;
+    if (_likingInFlight.has(songId)) return;
+    _likingInFlight.add(songId);
+    const isLiked = btn.dataset.liked === 'true';
+    setLikeState(btn, !isLiked);
+    try {
+      if (isLiked) {
+        await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
+      } else {
+        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
+      }
+      window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !isLiked } }));
+    } catch {
+      setLikeState(btn, isLiked);
+    } finally {
+      _likingInFlight.delete(songId);
+    }
+  }
+
+  async function loadFavoriteStatuses() {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+    document.querySelectorAll('.btn-like-song').forEach(async (btn) => {
+      const b = btn as HTMLElement;
+      const songId = b.dataset.id;
+      if (!songId) return;
+      try {
+        const res = await apiFetch(`/favorites/${songId}/is-favorite`);
+        setLikeState(b, !!res.data?.isFavorite);
+      } catch {}
+    });
+  }
+
   window.addEventListener('favorites:changed', (e: any) => {
     const { songId, isFavorite } = e.detail;
     document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach((btn) => {
@@ -650,8 +760,14 @@ import PlayerBar from "../components/PlayerBar.astro";
     });
   });
 
-  // Load favorites after songs are rendered
-  setTimeout(loadFavoriteStatuses, 500);
+  Promise.all([
+    loadHero(),
+    loadTrending().then(() => setTimeout(loadFavoriteStatuses, 500)),
+    loadArtists(),
+    loadReleases(),
+    loadRecentlyPlayed(),
+    loadArtistMembers(),
+  ]);
 </script>
 
 </MainLayout>

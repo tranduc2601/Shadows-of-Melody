@@ -5,7 +5,6 @@ import MainLayout from "../layouts/MainLayout.astro";
 <MainLayout title="Đăng Ký - Shadows of Melody">
   <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-      <!-- Logo -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center justify-center gap-2 mb-2">
           <span class="material-symbols-outlined text-purple-400">music_note</span>
@@ -14,12 +13,10 @@ import MainLayout from "../layouts/MainLayout.astro";
         <p class="text-gray-400 text-sm">Join our music community</p>
       </div>
 
-      <!-- Signup Form -->
       <div class="bg-[#0a1229]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
         <h2 class="text-2xl font-bold mb-6 text-center text-white">Create New Account</h2>
 
         <form id="signupForm" class="space-y-4">
-          <!-- Username Input -->
           <div>
             <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
               Username
@@ -38,7 +35,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             <p class="text-xs text-gray-500 mt-1">Only letters, numbers, and underscores are allowed</p>
           </div>
 
-          <!-- Email Input -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
               Email
@@ -53,7 +49,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             />
           </div>
 
-          <!-- Password Input -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
               Password
@@ -81,7 +76,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             </p>
           </div>
 
-          <!-- Confirm Password Input -->
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
               Confirm Password
@@ -106,7 +100,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             </div>
           </div>
 
-          <!-- Terms & Conditions -->
           <div class="flex items-start gap-2 pt-2">
             <input
               type="checkbox"
@@ -127,10 +120,8 @@ import MainLayout from "../layouts/MainLayout.astro";
             </label>
           </div>
 
-          <!-- Error message -->
           <div id="signupError" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
 
-          <!-- Sign Up Button -->
           <button
             type="submit"
             id="signupBtn"
@@ -140,14 +131,12 @@ import MainLayout from "../layouts/MainLayout.astro";
           </button>
         </form>
 
-        <!-- Divider -->
         <div class="my-6 flex items-center">
           <div class="flex-1 h-px bg-white/10"></div>
           <span class="px-4 text-gray-500 text-sm">OR</span>
           <div class="flex-1 h-px bg-white/10"></div>
         </div>
 
-        <!-- Google Sign Up -->
         <button
           class="w-full py-3 bg-[#1a2847] border border-white/10 text-gray-300 font-medium rounded-lg hover:bg-[#233d5d] transition-all duration-200 flex items-center justify-center gap-2"
         >
@@ -157,7 +146,6 @@ import MainLayout from "../layouts/MainLayout.astro";
           Sign Up with Google
         </button>
 
-        <!-- Login Link -->
         <p class="text-center text-gray-400 text-sm mt-6">
           Already have an account?
           <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
@@ -166,15 +154,15 @@ import MainLayout from "../layouts/MainLayout.astro";
         </p>
       </div>
 
-      <!-- Footer -->
       <p class="text-center text-gray-500 text-xs mt-6">
         Chúng tôi sẽ gửi email xác nhận đến địa chỉ email của bạn
       </p>
     </div>
   </div>
 
-
 <script>
+  import { API_BASE } from '../lib/api.js';
+
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -197,11 +185,9 @@ import MainLayout from "../layouts/MainLayout.astro";
   const errDiv = document.getElementById('signupError') as HTMLElement;
   const btn = document.getElementById('signupBtn') as HTMLButtonElement;
 
-  // If already logged in, skip signup page
   const existingToken = localStorage.getItem('auth_token');
   if (existingToken) window.location.href = '/';
 
-  // Password show/hide toggles
   const setupToggle = (btnId: string, iconId: string, inputId: string) => {
     const btn   = document.getElementById(btnId) as HTMLButtonElement;
     const icon  = document.getElementById(iconId) as HTMLElement;
@@ -234,7 +220,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     btn.textContent = 'Creating Account...';
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
+      const res = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password, confirmPassword }),

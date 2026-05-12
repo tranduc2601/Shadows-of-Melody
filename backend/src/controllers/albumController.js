@@ -1,4 +1,5 @@
 import Album from '../models/Album.js';
+import { pool } from '../config/database.js';
 
 export const getAlbumById = async (req, res) => {
     try {
@@ -53,26 +54,22 @@ export const getAlbumsByArtist = async (req, res) => {
 
 export const getAllAlbums = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const page  = Math.max(1, parseInt(req.query.page)  || 1);
+        const limit = Math.min(100, parseInt(req.query.limit) || 20);
         const offset = (page - 1) * limit;
 
         const albums = await Album.findAll(limit, offset);
+        const [[countRow]] = await pool.query('SELECT COUNT(*)::int AS total FROM albums');
+        const totalItems = countRow?.total ?? 0;
 
         return res.status(200).json({
             success: true,
             data: albums,
-            pagination: {
-                page,
-                limit,
-            },
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
         });
     } catch (error) {
         console.error('GetAllAlbums error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch albums',
-        });
+        return res.status(500).json({ success: false, message: 'Failed to fetch albums' });
     }
 };
 

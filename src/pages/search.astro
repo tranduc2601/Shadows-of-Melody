@@ -9,89 +9,119 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <Sidebar currentPage="search" />
 
-    <!-- Main -->
     <main class="flex-1 flex flex-col overflow-hidden relative bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <div class="absolute top-[-10%] left-[20%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div class="absolute top-[-10%] left-[20%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none" aria-hidden="true"></div>
 
-      <!-- Search Header -->
       <header class="h-20 flex-shrink-0 flex items-center justify-between px-8 relative z-10 gap-4">
-        <!-- Back to categories button (visible only when category is active) -->
         <button id="btnBackCategories"
           class="hidden shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10
                  text-gray-300 hover:text-white hover:bg-white/10 text-sm font-medium
-                 opacity-0 -translate-x-2 transition-all duration-200 ease-out">
-          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-          <span class="hidden sm:inline">Genres</span>
+                 opacity-0 -translate-x-2 transition-all duration-200 ease-out"
+          aria-label="Quay lại danh sách thể loại">
+          <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
+          <span class="hidden sm:inline">Thể loại</span>
         </button>
+
         <div class="relative flex-1 max-w-2xl group">
-          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors text-2xl">search</span>
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors text-2xl" aria-hidden="true">search</span>
           <input
             id="searchInput"
-            type="text"
-            placeholder="Search for songs, artists, and albums..."
-            class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-3 pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-lg"
+            type="search"
+            autocomplete="off"
+            aria-label="Tìm kiếm bài hát, nghệ sĩ, album (nhấn / để focus)"
+            placeholder="Tìm kiếm bài hát, nghệ sĩ, album..."
+            class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-lg"
           />
+          <button id="clearSearchBtn"
+            class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+            aria-label="Xóa tìm kiếm">
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
+          </button>
         </div>
-        <!-- Account info -->
+
         <div class="flex items-center gap-3 shrink-0">
-          <!-- <button class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center hover:bg-white/10 hover:text-white transition-all relative group">
-            <span class="material-symbols-outlined text-gray-300 group-hover:text-white transition-colors">notifications</span>
-            <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]"></span>
-          </button> -->
-          <a href="/profile" id="search-user-avatar" class="hidden w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0 hover:opacity-90 transition-opacity">
+          <a href="/profile" id="search-user-avatar"
+             class="hidden w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0 hover:opacity-90 transition-opacity"
+             aria-label="Trang cá nhân">
             <div id="search-user-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
-              <span class="material-symbols-outlined text-purple-400 text-sm">person</span>
+              <span class="material-symbols-outlined text-purple-400 text-sm" aria-hidden="true">person</span>
             </div>
           </a>
         </div>
       </header>
 
-      <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10">
+      <div class="flex-1 overflow-y-auto px-8 pb-32 pt-2 relative z-10 custom-scrollbar">
 
-        <!-- Default: Browse Categories -->
         <div id="browseSection">
           <h2 class="text-xl font-bold text-white mb-6">Browse by genres</h2>
-          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-            <!-- Populated dynamically by JS -->
+          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10" role="list" aria-label="Danh mục thể loại">
+            {Array.from({length: 8}).map(() => (
+              <div class="h-28 rounded-2xl bg-white/5 animate-pulse"></div>
+            ))}
           </div>
         </div>
 
-        <!-- Search Results (hidden by default, shown on search) -->
-        <div id="searchResults" class="hidden">
-          <!-- Tabs -->
-          <div class="flex gap-2 mb-8 border-b border-white/10 pb-0">
-            {["All", "Songs", "Artists", "Albums"].map((tab, i) => (
+        <div id="searchResults" class="hidden" role="region" aria-label="Kết quả tìm kiếm" aria-live="polite">
+          <div class="flex gap-1 mb-6 border-b border-white/10" role="tablist">
+            {[
+              { id: "all",     label: "Tất cả" },
+              { id: "songs",   label: "Bài hát" },
+              { id: "artists", label: "Nghệ sĩ" },
+              { id: "albums",  label: "Album" },
+            ].map((tab, i) => (
               <button
-                class={`search-tab px-5 py-2.5 font-semibold text-sm rounded-t-lg border-b-2 transition-all cursor-pointer ${i === 0 ? "text-white border-purple-500 bg-purple-500/10" : "text-gray-400 border-transparent hover:text-white"}`}
-                data-tab={tab.toLowerCase().replace(" ", "-")}
+                role="tab"
+                class={`search-tab px-5 py-2.5 font-semibold text-sm rounded-t-lg border-b-2 transition-all duration-200 cursor-pointer ${i === 0 ? "text-white border-purple-500 bg-purple-500/10" : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"}`}
+                data-tab={tab.id}
+                aria-selected={i === 0 ? "true" : "false"}
               >
-                {tab}
+                {tab.label}
+                <span class={`tab-badge ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 hidden`}
+                      data-badge={tab.id}></span>
               </button>
             ))}
           </div>
 
-          <!-- Songs Section -->
-          <div id="tab-tat-ca" class="tab-content">
-            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-purple-400">music_note</span>Bài Hát Nổi Bật
-            </h3>
-            <div class="space-y-2 mb-10" id="search-songs">
-              <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
+          <div id="panel-all" class="tab-panel" role="tabpanel">
+            <div id="panel-all-empty" class="hidden flex flex-col items-center gap-4 py-20 text-center">
+              <span class="material-symbols-outlined text-[60px] text-gray-600">search_off</span>
+              <p class="text-gray-400 text-base font-medium">Không tìm thấy kết quả</p>
+              <p class="text-gray-600 text-sm">Thử từ khóa khác hoặc kiểm tra chính tả</p>
             </div>
+            <div id="panel-all-content">
+              <h3 id="songs-heading" class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Bài hát
+              </h3>
+              <div id="songs-all" class="space-y-1 mb-3"></div>
+              <div id="show-more-songs-wrap" class="hidden mb-10">
+                <button id="show-more-songs-btn"
+                  class="w-full py-2.5 text-sm font-semibold text-purple-400 hover:text-purple-300 hover:bg-white/5 rounded-xl transition-colors">
+                  Xem thêm bài hát
+                </button>
+              </div>
 
-            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-purple-400">person</span>Artists
-            </h3>
-            <div class="flex gap-4 overflow-x-auto pb-4 mb-10" id="search-artists">
-              <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
-            </div>
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">person</span>Nghệ sĩ
+              </h3>
+              <div class="flex gap-6 overflow-x-auto pb-4 mb-10 no-scrollbar" id="artists-all"></div>
 
-            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span class="material-symbols-outlined text-purple-400">album</span>Albums
-            </h3>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="search-albums">
-              <p class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</p>
+              <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">album</span>Album
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="albums-all"></div>
             </div>
+          </div>
+
+          <div id="panel-songs" class="tab-panel hidden" role="tabpanel">
+            <div class="space-y-1" id="songs-only"></div>
+          </div>
+
+          <div id="panel-artists" class="tab-panel hidden" role="tabpanel">
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6 py-2" id="artists-only"></div>
+          </div>
+
+          <div id="panel-albums" class="tab-panel hidden" role="tabpanel">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 py-2" id="albums-only"></div>
           </div>
         </div>
       </div>
@@ -100,69 +130,51 @@ import PlayerBar from "../components/PlayerBar.astro";
     </main>
   </div>
 
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .animate-pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+
+    .song-skeleton {
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 12px; border-radius: 12px;
+    }
+    .song-skeleton .sk { background: rgba(255,255,255,0.06); border-radius: 8px; animation: pulse 2s infinite; }
+  </style>
+
   <script>
-    import { apiFetch, formatDuration, formatCount, getUser } from '../lib/api.js';
+    import { apiFetch, formatDuration, formatCount, getUser, colorFor } from '../lib/api.js';
     import { player } from '../lib/player.js';
 
-    // ── Show user avatar in header ──────────────────────────────────────────
+    function esc(str: unknown): string {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     const _user = getUser();
     if (_user) {
-      const avatarEl = document.getElementById('search-user-avatar') as HTMLElement;
+      const avatarEl    = document.getElementById('search-user-avatar') as HTMLElement;
       const avatarInner = document.getElementById('search-user-avatar-inner') as HTMLElement;
       avatarEl?.classList.remove('hidden');
       avatarEl?.classList.add('flex');
       if (_user.avatar_url && avatarInner) {
-        avatarInner.innerHTML = `<img src="${_user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
+        avatarInner.innerHTML = `<img src="${esc(_user.avatar_url)}" class="w-full h-full object-cover rounded-full" alt="Avatar" loading="lazy"/>`;
+      } else if (avatarInner) {
+        const name = _user.full_name || _user.username || '?';
+        avatarInner.innerHTML = `<span class="text-xs font-bold text-purple-300">${esc(name.slice(0, 2).toUpperCase())}</span>`;
       }
     }
-
-    const GRADS = [
-      'linear-gradient(135deg,#6366f1,#8b5cf6)',
-      'linear-gradient(135deg,#f43f5e,#f97316)',
-      'linear-gradient(135deg,#ec4899,#7c3aed)',
-      'linear-gradient(135deg,#ef4444,#d946ef)',
-      'linear-gradient(135deg,#3b82f6,#06b6d4)',
-      'linear-gradient(135deg,#06b6d4,#10b981)',
-      'linear-gradient(135deg,#d946ef,#7c3aed)',
-      'linear-gradient(135deg,#fb923c,#fb7185)',
-    ];
-    const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
-
-    const input = document.getElementById('searchInput') as HTMLInputElement;
-    const browseSection = document.getElementById('browseSection');
-    const searchResults = document.getElementById('searchResults');
-    const btnBack = document.getElementById('btnBackCategories') as HTMLButtonElement;
-
-    // ── Show/hide transitions ─────────────────────────────────────────────────
-    function showResults(isCategory = false) {
-      browseSection?.classList.add('hidden');
-      searchResults?.classList.remove('hidden');
-      if (isCategory) {
-        btnBack?.classList.remove('hidden');
-        btnBack?.classList.add('flex');
-        requestAnimationFrame(() => {
-          btnBack?.classList.remove('opacity-0', '-translate-x-2');
-        });
-      }
-    }
-
-    function showCategories() {
-      browseSection?.classList.remove('hidden');
-      searchResults?.classList.add('hidden');
-      btnBack?.classList.add('opacity-0', '-translate-x-2');
-      setTimeout(() => {
-        btnBack?.classList.add('hidden');
-        btnBack?.classList.remove('flex');
-      }, 200);
-    }
-
-    btnBack?.addEventListener('click', () => {
-      if (input) input.value = '';
-      showCategories();
-    });
-
-    let allArtists: any[] = [];
-    let allAlbums: any[] = [];
 
     const CAT_COLORS = [
       'linear-gradient(135deg,#ec4899,#e11d48)',
@@ -176,265 +188,592 @@ import PlayerBar from "../components/PlayerBar.astro";
       'linear-gradient(135deg,#6366f1,#8b5cf6)',
       'linear-gradient(135deg,#3b82f6,#06b6d4)',
     ];
-    const CAT_ICONS = ['star','music_note','electric_bolt','coffee','graphic_eq','eco','mic','piano','headphones','radio'];
+    const CAT_ICONS: Record<string, string> = {
+      pop:'music_note', rock:'electric_bolt', jazz:'piano', classical:'library_music',
+      electronic:'graphic_eq', hiphop:'mic', rnb:'headphones', country:'guitar_pick',
+      metal:'crisis_alert', indie:'radio', folk:'acoustic_guitar', blues:'water_drop',
+    };
+    const DEFAULT_ICONS = ['star','music_note','electric_bolt','coffee','graphic_eq','eco','mic','piano','headphones','radio'];
 
-    async function loadCategories() {
-      const grid = document.getElementById('categoriesGrid');
-      if (!grid) return;
-      try {
-        const { data: genres } = await apiFetch('/songs/genres');
-        if (!genres?.length) return;
-        grid.innerHTML = genres.map((g: any, i: number) => `
-          <div class="rounded-2xl p-5 cursor-pointer hover:scale-105 transition-transform relative overflow-hidden h-28 genre-card"
-               data-genre-id="${g.id}" data-genre-name="${g.name}"
-               style="background:${CAT_COLORS[i % CAT_COLORS.length]}">
-            <span class="text-white font-bold text-lg">${g.name}</span>
-            <span class="material-symbols-outlined absolute right-4 bottom-4 text-white/30 text-5xl">${CAT_ICONS[i % CAT_ICONS.length]}</span>
-          </div>`).join('');
-      } catch {}
+    const input         = document.getElementById('searchInput') as HTMLInputElement;
+    const clearBtn      = document.getElementById('clearSearchBtn') as HTMLButtonElement;
+    const browseSection = document.getElementById('browseSection') as HTMLElement;
+    const searchResults = document.getElementById('searchResults') as HTMLElement;
+    const btnBack       = document.getElementById('btnBackCategories') as HTMLButtonElement;
+
+    let currentSongs: any[]   = [];
+    let allArtists: any[]     = [];
+    let allAlbums: any[]      = [];
+    let _preloadPromise: Promise<void> | null = null;
+    let _likedSet             = new Set<number>();
+    let _showingAllSongs      = false;
+    const SONGS_PREVIEW       = 8;
+
+    function preload(): Promise<void> {
+      if (_preloadPromise) return _preloadPromise;
+      _preloadPromise = (async () => {
+        try {
+          const [ar, al] = await Promise.all([
+            apiFetch('/artists?limit=500'),
+            apiFetch('/albums?limit=500'),
+          ]);
+          allArtists = ar.data || [];
+          allAlbums  = al.data || [];
+        } catch {}
+      })();
+      return _preloadPromise;
     }
 
-    // Preload artists and albums
-    async function preload() {
-      try {
-        const [ar, al] = await Promise.all([
-          apiFetch('/artists?limit=100'),
-          apiFetch('/albums?limit=100'),
-        ]);
-        allArtists = ar.data || [];
-        allAlbums = al.data || [];
-      } catch {}
+    function activateTab(tabId: string) {
+      document.querySelectorAll('.search-tab').forEach(el => {
+        const isActive = (el as HTMLElement).dataset.tab === tabId;
+        el.classList.toggle('text-white',         isActive);
+        el.classList.toggle('border-purple-500',  isActive);
+        el.classList.toggle('bg-purple-500/10',   isActive);
+        el.classList.toggle('text-gray-400',      !isActive);
+        el.classList.toggle('border-transparent', !isActive);
+        (el as HTMLElement).setAttribute('aria-selected', String(isActive));
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`panel-${tabId}`)?.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('.search-tab').forEach(tab => {
+      tab.addEventListener('click', () => activateTab((tab as HTMLElement).dataset.tab || 'all'));
+    });
+
+    function updateBadges(songs: number, artists: number, albums: number) {
+      const total = songs + artists + albums;
+      const map: Record<string, number> = { all: total, songs, artists, albums };
+      Object.entries(map).forEach(([key, count]) => {
+        const badge = document.querySelector(`[data-badge="${key}"]`) as HTMLElement | null;
+        if (!badge) return;
+        if (count > 0) {
+          badge.textContent = String(count > 99 ? '99+' : count);
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      });
+
+      const emptyEl   = document.getElementById('panel-all-empty') as HTMLElement;
+      const contentEl = document.getElementById('panel-all-content') as HTMLElement;
+      if (emptyEl && contentEl) {
+        const allEmpty = total === 0;
+        emptyEl.classList.toggle('hidden', !allEmpty);
+        emptyEl.classList.toggle('flex', allEmpty);
+        contentEl.classList.toggle('hidden', allEmpty);
+      }
+    }
+
+    function showResults(isCategory = false) {
+      browseSection.classList.add('hidden');
+      searchResults.classList.remove('hidden');
+      activateTab('all');
+      clearBtn.classList.remove('hidden');
+      if (isCategory) {
+        btnBack.classList.remove('hidden');
+        btnBack.classList.add('flex');
+        requestAnimationFrame(() => btnBack.classList.remove('opacity-0', '-translate-x-2'));
+      }
+    }
+
+    function showCategories() {
+      browseSection.classList.remove('hidden');
+      searchResults.classList.add('hidden');
+      clearBtn.classList.add('hidden');
+      btnBack.classList.add('opacity-0', '-translate-x-2');
+      setTimeout(() => { btnBack.classList.add('hidden'); btnBack.classList.remove('flex'); }, 200);
+      updateBadges(0, 0, 0);
+      history.replaceState(null, '', '/search');
+    }
+
+    btnBack.addEventListener('click', () => { input.value = ''; showCategories(); input.focus(); });
+    clearBtn.addEventListener('click', () => { input.value = ''; showCategories(); input.focus(); });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { input.value = ''; showCategories(); input.blur(); }
+    });
+
+    input.addEventListener('input', () => {
+      clearBtn.classList.toggle('hidden', input.value === '');
+    });
+
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      const active = document.activeElement as HTMLElement;
+      if (e.key === '/' && active?.tagName !== 'INPUT' && active?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        input?.focus();
+        input?.select();
+      }
+    });
+
+    function showSongsSkeleton(containerId: string) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = Array.from({length: 4}).map(() => `
+        <div class="song-skeleton">
+          <div class="sk w-5 h-4 rounded shrink-0"></div>
+          <div class="sk w-12 h-12 shrink-0"></div>
+          <div class="flex-1 min-w-0 flex flex-col gap-2">
+            <div class="sk h-3.5 w-3/4 rounded-full"></div>
+            <div class="sk h-2.5 w-1/2 rounded-full"></div>
+          </div>
+          <div class="sk h-3 w-8 rounded-full hidden sm:block"></div>
+          <div class="sk h-3 w-10 rounded-full"></div>
+        </div>`).join('');
+    }
+
+    function showArtistsSkeleton(containerId: string) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = Array.from({length: 4}).map(() => `
+        <div class="flex flex-col items-center gap-2 shrink-0 w-24">
+          <div class="w-24 h-24 rounded-full bg-white/5 animate-pulse"></div>
+          <div class="w-16 h-3 bg-white/5 animate-pulse rounded-full"></div>
+          <div class="w-12 h-2.5 bg-white/5 animate-pulse rounded-full"></div>
+        </div>`).join('');
+    }
+
+    function showAlbumsSkeleton(containerId: string) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = Array.from({length: 6}).map(() => `
+        <div>
+          <div class="aspect-square rounded-xl bg-white/5 animate-pulse mb-2"></div>
+          <div class="h-3 bg-white/5 animate-pulse rounded-full mb-1.5"></div>
+          <div class="h-2.5 w-3/4 bg-white/5 animate-pulse rounded-full"></div>
+        </div>`).join('');
+    }
+
+    function renderSongsAllPanel(songs: any[]) {
+      _showingAllSongs = false;
+      const el   = document.getElementById('songs-all') as HTMLElement;
+      const wrap = document.getElementById('show-more-songs-wrap') as HTMLElement;
+      const btn  = document.getElementById('show-more-songs-btn') as HTMLButtonElement;
+
+      const preview = songs.slice(0, SONGS_PREVIEW);
+      el.innerHTML  = preview.map((s, i) => songRowHTML(s, i)).join('');
+
+      if (songs.length > SONGS_PREVIEW) {
+        wrap.classList.remove('hidden');
+        btn.textContent = `Xem thêm ${songs.length - SONGS_PREVIEW} bài hát`;
+        btn.onclick = () => {
+          _showingAllSongs = !_showingAllSongs;
+          if (_showingAllSongs) {
+            el.innerHTML = songs.map((s, i) => songRowHTML(s, i)).join('');
+            btn.textContent = 'Thu gọn';
+          } else {
+            el.innerHTML = preview.map((s, i) => songRowHTML(s, i)).join('');
+            btn.textContent = `Xem thêm ${songs.length - SONGS_PREVIEW} bài hát`;
+          }
+          syncFavoriteButtons();
+        };
+      } else {
+        wrap.classList.add('hidden');
+      }
+    }
+
+    function songRowHTML(s: any, i: number) {
+      const cover = s.cover_url
+        ? `<img src="${esc(s.cover_url)}" class="w-12 h-12 rounded-lg flex-shrink-0 shadow-lg object-cover transition-transform duration-300 group-hover:scale-105" alt="${esc(s.title)} cover" loading="lazy"/>`
+        : `<div class="w-12 h-12 rounded-lg flex-shrink-0 shadow-lg transition-transform duration-300 group-hover:scale-105" style="background:${colorFor(s.id)}" aria-hidden="true"></div>`;
+      const isLiked = _likedSet.has(Number(s.id));
+      const sub     = [s.artist_names || 'Unknown', s.album_title].filter(Boolean).join(' · ');
+      const titleEsc  = esc(s.title);
+      const artistEsc = esc(s.artist_names || 'Unknown');
+      const subEsc    = esc(sub);
+      return `
+        <div class="song-row relative flex items-center gap-4 px-3 py-2.5 rounded-xl cursor-pointer group
+                    transition-all duration-200 ease-out overflow-hidden hover:bg-white/[0.06] hover:translate-x-px"
+             data-song="${encodeURIComponent(JSON.stringify(s))}" role="row" tabindex="0"
+             aria-label="Phát ${titleEsc} bởi ${artistEsc}">
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100" aria-hidden="true"></div>
+          <div class="relative w-6 h-5 shrink-0 ml-1" aria-hidden="true">
+            <span class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm font-medium transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
+            <span class="absolute inset-0 flex items-center justify-center material-symbols-outlined text-purple-400 text-[20px] opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
+          </div>
+          ${cover}
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-100 truncate text-[15px] transition-colors duration-200 group-hover:text-purple-300">${titleEsc}</p>
+            <p class="text-gray-400 text-xs truncate mt-0.5 transition-colors duration-200 group-hover:text-gray-300">${subEsc}</p>
+          </div>
+          <span class="text-gray-500 text-xs hidden sm:flex items-center gap-1 font-medium transition-colors duration-200 group-hover:text-gray-300 tabular-nums shrink-0" title="Lượt nghe">
+            <span class="material-symbols-outlined text-[13px]" aria-hidden="true">headphones</span>${formatCount(s.plays_count)}
+          </span>
+          <span class="text-gray-400 text-sm tabular-nums shrink-0 transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                    data-song="${encodeURIComponent(JSON.stringify(s))}" title="Thêm vào playlist" aria-label="Thêm ${titleEsc} vào playlist">
+              <span class="material-symbols-outlined text-[20px]" aria-hidden="true">playlist_add</span>
+            </button>
+            <button class="btn-like-song w-8 h-8 flex items-center justify-center hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100 ${isLiked ? 'text-pink-500 !opacity-100' : 'text-gray-500'}"
+                    data-id="${s.id}" data-liked="${isLiked}"
+                    title="${isLiked ? 'Bỏ yêu thích' : 'Yêu thích'}"
+                    aria-label="${isLiked ? 'Bỏ yêu thích' : 'Yêu thích'} ${titleEsc}">
+              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' ${isLiked ? 1 : 0}" aria-hidden="true">${isLiked ? 'favorite' : 'favorite_border'}</span>
+            </button>
+          </div>
+        </div>`;
+    }
+
+    function renderSongsToEl(el: HTMLElement | null, songs: any[]) {
+      if (!el) return;
+      if (!songs.length) {
+        el.innerHTML = `
+          <div class="flex flex-col items-center gap-3 py-12 text-center">
+            <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">music_off</span>
+            <p class="text-gray-500 text-sm">Không tìm thấy bài hát nào</p>
+          </div>`;
+        return;
+      }
+      el.innerHTML = songs.map((s, i) => songRowHTML(s, i)).join('');
     }
 
     function renderSongs(songs: any[]) {
-      const el = document.getElementById('search-songs');
-      if (!el) return;
-      if (!songs.length) { el.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Không tìm thấy bài hát.</p>'; return; }
-      el.innerHTML = songs.map((s, i) => {
-        const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg flex-shrink-0 shadow-md object-cover" alt=""/>`
-          : `<div class="w-12 h-12 rounded-lg flex-shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
-        return `
-          <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <span class="w-6 text-center text-gray-500 text-sm group-hover:hidden">${i + 1}</span>
-            <span class="material-symbols-outlined text-purple-400 w-6 text-center hidden group-hover:block text-sm">play_arrow</span>
-            ${cover}
-            <div class="flex-1 min-w-0">
-              <p class="text-white font-medium truncate group-hover:text-purple-300">${s.title}</p>
-              <p class="text-gray-400 text-sm truncate">${s.artist_names || 'Unknown'}${s.album_title ? ' · ' + s.album_title : ''}</p>
-            </div>
-            <span class="text-gray-500 text-sm hidden sm:block">${formatCount(s.plays_count)}</span>
-            <span class="text-gray-500 text-sm">${formatDuration(s.duration)}</span>
-            <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 transition-colors shrink-0"
-                    data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to Playlist" onclick="event.stopPropagation()">
-              <span class="material-symbols-outlined text-[20px]">playlist_add</span>
-            </button>
-            <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 transition-colors shrink-0"
-                    data-id="${s.id}" data-liked="false" title="Yêu thích" onclick="event.stopPropagation()">
-              <span class="material-symbols-outlined text-[20px]">favorite_border</span>
-            </button>
-          </div>`;
-      }).join('');
-      // Load favorite statuses after render
-      setTimeout(loadFavoriteStatuses, 200);
+      currentSongs = songs;
+      renderSongsAllPanel(songs);
+      renderSongsToEl(document.getElementById('songs-only'), songs);
+      syncFavoriteButtons();
+    }
+
+    function artistCardHTML(a: any) {
+      const nameEsc = esc(a.name);
+      const img = a.image_url
+        ? `<img src="${esc(a.image_url)}" class="w-full h-full object-cover" alt="${nameEsc}" loading="lazy"/>`
+        : '';
+      return `
+        <a href="/artist?id=${esc(String(a.id))}"
+           class="flex-shrink-0 text-center group cursor-pointer no-underline"
+           aria-label="Xem nghệ sĩ ${nameEsc}">
+          <div class="w-24 h-24 rounded-full mx-auto mb-2 shadow-lg overflow-hidden
+                      transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-purple-500/30 group-hover:shadow-xl"
+               style="background:${colorFor(a.id)}">${img}</div>
+          <p class="text-white text-sm font-medium transition-colors duration-200 group-hover:text-purple-400 truncate max-w-[96px]">${nameEsc}</p>
+          <p class="text-gray-500 text-xs">${formatCount(a.followers_count)} followers</p>
+        </a>`;
+    }
+
+    function artistGridCardHTML(a: any) {
+      const nameEsc = esc(a.name);
+      const img = a.image_url
+        ? `<img src="${esc(a.image_url)}" class="w-full h-full object-cover" alt="${nameEsc}" loading="lazy"/>`
+        : '';
+      return `
+        <a href="/artist?id=${esc(String(a.id))}"
+           class="text-center group cursor-pointer p-3 rounded-2xl transition-all duration-200 ease-out hover:bg-white/5 no-underline"
+           aria-label="Xem nghệ sĩ ${nameEsc}">
+          <div class="w-28 h-28 rounded-full mx-auto mb-3 shadow-lg overflow-hidden
+                      transition-all duration-300 ease-out group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-xl"
+               style="background:${colorFor(a.id)}">${img}</div>
+          <p class="text-white text-sm font-medium transition-colors duration-200 group-hover:text-purple-400 truncate">${nameEsc}</p>
+          <p class="text-gray-500 text-xs mt-0.5">${formatCount(a.followers_count)} followers</p>
+        </a>`;
     }
 
     function renderArtists(artists: any[]) {
-      const el = document.getElementById('search-artists');
-      if (!el) return;
-      if (!artists.length) { el.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No artists found.</p>'; return; }
-      el.innerHTML = artists.slice(0, 6).map(a => {
-        const img = a.image_url
-          ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
-          : '';
-        return `
-          <a href="/artists" class="flex-shrink-0 text-center group cursor-pointer">
-            <div class="w-24 h-24 rounded-full mx-auto mb-2 shadow-lg overflow-hidden group-hover:scale-110 transition-all" style="background:${grad(a.id)}">${img}</div>
-            <p class="text-white text-sm font-medium group-hover:text-purple-400">${a.name}</p>
-            <p class="text-gray-500 text-xs">${formatCount(a.followers_count)} người theo dõi</p>
-          </a>`;
-      }).join('');
+      const allEl  = document.getElementById('artists-all');
+      const onlyEl = document.getElementById('artists-only');
+      const emptyMsg = `
+        <div class="flex flex-col items-center gap-3 py-8 text-center w-full">
+          <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">person_off</span>
+          <p class="text-gray-500 text-sm">Không tìm thấy nghệ sĩ nào</p>
+        </div>`;
+      if (allEl) {
+        allEl.innerHTML = artists.length
+          ? artists.slice(0, 6).map(artistCardHTML).join('')
+          : emptyMsg;
+      }
+      if (onlyEl) {
+        onlyEl.innerHTML = artists.length
+          ? artists.map(artistGridCardHTML).join('')
+          : `<div class="col-span-full">${emptyMsg}</div>`;
+      }
+    }
+
+    function albumCardHTML(al: any) {
+      const year     = al.release_date ? new Date(al.release_date).getFullYear() : '';
+      const titleEsc = esc(al.title);
+      const artist   = al.artist_name || al.artist?.name || '';
+      const subEsc   = esc([artist, year].filter(Boolean).join(' · ') || 'Album');
+      const cover    = al.cover_url
+        ? `<img src="${esc(al.cover_url)}" class="absolute inset-0 w-full h-full object-cover" alt="${titleEsc} cover" loading="lazy"/>`
+        : '';
+      return `
+        <a href="/album?id=${esc(String(al.id))}"
+           class="group cursor-pointer block no-underline"
+           aria-label="Xem album ${titleEsc}">
+          <div class="aspect-square rounded-xl mb-2 shadow-lg relative overflow-hidden
+                      transition-all duration-300 ease-out group-hover:scale-105 group-hover:shadow-xl"
+               style="background:${colorFor(al.id)}">
+            ${cover}
+            <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-all duration-300" aria-hidden="true">
+              <span class="material-symbols-outlined text-white text-4xl opacity-0 scale-75
+                           group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">play_circle</span>
+            </div>
+          </div>
+          <p class="text-white text-sm font-medium truncate transition-colors duration-200 group-hover:text-purple-400">${titleEsc}</p>
+          <p class="text-gray-500 text-xs truncate mt-0.5">${subEsc}</p>
+        </a>`;
     }
 
     function renderAlbums(albums: any[]) {
-      const el = document.getElementById('search-albums');
-      if (!el) return;
-      if (!albums.length) { el.innerHTML = '<p class="col-span-6 text-gray-500 text-sm text-center py-4">Không tìm thấy album.</p>'; return; }
-      el.innerHTML = albums.slice(0, 6).map(al => {
-        const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
-        const cover = al.cover_url
-          ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
-          : '';
-        return `
-          <div class="group cursor-pointer">
-            <div class="aspect-square rounded-xl mb-2 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform" style="background:${grad(al.id)}">
-              ${cover}
-              <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
-                <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100">play_circle</span>
-              </div>
-            </div>
-            <p class="text-white text-sm font-medium truncate group-hover:text-purple-400">${al.title}</p>
-            <p class="text-gray-500 text-xs truncate">${year}</p>
-          </div>`;
-      }).join('');
+      const allEl  = document.getElementById('albums-all');
+      const onlyEl = document.getElementById('albums-only');
+      const emptyMsg = `
+        <div class="col-span-full flex flex-col items-center gap-3 py-8 text-center">
+          <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">album</span>
+          <p class="text-gray-500 text-sm">Không tìm thấy album nào</p>
+        </div>`;
+      if (allEl) {
+        allEl.innerHTML = albums.length
+          ? albums.slice(0, 6).map(albumCardHTML).join('')
+          : emptyMsg;
+      }
+      if (onlyEl) {
+        onlyEl.innerHTML = albums.length
+          ? albums.map(albumCardHTML).join('')
+          : emptyMsg;
+      }
     }
 
-    let searchTimer: ReturnType<typeof setTimeout>;
+    const _likingInFlight = new Set<string>();
 
-    input?.addEventListener('input', () => {
-      const q = input.value.trim();
-      if (q.length > 0) {
-        showResults(false);
-
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(async () => {
-          // Search songs
-          try {
-            const { data: songs } = await apiFetch(`/songs/search?q=${encodeURIComponent(q)}`);
-            renderSongs(songs || []);
-          } catch {
-            renderSongs([]);
-          }
-          // Filter artists & albums client-side
-          const ql = q.toLowerCase();
-          renderArtists(allArtists.filter(a => a.name.toLowerCase().includes(ql)));
-          renderAlbums(allAlbums.filter(a => a.title.toLowerCase().includes(ql)));
-        }, 300);
-      } else {
-        showCategories();
-      }
-    });
-
-    preload();
-    loadCategories();
-
-    // Genre category click → filter songs by genre
-    document.getElementById('categoriesGrid')?.addEventListener('click', async (e) => {
-      const card = (e.target as HTMLElement).closest('.genre-card') as HTMLElement | null;
-      if (!card) return;
-      const genreId = card.dataset.genreId;
-      const genreName = card.dataset.genreName || 'Genre';
-      if (!genreId) return;
-
-      showResults(true);
-
-      const songsEl = document.getElementById('search-songs');
-      const artistsEl = document.getElementById('search-artists');
-      const albumsEl = document.getElementById('search-albums');
-      if (songsEl) songsEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Loading...</p>';
-
-      // Update input placeholder
-      if (input) input.value = '';
-
+    async function loadFavoritesBatch() {
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
       try {
-        const { data: songs } = await apiFetch(`/songs/by-genre/${genreId}?limit=30`);
-        // Show genre header
-        const headers = document.querySelectorAll<HTMLElement>('#tab-tat-ca h3');
-        if (headers[0]) headers[0].innerHTML = `<span class="material-symbols-outlined text-purple-400">music_note</span>${genreName}`;
-        renderSongs(songs || []);
+        // Use limit=500 to get all favorites in one request
+        const { data: favs } = await apiFetch('/favorites?limit=500&page=1');
+        _likedSet = new Set<number>((favs || []).map((f: any) => Number(f.id)));
+        syncFavoriteButtons();
+      } catch {}
+    }
 
-        // Derive artists & albums from the songs in this genre
-        const genreSongs: any[] = songs || [];
-        const artistIdSet = new Set<number>();
-        genreSongs.forEach(s => {
-          if (s.artist_ids) {
-            String(s.artist_ids).split(',').forEach(id => { const n = parseInt(id.trim()); if (n) artistIdSet.add(n); });
-          }
-        });
-        const albumIdSet = new Set<number>();
-        genreSongs.forEach(s => { if (s.album_id) albumIdSet.add(Number(s.album_id)); });
+    function syncFavoriteButtons() {
+      document.querySelectorAll('.btn-like-song').forEach((btn) => {
+        const b   = btn as HTMLElement;
+        const sid = Number(b.dataset.id);
+        setLikeState(b, _likedSet.has(sid));
+      });
+    }
 
-        const filteredArtists = allArtists.filter(a => artistIdSet.has(Number(a.id)));
-        const filteredAlbums  = allAlbums.filter(al => albumIdSet.has(Number(al.id)));
-        renderArtists(filteredArtists);
-        renderAlbums(filteredAlbums);
-      } catch {
-        renderSongs([]);
+    function setLikeState(btn: HTMLElement, liked: boolean) {
+      const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+      btn.dataset.liked = String(liked);
+      const songTitle = btn.getAttribute('aria-label')?.replace(/^(Bỏ yêu thích|Yêu thích)\s?/, '') || '';
+      if (liked) {
+        if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
+        btn.classList.add('text-pink-500', '!opacity-100');
+        btn.classList.remove('text-gray-500');
+        btn.title = 'Bỏ yêu thích';
+        btn.setAttribute('aria-label', `Bỏ yêu thích ${songTitle}`);
+      } else {
+        if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
+        btn.classList.remove('text-pink-500', '!opacity-100');
+        btn.classList.add('text-gray-500');
+        btn.title = 'Yêu thích';
+        btn.setAttribute('aria-label', `Yêu thích ${songTitle}`);
       }
-    });
+    }
 
-    // ── Favorites helpers ─────────────────────────────────────────────────────
     async function toggleLike(btn: HTMLElement) {
       const token = localStorage.getItem('auth_token');
       if (!token) { window.location.href = '/login'; return; }
-      const songId  = btn.dataset.id;
+      const songId = btn.dataset.id!;
+      if (_likingInFlight.has(songId)) return;
+      _likingInFlight.add(songId);
       const isLiked = btn.dataset.liked === 'true';
-      const icon    = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+      setLikeState(btn, !isLiked);
+      if (!isLiked) _likedSet.add(Number(songId)); else _likedSet.delete(Number(songId));
       try {
         if (isLiked) {
           await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
-          btn.dataset.liked = 'false';
-          if (icon) icon.textContent = 'favorite_border';
-          btn.classList.remove('text-pink-500');
-          btn.classList.add('text-gray-500');
         } else {
-          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: songId }) });
-          btn.dataset.liked = 'true';
-          if (icon) icon.textContent = 'favorite';
-          btn.classList.add('text-pink-500');
-          btn.classList.remove('text-gray-500');
+          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
         }
         window.dispatchEvent(new CustomEvent('favorites:changed', {
           detail: { songId: Number(songId), isFavorite: !isLiked },
         }));
-      } catch {}
+      } catch {
+        setLikeState(btn, isLiked);
+        if (isLiked) _likedSet.add(Number(songId)); else _likedSet.delete(Number(songId));
+      } finally {
+        _likingInFlight.delete(songId);
+      }
     }
 
-    async function loadFavoriteStatuses() {
-      const token = localStorage.getItem('auth_token');
-      if (!token) return;
-      document.querySelectorAll('#search-songs .btn-like-song').forEach(async (btn) => {
-        const b = btn as HTMLElement;
-        const songId = b.dataset.id;
-        if (!songId) return;
-        try {
-          const res = await apiFetch(`/favorites/${songId}/is-favorite`);
-          if (res.data?.isFavorite) {
-            b.dataset.liked = 'true';
-            const icon = b.querySelector('.material-symbols-outlined') as HTMLElement;
-            if (icon) icon.textContent = 'favorite';
-            b.classList.add('text-pink-500');
-            b.classList.remove('text-gray-500');
-          }
-        } catch {}
-      });
-    }
-
-    // Song click handler (delegated)
-    document.getElementById('search-songs')?.addEventListener('click', (e) => {
-      const atpBtn  = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
+    searchResults.addEventListener('click', (e) => {
+      const atpBtn = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement | null;
       if (atpBtn) {
-        try { const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
+        e.stopPropagation();
+        try {
+          const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || ''));
+          (window as any).openAddToPlaylist?.(song);
+        } catch {}
         return;
       }
-      const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement;
-      if (likeBtn) { toggleLike(likeBtn); return; }
-      const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
+
+      const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement | null;
+      if (likeBtn) { e.stopPropagation(); toggleLike(likeBtn); return; }
+
+      const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
       if (!row) return;
       try {
-        const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-        const allRows = Array.from(document.querySelectorAll('#search-songs .song-row'));
-        const queue = allRows.map(r => {
+        const song  = JSON.parse(decodeURIComponent(row.dataset.song || ''));
+        const panel = document.querySelector('.tab-panel:not(.hidden)');
+        const rows  = panel
+          ? Array.from(panel.querySelectorAll('.song-row'))
+          : Array.from(document.querySelectorAll('.song-row'));
+        const queue = rows.map(r => {
           try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
         }).filter(Boolean);
         player.playSong(song, queue);
       } catch {}
     });
 
-    // Sync like buttons from PlayerBar events
+    searchResults.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
+      if (!row) return;
+      e.preventDefault();
+      row.click();
+    });
+
     window.addEventListener('favorites:changed', (e: any) => {
       const { songId, isFavorite } = e.detail;
-      document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach((btn) => {
-        const b = btn as HTMLElement;
-        b.dataset.liked = String(isFavorite);
-        const icon = b.querySelector('.material-symbols-outlined') as HTMLElement;
-        if (icon) icon.textContent = isFavorite ? 'favorite' : 'favorite_border';
-        b.classList.toggle('text-pink-500', isFavorite);
-        b.classList.toggle('text-gray-500', !isFavorite);
+      if (isFavorite) _likedSet.add(Number(songId)); else _likedSet.delete(Number(songId));
+      document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach(btn => {
+        setLikeState(btn as HTMLElement, isFavorite);
       });
     });
 
-    // Load favorite statuses when songs are rendered (on initial page load or navigation)
-    loadFavoriteStatuses();
+    let searchTimer: ReturnType<typeof setTimeout>;
+
+    async function doSearch(q: string) {
+      if (!q) { showCategories(); return; }
+      showResults(false);
+
+      history.replaceState(null, '', `/search?q=${encodeURIComponent(q)}`);
+
+      showSongsSkeleton('songs-all');
+      showSongsSkeleton('songs-only');
+      showArtistsSkeleton('artists-all');
+      showAlbumsSkeleton('albums-all');
+
+      const heading = document.getElementById('songs-heading');
+      if (heading) heading.innerHTML = `<span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Bài hát`;
+
+      const [songsResult] = await Promise.allSettled([
+        apiFetch(`/songs/search?q=${encodeURIComponent(q)}&limit=50`),
+        preload(),
+      ]);
+
+      const songs: any[] = songsResult.status === 'fulfilled' ? (songsResult.value?.data || []) : [];
+      const ql      = q.toLowerCase();
+      const artists = allArtists.filter((a: any) => (a.name || '').toLowerCase().includes(ql));
+      const albums  = allAlbums.filter((a: any)  => (a.title || '').toLowerCase().includes(ql));
+
+      renderSongs(songs);
+      renderArtists(artists);
+      renderAlbums(albums);
+      updateBadges(songs.length, artists.length, albums.length);
+      loadFavoritesBatch();
+    }
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim();
+      clearBtn.classList.toggle('hidden', q === '');
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => doSearch(q), 300);
+    });
+
+    async function loadCategories() {
+      const grid = document.getElementById('categoriesGrid');
+      if (!grid) return;
+      try {
+        const { data: genres } = await apiFetch('/songs/genres');
+        if (!genres?.length) { grid.innerHTML = ''; return; }
+        grid.innerHTML = genres.map((g: any, i: number) => {
+          const nameKey = g.name.toLowerCase().replace(/[^a-z]/g, '');
+          const icon    = CAT_ICONS[nameKey] || DEFAULT_ICONS[i % DEFAULT_ICONS.length];
+          const nameEsc = esc(g.name);
+          return `
+            <div class="genre-card rounded-2xl p-5 cursor-pointer relative overflow-hidden h-28
+                        transition-all duration-300 ease-out hover:scale-[1.04] hover:shadow-xl hover:brightness-110
+                        focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-400"
+                 data-genre-id="${esc(String(g.id))}" data-genre-name="${nameEsc}"
+                 role="button" tabindex="0" aria-label="Lọc theo thể loại ${nameEsc}"
+                 style="background:${CAT_COLORS[i % CAT_COLORS.length]}">
+              <span class="text-white font-bold text-lg drop-shadow">${nameEsc}</span>
+              <span class="material-symbols-outlined absolute right-4 bottom-4 text-white/30 text-5xl
+                           transition-all duration-300" aria-hidden="true">${icon}</span>
+            </div>`;
+        }).join('');
+      } catch {
+        grid.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Không thể tải thể loại.</p>';
+      }
+    }
+
+    document.getElementById('categoriesGrid')?.addEventListener('click', async (e) => {
+      const card = (e.target as HTMLElement).closest('.genre-card') as HTMLElement | null;
+      if (!card) return;
+      const genreId   = card.dataset.genreId;
+      const genreName = card.dataset.genreName || 'Genre';
+      if (!genreId) return;
+
+      showResults(true);
+      showSongsSkeleton('songs-all');
+      showSongsSkeleton('songs-only');
+
+      const heading = document.getElementById('songs-heading');
+      if (heading) {
+        // Safe: genreName was already escaped when written to data attribute
+        heading.innerHTML = `<span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>${esc(genreName)}`;
+      }
+      if (input) input.value = '';
+
+      await Promise.allSettled([
+        apiFetch(`/songs/by-genre/${encodeURIComponent(genreId)}?limit=50`).then(({ data: songs }) => {
+          const genreSongs: any[] = songs || [];
+          renderSongs(genreSongs);
+
+          const artistIdSet = new Set<number>();
+          genreSongs.forEach(s => {
+            if (s.artist_ids) {
+              String(s.artist_ids).split(',').forEach(id => {
+                const n = parseInt(id.trim()); if (n) artistIdSet.add(n);
+              });
+            }
+          });
+          const albumIdSet = new Set<number>();
+          genreSongs.forEach(s => { if (s.album_id) albumIdSet.add(Number(s.album_id)); });
+
+          renderArtists(allArtists.filter((a: any) => artistIdSet.has(Number(a.id))));
+          renderAlbums(allAlbums.filter((al: any) => albumIdSet.has(Number(al.id))));
+          updateBadges(genreSongs.length, artistIdSet.size, albumIdSet.size);
+          loadFavoritesBatch();
+        }).catch(() => { renderSongs([]); updateBadges(0, 0, 0); }),
+        preload(),
+      ]);
+    });
+
+    document.getElementById('categoriesGrid')?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      (e.target as HTMLElement).closest('.genre-card')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const urlQ = new URLSearchParams(window.location.search).get('q');
+
+    loadCategories();
+
+    if (urlQ && input) {
+      input.value = urlQ;
+      clearBtn.classList.remove('hidden');
+      doSearch(urlQ).then(() => input.focus());
+    } else {
+      preload();
+    }
   </script>
 </MainLayout>

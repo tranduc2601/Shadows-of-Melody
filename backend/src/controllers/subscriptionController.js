@@ -1,9 +1,22 @@
 import Subscription from '../models/Subscription.js';
 import Payment from '../models/Payment.js';
 
+const EXEMPT_ROLES = ['admin', 'manager'];
+
 export const getSubscription = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const { id: userId, role } = req.user;
+
+        if (EXEMPT_ROLES.includes(role)) {
+            return res.status(200).json({
+                success: true,
+                data: {
+                    subscription_type: role === 'admin' ? 'admin' : 'manager',
+                    is_active: true,
+                    exempt: true,
+                },
+            });
+        }
 
         const subscription = await Subscription.findByUserId(userId);
 
@@ -22,7 +35,15 @@ export const getSubscription = async (req, res) => {
 
 export const upgradeSubscription = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const { id: userId, role } = req.user;
+
+        if (EXEMPT_ROLES.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: 'System administrators do not require subscriptions.',
+            });
+        }
+
         const { subscriptionType } = req.body;
 
         if (!['free', 'premium', 'vip'].includes(subscriptionType)) {
@@ -89,7 +110,15 @@ export const getPaymentHistory = async (req, res) => {
 
 export const createPayment = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const { id: userId, role } = req.user;
+
+        if (EXEMPT_ROLES.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: 'System administrators do not require subscriptions.',
+            });
+        }
+
         const { subscriptionType, amount, paymentMethod, transactionId } = req.body;
 
         if (!amount || !paymentMethod) {

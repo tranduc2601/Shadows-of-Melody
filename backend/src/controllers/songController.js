@@ -5,29 +5,62 @@ import { pool } from '../config/database.js';
 
 export const getAllSongs = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const offset = (page - 1) * limit;
+        const page    = Math.max(1, parseInt(req.query.page)   || 1);
+        const limit   = Math.min(100, parseInt(req.query.limit) || 20);
+        const offset  = (page - 1) * limit;
+        const keyword = (req.query.keyword || req.query.q || '').trim();
+        const genreId  = parseInt(req.query.genre_id)  || 0;
+        const artistId = parseInt(req.query.artist_id) || 0;
 
-        const songs = await Song.findAll(limit, offset);
-        const totalCount = await Song.countTotal();
+        const VALID_SORT  = ['created_at', 'plays_count', 'title', 'duration'];
+        const VALID_ORDER = ['asc', 'desc'];
+        const sortBy = VALID_SORT.includes(req.query.sortBy)  ? `s.${req.query.sortBy}` : 's.created_at';
+        const order  = VALID_ORDER.includes((req.query.order || '').toLowerCase()) ? req.query.order.toLowerCase() : 'desc';
 
+        const conditions = ["(s.status IS NULL OR s.status = 'published')"];
+        const params     = [];
+        const addParam   = v => { params.push(v); return `$${params.length}`; };
+
+        if (keyword) conditions.push(`(s.tsv @@ plainto_tsquery('simple', unaccent(${addParam(keyword)})) OR s.title ILIKE ${addParam('%' + keyword + '%')})`);
+        if (genreId)  conditions.push(`EXISTS (SELECT 1 FROM song_genres sg2 WHERE sg2.song_id = s.id AND sg2.genre_id = ${addParam(genreId)})`);
+        if (artistId) conditions.push(`EXISTS (SELECT 1 FROM song_artists sa2 WHERE sa2.song_id = s.id AND sa2.artist_id = ${addParam(artistId)})`);
+
+        const where = `WHERE ${conditions.join(' AND ')}`;
+        const filterParams = [...params];
+        const limitP  = addParam(limit);
+        const offsetP = addParam(offset);
+
+        const [[countRow], [songs]] = await Promise.all([
+            pool.query(`SELECT COUNT(DISTINCT s.id)::int AS total FROM songs s ${where}`, filterParams),
+            pool.query(
+                `SELECT s.*,
+                        STRING_AGG(DISTINCT a.id::text, ',') AS artist_ids,
+                        STRING_AGG(DISTINCT a.name, ','    ) AS artist_names,
+                        STRING_AGG(DISTINCT g.id::text, ',') AS genre_ids,
+                        STRING_AGG(DISTINCT g.name, ','    ) AS genre_names,
+                        al.title AS album_title
+                 FROM songs s
+                 LEFT JOIN song_artists sa ON s.id = sa.song_id
+                 LEFT JOIN artists a       ON sa.artist_id = a.id
+                 LEFT JOIN song_genres sg  ON s.id = sg.song_id
+                 LEFT JOIN genres g        ON sg.genre_id = g.id
+                 LEFT JOIN albums al       ON s.album_id = al.id
+                 ${where}
+                 GROUP BY s.id, al.title
+                 ORDER BY ${sortBy} ${order}
+                 LIMIT ${limitP} OFFSET ${offsetP}`,
+                params
+            ),
+        ]);
+        const totalItems = countRow[0]?.total ?? 0;
         return res.status(200).json({
             success: true,
             data: songs,
-            pagination: {
-                page,
-                limit,
-                total: totalCount,
-                pages: Math.ceil(totalCount / limit),
-            },
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
         });
     } catch (error) {
         console.error('GetAllSongs error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch songs',
-        });
+        return res.status(500).json({ success: false, message: 'Failed to fetch songs' });
     }
 };
 

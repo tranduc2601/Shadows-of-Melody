@@ -1,4 +1,5 @@
 import { verifyToken } from '../utils/jwt.js';
+import Subscription from '../models/Subscription.js';
 
 // ── Role hierarchy ────────────────────────────────────────────────────────────
 // Used to derive implicit permissions. A higher-ranked role includes all
@@ -58,4 +59,33 @@ const adminMiddleware = (req, res, next) => {
     next();
 };
 
-export { requireAuth, requireRole, authMiddleware, adminMiddleware };
+// ── requirePremium ───────────────────────────────────────────────────────────
+/**
+ * Ensures the user has an active premium subscription.
+ * admin and manager roles are unconditionally granted access.
+ * Must be used AFTER requireAuth.
+ */
+const requirePremium = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    const { role } = req.user;
+    if (role === 'admin' || role === 'manager') {
+        return next();
+    }
+    try {
+        const active = await Subscription.isActive(req.user.id);
+        if (!active) {
+            return res.status(403).json({
+                success: false,
+                message: 'An active premium subscription is required.',
+            });
+        }
+        next();
+    } catch (err) {
+        console.error('requirePremium error:', err);
+        return res.status(500).json({ success: false, message: 'Could not verify subscription.' });
+    }
+};
+
+export { requireAuth, requireRole, requirePremium, authMiddleware, adminMiddleware };

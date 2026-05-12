@@ -7,25 +7,18 @@ import Sidebar from "../components/Sidebar.astro";
 <MainLayout title="Liked Songs - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
-    <!-- Sidebar -->
     <Sidebar currentPage="liked" />
 
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <!-- Ambient Glow -->
-      <div class="absolute top-[-5%] left-[-5%] w-[50%] h-[50%] bg-rose-900/15 blur-[160px] rounded-full pointer-events-none"></div>
-      <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none"></div>
+      <div class="absolute top-[-5%] left-[-5%] w-[50%] h-[50%] bg-rose-900/15 blur-[160px] rounded-full pointer-events-none" aria-hidden="true"></div>
+      <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none" aria-hidden="true"></div>
 
-      <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
 
-        <!-- Hero Header -->
-        <section class="relative overflow-hidden">
-          <div class="absolute inset-0 bg-linear-to-b from-rose-900/40 via-purple-900/20 to-transparent pointer-events-none"></div>
+        <section class="relative overflow-hidden" aria-label="Liked Songs overview">
+          <div class="absolute inset-0 bg-linear-to-b from-rose-900/40 via-purple-900/20 to-transparent pointer-events-none" aria-hidden="true"></div>
           <div class="relative z-10 flex flex-col sm:flex-row items-end gap-8 px-8 pt-10 pb-12">
-            <!-- Cover Art -->
-            <div class="w-52 h-52 rounded-2xl shrink-0 bg-linear-to-br from-rose-500 via-pink-600 to-purple-700 shadow-2xl shadow-rose-900/50 flex items-center justify-center relative overflow-hidden">
-              <!-- Decorative hearts -->
+            <div class="w-52 h-52 rounded-2xl shrink-0 bg-linear-to-br from-rose-500 via-pink-600 to-purple-700 shadow-2xl shadow-rose-900/50 flex items-center justify-center relative overflow-hidden" aria-hidden="true">
               <div class="absolute inset-0 flex items-center justify-center opacity-15">
                 <span class="material-symbols-outlined text-white" style="font-size: 9rem;">favorite</span>
               </div>
@@ -35,7 +28,6 @@ import Sidebar from "../components/Sidebar.astro";
               <div class="absolute bottom-4 right-4 w-16 h-16 rounded-xl bg-linear-to-br from-rose-500 to-orange-500 shadow-md"></div>
             </div>
 
-            <!-- Info -->
             <div class="flex flex-col gap-2 min-w-0">
               <span class="text-xs font-bold uppercase tracking-widest text-white/50">Playlist</span>
               <h1 class="text-5xl sm:text-6xl font-black text-white drop-shadow-xl">Liked Songs</h1>
@@ -47,61 +39,88 @@ import Sidebar from "../components/Sidebar.astro";
                 <span class="text-white/50" id="total-duration">—</span>
               </div>
               <div class="flex items-center gap-3 mt-4 flex-wrap">
-                <button id="btn-play-all" type="button" class="bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(244,63,94,0.4)]">
-                  <span class="material-symbols-outlined text-[22px]">play_arrow</span>
+                <button
+                  id="btn-play-all"
+                  type="button"
+                  aria-label="Play all liked songs"
+                  class="bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(244,63,94,0.4)]"
+                >
+                  <span class="material-symbols-outlined text-[22px]" aria-hidden="true">play_arrow</span>
                   Play All
                 </button>
-                <button id="btn-shuffle-play" type="button" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
-                  <span class="material-symbols-outlined text-[18px]">shuffle</span>
+                <button
+                  id="btn-shuffle-play"
+                  type="button"
+                  aria-label="Shuffle play liked songs"
+                  class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all"
+                >
+                  <span class="material-symbols-outlined text-[18px]" aria-hidden="true">shuffle</span>
                   Shuffle Play
                 </button>
               </div>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none" aria-hidden="true"></div>
         </section>
 
-        <!-- Search & Sort bar -->
         <div class="px-6 lg:px-8 mt-4 mb-4 flex items-center gap-4 flex-wrap">
           <div class="relative flex-1 max-w-xs">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]">search</span>
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]" aria-hidden="true">search</span>
             <input
               id="liked-search"
-              type="text"
+              type="search"
               placeholder="Search in Liked Songs..."
+              autocomplete="off"
+              aria-label="Search in liked songs (press / to focus)"
               class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-600 rounded-full py-2 pl-9 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:bg-white/10 transition-all"
             />
-            <button id="liked-search-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
-              <span class="material-symbols-outlined text-[16px]">close</span>
+            <button
+              id="liked-search-clear"
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+              aria-label="Clear search"
+            >
+              <span class="material-symbols-outlined text-[16px]" aria-hidden="true">close</span>
             </button>
           </div>
           <div class="relative flex items-center gap-2 text-sm text-gray-500">
-            <span>Sort by:</span>
+            <span id="sort-by-label">Sort by:</span>
             <div class="relative">
-              <button id="liked-sort-btn" type="button" class="flex items-center gap-1 text-gray-300 hover:text-white transition-colors font-medium px-2 py-1 rounded-lg hover:bg-white/5">
+              <button
+                id="liked-sort-btn"
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-labelledby="sort-by-label liked-sort-label"
+                class="flex items-center gap-1 text-gray-300 hover:text-white transition-colors font-medium px-2 py-1 rounded-lg hover:bg-white/5"
+              >
                 <span id="liked-sort-label">Date Added</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_drop_down</span>
               </button>
-              <div id="liked-sort-menu" class="hidden absolute right-0 top-full mt-1 bg-[#0e1835] border border-white/10 rounded-xl shadow-2xl z-50 min-w-[160px] py-1 backdrop-blur-xl">
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_desc">
+              <div
+                id="liked-sort-menu"
+                role="listbox"
+                aria-label="Sort options"
+                class="hidden absolute right-0 top-full mt-1 bg-[#0e1835] border border-white/10 rounded-xl shadow-2xl z-50 min-w-[160px] py-1 backdrop-blur-xl"
+              >
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_desc">
                   <span class="material-symbols-outlined text-[15px] text-purple-400 sort-check" data-for="date_desc">check</span>Date Added ↓
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_asc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="date_asc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="date_asc">check</span>Date Added ↑
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_asc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_asc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="title_asc">check</span>Title A–Z
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_desc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="title_desc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="title_desc">check</span>Title Z–A
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="artist_asc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="artist_asc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="artist_asc">check</span>Artist A–Z
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_asc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_asc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="duration_asc">check</span>Duration ↑
                 </button>
-                <button class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_desc">
+                <button role="option" class="liked-sort-option w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2" data-sort="duration_desc">
                   <span class="material-symbols-outlined text-[15px] text-transparent sort-check" data-for="duration_desc">check</span>Duration ↓
                 </button>
               </div>
@@ -109,23 +128,21 @@ import Sidebar from "../components/Sidebar.astro";
           </div>
         </div>
 
-        <!-- Track Table -->
         <div class="px-6 lg:px-8">
-          <div class="bg-white/2 border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
-            <table class="w-full text-left border-collapse">
+          <div class="bg-white/[0.02] border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
+            <table class="w-full text-left border-collapse" role="table" aria-label="Liked songs list">
               <thead>
                 <tr class="text-gray-500 border-b border-white/5">
                   <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Title</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden lg:table-cell uppercase tracking-wider">Album</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-8">Date Added</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-16 text-center">
-                    <span class="material-symbols-outlined text-[18px]">schedule</span>
+                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-28 text-center">
+                    <span class="material-symbols-outlined text-[18px]" aria-label="Duration">schedule</span>
                   </th>
                 </tr>
               </thead>
-              <tbody id="liked-tbody">
-                <tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">Loading...</td></tr>
+              <tbody id="liked-tbody" aria-live="polite" aria-atomic="false">
               </tbody>
             </table>
           </div>
@@ -133,15 +150,18 @@ import Sidebar from "../components/Sidebar.astro";
 
       </div>
 
-      <!-- Toast notification -->
-      <div id="liked-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+      <div
+        id="liked-toast"
+        role="status"
+        aria-live="polite"
+        class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300"
+      >
         <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md">
-          <span class="material-symbols-outlined text-rose-400 text-[18px]">info</span>
+          <span id="liked-toast-icon" class="material-symbols-outlined text-rose-400 text-[18px]" aria-hidden="true">info</span>
           <span id="liked-toast-msg"></span>
         </div>
       </div>
 
-      <!-- Now Playing Bar -->
       <PlayerBar />
     </main>
   </div>
@@ -154,39 +174,44 @@ import Sidebar from "../components/Sidebar.astro";
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.65; }
+    }
+    .skeleton { animation: skeleton-pulse 1.4s ease-in-out infinite; }
   </style>
 
 <script>
-  import { apiFetch, formatDuration, getCachedMe, refreshMe } from '../lib/api.js';
+  import { apiFetch, formatDuration, getCachedMe, refreshMe, colorFor } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
-  // ── Populate hero username ─────────────────────────────────────────────
+  if (!localStorage.getItem('auth_token')) {
+    window.location.href = '/login?reason=auth_required';
+  }
+
+  function escapeHtml(str: unknown): string {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function applyHeroUser(me: any) {
     if (!me) return;
-    const heroName = document.getElementById('hero-user-name') as HTMLElement;
-    if (heroName) heroName.textContent = me.full_name || me.username || '—';
+    const el = document.getElementById('hero-user-name') as HTMLElement;
+    if (el) el.textContent = me.full_name || me.username || '—';
   }
   const _cached = getCachedMe();
   if (_cached) applyHeroUser(_cached);
   if (localStorage.getItem('auth_token')) {
     refreshMe().then((fresh: any) => { if (fresh) applyHeroUser(fresh); });
   }
-  const GRADS = [
-    'linear-gradient(135deg,#6366f1,#8b5cf6)',
-    'linear-gradient(135deg,#f43f5e,#f97316)',
-    'linear-gradient(135deg,#ec4899,#7c3aed)',
-    'linear-gradient(135deg,#ef4444,#d946ef)',
-    'linear-gradient(135deg,#3b82f6,#06b6d4)',
-    'linear-gradient(135deg,#06b6d4,#10b981)',
-    'linear-gradient(135deg,#d946ef,#7c3aed)',
-    'linear-gradient(135deg,#fb923c,#fb7185)',
-  ];
-  const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
 
-  // ── Module-level tracks list and display state ───────────────────────────
   let _tracks: any[] = [];
-  let _searchQuery: string = '';
-  let _sortKey: string = 'date_desc';
+  let _searchQuery = '';
+  let _sortKey: string = localStorage.getItem('liked_sort') || 'date_desc';
 
   const SORT_LABELS: Record<string, string> = {
     date_desc:    'Date Added',
@@ -200,22 +225,20 @@ import Sidebar from "../components/Sidebar.astro";
 
   function getDisplayTracks(): any[] {
     let list = [..._tracks];
-    // Filter
     if (_searchQuery) {
       const q = _searchQuery.toLowerCase();
       list = list.filter((t: any) =>
-        t.title.toLowerCase().includes(q) ||
+        (t.title || '').toLowerCase().includes(q) ||
         (t.artist_names || '').toLowerCase().includes(q) ||
         (t.album_title  || '').toLowerCase().includes(q)
       );
     }
-    // Sort
     list.sort((a: any, b: any) => {
       switch (_sortKey) {
         case 'date_desc': return new Date(b.favorited_at || b.added_at || 0).getTime() - new Date(a.favorited_at || a.added_at || 0).getTime();
         case 'date_asc':  return new Date(a.favorited_at || a.added_at || 0).getTime() - new Date(b.favorited_at || b.added_at || 0).getTime();
-        case 'title_asc': return a.title.localeCompare(b.title);
-        case 'title_desc':return b.title.localeCompare(a.title);
+        case 'title_asc': return (a.title || '').localeCompare(b.title || '');
+        case 'title_desc':return (b.title || '').localeCompare(a.title || '');
         case 'artist_asc':return (a.artist_names || '').localeCompare(b.artist_names || '');
         case 'duration_asc': return (a.duration || 0) - (b.duration || 0);
         case 'duration_desc':return (b.duration || 0) - (a.duration || 0);
@@ -226,54 +249,134 @@ import Sidebar from "../components/Sidebar.astro";
   }
 
   function updateStats() {
-    (document.getElementById('total-tracks') as HTMLElement).textContent = String(_tracks.length);
+    const countEl = document.getElementById('total-tracks') as HTMLElement;
+    const durEl   = document.getElementById('total-duration') as HTMLElement;
+    if (!countEl || !durEl) return;
+
+    if (_searchQuery) {
+      countEl.textContent = `${getDisplayTracks().length} / ${_tracks.length}`;
+    } else {
+      countEl.textContent = String(_tracks.length);
+    }
+
     const totalSec = _tracks.reduce((s: number, t: any) => s + (parseInt(t.duration) || 0), 0);
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
-    (document.getElementById('total-duration') as HTMLElement).textContent =
-      totalSec === 0 ? '—' : h > 0 ? `${h} hr ${m} min` : `${m} min`;
+    durEl.textContent = totalSec === 0 ? '—' : h > 0 ? `${h} hr ${m} min` : `${m} min`;
   }
 
-  function renderTracks() {
+  function renderSkeletons(count = 6) {
+    const tbody = document.getElementById('liked-tbody')!;
+    tbody.innerHTML = Array.from({ length: count }, () => `
+      <tr class="border-b border-white/[0.03]">
+        <td class="px-4 py-3 text-center">
+          <div class="skeleton w-4 h-3 rounded bg-white/10 mx-auto"></div>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-10 h-10 rounded-lg bg-white/10 shrink-0"></div>
+            <div class="space-y-2">
+              <div class="skeleton h-3 w-36 rounded bg-white/10"></div>
+              <div class="skeleton h-2 w-24 rounded bg-white/8"></div>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3 hidden lg:table-cell">
+          <div class="skeleton h-3 w-28 rounded bg-white/10"></div>
+        </td>
+        <td class="px-4 py-3 hidden sm:table-cell text-right pr-8">
+          <div class="skeleton h-3 w-16 rounded bg-white/10 ml-auto"></div>
+        </td>
+        <td class="px-4 py-3 text-center">
+          <div class="skeleton h-3 w-10 rounded bg-white/10 mx-auto"></div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function render() {
+    updateStats();
     const display = getDisplayTracks();
     const tbody = document.getElementById('liked-tbody')!;
+
     if (!_tracks.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">No liked songs.</td></tr>';
+      tbody.innerHTML = `
+        <tr><td colspan="5" class="px-4 py-16 text-center">
+          <div class="flex flex-col items-center gap-3 text-gray-500">
+            <span class="material-symbols-outlined text-[52px] text-rose-400/30">favorite_border</span>
+            <p class="text-base font-medium text-gray-400">No liked songs yet</p>
+            <p class="text-sm">Songs you like will appear here</p>
+            <a href="/search" class="mt-2 inline-flex items-center gap-1.5 text-sm text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+              <span class="material-symbols-outlined text-[16px]">explore</span>
+              Discover music
+            </a>
+          </div>
+        </td></tr>`;
       return;
     }
+
     if (!display.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-gray-500">Không tìm thấy bài hát nào.</td></tr>';
+      tbody.innerHTML = `
+        <tr><td colspan="5" class="px-4 py-12 text-center">
+          <div class="flex flex-col items-center gap-2 text-gray-500">
+            <span class="material-symbols-outlined text-[40px] text-gray-600">search_off</span>
+            <p class="text-sm mt-1">No results for "<strong class="text-gray-300">${escapeHtml(_searchQuery)}</strong>"</p>
+          </div>
+        </td></tr>`;
       return;
     }
+
     tbody.innerHTML = display.map((t: any, i: number) => {
-      const cover = t.cover_url
-        ? `<img src="${t.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
-        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(t.id)}"></div>`;
+      const coverHtml = t.cover_url
+        ? `<img src="${escapeHtml(t.cover_url)}" loading="lazy" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt="${escapeHtml(t.title)} cover"/>`
+        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${colorFor(t.id)}" aria-hidden="true"></div>`;
       const added = (t.favorited_at || t.added_at)
         ? new Date(t.favorited_at || t.added_at).toLocaleDateString('en-US') : '—';
+      const titleEsc  = escapeHtml(t.title);
+      const artistEsc = escapeHtml(t.artist_names || 'Unknown');
+      const albumEsc  = escapeHtml(t.album_title  || '—');
+
       return `
-        <tr class="group hover:bg-white/5 transition-colors cursor-pointer song-row" data-id="${t.id}">
-          <td class="px-4 py-3 text-center rounded-l-xl pointer-events-none">
+        <tr
+          class="group hover:bg-white/5 transition-colors cursor-pointer song-row"
+          data-id="${t.id}"
+          role="row"
+          tabindex="0"
+          aria-label="Play ${titleEsc} by ${artistEsc}"
+        >
+          <td class="px-4 py-3 text-center rounded-l-xl select-none pointer-events-none">
             <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
-            <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]">play_arrow</span>
+            <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]" aria-hidden="true">play_arrow</span>
           </td>
-          <td class="px-4 py-3 pointer-events-none">
+          <td class="px-4 py-3 pointer-events-none select-none">
             <div class="flex items-center gap-4">
-              ${cover}
+              ${coverHtml}
               <div class="min-w-0">
-                <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${t.title}</p>
-                <p class="text-xs text-gray-500 truncate mt-0.5">${t.artist_names || 'Unknown'}</p>
+                <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${titleEsc}</p>
+                <p class="text-xs text-gray-500 truncate mt-0.5">${artistEsc}</p>
               </div>
             </div>
           </td>
-          <td class="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell truncate max-w-40 pointer-events-none">${t.album_title || '—'}</td>
-          <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-8 whitespace-nowrap pointer-events-none">${added}</td>
+          <td class="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell truncate max-w-40 pointer-events-none select-none">${albumEsc}</td>
+          <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-8 whitespace-nowrap pointer-events-none select-none">${added}</td>
           <td class="px-4 py-3 rounded-r-xl">
-            <div class="flex items-center justify-center gap-3">
-              <button class="unlike-btn opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-300 transition-all" data-id="${t.id}" title="Bỏ yêu thích">
-                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">favorite</span>
+            <div class="flex items-center justify-center gap-1">
+              <button
+                class="add-to-pl-btn opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-all p-1 rounded-lg hover:bg-white/10"
+                data-id="${t.id}"
+                aria-label="Add ${titleEsc} to playlist"
+                title="Add to playlist"
+              >
+                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">playlist_add</span>
               </button>
-              <span class="text-sm text-gray-500 pointer-events-none">${formatDuration(t.duration)}</span>
+              <button
+                class="unlike-btn opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-300 transition-all p-1 rounded-lg hover:bg-rose-500/10"
+                data-id="${t.id}"
+                aria-label="Unlike ${titleEsc}"
+                title="Remove from liked songs"
+              >
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1" aria-hidden="true">favorite</span>
+              </button>
+              <span class="text-sm text-gray-500 pointer-events-none tabular-nums ml-1 min-w-[2.5rem] text-right">${formatDuration(t.duration)}</span>
             </div>
           </td>
         </tr>`;
@@ -281,69 +384,110 @@ import Sidebar from "../components/Sidebar.astro";
   }
 
   async function loadFavorites() {
-    const tbody = document.getElementById('liked-tbody')!;
     const token = localStorage.getItem('auth_token');
+    if (!token) return;
 
-    if (!token) {
-      tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-10 text-center">
-        <p class="text-gray-400 mb-2">Bạn cần đăng nhập để xem bài hát yêu thích.</p>
-        <a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a>
-      </td></tr>`;
-      return;
-    }
+    renderSkeletons();
 
     try {
-      const { data: tracks } = await apiFetch('/favorites');
-      _tracks = tracks || [];
-      updateStats();
-      renderTracks();
-    } catch (err) {
-      tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-10 text-center text-red-400">Không thể tải dữ liệu.</td></tr>';
+      const first = await apiFetch('/favorites?limit=500&page=1');
+      _tracks = first.data || [];
+
+      const totalPages = first.pagination?.pages ?? 1;
+      if (totalPages > 1) {
+        const rest = await Promise.all(
+          Array.from({ length: totalPages - 1 }, (_, i) =>
+            apiFetch(`/favorites?limit=500&page=${i + 2}`).then((r: any) => r.data || [])
+          )
+        );
+        _tracks = [..._tracks, ...rest.flat()];
+      }
+
+      render();
+    } catch {
+      const tbody = document.getElementById('liked-tbody')!;
+      tbody.innerHTML = `
+        <tr><td colspan="5" class="px-4 py-12 text-center">
+          <div class="flex flex-col items-center gap-3">
+            <span class="material-symbols-outlined text-[40px] text-red-400/50">error_outline</span>
+            <p class="text-red-400 text-sm">Failed to load liked songs</p>
+            <button id="liked-retry" class="mt-1 text-sm text-purple-400 hover:text-purple-300 font-semibold transition-colors">Try again</button>
+          </div>
+        </td></tr>`;
+      document.getElementById('liked-retry')?.addEventListener('click', loadFavorites);
     }
   }
 
-  // ── Event delegation: play row click ─────────────────────────────────────
   document.getElementById('liked-tbody')!.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement;
 
-    // Unlike button
+    const atpBtn = target.closest('.add-to-pl-btn') as HTMLElement | null;
+    if (atpBtn) {
+      e.stopPropagation();
+      const songId = Number(atpBtn.dataset.id);
+      const song = _tracks.find((t: any) => t.id === songId);
+      if (song && typeof (window as any).openAddToPlaylist === 'function') {
+        (window as any).openAddToPlaylist(song);
+      }
+      return;
+    }
+
     const unlikeBtn = target.closest('.unlike-btn') as HTMLElement | null;
     if (unlikeBtn) {
       e.stopPropagation();
       const songId = unlikeBtn.dataset.id;
       if (!songId) return;
-      unlikeBtn.style.opacity = '0.4';
+
+      const row = unlikeBtn.closest('tr') as HTMLElement | null;
+      if (row) { row.style.opacity = '0.4'; row.style.transition = 'opacity 0.2s'; }
       unlikeBtn.style.pointerEvents = 'none';
+
       try {
         await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
         _tracks = _tracks.filter((t: any) => String(t.id) !== songId);
-        updateStats();
-        renderTracks();
+        render();
+        showToast('Removed from liked songs', 'success');
         window.dispatchEvent(new CustomEvent('favorites:changed', {
           detail: { songId: Number(songId), isFavorite: false },
         }));
       } catch {
-        unlikeBtn.style.opacity = '';
+        if (row) row.style.opacity = '';
         unlikeBtn.style.pointerEvents = '';
+        showToast('Failed to remove song', 'error');
       }
       return;
     }
 
-    // Row click → play song
     const row = target.closest('.song-row') as HTMLElement | null;
-    if (row && _tracks.length) {
+    if (row) {
       const songId = Number(row.dataset.id);
-      const song = _tracks.find((t: any) => t.id === songId);
-      if (song) player.playSong(song, _tracks);
+      const displayTracks = getDisplayTracks();
+      const song = displayTracks.find((t: any) => t.id === songId);
+      if (song) player.playSong(song, displayTracks);
     }
   });
 
-  // ── Toast helper ─────────────────────────────────────────────────────────
+  document.getElementById('liked-tbody')!.addEventListener('keydown', (e: KeyboardEvent) => {
+    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
+    if (!row) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      row.click();
+    }
+  });
+
   let _toastTimer: ReturnType<typeof setTimeout> | null = null;
-  function showToast(msg: string) {
-    const toast = document.getElementById('liked-toast')!;
-    const msgEl = document.getElementById('liked-toast-msg')!;
-    msgEl.textContent = msg;
+  function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
+    const toast   = document.getElementById('liked-toast')!;
+    const msgEl   = document.getElementById('liked-toast-msg')!;
+    const iconEl  = document.getElementById('liked-toast-icon')!;
+    const iconMap = { success: 'check_circle', error: 'error_outline', info: 'info' };
+    const clsMap  = { success: 'text-green-400', error: 'text-red-400', info: 'text-rose-400' };
+
+    msgEl.textContent  = msg;
+    iconEl.textContent = iconMap[type];
+    iconEl.className   = `material-symbols-outlined text-[18px] ${clsMap[type]}`;
+
     toast.classList.remove('opacity-0');
     toast.classList.add('opacity-100');
     if (_toastTimer) clearTimeout(_toastTimer);
@@ -353,7 +497,6 @@ import Sidebar from "../components/Sidebar.astro";
     }, 3000);
   }
 
-  // ── Fisher-Yates shuffle ──────────────────────────────────────────────────
   function shuffleArray<T>(arr: T[]): T[] {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
@@ -363,80 +506,100 @@ import Sidebar from "../components/Sidebar.astro";
     return a;
   }
 
-  // ── Play All button ───────────────────────────────────────────────────────
   document.getElementById('btn-play-all')?.addEventListener('click', () => {
-    if (!_tracks.length) {
-      showToast('Bạn chưa có bài hát yêu thích nào để phát.');
-      return;
-    }
-    // Play in order; disable shuffle if it was on
+    const list = getDisplayTracks();
+    if (!list.length) { showToast('No songs to play.', 'info'); return; }
     if (player.shuffle) player.toggleShuffle();
-    player.playSong(_tracks[0], _tracks);
+    player.playSong(list[0], list);
   });
 
-  // ── Shuffle Play button ───────────────────────────────────────────────────
   document.getElementById('btn-shuffle-play')?.addEventListener('click', () => {
-    if (!_tracks.length) {
-      showToast('Bạn chưa có bài hát yêu thích nào để phát.');
-      return;
-    }
-    // Pre-shuffle the queue so player cycles through all songs without repeats
-    const shuffled = shuffleArray(_tracks);
+    const list = getDisplayTracks();
+    if (!list.length) { showToast('No songs to play.', 'info'); return; }
+    const shuffled = shuffleArray(list);
     player.playSong(shuffled[0], shuffled);
   });
 
-  // ── Refresh when a favorite changes in another component ─────────────────
   window.addEventListener('favorites:changed', (e: any) => {
     const { songId, isFavorite } = e.detail;
     if (!isFavorite) {
       _tracks = _tracks.filter((t: any) => t.id !== songId);
-      updateStats();
-      renderTracks();
+      render();
+    } else {
+      loadFavorites();
     }
   });
 
   loadFavorites();
 
-  // ── Search ────────────────────────────────────────────────────────────────
   const searchInput = document.getElementById('liked-search') as HTMLInputElement;
   const searchClear = document.getElementById('liked-search-clear') as HTMLElement;
+  let _searchDebounce: ReturnType<typeof setTimeout> | null = null;
 
   searchInput?.addEventListener('input', () => {
-    _searchQuery = searchInput.value.trim();
-    searchClear?.classList.toggle('hidden', !_searchQuery);
-    renderTracks();
+    const val = searchInput.value.trim();
+    searchClear?.classList.toggle('hidden', !val);
+    if (_searchDebounce) clearTimeout(_searchDebounce);
+    _searchDebounce = setTimeout(() => {
+      _searchQuery = val;
+      render();
+    }, 250);
   });
 
   searchClear?.addEventListener('click', () => {
     searchInput.value = '';
     _searchQuery = '';
+    if (_searchDebounce) clearTimeout(_searchDebounce);
     searchClear.classList.add('hidden');
-    renderTracks();
+    render();
     searchInput.focus();
   });
 
-  // ── Sort dropdown ─────────────────────────────────────────────────────────
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    const active = document.activeElement as HTMLElement;
+    const inInput = active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA';
+
+    if (e.key === '/' && !inInput) {
+      e.preventDefault();
+      searchInput?.focus();
+      searchInput?.select();
+    }
+    if (e.key === 'Escape' && active === searchInput) {
+      searchClear?.click();
+    }
+  });
+
   const sortBtn   = document.getElementById('liked-sort-btn') as HTMLButtonElement;
   const sortMenu  = document.getElementById('liked-sort-menu') as HTMLElement;
   const sortLabel = document.getElementById('liked-sort-label') as HTMLElement;
 
+  function syncSortUI() {
+    if (sortLabel) sortLabel.textContent = SORT_LABELS[_sortKey] ?? _sortKey;
+    document.querySelectorAll<HTMLElement>('.sort-check').forEach((icon) => {
+      icon.style.color = icon.dataset.for === _sortKey ? 'rgb(192 132 252)' : 'transparent';
+    });
+  }
+  syncSortUI();
   sortBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
+    const willOpen = sortMenu?.classList.contains('hidden');
     sortMenu?.classList.toggle('hidden');
+    sortBtn.setAttribute('aria-expanded', String(willOpen));
   });
 
-  document.addEventListener('click', () => sortMenu?.classList.add('hidden'));
+  document.addEventListener('click', () => {
+    sortMenu?.classList.add('hidden');
+    sortBtn?.setAttribute('aria-expanded', 'false');
+  });
 
   document.querySelectorAll<HTMLElement>('.liked-sort-option').forEach((btn) => {
     btn.addEventListener('click', () => {
       _sortKey = btn.dataset.sort!;
-      if (sortLabel) sortLabel.textContent = SORT_LABELS[_sortKey] ?? _sortKey;
-      // Update checkmarks
-      document.querySelectorAll<HTMLElement>('.sort-check').forEach((icon) => {
-        icon.style.color = icon.dataset.for === _sortKey ? 'rgb(192 132 252)' : 'transparent';
-      });
+      localStorage.setItem('liked_sort', _sortKey);
+      syncSortUI();
       sortMenu?.classList.add('hidden');
-      renderTracks();
+      sortBtn?.setAttribute('aria-expanded', 'false');
+      render();
     });
   });
 </script>

@@ -18,6 +18,7 @@ import streamRoutes from './routes/stream.js';
 import subscriptionRoutes from './routes/subscriptions.js';
 import adminRoutes from './routes/admin.js';
 import roleRoutes from './routes/roles.js';
+import studioRoutes from './routes/studio.js';
 
 const app = express();
 
@@ -28,9 +29,19 @@ testConnection();
 (async () => {
   const migrations = [
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
+    `ALTER TABLE artists ADD COLUMN IF NOT EXISTS cover_url VARCHAR(500)`,
     `ALTER TABLE albums   ALTER COLUMN artist_id DROP NOT NULL`,
     // Unique constraint required for ON CONFLICT (user_id) upsert to work
     `CREATE UNIQUE INDEX IF NOT EXISTS artists_user_id_unique ON artists (user_id) WHERE user_id IS NOT NULL`,
+    // Artist follows table
+    `CREATE TABLE IF NOT EXISTS artist_follows (
+       user_id   INT NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
+       artist_id INT NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
+       created_at TIMESTAMPTZ DEFAULT NOW(),
+       PRIMARY KEY (user_id, artist_id)
+     )`,
+    `CREATE INDEX IF NOT EXISTS idx_artist_follows_artist ON artist_follows(artist_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_artist_follows_user   ON artist_follows(user_id)`,
   ];
   for (const sql of migrations) {
     try { await pool.query(sql); } catch (e) { console.warn('Auto-migration note:', e.message); }
@@ -73,6 +84,7 @@ app.use('/api/stream', streamRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/studio', studioRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

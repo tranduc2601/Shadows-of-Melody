@@ -1,4 +1,4 @@
-export const API_BASE = 'http://localhost:5000/api';
+export const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://localhost:5000/api';
 
 export function getToken() {
   return localStorage.getItem('auth_token');

@@ -5,7 +5,6 @@ import MainLayout from "../layouts/MainLayout.astro";
 <MainLayout title="Đăng Nhập - Shadows of Melody">
   <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-      <!-- Logo -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 flex items-center justify-center gap-2 mb-2">
           <span class="material-symbols-outlined text-purple-400">music_note</span>
@@ -14,12 +13,10 @@ import MainLayout from "../layouts/MainLayout.astro";
         <p class="text-gray-400 text-sm">Discover amazing music</p>
       </div>
 
-      <!-- Login Form -->
       <div class="bg-[#0a1229]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
         <h2 class="text-2xl font-bold mb-6 text-center text-white">Login</h2>
 
         <form id="loginForm" class="space-y-5">
-          <!-- Email Input -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
               Email
@@ -34,7 +31,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             />
           </div>
 
-          <!-- Password Input -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
               Password
@@ -59,7 +55,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             </div>
           </div>
 
-          <!-- Remember Me & Forgot Password -->
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center gap-2 cursor-pointer">
               <input
@@ -74,15 +69,12 @@ import MainLayout from "../layouts/MainLayout.astro";
             </a>
           </div>
 
-          <!-- Error message -->
           <div id="loginError" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
-          <!-- Session banner (shown when redirected from expired session) -->
           <div id="sessionBanner" class="hidden bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">timer_off</span>
             Your session has expired. Please log in again.
           </div>
 
-          <!-- Login Button -->
           <button
             type="submit"
             id="loginBtn"
@@ -92,14 +84,12 @@ import MainLayout from "../layouts/MainLayout.astro";
           </button>
         </form>
 
-        <!-- Divider -->
         <div class="my-6 flex items-center">
           <div class="flex-1 h-px bg-white/10"></div>
           <span class="px-4 text-gray-500 text-sm">OR</span>
           <div class="flex-1 h-px bg-white/10"></div>
         </div>
 
-        <!-- Google Login -->
         <button
           class="w-full py-3 bg-[#1a2847] border border-white/10 text-gray-300 font-medium rounded-lg hover:bg-[#233d5d] transition-all duration-200 flex items-center justify-center gap-2"
         >
@@ -109,7 +99,6 @@ import MainLayout from "../layouts/MainLayout.astro";
           Login with Google
         </button>
 
-        <!-- Sign Up Link -->
         <p class="text-center text-gray-400 text-sm mt-6">
           Don't have an account?
           <a href="/signup" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
@@ -118,7 +107,6 @@ import MainLayout from "../layouts/MainLayout.astro";
         </p>
       </div>
 
-      <!-- Footer -->
       <p class="text-center text-gray-500 text-xs mt-6">
         By logging in, you agree to the 
         <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Terms of Service</a>
@@ -128,8 +116,9 @@ import MainLayout from "../layouts/MainLayout.astro";
     </div>
   </div>
 
-
 <script>
+  import { API_BASE } from '../lib/api.js';
+
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -153,11 +142,9 @@ import MainLayout from "../layouts/MainLayout.astro";
   const banner  = document.getElementById('sessionBanner') as HTMLElement;
   const btn     = document.getElementById('loginBtn') as HTMLButtonElement;
 
-  // Show session-expired banner if redirected with ?reason=session_expired
   const reason = new URLSearchParams(window.location.search).get('reason');
   if (reason === 'session_expired' && banner) banner.classList.remove('hidden');
 
-  // Password show/hide toggle
   const togglePwdBtn  = document.getElementById('toggle-password') as HTMLButtonElement;
   const togglePwdIcon = document.getElementById('toggle-password-icon') as HTMLElement;
   const pwdInput      = document.getElementById('password') as HTMLInputElement;
@@ -167,7 +154,6 @@ import MainLayout from "../layouts/MainLayout.astro";
     togglePwdIcon.textContent = hidden ? 'visibility_off' : 'visibility';
   });
 
-  // If already logged in with a valid token, skip the login page
   const existingToken = localStorage.getItem('auth_token');
   if (existingToken && reason !== 'session_expired') {
     window.location.href = '/';
@@ -183,7 +169,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     btn.textContent = 'Logging in...';
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

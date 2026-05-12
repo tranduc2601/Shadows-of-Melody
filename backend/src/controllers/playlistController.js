@@ -4,8 +4,8 @@ import { uploadToCloudinary } from '../utils/cloudinaryStorage.js';
 
 export const getAllPlaylists = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const page  = Math.max(1, parseInt(req.query.page)  || 1);
+        const limit = Math.min(100, parseInt(req.query.limit) || 20);
         const offset = (page - 1) * limit;
         const userId = req.user.id;
 
@@ -14,17 +14,11 @@ export const getAllPlaylists = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: playlists,
-            pagination: {
-                page,
-                limit,
-            },
+            meta: { totalItems: playlists.length, totalPages: 1, currentPage: page, limit },
         });
     } catch (error) {
         console.error('GetAllPlaylists error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch playlists',
-        });
+        return res.status(500).json({ success: false, message: 'Failed to fetch playlists' });
     }
 };
 

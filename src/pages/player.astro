@@ -1,251 +1,664 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-const queue = [
-  { id: 1, title: "Midnight City", artist: "M83", duration: "4:03", cover: "bg-gradient-to-br from-indigo-500 to-purple-500", active: true },
-  { id: 2, title: "Starboy", artist: "The Weeknd", duration: "3:50", cover: "bg-gradient-to-br from-rose-500 to-orange-500", active: false },
-  { id: 3, title: "Levitating", artist: "Dua Lipa", duration: "3:23", cover: "bg-gradient-to-br from-pink-500 to-violet-500", active: false },
-  { id: 4, title: "Blinding Lights", artist: "The Weeknd", duration: "3:20", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500", active: false },
-  { id: 5, title: "Save Your Tears", artist: "The Weeknd", duration: "3:35", cover: "bg-gradient-to-br from-blue-500 to-cyan-500", active: false },
-  { id: 6, title: "Neon Blade", artist: "Synthwave Vibes", duration: "4:12", cover: "bg-gradient-to-br from-cyan-500 to-emerald-500", active: false },
-];
-
-const lyrics = [
-  { time: "0:00", text: "♪ Intro ♪", active: false },
-  { time: "0:17", text: "Waiting in a car", active: false },
-  { time: "0:25", text: "Waiting for a ride in the dark", active: false },
-  { time: "0:38", text: "The night city grows", active: false },
-  { time: "0:46", text: "Look and see her eyes, they glow", active: false },
-  { time: "1:00", text: "Waiting in a car", active: false },
-  { time: "1:08", text: "Waiting for a ride in the dark", active: true },
-  { time: "1:20", text: "Heading for the top", active: false },
-  { time: "1:28", text: "No we can't stop", active: false },
-  { time: "1:40", text: "We're gonna ride the stars tonight", active: false },
-  { time: "1:55", text: "Hey! Midnight City...", active: false },
-];
+import Sidebar from "../components/Sidebar.astro";
 ---
 
-<MainLayout title="Player - Shadows of Melody">
+<MainLayout title="Now Playing - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
-    <!-- Sidebar -->
-    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Melody
-        </a>
-      </div>
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
-          </a>
-        </nav>
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <a href="#" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined text-rose-400">favorite</span>Liked Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-        </nav>
-      </div>
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors">
-          <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5">
-            <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
-              <span class="material-symbols-outlined text-purple-400">person</span>
-            </div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
-            <p class="text-xs text-purple-400 font-medium">Premium</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <Sidebar currentPage="" />
 
-    <!-- Main Content: Three-panel layout -->
     <main class="flex-1 flex overflow-hidden">
 
-      <!-- CENTER: Player -->
-      <div class="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#0a0d1a] relative overflow-hidden px-8">
-        <!-- Ambient Glow -->
-        <div class="absolute w-125 h-125 bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute w-75 h-75 bg-purple-600/15 blur-[100px] rounded-full pointer-events-none top-1/4 left-1/3"></div>
+      <div class="flex-1 flex flex-col items-center justify-center relative overflow-hidden px-6 sm:px-10
+                  bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#0a0d1a]">
 
-        <div class="relative z-10 flex flex-col items-center w-full max-w-sm">
-          <!-- Album Art -->
-          <div class="w-72 h-72 rounded-3xl bg-linear-to-br from-indigo-500 to-purple-600 shadow-2xl shadow-indigo-500/40 mb-8 relative group hover:scale-105 transition-transform duration-500">
-            <!-- Vinyl record effect -->
-            <div class="absolute -right-6 top-1/2 -translate-y-1/2 w-60 h-60 rounded-full border-4 border-white/5 bg-linear-to-br from-gray-900 to-black opacity-0 group-hover:opacity-100 transition-opacity blur-sm"></div>
-            <!-- Note overlay -->
-            <div class="absolute inset-0 flex items-center justify-center opacity-20">
-              <span class="material-symbols-outlined text-white" style="font-size: 8rem;">music_note</span>
-            </div>
+        <div id="amb-glow"
+             class="absolute w-[520px] h-[520px] blur-[160px] rounded-full pointer-events-none
+                    top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                    bg-indigo-600/20 transition-colors duration-1000"
+             aria-hidden="true"></div>
+
+        <div id="player-empty" class="relative z-10 flex flex-col items-center gap-4 text-center">
+          <div class="w-52 h-52 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mb-2">
+            <span class="material-symbols-outlined text-[80px] text-white/20" aria-hidden="true">music_note</span>
+          </div>
+          <p class="text-gray-300 text-xl font-semibold">Nothing playing</p>
+          <p class="text-gray-600 text-sm">
+            Go to <a href="/search" class="text-purple-400 hover:text-purple-300 transition-colors">Search</a> or
+            <a href="/liked" class="text-purple-400 hover:text-purple-300 transition-colors">Liked Songs</a> to start listening
+          </p>
+        </div>
+
+        <div id="player-ui" class="hidden relative z-10 flex-col items-center w-full max-w-sm">
+
+          <div id="album-art"
+               class="w-64 h-64 sm:w-72 sm:h-72 rounded-3xl shadow-2xl shadow-indigo-500/30 mb-8
+                      relative overflow-hidden flex items-center justify-center
+                      bg-gradient-to-br from-indigo-500 to-purple-600
+                      hover:scale-[1.02] transition-transform duration-500"
+               aria-label="Album art">
+            <span id="album-art-icon"
+                  class="material-symbols-outlined text-[80px] text-white/20"
+                  aria-hidden="true">music_note</span>
           </div>
 
-          <!-- Track Info -->
-          <div class="text-center w-full mb-6">
-            <div class="flex items-center justify-between mb-1">
-              <div class="text-left">
-                <h2 class="text-2xl font-black text-white">Midnight City</h2>
-                <p class="text-gray-400">M83 · Hurry Up, We're Dreaming</p>
+          <div class="w-full mb-5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <h2 id="player-title" class="text-2xl font-black text-white truncate leading-tight">—</h2>
+                <p  id="player-artist" class="text-gray-400 text-sm mt-1 truncate">—</p>
               </div>
-              <button id="likeBtn" class="w-10 h-10 flex items-center justify-center hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-gray-400 hover:text-rose-400 transition-colors text-3xl">favorite_border</span>
+              <button id="fav-btn" type="button" aria-label="Yêu thích"
+                      class="w-10 h-10 flex items-center justify-center text-gray-400
+                             hover:text-rose-400 hover:scale-110 transition-all shrink-0 mt-0.5">
+                <span class="material-symbols-outlined text-[28px]">favorite_border</span>
               </button>
             </div>
           </div>
 
-          <!-- Progress Bar -->
-          <div class="w-full mb-4">
-            <div class="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group relative mb-2">
-              <div class="h-full w-[34%] bg-linear-to-r from-purple-500 to-indigo-500 rounded-full relative">
-                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="w-full mb-5">
+            <div id="seek-bar" role="slider" aria-label="Tiến độ phát" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+                 class="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group/seek relative mb-2
+                        hover:h-2 transition-[height] duration-150">
+              <div id="seek-progress"
+                   class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-indigo-400
+                          rounded-full pointer-events-none transition-[width] duration-75"
+                   style="width:0%">
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full
+                            shadow-lg opacity-0 group-hover/seek:opacity-100 transition-opacity"></div>
               </div>
             </div>
-            <div class="flex justify-between text-xs text-gray-500">
-              <span>1:22</span>
-              <span>4:03</span>
+            <div class="flex justify-between text-xs text-gray-500 tabular-nums select-none">
+              <span id="cur-time">0:00</span>
+              <span id="tot-time">0:00</span>
             </div>
           </div>
 
-          <!-- Controls -->
           <div class="flex items-center justify-between w-full mb-6">
-            <button class="p-2 text-gray-400 hover:text-white transition-colors">
-              <span class="material-symbols-outlined">shuffle</span>
+            <button id="ctrl-shuffle" type="button" aria-label="Ngẫu nhiên" aria-pressed="false"
+                    class="p-2 text-gray-500 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                    title="Ngẫu nhiên (S)">
+              <span class="material-symbols-outlined text-[22px]">shuffle</span>
             </button>
-            <button class="p-2 text-gray-300 hover:text-white transition-colors">
-              <span class="material-symbols-outlined text-4xl">skip_previous</span>
+
+            <button id="ctrl-prev" type="button" aria-label="Bài trước (P)"
+                    class="p-2 text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+              <span class="material-symbols-outlined text-[42px]">skip_previous</span>
             </button>
-            <button id="playBtn" class="w-16 h-16 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 flex items-center justify-center hover:scale-110 transition-all shadow-2xl shadow-purple-500/40">
-              <span class="material-symbols-outlined text-white text-4xl">play_arrow</span>
+
+            <button id="ctrl-play" type="button" aria-label="Phát (Space)"
+                    class="w-16 h-16 rounded-full flex items-center justify-center
+                           bg-gradient-to-r from-purple-600 to-indigo-600
+                           hover:from-purple-500 hover:to-indigo-500
+                           hover:scale-110 active:scale-95 transition-all
+                           shadow-2xl shadow-purple-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-400">
+              <span class="material-symbols-outlined text-white text-[42px]">play_arrow</span>
             </button>
-            <button class="p-2 text-gray-300 hover:text-white transition-colors">
-              <span class="material-symbols-outlined text-4xl">skip_next</span>
+
+            <button id="ctrl-next" type="button" aria-label="Bài tiếp (N)"
+                    class="p-2 text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+              <span class="material-symbols-outlined text-[42px]">skip_next</span>
             </button>
-            <button class="p-2 text-gray-400 hover:text-white transition-colors">
-              <span class="material-symbols-outlined">repeat</span>
+
+            <button id="ctrl-repeat" type="button" aria-label="Lặp lại" aria-pressed="false"
+                    class="p-2 text-gray-500 hover:text-white transition-colors rounded-lg hover:bg-white/5 relative"
+                    title="Lặp lại">
+              <span class="material-symbols-outlined text-[22px]">repeat</span>
+              <span id="repeat-dot"
+                    class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full
+                           bg-purple-400 opacity-0 transition-opacity"></span>
             </button>
           </div>
 
-          <!-- Volume & Extra Controls -->
           <div class="flex items-center gap-3 w-full">
-            <span class="material-symbols-outlined text-gray-500 text-lg">volume_down</span>
-            <div class="flex-1 h-1 bg-white/10 rounded-full cursor-pointer">
-              <div class="w-3/4 h-full bg-white/50 rounded-full"></div>
+            <button id="vol-btn" type="button" aria-label="Bật/tắt âm thanh"
+                    class="text-gray-500 hover:text-white transition-colors shrink-0">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+            <div id="vol-track" role="slider" aria-label="Âm lượng" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"
+                 class="flex-1 h-1 bg-white/10 rounded-full cursor-pointer hover:h-1.5 transition-[height] duration-150 relative">
+              <div id="vol-bar"
+                   class="h-full bg-white/60 hover:bg-purple-400 transition-colors rounded-full pointer-events-none"
+                   style="width:75%"></div>
             </div>
-            <span class="material-symbols-outlined text-gray-500 text-lg">volume_up</span>
-            <button class="ml-2 p-1.5 text-gray-400 hover:text-white transition-colors">
-              <span class="material-symbols-outlined text-lg">queue_music</span>
-            </button>
-            <button class="p-1.5 text-gray-400 hover:text-white transition-colors">
-              <span class="material-symbols-outlined text-lg">lyrics</span>
+            <button id="btn-queue-mobile" type="button"
+                    aria-label="Danh sách phát" title="Danh sách phát"
+                    class="xl:hidden p-1.5 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+              <span class="material-symbols-outlined text-xl">queue_music</span>
             </button>
           </div>
+
+          <p class="hidden lg:block mt-6 text-[11px] text-gray-700 text-center select-none">
+            Space&nbsp;·&nbsp;play/pause&nbsp;&nbsp;←/→&nbsp;·&nbsp;seek 10s&nbsp;&nbsp;↑/↓&nbsp;·&nbsp;volume&nbsp;&nbsp;N&nbsp;·&nbsp;next&nbsp;&nbsp;P&nbsp;·&nbsp;prev
+          </p>
         </div>
       </div>
 
-      <!-- RIGHT PANEL: Tabs (Queue / Lyrics) -->
-      <div class="w-80 shrink-0 border-l border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden xl:flex xl:flex-col">
-        <!-- Panel Tabs -->
-        <div class="flex border-b border-white/5 shrink-0">
-          <button id="tabQueue" class="flex-1 py-4 text-sm font-semibold text-white border-b-2 border-purple-500 transition-all">Danh sách phát</button>
-          <button id="tabLyrics" class="flex-1 py-4 text-sm font-semibold text-gray-400 border-b-2 border-transparent hover:text-white transition-all">Lời bài hát</button>
+      <aside class="w-80 shrink-0 border-l border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden xl:flex xl:flex-col">
+        <div class="flex border-b border-white/5 shrink-0" role="tablist">
+          <button id="tab-queue" role="tab" aria-selected="true"
+                  class="flex-1 py-4 text-sm font-semibold text-white border-b-2 border-purple-500 transition-all">
+            Danh sách phát
+          </button>
+          <button id="tab-lyrics" role="tab" aria-selected="false"
+                  class="flex-1 py-4 text-sm font-semibold text-gray-400 border-b-2 border-transparent hover:text-white transition-all">
+            Lời bài hát
+          </button>
         </div>
 
-        <!-- QUEUE Panel -->
-        <div id="panelQueue" class="flex-1 overflow-y-auto py-4 px-3">
+        <div id="panel-queue" role="tabpanel" class="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar">
           <p class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 mb-3">Đang phát tiếp</p>
-          <div class="space-y-1">
-            {queue.map((track, i) => (
-              <div class={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all group ${track.active ? "bg-purple-500/20 border border-purple-500/30" : "hover:bg-white/5"}`}>
-                <div class={`w-10 h-10 rounded-lg ${track.cover} shrink-0 relative`}>
-                  {track.active && (
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
-                      <span class="material-symbols-outlined text-white text-sm">graphic_eq</span>
-                    </div>
-                  )}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class={`text-sm font-medium truncate ${track.active ? "text-purple-300" : "text-white"}`}>{track.title}</p>
-                  <p class="text-gray-500 text-xs truncate">{track.artist}</p>
-                </div>
-                <span class="text-gray-500 text-xs">{track.duration}</span>
-              </div>
-            ))}
+          <div id="queue-list" class="space-y-1">
+            <p class="px-3 py-10 text-sm text-gray-600 text-center">Chưa có bài hát nào trong hàng đợi</p>
           </div>
         </div>
 
-        <!-- LYRICS Panel (hidden by default) -->
-        <div id="panelLyrics" class="flex-1 overflow-y-auto py-6 px-6 hidden">
-          <div class="space-y-6 text-center">
-            {lyrics.map(line => (
-              <div class={`transition-all duration-300 ${line.active ? "text-white text-xl font-bold scale-105" : "text-gray-600 text-base hover:text-gray-400"}`}>
-                {line.text}
-              </div>
-            ))}
+        <div id="panel-lyrics" role="tabpanel" class="hidden flex-1 overflow-y-auto py-8 px-6 custom-scrollbar">
+          <div id="lyrics-content" class="space-y-6 text-center">
+            <div class="flex flex-col items-center gap-3 py-10 text-gray-600">
+              <span class="material-symbols-outlined text-[48px]" aria-hidden="true">lyrics</span>
+              <p class="text-sm font-medium">Không có lời bài hát</p>
+              <p class="text-xs text-gray-700">Lời bài hát chưa được hỗ trợ</p>
+            </div>
           </div>
         </div>
+      </aside>
+
+      <div id="mobile-drawer"
+           class="xl:hidden hidden fixed inset-x-0 bottom-0 z-[200]
+                  bg-[#0b1530]/95 backdrop-blur-xl rounded-t-2xl border-t border-white/10
+                  max-h-[65vh] flex-col shadow-2xl">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
+          <p class="text-sm font-bold text-white uppercase tracking-wider">Danh sách phát</p>
+          <button id="mobile-drawer-close" type="button" aria-label="Đóng"
+                  class="text-gray-400 hover:text-white transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div id="mobile-queue-list" class="flex-1 overflow-y-auto py-3 px-3 space-y-1 custom-scrollbar">
+          <p class="px-3 py-8 text-sm text-gray-600 text-center">Chưa có bài hát nào</p>
+        </div>
       </div>
+      <div id="mobile-drawer-bg"
+           class="xl:hidden hidden fixed inset-0 z-[199] bg-black/60 backdrop-blur-sm"></div>
+
     </main>
   </div>
 
-  <script>
-    // Toggle play button
-    const playBtn = document.getElementById('playBtn');
-    let isPlaying = false;
-    playBtn?.addEventListener('click', () => {
-      isPlaying = !isPlaying;
-      const icon = playBtn.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = isPlaying ? 'pause' : 'play_arrow';
-    });
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
 
-    // Toggle like button
-    const likeBtn = document.getElementById('likeBtn');
-    let isLiked = false;
-    likeBtn?.addEventListener('click', () => {
-      isLiked = !isLiked;
-      const icon = likeBtn.querySelector('.material-symbols-outlined');
+  <script>
+    import { player } from '../lib/player.js';
+    import { apiFetch, API_BASE, colorFor } from '../lib/api.js';
+
+    player.restoreState();
+
+    const playerEmpty  = document.getElementById('player-empty')!;
+    const playerUI     = document.getElementById('player-ui')!;
+    const albumArt     = document.getElementById('album-art')!;
+    const albumArtIcon = document.getElementById('album-art-icon')!;
+    const ambGlow      = document.getElementById('amb-glow')!;
+    const playerTitle  = document.getElementById('player-title')!;
+    const playerArtist = document.getElementById('player-artist')!;
+    const favBtn       = document.getElementById('fav-btn')!;
+    const seekBar      = document.getElementById('seek-bar')!;
+    const seekProgress = document.getElementById('seek-progress')!;
+    const curTime      = document.getElementById('cur-time')!;
+    const totTime      = document.getElementById('tot-time')!;
+    const ctrlPlay     = document.getElementById('ctrl-play')!;
+    const ctrlPrev     = document.getElementById('ctrl-prev')!;
+    const ctrlNext     = document.getElementById('ctrl-next')!;
+    const ctrlShuffle  = document.getElementById('ctrl-shuffle')!;
+    const ctrlRepeat   = document.getElementById('ctrl-repeat')!;
+    const repeatDot    = document.getElementById('repeat-dot')!;
+    const volBtn       = document.getElementById('vol-btn')!;
+    const volTrack     = document.getElementById('vol-track')!;
+    const volBar       = document.getElementById('vol-bar')!;
+    const queueList    = document.getElementById('queue-list')!;
+    const mobileQList  = document.getElementById('mobile-queue-list')!;
+    const tabQueue     = document.getElementById('tab-queue')!;
+    const tabLyrics    = document.getElementById('tab-lyrics')!;
+    const panelQueue   = document.getElementById('panel-queue')!;
+    const panelLyrics  = document.getElementById('panel-lyrics')!;
+    const mobileDrawer = document.getElementById('mobile-drawer')!;
+    const mobileDrawerBg = document.getElementById('mobile-drawer-bg')!;
+    const btnQueueMobile = document.getElementById('btn-queue-mobile')!;
+    const mobileClose  = document.getElementById('mobile-drawer-close')!;
+
+    function fmt(sec: number) {
+      const s = Math.floor(sec) || 0;
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function esc(str: unknown): string {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function getAudioDur(): number {
+      const d = player.duration;
+      return (isFinite(d) && d > 0) ? d : (player.current?.duration ?? 0);
+    }
+
+    function showPlayerUI() {
+      playerEmpty.classList.add('hidden');
+      playerUI.classList.remove('hidden');
+      playerUI.classList.add('flex');
+    }
+
+    function showEmptyState() {
+      playerUI.classList.add('hidden');
+      playerUI.classList.remove('flex');
+      playerEmpty.classList.remove('hidden');
+    }
+
+    function applySong(song: any) {
+      playerTitle.textContent  = song.title       || '—';
+      playerArtist.textContent = song.artist_names || '—';
+      totTime.textContent = fmt(song.duration ?? 0);
+      seekProgress.style.width = '0%';
+      curTime.textContent = '0:00';
+      seekBar.setAttribute('aria-valuenow', '0');
+
+      albumArt.querySelectorAll('img').forEach(el => el.remove());
+      if (song.cover_url) {
+        albumArtIcon.classList.add('hidden');
+        const img = document.createElement('img');
+        img.src       = song.cover_url;
+        img.alt       = `${song.title} cover`;
+        img.className = 'absolute inset-0 w-full h-full object-cover';
+        albumArt.appendChild(img);
+        albumArt.style.background = '';
+      } else {
+        albumArtIcon.classList.remove('hidden');
+        albumArt.style.background = colorFor(song.id);
+      }
+    }
+
+    function updatePlayBtn(playing: boolean) {
+      const icon = ctrlPlay.querySelector('.material-symbols-outlined') as HTMLElement;
+      if (icon) icon.textContent = playing ? 'pause' : 'play_arrow';
+      ctrlPlay.setAttribute('aria-label', playing ? 'Dừng (Space)' : 'Phát (Space)');
+    }
+
+    function queueItemHTML(s: any, isCurrent: boolean, idx: number): string {
+      const cover = s.cover_url
+        ? `<img src="${esc(s.cover_url)}" class="w-full h-full object-cover" alt="" loading="lazy"/>`
+        : '';
+      const activeClass = isCurrent
+        ? 'bg-purple-500/20 border border-purple-500/30'
+        : 'hover:bg-white/5';
+      const titleColor = isCurrent ? 'text-purple-300' : 'text-white group-hover:text-purple-300';
+      const nowPlaying = isCurrent
+        ? `<div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+             <span class="material-symbols-outlined text-white text-sm" aria-hidden="true">graphic_eq</span>
+           </div>`
+        : '';
+      return `
+        <div class="queue-item flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all group ${activeClass}"
+             data-queue-idx="${idx}" role="button" tabindex="0"
+             aria-label="Phát ${esc(s.title)}${isCurrent ? ' (đang phát)' : ''}">
+          <div class="w-10 h-10 rounded-lg shrink-0 relative overflow-hidden"
+               style="background:${colorFor(s.id)}">${cover}${nowPlaying}</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium truncate transition-colors ${titleColor}">${esc(s.title)}</p>
+            <p class="text-gray-500 text-xs truncate mt-0.5">${esc(s.artist_names || 'Unknown')}</p>
+          </div>
+          <span class="text-gray-500 text-xs tabular-nums shrink-0">${fmt(s.duration)}</span>
+        </div>`;
+    }
+
+    function renderQueue() {
+      const q: any[] = player.queue || [];
+      const idx = player.queueIndex;
+      if (!q.length) {
+        const empty = '<p class="px-3 py-10 text-sm text-gray-600 text-center">Chưa có bài hát nào trong hàng đợi</p>';
+        queueList.innerHTML  = empty;
+        mobileQList.innerHTML = empty;
+        return;
+      }
+      const html = q.map((s: any, i: number) => queueItemHTML(s, i === idx, i)).join('');
+      queueList.innerHTML   = html;
+      mobileQList.innerHTML = html;
+
+      const curr = queueList.querySelector('[data-queue-idx="' + idx + '"]') as HTMLElement | null;
+      curr?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    function handleQueueClick(e: MouseEvent) {
+      const item = (e.target as HTMLElement).closest('.queue-item') as HTMLElement | null;
+      if (!item) return;
+      const idx = Number(item.dataset.queueIdx);
+      const q: any[] = player.queue || [];
+      if (q[idx]) player.playSong(q[idx], q);
+    }
+    queueList.addEventListener('click',  handleQueueClick);
+    mobileQList.addEventListener('click', handleQueueClick);
+
+    function handleQueueKeydown(e: KeyboardEvent) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      (e.target as HTMLElement).closest('.queue-item')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }
+    queueList.addEventListener('keydown',  handleQueueKeydown);
+    mobileQList.addEventListener('keydown', handleQueueKeydown);
+
+    function setFavUI(isFav: boolean) {
+      const icon = favBtn.querySelector('.material-symbols-outlined') as HTMLElement;
       if (icon) {
-        icon.textContent = isLiked ? 'favorite' : 'favorite_border';
-        icon.classList.toggle('text-rose-400', isLiked);
-        icon.classList.toggle('text-gray-400', !isLiked);
+        icon.textContent = isFav ? 'favorite' : 'favorite_border';
+        icon.style.fontVariationSettings = isFav ? "'FILL' 1" : "'FILL' 0";
+      }
+      favBtn.classList.toggle('text-rose-400', isFav);
+      favBtn.classList.toggle('text-gray-400', !isFav);
+      favBtn.setAttribute('aria-label', isFav ? 'Bỏ yêu thích' : 'Yêu thích');
+    }
+
+    async function checkFavoriteStatus(songId: number) {
+      const token = localStorage.getItem('auth_token');
+      if (!token) { setFavUI(false); return; }
+      try {
+        const res = await apiFetch(`/favorites/${songId}/is-favorite`);
+        setFavUI(!!res.data?.isFavorite);
+      } catch { setFavUI(false); }
+    }
+
+    favBtn.addEventListener('click', async () => {
+      const song = player.current;
+      if (!song) return;
+      const token = localStorage.getItem('auth_token');
+      if (!token) { window.location.href = '/login'; return; }
+      const icon   = favBtn.querySelector('.material-symbols-outlined') as HTMLElement;
+      const isFav  = icon?.textContent === 'favorite';
+      setFavUI(!isFav); // optimistic
+      try {
+        if (isFav) {
+          await apiFetch(`/favorites/${song.id}`, { method: 'DELETE' });
+        } else {
+          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId: song.id }) });
+        }
+        window.dispatchEvent(new CustomEvent('favorites:changed', {
+          detail: { songId: song.id, isFavorite: !isFav },
+        }));
+      } catch {
+        setFavUI(isFav); // revert
       }
     });
 
-    // Switch tabs
-    const tabQueue = document.getElementById('tabQueue');
-    const tabLyrics = document.getElementById('tabLyrics');
-    const panelQueue = document.getElementById('panelQueue');
-    const panelLyrics = document.getElementById('panelLyrics');
-
-    tabQueue?.addEventListener('click', () => {
-      tabQueue.classList.add('text-white', 'border-purple-500');
-      tabQueue.classList.remove('text-gray-400', 'border-transparent');
-      tabLyrics?.classList.add('text-gray-400', 'border-transparent');
-      tabLyrics?.classList.remove('text-white', 'border-purple-500');
-      panelQueue?.classList.remove('hidden');
-      panelLyrics?.classList.add('hidden');
+    window.addEventListener('favorites:changed', (e: any) => {
+      if (player.current?.id === e.detail.songId) setFavUI(e.detail.isFavorite);
     });
 
-    tabLyrics?.addEventListener('click', () => {
-      tabLyrics.classList.add('text-white', 'border-purple-500');
-      tabLyrics.classList.remove('text-gray-400', 'border-transparent');
-      tabQueue?.classList.add('text-gray-400', 'border-transparent');
-      tabQueue?.classList.remove('text-white', 'border-purple-500');
-      panelLyrics?.classList.remove('hidden');
-      panelQueue?.classList.add('hidden');
+    ctrlPlay.addEventListener('click',    () => player.toggle());
+    ctrlPrev.addEventListener('click',    () => player.prev());
+    ctrlNext.addEventListener('click',    () => player.next());
+
+    ctrlShuffle.addEventListener('click', () => {
+      const on = player.toggleShuffle();
+      ctrlShuffle.classList.toggle('text-purple-400', on);
+      ctrlShuffle.classList.toggle('text-gray-500',  !on);
+      ctrlShuffle.setAttribute('aria-pressed', String(on));
     });
+
+    ctrlRepeat.addEventListener('click', () => {
+      const mode  = player.cycleRepeat();
+      const icon  = ctrlRepeat.querySelector('.material-symbols-outlined') as HTMLElement;
+      const active = mode !== 'none';
+      ctrlRepeat.classList.toggle('text-purple-400', active);
+      ctrlRepeat.classList.toggle('text-gray-500',  !active);
+      ctrlRepeat.setAttribute('aria-pressed', String(active));
+      repeatDot.style.opacity = active ? '1' : '0';
+      if (icon) icon.textContent = mode === 'one' ? 'repeat_one' : 'repeat';
+    });
+
+    let _isDragging = false;
+    let _lastSec    = -1;
+    let _rafId      = 0;
+
+    function applySeekVisual(clientX: number): number {
+      const rect = seekBar.getBoundingClientRect();
+      const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      seekProgress.style.width = `${frac * 100}%`;
+      seekBar.setAttribute('aria-valuenow', String(Math.round(frac * 100)));
+      const dur = getAudioDur();
+      if (dur > 0) curTime.textContent = fmt(frac * dur);
+      return frac;
+    }
+
+    seekBar.addEventListener('mousedown', (e) => {
+      _isDragging = true;
+      applySeekVisual(e.clientX);
+      const onMove = (mv: MouseEvent) => applySeekVisual(mv.clientX);
+      const onUp   = (mv: MouseEvent) => {
+        _isDragging = false; _lastSec = -1;
+        player.seek(applySeekVisual(mv.clientX));
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup',   onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup',   onUp);
+    });
+
+    seekBar.addEventListener('touchstart', (e) => {
+      _isDragging = true;
+      applySeekVisual(e.touches[0].clientX);
+      const onMove = (mv: TouchEvent) => applySeekVisual(mv.touches[0].clientX);
+      const onEnd  = (mv: TouchEvent) => {
+        _isDragging = false; _lastSec = -1;
+        player.seek(applySeekVisual(mv.changedTouches[0].clientX));
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend',  onEnd);
+      };
+      window.addEventListener('touchmove', onMove, { passive: true });
+      window.addEventListener('touchend',  onEnd);
+    }, { passive: true });
+
+    function startRaf() {
+      cancelAnimationFrame(_rafId);
+      (function tick() {
+        if (!_isDragging) {
+          const dur = getAudioDur();
+          const cur = player.currentTime;
+          if (dur > 0) {
+            const sec = Math.floor(cur);
+            if (sec !== _lastSec) {
+              _lastSec = sec;
+              seekProgress.style.width = `${(cur / dur) * 100}%`;
+              curTime.textContent = fmt(sec);
+              seekBar.setAttribute('aria-valuenow', String(Math.round((cur / dur) * 100)));
+            }
+          }
+        }
+        _rafId = requestAnimationFrame(tick);
+      })();
+    }
+
+    function applyVolumeUI(v: number) {
+      volBar.style.width = `${v * 100}%`;
+      volTrack.setAttribute('aria-valuenow', String(Math.round(v * 100)));
+      const icon = volBtn.querySelector('.material-symbols-outlined') as HTMLElement;
+      if (icon) icon.textContent = v === 0 ? 'volume_off' : v < 0.5 ? 'volume_down' : 'volume_up';
+    }
+
+    volTrack.addEventListener('click', (e) => {
+      const rect = volTrack.getBoundingClientRect();
+      const v    = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      player.setVolume(v);
+      applyVolumeUI(v);
+    });
+
+    volBtn.addEventListener('click', () => {
+      const icon = volBtn.querySelector('.material-symbols-outlined') as HTMLElement;
+      if (icon?.textContent === 'volume_off') {
+        player.setVolume(0.75); applyVolumeUI(0.75);
+      } else {
+        player.setVolume(0); applyVolumeUI(0);
+      }
+    });
+
+    function setTab(tab: 'queue' | 'lyrics') {
+      const isQueue = tab === 'queue';
+      tabQueue.classList.toggle('text-white',        isQueue);
+      tabQueue.classList.toggle('border-purple-500', isQueue);
+      tabQueue.classList.toggle('text-gray-400',    !isQueue);
+      tabQueue.classList.toggle('border-transparent',!isQueue);
+      tabLyrics.classList.toggle('text-white',       !isQueue);
+      tabLyrics.classList.toggle('border-purple-500',!isQueue);
+      tabLyrics.classList.toggle('text-gray-400',    isQueue);
+      tabLyrics.classList.toggle('border-transparent',isQueue);
+      panelQueue.classList.toggle('hidden',  !isQueue);
+      panelLyrics.classList.toggle('hidden',  isQueue);
+      tabQueue.setAttribute('aria-selected',  String(isQueue));
+      tabLyrics.setAttribute('aria-selected', String(!isQueue));
+    }
+    tabQueue.addEventListener('click',  () => setTab('queue'));
+    tabLyrics.addEventListener('click', () => setTab('lyrics'));
+
+    function openDrawer() {
+      mobileDrawer.classList.remove('hidden');
+      mobileDrawer.classList.add('flex');
+      mobileDrawerBg.classList.remove('hidden');
+    }
+    function closeDrawer() {
+      mobileDrawer.classList.add('hidden');
+      mobileDrawer.classList.remove('flex');
+      mobileDrawerBg.classList.add('hidden');
+    }
+    btnQueueMobile.addEventListener('click', openDrawer);
+    mobileClose.addEventListener('click',    closeDrawer);
+    mobileDrawerBg.addEventListener('click', closeDrawer);
+
+    let _sessionSongId: number | null = null;
+    let _sessionStart:  number | null = null;
+
+    async function submitSession() {
+      if (!_sessionSongId || !_sessionStart) return;
+      const token = localStorage.getItem('auth_token');
+      if (!token) { _sessionSongId = null; _sessionStart = null; return; }
+      const dur = Math.round((Date.now() - _sessionStart) / 1000);
+      const sid = _sessionSongId;
+      _sessionSongId = null; _sessionStart = null;
+      try {
+        await apiFetch('/history/play-session', {
+          method: 'POST',
+          body: JSON.stringify({ song_id: sid, duration_played: dur }),
+        });
+      } catch {}
+    }
+
+    window.addEventListener('beforeunload', () => {
+      player.saveState();
+      if (!_sessionSongId || !_sessionStart) return;
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+      const dur = Math.round((Date.now() - _sessionStart) / 1000);
+      if (dur < 1) return;
+      fetch(`${API_BASE}/history/play-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ song_id: _sessionSongId, duration_played: dur }),
+        keepalive: true,
+      }).catch(() => {});
+    });
+
+    window.addEventListener('player:songchange', (e: any) => {
+      const song = e.detail.song;
+      if (!song) { showEmptyState(); return; }
+      showPlayerUI();
+      applySong(song);
+      updatePlayBtn(player.isPlaying);
+      startRaf();
+      setFavUI(false);
+      checkFavoriteStatus(song.id);
+      submitSession();
+      _sessionSongId = song.id;
+      _sessionStart  = Date.now();
+      renderQueue();
+    });
+
+    window.addEventListener('player:play', () => {
+      if (player.current && !_sessionStart) {
+        _sessionSongId = player.current.id;
+        _sessionStart  = Date.now();
+      }
+      updatePlayBtn(true);
+      startRaf();
+    });
+
+    window.addEventListener('player:pause', () => {
+      submitSession();
+      updatePlayBtn(false);
+    });
+
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      const tag = (document.activeElement as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      switch (e.key) {
+        case ' ':
+          e.preventDefault();
+          player.toggle();
+          break;
+        case 'ArrowRight': {
+          e.preventDefault();
+          const dur = getAudioDur();
+          if (dur > 0) player.seek(Math.min(1, (player.currentTime + 10) / dur));
+          break;
+        }
+        case 'ArrowLeft': {
+          e.preventDefault();
+          const dur = getAudioDur();
+          if (dur > 0) player.seek(Math.max(0, (player.currentTime - 10) / dur));
+          break;
+        }
+        case 'ArrowUp': {
+          e.preventDefault();
+          const curVol = parseFloat(volBar.style.width) / 100;
+          const newVol = Math.min(1, curVol + 0.1);
+          player.setVolume(newVol); applyVolumeUI(newVol);
+          break;
+        }
+        case 'ArrowDown': {
+          e.preventDefault();
+          const curVol = parseFloat(volBar.style.width) / 100;
+          const newVol = Math.max(0, curVol - 0.1);
+          player.setVolume(newVol); applyVolumeUI(newVol);
+          break;
+        }
+        case 'n': case 'N': player.next(); break;
+        case 'p': case 'P': player.prev(); break;
+      }
+    });
+
+    if (player.current) {
+      showPlayerUI();
+      applySong(player.current);
+      updatePlayBtn(player.isPlaying);
+      if (player.isPlaying) startRaf();
+      setFavUI(false);
+      checkFavoriteStatus(player.current.id);
+      renderQueue();
+      if (player.shuffle) {
+        ctrlShuffle.classList.add('text-purple-400');
+        ctrlShuffle.classList.remove('text-gray-500');
+        ctrlShuffle.setAttribute('aria-pressed', 'true');
+      }
+      if (player.repeat !== 'none') {
+        ctrlRepeat.classList.add('text-purple-400');
+        ctrlRepeat.classList.remove('text-gray-500');
+        ctrlRepeat.setAttribute('aria-pressed', 'true');
+        repeatDot.style.opacity = '1';
+        const icon = ctrlRepeat.querySelector('.material-symbols-outlined') as HTMLElement;
+        if (icon) icon.textContent = player.repeat === 'one' ? 'repeat_one' : 'repeat';
+      }
+    }
   </script>
 </MainLayout>

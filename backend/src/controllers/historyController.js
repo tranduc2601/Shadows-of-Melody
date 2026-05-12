@@ -1,32 +1,41 @@
 import History from '../models/History.js';
 import Song from '../models/Song.js';
 
+export const logPlay = async (req, res) => {
+    try {
+        const { song_id } = req.body;
+        if (!song_id) {
+            return res.status(400).json({ success: false, message: 'song_id required' });
+        }
+        await History.upsert(req.user.id, parseInt(song_id, 10), null);
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('LogPlay error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to log play' });
+    }
+};
+
 export const getHistory = async (req, res) => {
     try {
         const userId = req.user.id;
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 50;
+        const page  = Math.max(1, parseInt(req.query.page)  || 1);
+        const limit = Math.min(50, parseInt(req.query.limit) || 20);
         const offset = (page - 1) * limit;
 
-        const history = await History.findByUserId(userId, limit, offset);
-        const totalCount = await History.countByUserId(userId);
+        const [history, totalCount] = await Promise.all([
+            History.findByUserId(userId, limit, offset),
+            History.countByUserId(userId),
+        ]);
+        const totalItems = parseInt(totalCount, 10) || 0;
 
         return res.status(200).json({
             success: true,
             data: history,
-            pagination: {
-                page,
-                limit,
-                total: totalCount,
-                pages: Math.ceil(totalCount / limit),
-            },
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
         });
     } catch (error) {
         console.error('GetHistory error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to fetch history',
-        });
+        return res.status(500).json({ success: false, message: 'Failed to fetch history' });
     }
 };
 
@@ -56,8 +65,7 @@ export const clearHistory = async (req, res) => {
         const { days } = req.query;
 
         if (days) {
-            // Clear history older than X days
-            await History.deleteOlderThan(parseInt(days));
+            await History.deleteOlderThan(userId, parseInt(days, 10));
         } else {
             // Clear all history for user
             await History.delete(userId);
@@ -107,8 +115,8 @@ export const recordPlaySession = async (req, res) => {
         // Increment play_count
         await Song.incrementPlayCount(song_id);
 
-        // Add to history
-        await History.create(userId, song_id, durationSec);
+        // Add to history (upsert to safely handle the unique constraint)
+        await History.upsert(userId, song_id, durationSec);
 
         return res.status(200).json({ success: true, counted: true });
     } catch (error) {
