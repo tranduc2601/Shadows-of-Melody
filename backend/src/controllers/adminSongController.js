@@ -1,28 +1,28 @@
 import { pool } from '../config/database.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryStorage.js';
 
-/**
- * POST /api/admin/songs/upload
- * Multipart form-data fields:
- *   audio       - file (required, mp3/wav/flac/aac/ogg/m4a)
- *   title       - string (required)
- *   duration    - integer seconds (required, auto-filled by client)
- *   artist_ids  - JSON array string  e.g. "[1,2]"
- *   genre_ids   - JSON array string  e.g. "[3,4]"
- *   album_id    - integer (optional)
- *   cover_url   - string URL (optional)
- *
- * Flow:
- *   1. Upload buffer → Cloudinary
- *   2. BEGIN PostgreSQL transaction
- *   3. INSERT songs RETURNING id
- *   4. INSERT song_artists (ON CONFLICT DO NOTHING)
- *   5. INSERT song_genres  (ON CONFLICT DO NOTHING)
- *   6. COMMIT
- *   If any DB step fails → ROLLBACK + delete from Cloudinary (prevent orphaned files)
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const adminUploadSong = async (req, res) => {
-    // ── 1. Validate input ────────────────────────────────────────────────────
+
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'Audio file required' });
     }
@@ -43,7 +43,7 @@ export const adminUploadSong = async (req, res) => {
     try { artistArr = JSON.parse(artist_ids || '[]'); } catch {}
     try { genreArr  = JSON.parse(genre_ids  || '[]'); } catch {}
 
-    // ── 2. Upload to Cloudinary ───────────────────────────────────────────────
+
     let cloudinaryResult;
     try {
         cloudinaryResult = await uploadToCloudinary(req.file.buffer, 'songs', 'video');
@@ -54,13 +54,13 @@ export const adminUploadSong = async (req, res) => {
 
     const { publicId, secureUrl, size } = cloudinaryResult;
 
-    // ── 3. PostgreSQL transaction ─────────────────────────────────────────────
-    // pool.connect() returns a raw pg client — use native $1/$2 syntax here
+
+
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
 
-        // 3a. Insert song
+
         const songResult = await client.query(
             `INSERT INTO songs
                (title, album_id, duration, file_url, file_path, file_size, cover_url)
@@ -70,15 +70,15 @@ export const adminUploadSong = async (req, res) => {
                 title.trim(),
                 album_id ? parseInt(album_id, 10) : null,
                 durationSec,
-                secureUrl,   // Cloudinary CDN URL
-                publicId,    // e.g. songs/abc123 — used for deletion
+                secureUrl,
+                publicId,
                 size,
                 cover_url || null,
             ]
         );
         const songId = songResult.rows[0].id;
 
-        // 3b. Link artists (junction table)
+
         for (const rawId of artistArr) {
             const aid = parseInt(rawId, 10);
             if (!isNaN(aid)) {
@@ -89,7 +89,7 @@ export const adminUploadSong = async (req, res) => {
             }
         }
 
-        // 3c. Link genres (junction table)
+
         for (const rawId of genreArr) {
             const gid = parseInt(rawId, 10);
             if (!isNaN(gid)) {
@@ -102,7 +102,7 @@ export const adminUploadSong = async (req, res) => {
 
         await client.query('COMMIT');
 
-        // ── 4. Return new song with joined data ───────────────────────────────
+
         const { rows: [song] } = await client.query(
             `SELECT s.*,
                     STRING_AGG(DISTINCT a.id::text, ',') as artist_ids,
@@ -128,7 +128,7 @@ export const adminUploadSong = async (req, res) => {
         });
 
     } catch (dbErr) {
-        // ── Rollback DB + delete from Cloudinary to avoid orphaned files ──────
+
         await client.query('ROLLBACK').catch(() => {});
         await deleteFromCloudinary(publicId, 'video');
 
@@ -139,10 +139,10 @@ export const adminUploadSong = async (req, res) => {
     }
 };
 
-/**
- * PATCH /api/admin/songs/:id
- * JSON body: { title?, cover_url?, album_id?, genre_ids?, artist_ids? }
- */
+
+
+
+
 export const adminUpdateSong = async (req, res) => {
     const { id } = req.params;
     const { title, cover_url, album_id, genre_ids, artist_ids } = req.body;
@@ -151,7 +151,7 @@ export const adminUpdateSong = async (req, res) => {
     try {
         await client.query('BEGIN');
 
-        // Build dynamic SET clause for scalar fields
+
         const setClauses = [];
         const setValues  = [];
         if (title?.trim())          { setClauses.push(`title = $${setValues.length + 1}`);     setValues.push(title.trim()); }
@@ -167,7 +167,7 @@ export const adminUpdateSong = async (req, res) => {
             );
         }
 
-        // Replace genres
+
         if (Array.isArray(genre_ids)) {
             await client.query('DELETE FROM song_genres WHERE song_id = $1', [id]);
             for (const gid of genre_ids) {
@@ -176,7 +176,7 @@ export const adminUpdateSong = async (req, res) => {
             }
         }
 
-        // Replace artists
+
         if (Array.isArray(artist_ids)) {
             await client.query('DELETE FROM song_artists WHERE song_id = $1', [id]);
             for (const aid of artist_ids) {
@@ -215,11 +215,11 @@ export const adminUpdateSong = async (req, res) => {
     }
 };
 
-/**
- * POST /api/admin/upload/cover
- * Multipart field: cover (image/jpeg | image/png | image/webp, max 5 MB)
- * Returns: { success: true, data: { url: string } }
- */
+
+
+
+
+
 export const adminUploadCover = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'Image file required' });

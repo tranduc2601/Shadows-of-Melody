@@ -6,7 +6,7 @@ import { logger } from './middleware/logger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 
-// Routes
+
 import authRoutes from './routes/auth.js';
 import songRoutes from './routes/songs.js';
 import artistRoutes from './routes/artists.js';
@@ -22,18 +22,18 @@ import studioRoutes from './routes/studio.js';
 
 const app = express();
 
-// Test database connection on startup
+
 testConnection();
 
-// ── Auto-run safe schema migrations ──────────────────────────────────────────
+
 (async () => {
   const migrations = [
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS cover_url VARCHAR(500)`,
     `ALTER TABLE albums   ALTER COLUMN artist_id DROP NOT NULL`,
-    // Unique constraint required for ON CONFLICT (user_id) upsert to work
+
     `CREATE UNIQUE INDEX IF NOT EXISTS artists_user_id_unique ON artists (user_id) WHERE user_id IS NOT NULL`,
-    // Artist follows table
+
     `CREATE TABLE IF NOT EXISTS artist_follows (
        user_id   INT NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
        artist_id INT NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
@@ -47,7 +47,7 @@ testConnection();
     try { await pool.query(sql); } catch (e) { console.warn('Auto-migration note:', e.message); }
   }
 
-  // Backfill: create artist rows for any users with role='artist' that have no entry yet
+
   try {
     await pool.query(
       `INSERT INTO artists (name, image_url, user_id)
@@ -62,7 +62,7 @@ testConnection();
   }
 })();
 
-// Middleware
+
 app.use(logger);
 app.use(cors({
     origin: config.cors.origin,
@@ -72,7 +72,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(generalLimiter);
 
-// Routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/songs', songRoutes);
 app.use('/api/artists', artistRoutes);
@@ -86,12 +86,12 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/studio', studioRoutes);
 
-// Health check
+
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// 404 handler
+
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -99,7 +99,7 @@ app.use((req, res) => {
     });
 });
 
-// Error handler (must be last)
+
 app.use(errorHandler);
 
 export default app;

@@ -24,7 +24,7 @@ export function clearAuth() {
   try { sessionStorage.removeItem('player_state'); } catch {}
 }
 
-// ── Me cache (stale-while-revalidate) ────────────────────────────────────────
+
 export function getCachedMe() {
   try { return JSON.parse(localStorage.getItem('me_cache') || 'null'); } catch { return null; }
 }
@@ -33,10 +33,10 @@ export function setCachedMe(data) {
   localStorage.setItem('me_cache', JSON.stringify(data));
 }
 
-/**
- * Fetch fresh user profile and update cache.
- * Returns the fresh data (or null on error).
- */
+
+
+
+
 export async function refreshMe() {
   try {
     const { data } = await apiFetch('/auth/me');
@@ -45,31 +45,31 @@ export async function refreshMe() {
   } catch { return null; }
 }
 
-// ── Role helpers ─────────────────────────────────────────────────────────────
+
 const ROLE_RANK = { user: 0, artist: 1, manager: 2, admin: 3 };
 
-/** Returns the current user's role string, or null if not logged in. */
+
 export function getUserRole() {
   return getUser()?.role ?? null;
 }
 
-/** True when the logged-in user has at least the given role level. */
+
 export function hasRole(...roles) {
   const role = getUserRole();
   return role !== null && roles.includes(role);
 }
 
-/** True when the user's role rank is >= the required rank. */
+
 export function hasMinRole(minRole) {
   const rank = ROLE_RANK[getUserRole()] ?? -1;
   return rank >= (ROLE_RANK[minRole] ?? 0);
 }
 
-/**
- * Guard helper for Astro/vanilla pages.
- * Call at the top of your <script> block.
- * @param {string} [minRole]  Minimum role required. Omit to require only auth.
- */
+
+
+
+
+
 export function requireAuthClient(minRole) {
   const token = getToken();
   if (!token) {
@@ -95,7 +95,7 @@ export async function apiFetch(path, options = {}) {
   });
   const data = await res.json();
 
-  // Token expired / invalid → clear local state and redirect to login
+
   if (res.status === 401) {
     clearAuth();
     window.location.href = '/login?reason=session_expired';

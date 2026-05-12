@@ -9,17 +9,17 @@ const initDb = async () => {
     try {
         console.log('Initializing database...');
 
-        // Read SQL schema
+
         const schemaPath = path.join(__dirname, 'schema.postgresql.sql');
         const schemaSql = fs.readFileSync(schemaPath, 'utf-8');
 
-        // Split SQL statements
+
         const statements = schemaSql
             .split(';')
             .map(stmt => stmt.trim())
             .filter(stmt => stmt.length > 0);
 
-        // Execute each statement
+
         for (const statement of statements) {
             await pool.query(statement);
             console.log('Executed:', statement.split('\n')[0].substring(0, 50) + '...');

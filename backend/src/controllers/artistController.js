@@ -2,7 +2,7 @@ import Artist from '../models/Artist.js';
 import { pool } from '../config/database.js';
 import { sanitizeSearchQuery } from '../utils/validators.js';
 
-// GET /api/artists/members — returns users with role='artist' for public display
+
 export const getArtistMembers = async (req, res) => {
     try {
         const limit = Math.min(50, parseInt(req.query.limit) || 20);
@@ -57,7 +57,7 @@ export const getAllArtists = async (req, res) => {
         ]);
         const totalItems = countRow[0]?.total ?? 0;
 
-        // Follow status for requesting user
+
         const token = req.headers.authorization?.split(' ')[1];
         let followedSet = new Set();
         if (token && artists.length) {
@@ -95,7 +95,7 @@ export const getArtistById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Artist not found' });
         }
 
-        // Monthly listeners: distinct users who played this artist's songs in the last 30 days
+
         const [[{ monthly_listeners }]] = await pool.query(
             `SELECT COUNT(DISTINCT lh.user_id)::int AS monthly_listeners
              FROM listening_history lh
@@ -106,7 +106,7 @@ export const getArtistById = async (req, res) => {
         );
         artist.monthly_listeners = monthly_listeners ?? 0;
 
-        // Follow status for the requesting user (optional auth)
+
         const token = req.headers.authorization?.split(' ')[1];
         let is_following = false;
         if (token) {
@@ -131,7 +131,7 @@ export const getArtistById = async (req, res) => {
     }
 };
 
-// GET /api/artists/:id/follow — check follow status
+
 export const getFollowStatus = async (req, res) => {
     try {
         const { id } = req.params;
@@ -147,7 +147,7 @@ export const getFollowStatus = async (req, res) => {
     }
 };
 
-// POST /api/artists/:id/follow — follow an artist
+
 export const followArtist = async (req, res) => {
     try {
         const { id } = req.params;
@@ -156,7 +156,7 @@ export const followArtist = async (req, res) => {
         const [[artistRow]] = await pool.query('SELECT id, followers_count FROM artists WHERE id = $1', [id]);
         if (!artistRow) return res.status(404).json({ success: false, message: 'Artist not found' });
 
-        // Upsert follow (RETURNING tells us if it was actually inserted)
+
         const [inserted] = await pool.query(
             `INSERT INTO artist_follows (user_id, artist_id) VALUES ($1, $2)
              ON CONFLICT (user_id, artist_id) DO NOTHING
@@ -181,7 +181,7 @@ export const followArtist = async (req, res) => {
     }
 };
 
-// DELETE /api/artists/:id/follow — unfollow an artist
+
 export const unfollowArtist = async (req, res) => {
     try {
         const { id } = req.params;
@@ -287,7 +287,7 @@ export const updateArtist = async (req, res) => {
             });
         }
 
-        // Validate name if provided
+
         if (name !== undefined && !name?.trim()) {
             return res.status(400).json({
                 success: false,
@@ -295,7 +295,7 @@ export const updateArtist = async (req, res) => {
             });
         }
 
-        // Check for duplicate name (exclude self)
+
         if (name?.trim() && name.trim().toLowerCase() !== artist.name.toLowerCase()) {
             const [existing] = await pool.query(
                 'SELECT id FROM artists WHERE LOWER(name) = LOWER($1) AND id != $2',
@@ -366,7 +366,7 @@ export const deleteArtist = async (req, res) => {
     }
 };
 
-// GET /api/artists/following — artists the authenticated user follows
+
 export const getFollowedArtists = async (req, res) => {
     try {
         const userId = req.user.id;

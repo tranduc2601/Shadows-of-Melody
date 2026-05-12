@@ -1,10 +1,6 @@
 import { pool } from '../config/database.js';
 
 class History {
-    /**
-     * Upsert a play event: insert if not exists, otherwise update played_at to NOW().
-     * Requires the unique constraint uq_history_user_song on (user_id, song_id).
-     */
     static async upsert(userId, songId, durationPlayed = null) {
         const [rows] = await pool.query(
             `INSERT INTO listening_history (user_id, song_id, duration_played, played_at)
@@ -16,10 +12,6 @@ class History {
         return rows;
     }
 
-    /**
-     * Insert a new history entry unconditionally (no conflict resolution).
-     * Use after confirming no recent duplicate via hasRecentEntry().
-     */
     static async create(userId, songId, durationPlayed = null) {
         const [rows] = await pool.query(
             `INSERT INTO listening_history (user_id, song_id, duration_played, played_at)

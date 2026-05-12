@@ -10,7 +10,7 @@ const { title = "Music App" } = Astro.props;
   <link rel="icon" type="image/png" href="src/assets/images/favicon.png" />
   <title>{title}</title>
 
-  <!-- Fonts -->
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
@@ -19,7 +19,7 @@ const { title = "Music App" } = Astro.props;
 <body>
   <slot />
 
-  <!-- ── Global: Add to Playlist Modal ─────────────────────────────────── -->
+
   <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-[#0f1b35] border border-white/10 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative">
       <button id="global-atp-close" type="button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
@@ -148,7 +148,7 @@ const { title = "Music App" } = Astro.props;
       }
     });
 
-    // Expose globally
+
     (window as any).openAddToPlaylist = openAddToPlaylist;
   </script>
 </body>

@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar.astro";
 import PlayerBar from "../components/PlayerBar.astro";
 ---
 
-<MainLayout title="Tìm Kiếm - Shadows of Melody">
+<MainLayout title="Search - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <Sidebar currentPage="search" />
@@ -17,9 +17,9 @@ import PlayerBar from "../components/PlayerBar.astro";
           class="hidden shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10
                  text-gray-300 hover:text-white hover:bg-white/10 text-sm font-medium
                  opacity-0 -translate-x-2 transition-all duration-200 ease-out"
-          aria-label="Quay lại danh sách thể loại">
+          aria-label="Back to genres">
           <span class="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_back</span>
-          <span class="hidden sm:inline">Thể loại</span>
+          <span class="hidden sm:inline">Genres</span>
         </button>
 
         <div class="relative flex-1 max-w-2xl group">
@@ -28,13 +28,13 @@ import PlayerBar from "../components/PlayerBar.astro";
             id="searchInput"
             type="search"
             autocomplete="off"
-            aria-label="Tìm kiếm bài hát, nghệ sĩ, album (nhấn / để focus)"
-            placeholder="Tìm kiếm bài hát, nghệ sĩ, album..."
+            aria-label="Search songs, artists, albums (press / to focus)"
+            placeholder="Search songs, artists, albums..."
             class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-lg"
           />
           <button id="clearSearchBtn"
             class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-            aria-label="Xóa tìm kiếm">
+            aria-label="Clear search">
             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
           </button>
         </div>
@@ -42,7 +42,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         <div class="flex items-center gap-3 shrink-0">
           <a href="/profile" id="search-user-avatar"
              class="hidden w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0 hover:opacity-90 transition-opacity"
-             aria-label="Trang cá nhân">
+             aria-label="Profile">
             <div id="search-user-avatar-inner" class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center overflow-hidden">
               <span class="material-symbols-outlined text-purple-400 text-sm" aria-hidden="true">person</span>
             </div>
@@ -54,20 +54,20 @@ import PlayerBar from "../components/PlayerBar.astro";
 
         <div id="browseSection">
           <h2 class="text-xl font-bold text-white mb-6">Browse by genres</h2>
-          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10" role="list" aria-label="Danh mục thể loại">
+          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10" role="list" aria-label="Genre categories">
             {Array.from({length: 8}).map(() => (
               <div class="h-28 rounded-2xl bg-white/5 animate-pulse"></div>
             ))}
           </div>
         </div>
 
-        <div id="searchResults" class="hidden" role="region" aria-label="Kết quả tìm kiếm" aria-live="polite">
+        <div id="searchResults" class="hidden" role="region" aria-label="Search results" aria-live="polite">
           <div class="flex gap-1 mb-6 border-b border-white/10" role="tablist">
             {[
-              { id: "all",     label: "Tất cả" },
-              { id: "songs",   label: "Bài hát" },
-              { id: "artists", label: "Nghệ sĩ" },
-              { id: "albums",  label: "Album" },
+              { id: "all",     label: "All" },
+              { id: "songs",   label: "Songs" },
+              { id: "artists", label: "Artists" },
+              { id: "albums",  label: "Albums" },
             ].map((tab, i) => (
               <button
                 role="tab"
@@ -85,28 +85,28 @@ import PlayerBar from "../components/PlayerBar.astro";
           <div id="panel-all" class="tab-panel" role="tabpanel">
             <div id="panel-all-empty" class="hidden flex flex-col items-center gap-4 py-20 text-center">
               <span class="material-symbols-outlined text-[60px] text-gray-600">search_off</span>
-              <p class="text-gray-400 text-base font-medium">Không tìm thấy kết quả</p>
-              <p class="text-gray-600 text-sm">Thử từ khóa khác hoặc kiểm tra chính tả</p>
+              <p class="text-gray-400 text-base font-medium">No results found</p>
+              <p class="text-gray-600 text-sm">Try different keywords or check spelling</p>
             </div>
             <div id="panel-all-content">
               <h3 id="songs-heading" class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Bài hát
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Songs
               </h3>
               <div id="songs-all" class="space-y-1 mb-3"></div>
               <div id="show-more-songs-wrap" class="hidden mb-10">
                 <button id="show-more-songs-btn"
                   class="w-full py-2.5 text-sm font-semibold text-purple-400 hover:text-purple-300 hover:bg-white/5 rounded-xl transition-colors">
-                  Xem thêm bài hát
+                  View more songs
                 </button>
               </div>
 
               <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">person</span>Nghệ sĩ
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">person</span>Artists
               </h3>
               <div class="flex gap-6 overflow-x-auto pb-4 mb-10 no-scrollbar" id="artists-all"></div>
 
               <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">album</span>Album
+                <span class="material-symbols-outlined text-purple-400" aria-hidden="true">album</span>Albums
               </h3>
               <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="albums-all"></div>
             </div>
@@ -357,15 +357,15 @@ import PlayerBar from "../components/PlayerBar.astro";
 
       if (songs.length > SONGS_PREVIEW) {
         wrap.classList.remove('hidden');
-        btn.textContent = `Xem thêm ${songs.length - SONGS_PREVIEW} bài hát`;
+        btn.textContent = `View ${songs.length - SONGS_PREVIEW} more songs`;
         btn.onclick = () => {
           _showingAllSongs = !_showingAllSongs;
           if (_showingAllSongs) {
             el.innerHTML = songs.map((s, i) => songRowHTML(s, i)).join('');
-            btn.textContent = 'Thu gọn';
+            btn.textContent = 'Collapse';
           } else {
             el.innerHTML = preview.map((s, i) => songRowHTML(s, i)).join('');
-            btn.textContent = `Xem thêm ${songs.length - SONGS_PREVIEW} bài hát`;
+            btn.textContent = `View ${songs.length - SONGS_PREVIEW} more songs`;
           }
           syncFavoriteButtons();
         };
@@ -387,7 +387,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         <div class="song-row relative flex items-center gap-4 px-3 py-2.5 rounded-xl cursor-pointer group
                     transition-all duration-200 ease-out overflow-hidden hover:bg-white/[0.06] hover:translate-x-px"
              data-song="${encodeURIComponent(JSON.stringify(s))}" role="row" tabindex="0"
-             aria-label="Phát ${titleEsc} bởi ${artistEsc}">
+             aria-label="Play ${titleEsc} by ${artistEsc}">
           <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100" aria-hidden="true"></div>
           <div class="relative w-6 h-5 shrink-0 ml-1" aria-hidden="true">
             <span class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm font-medium transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
@@ -398,19 +398,19 @@ import PlayerBar from "../components/PlayerBar.astro";
             <p class="font-semibold text-gray-100 truncate text-[15px] transition-colors duration-200 group-hover:text-purple-300">${titleEsc}</p>
             <p class="text-gray-400 text-xs truncate mt-0.5 transition-colors duration-200 group-hover:text-gray-300">${subEsc}</p>
           </div>
-          <span class="text-gray-500 text-xs hidden sm:flex items-center gap-1 font-medium transition-colors duration-200 group-hover:text-gray-300 tabular-nums shrink-0" title="Lượt nghe">
+          <span class="text-gray-500 text-xs hidden sm:flex items-center gap-1 font-medium transition-colors duration-200 group-hover:text-gray-300 tabular-nums shrink-0" title="Plays">
             <span class="material-symbols-outlined text-[13px]" aria-hidden="true">headphones</span>${formatCount(s.plays_count)}
           </span>
           <span class="text-gray-400 text-sm tabular-nums shrink-0 transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
           <div class="flex items-center gap-1 shrink-0">
             <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                    data-song="${encodeURIComponent(JSON.stringify(s))}" title="Thêm vào playlist" aria-label="Thêm ${titleEsc} vào playlist">
+                    data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to playlist" aria-label="Add ${titleEsc} to playlist">
               <span class="material-symbols-outlined text-[20px]" aria-hidden="true">playlist_add</span>
             </button>
             <button class="btn-like-song w-8 h-8 flex items-center justify-center hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100 ${isLiked ? 'text-pink-500 !opacity-100' : 'text-gray-500'}"
                     data-id="${s.id}" data-liked="${isLiked}"
-                    title="${isLiked ? 'Bỏ yêu thích' : 'Yêu thích'}"
-                    aria-label="${isLiked ? 'Bỏ yêu thích' : 'Yêu thích'} ${titleEsc}">
+                    title="${isLiked ? 'Unlike' : 'Like'}"
+                    aria-label="${isLiked ? 'Unlike' : 'Like'} ${titleEsc}">
               <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' ${isLiked ? 1 : 0}" aria-hidden="true">${isLiked ? 'favorite' : 'favorite_border'}</span>
             </button>
           </div>
@@ -423,7 +423,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         el.innerHTML = `
           <div class="flex flex-col items-center gap-3 py-12 text-center">
             <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">music_off</span>
-            <p class="text-gray-500 text-sm">Không tìm thấy bài hát nào</p>
+            <p class="text-gray-500 text-sm">No songs found</p>
           </div>`;
         return;
       }
@@ -445,7 +445,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       return `
         <a href="/artist?id=${esc(String(a.id))}"
            class="flex-shrink-0 text-center group cursor-pointer no-underline"
-           aria-label="Xem nghệ sĩ ${nameEsc}">
+           aria-label="View artist ${nameEsc}">
           <div class="w-24 h-24 rounded-full mx-auto mb-2 shadow-lg overflow-hidden
                       transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-purple-500/30 group-hover:shadow-xl"
                style="background:${colorFor(a.id)}">${img}</div>
@@ -462,7 +462,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       return `
         <a href="/artist?id=${esc(String(a.id))}"
            class="text-center group cursor-pointer p-3 rounded-2xl transition-all duration-200 ease-out hover:bg-white/5 no-underline"
-           aria-label="Xem nghệ sĩ ${nameEsc}">
+           aria-label="View artist ${nameEsc}">
           <div class="w-28 h-28 rounded-full mx-auto mb-3 shadow-lg overflow-hidden
                       transition-all duration-300 ease-out group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-xl"
                style="background:${colorFor(a.id)}">${img}</div>
@@ -477,7 +477,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const emptyMsg = `
         <div class="flex flex-col items-center gap-3 py-8 text-center w-full">
           <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">person_off</span>
-          <p class="text-gray-500 text-sm">Không tìm thấy nghệ sĩ nào</p>
+          <p class="text-gray-500 text-sm">No artists found</p>
         </div>`;
       if (allEl) {
         allEl.innerHTML = artists.length
@@ -502,7 +502,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       return `
         <a href="/album?id=${esc(String(al.id))}"
            class="group cursor-pointer block no-underline"
-           aria-label="Xem album ${titleEsc}">
+           aria-label="View album ${titleEsc}">
           <div class="aspect-square rounded-xl mb-2 shadow-lg relative overflow-hidden
                       transition-all duration-300 ease-out group-hover:scale-105 group-hover:shadow-xl"
                style="background:${colorFor(al.id)}">
@@ -523,7 +523,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const emptyMsg = `
         <div class="col-span-full flex flex-col items-center gap-3 py-8 text-center">
           <span class="material-symbols-outlined text-gray-600 text-5xl" aria-hidden="true">album</span>
-          <p class="text-gray-500 text-sm">Không tìm thấy album nào</p>
+          <p class="text-gray-500 text-sm">No albums found</p>
         </div>`;
       if (allEl) {
         allEl.innerHTML = albums.length
@@ -561,19 +561,19 @@ import PlayerBar from "../components/PlayerBar.astro";
     function setLikeState(btn: HTMLElement, liked: boolean) {
       const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
       btn.dataset.liked = String(liked);
-      const songTitle = btn.getAttribute('aria-label')?.replace(/^(Bỏ yêu thích|Yêu thích)\s?/, '') || '';
+      const songTitle = btn.getAttribute('aria-label')?.replace(/^(Unlike|Like)\s?/, '') || '';
       if (liked) {
         if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
         btn.classList.add('text-pink-500', '!opacity-100');
         btn.classList.remove('text-gray-500');
-        btn.title = 'Bỏ yêu thích';
-        btn.setAttribute('aria-label', `Bỏ yêu thích ${songTitle}`);
+        btn.title = 'Unlike';
+        btn.setAttribute('aria-label', `Unlike ${songTitle}`);
       } else {
         if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
         btn.classList.remove('text-pink-500', '!opacity-100');
         btn.classList.add('text-gray-500');
-        btn.title = 'Yêu thích';
-        btn.setAttribute('aria-label', `Yêu thích ${songTitle}`);
+        btn.title = 'Like';
+        btn.setAttribute('aria-label', `Like ${songTitle}`);
       }
     }
 
@@ -662,7 +662,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       showAlbumsSkeleton('albums-all');
 
       const heading = document.getElementById('songs-heading');
-      if (heading) heading.innerHTML = `<span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Bài hát`;
+      if (heading) heading.innerHTML = `<span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>Songs`;
 
       const [songsResult] = await Promise.allSettled([
         apiFetch(`/songs/search?q=${encodeURIComponent(q)}&limit=50`),
@@ -703,7 +703,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                         transition-all duration-300 ease-out hover:scale-[1.04] hover:shadow-xl hover:brightness-110
                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple-400"
                  data-genre-id="${esc(String(g.id))}" data-genre-name="${nameEsc}"
-                 role="button" tabindex="0" aria-label="Lọc theo thể loại ${nameEsc}"
+                 role="button" tabindex="0" aria-label="Filter by genre ${nameEsc}"
                  style="background:${CAT_COLORS[i % CAT_COLORS.length]}">
               <span class="text-white font-bold text-lg drop-shadow">${nameEsc}</span>
               <span class="material-symbols-outlined absolute right-4 bottom-4 text-white/30 text-5xl
@@ -711,7 +711,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>`;
         }).join('');
       } catch {
-        grid.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Không thể tải thể loại.</p>';
+        grid.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Failed to load genres.</p>';
       }
     }
 
@@ -728,7 +728,6 @@ import PlayerBar from "../components/PlayerBar.astro";
 
       const heading = document.getElementById('songs-heading');
       if (heading) {
-        // Safe: genreName was already escaped when written to data attribute
         heading.innerHTML = `<span class="material-symbols-outlined text-purple-400" aria-hidden="true">music_note</span>${esc(genreName)}`;
       }
       if (input) input.value = '';

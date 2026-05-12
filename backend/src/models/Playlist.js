@@ -16,7 +16,6 @@ class Playlist {
 
         const playlist = rows[0];
 
-        // Get songs in playlist
         const [songs] = await pool.query(
             `SELECT s.*, 
                     STRING_AGG(DISTINCT a.name, ',') as artist_names

@@ -2,7 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-<MainLayout title="Đăng Ký - Shadows of Melody">
+<MainLayout title="Sign Up - Shadows of Melody">
   <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30 flex items-center justify-center p-4">
     <div class="w-full max-w-md">
       <div class="text-center mb-8">
@@ -155,7 +155,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       </div>
 
       <p class="text-center text-gray-500 text-xs mt-6">
-        Chúng tôi sẽ gửi email xác nhận đến địa chỉ email của bạn
+        We will send a confirmation email to your email address
       </p>
     </div>
   </div>
@@ -230,7 +230,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
       localStorage.setItem('auth_token', json.data.token);
       localStorage.setItem('auth_user', JSON.stringify(json.data));
-      showToast('Tài khoản đã được tạo thành công! Đang chuyển hướng...', 'success');
+      showToast('Account created successfully! Redirecting...', 'success');
       setTimeout(() => { window.location.href = '/'; }, 900);
     } catch (err: any) {
       errDiv.textContent = err.message;

@@ -3,7 +3,7 @@ import User from '../models/User.js';
 import Artist from '../models/Artist.js';
 import { revokeToken } from '../utils/jwt.js';
 
-// GET /api/admin/analytics
+
 export const getAnalytics = async (req, res) => {
     try {
         const [
@@ -16,7 +16,7 @@ export const getAnalytics = async (req, res) => {
             subscriptionStatsRes,
             summaryRes,
         ] = await Promise.all([
-            // New user registrations per day — last 30 days
+
             pool.query(`
                 SELECT DATE(created_at AT TIME ZONE 'UTC') AS date,
                        COUNT(*)::int AS count
@@ -26,7 +26,7 @@ export const getAnalytics = async (req, res) => {
                 GROUP BY DATE(created_at AT TIME ZONE 'UTC')
                 ORDER BY date ASC
             `),
-            // Plays per day from listening_history — last 30 days
+
             pool.query(`
                 SELECT DATE(played_at AT TIME ZONE 'UTC') AS date,
                        COUNT(*)::int AS plays
@@ -35,7 +35,7 @@ export const getAnalytics = async (req, res) => {
                 GROUP BY DATE(played_at AT TIME ZONE 'UTC')
                 ORDER BY date ASC
             `),
-            // Top 10 songs by plays_count
+
             pool.query(`
                 SELECT s.id, s.title, s.cover_url, s.plays_count,
                        STRING_AGG(DISTINCT a.name, ', ' ORDER BY a.name) AS artist_names
@@ -46,7 +46,7 @@ export const getAnalytics = async (req, res) => {
                 ORDER BY s.plays_count DESC
                 LIMIT 10
             `),
-            // Top 10 artists by total plays of their songs
+
             pool.query(`
                 SELECT a.id, a.name, a.image_url,
                        COALESCE(SUM(s.plays_count), 0)::int AS total_plays,
@@ -58,7 +58,7 @@ export const getAnalytics = async (req, res) => {
                 ORDER BY total_plays DESC
                 LIMIT 10
             `),
-            // Genre distribution (songs per genre)
+
             pool.query(`
                 SELECT g.name, COUNT(DISTINCT sg.song_id)::int AS count
                 FROM genres g
@@ -67,7 +67,7 @@ export const getAnalytics = async (req, res) => {
                 ORDER BY count DESC
                 LIMIT 15
             `),
-            // Revenue per month — last 12 months (completed payments only)
+
             pool.query(`
                 SELECT TO_CHAR(DATE_TRUNC('month', payment_date), 'YYYY-MM') AS month,
                        SUM(amount)::float AS total,
@@ -78,7 +78,7 @@ export const getAnalytics = async (req, res) => {
                 GROUP BY DATE_TRUNC('month', payment_date)
                 ORDER BY month ASC
             `),
-            // Subscription type distribution
+
             pool.query(`
                 SELECT subscription_type, COUNT(*)::int AS count
                 FROM subscriptions
@@ -86,7 +86,7 @@ export const getAnalytics = async (req, res) => {
                 GROUP BY subscription_type
                 ORDER BY count DESC
             `),
-            // Summary aggregates
+
             pool.query(`
                 SELECT
                     (SELECT COALESCE(SUM(plays_count), 0)::int FROM songs)                        AS total_plays,
@@ -124,10 +124,10 @@ export const getAnalytics = async (req, res) => {
     }
 };
 
-// GET /api/admin/stats
+
 export const getStats = async (req, res) => {
     try {
-        // pool.query returns [rows, fields] — unwrap rows[0] for scalar counts
+
         const [usersRes, songsRes, artistsRes, playlistsRes, recentRes] = await Promise.all([
             pool.query('SELECT COUNT(*)::int AS users FROM users WHERE deleted_at IS NULL'),
             pool.query('SELECT COUNT(*)::int AS songs FROM songs'),
@@ -160,7 +160,7 @@ export const getStats = async (req, res) => {
     }
 };
 
-// GET /api/admin/users?page=1&limit=10
+
 export const getUsers = async (req, res) => {
     try {
         const page     = Math.max(1, parseInt(req.query.page)  || 1);
@@ -168,7 +168,7 @@ export const getUsers = async (req, res) => {
         const offset   = (page - 1) * limit;
         const keyword  = (req.query.keyword || req.query.q || '').trim();
         const role     = req.query.role || '';
-        const isLocked = req.query.is_locked; // '0', '1', or undefined
+        const isLocked = req.query.is_locked;
 
         const VALID_SORT  = ['created_at', 'username', 'email', 'role'];
         const VALID_ORDER = ['asc', 'desc'];
@@ -215,7 +215,7 @@ export const getUsers = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/users/:id
+
 export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
@@ -230,7 +230,7 @@ export const deleteUser = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/users/:id/toggle-admin
+
 export const toggleAdmin = async (req, res) => {
     try {
         const { id } = req.params;
@@ -247,15 +247,15 @@ export const toggleAdmin = async (req, res) => {
     }
 };
 
-// GET /api/admin/artists?page=1&limit=10
+
 export const getArtists = async (req, res) => {
     try {
         const page  = Math.max(1, parseInt(req.query.page)  || 1);
         const limit = Math.min(100, parseInt(req.query.limit) || 10);
         const offset = (page - 1) * limit;
 
-        // Fetch artists from artists table (including linked accounts)
-        // UNION with users who have role='artist' but no artist profile yet
+
+
         const [artists] = await pool.query(
             `SELECT a.id, a.name, a.bio, a.image_url, a.followers_count, a.user_id,
                     u.username AS linked_username, u.role AS linked_user_role,
@@ -283,7 +283,7 @@ export const getArtists = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/artists/:id/revoke-role
+
 export const revokeArtistRole = async (req, res) => {
     const { id } = req.params;
     try {
@@ -308,7 +308,7 @@ export const revokeArtistRole = async (req, res) => {
     }
 };
 
-// GET /api/admin/genres
+
 export const getGenres = async (req, res) => {
     try {
         const [genres] = await pool.query(
@@ -321,7 +321,7 @@ export const getGenres = async (req, res) => {
     }
 };
 
-// POST /api/admin/genres
+
 export const createGenre = async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -329,7 +329,7 @@ export const createGenre = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Genre name is required' });
         }
 
-        // Check for duplicate
+
         const [existing] = await pool.query(
             'SELECT id FROM genres WHERE LOWER(name) = LOWER(?)',
             [name.trim()]
@@ -354,7 +354,7 @@ export const createGenre = async (req, res) => {
     }
 };
 
-// PUT /api/admin/genres/:id
+
 export const updateGenre = async (req, res) => {
     try {
         const { id } = req.params;
@@ -363,7 +363,7 @@ export const updateGenre = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Genre name is required' });
         }
 
-        // Check for duplicate (exclude self)
+
         const [existing] = await pool.query(
             'SELECT id FROM genres WHERE LOWER(name) = LOWER(?) AND id != ?',
             [name.trim(), id]
@@ -386,7 +386,7 @@ export const updateGenre = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/genres/:id
+
 export const deleteGenre = async (req, res) => {
     try {
         const { id } = req.params;
@@ -404,7 +404,7 @@ export const deleteGenre = async (req, res) => {
     }
 };
 
-// GET /api/admin/albums
+
 export const getAlbums = async (req, res) => {
     try {
         const [albums] = await pool.query(
@@ -424,7 +424,7 @@ export const getAlbums = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/albums/:id
+
 export const updateAlbum = async (req, res) => {
     const { id } = req.params;
     const { title, artist_id, cover_url, release_date, description } = req.body;
@@ -451,7 +451,7 @@ export const updateAlbum = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/albums/:id
+
 export const deleteAlbum = async (req, res) => {
     const { id } = req.params;
     try {
@@ -469,7 +469,7 @@ export const deleteAlbum = async (req, res) => {
     }
 };
 
-// POST /api/admin/albums
+
 export const createAlbum = async (req, res) => {
     try {
         const { title, artist_id, cover_url, release_date } = req.body;
@@ -489,7 +489,7 @@ export const createAlbum = async (req, res) => {
     }
 };
 
-// GET /api/admin/artists/:id/content
+
 export const getArtistContent = async (req, res) => {
     const { id } = req.params;
     try {
@@ -538,8 +538,8 @@ export const getArtistContent = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/users/:id/role
-// Admin: set any role.  Manager: can only promote to 'artist'.
+
+
 export const updateUserRole = async (req, res) => {
     const requesterId = req.user.id;
     const requesterRole = req.user.role;
@@ -551,12 +551,12 @@ export const updateUserRole = async (req, res) => {
         return res.status(400).json({ success: false, message: `role must be one of: ${validRoles.join(', ')}` });
     }
 
-    // No self-role-change
+
     if (parseInt(id) === requesterId) {
         return res.status(400).json({ success: false, message: 'You cannot change your own role' });
     }
 
-    // Manager can only promote to artist
+
     if (requesterRole === 'manager' && newRole !== 'artist') {
         return res.status(403).json({
             success: false,
@@ -568,14 +568,14 @@ export const updateUserRole = async (req, res) => {
         const target = await User.findById(id);
         if (!target) return res.status(404).json({ success: false, message: 'User not found' });
 
-        // Sync is_admin when changing to/from admin role
+
         const isAdmin = newRole === 'admin';
         await pool.query(
             `UPDATE users SET role = $1, is_admin = $2 WHERE id = $3`,
             [newRole, isAdmin, id],
         );
 
-        // When promoting to artist, ensure an artists table entry exists
+
         if (newRole === 'artist') {
             try {
                 const [userInfo] = await pool.query(
@@ -585,7 +585,7 @@ export const updateUserRole = async (req, res) => {
                 if (userInfo.length > 0) {
                     const u = userInfo[0];
                     const artistName = u.full_name || u.username;
-                    // Check if an artist record already exists for this user_id
+
                     const [existing] = await pool.query(
                         `SELECT id FROM artists WHERE user_id = $1`,
                         [id],
@@ -597,7 +597,7 @@ export const updateUserRole = async (req, res) => {
                             [artistName, u.avatar_url || null, id],
                         );
                     } else {
-                        // Sync name & avatar in case they changed
+
                         await pool.query(
                             `UPDATE artists SET name = $1, image_url = $2, updated_at = NOW()
                              WHERE user_id = $3`,
@@ -606,7 +606,7 @@ export const updateUserRole = async (req, res) => {
                     }
                 }
             } catch (innerErr) {
-                // Non-fatal: log but don't fail the role update
+
                 console.warn('Could not create artist profile for user:', innerErr.message);
             }
         }
@@ -622,8 +622,8 @@ export const updateUserRole = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/users/:id/lock
-// Lock or unlock a user account (is_locked toggle)
+
+
 export const toggleLockUser = async (req, res) => {
     const { id } = req.params;
     if (parseInt(id) === req.user.id) {
@@ -650,13 +650,13 @@ export const toggleLockUser = async (req, res) => {
     }
 };
 
-// GET /api/admin/songs?page=&limit=&keyword=&status=&artist_id=&genre_id=&sortBy=&order=
+
 export const getAdminSongs = async (req, res) => {
     const page    = Math.max(1, parseInt(req.query.page)   || 1);
     const limit   = Math.min(200, parseInt(req.query.limit) || 20);
     const offset  = (page - 1) * limit;
     const keyword = (req.query.keyword || req.query.q || '').trim();
-    const status  = req.query.status || '';  // 'published' | 'suppressed' | ''
+    const status  = req.query.status || '';
     const artistId = parseInt(req.query.artist_id) || 0;
     const genreId  = parseInt(req.query.genre_id)  || 0;
 
@@ -731,8 +731,8 @@ export const toggleSongStatus = async (req, res) => {
     }
 };
 
-// GET /api/admin/albums/:id/songs
-// Returns songs in this album + all songs (for add/remove UI)
+
+
 export const getAlbumSongs = async (req, res) => {
     const { id } = req.params;
     try {
@@ -781,11 +781,11 @@ export const getAlbumSongs = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/albums/:albumId/songs/:songId
-// Add or remove a song from the album (action: 'add' | 'remove')
+
+
 export const updateAlbumSong = async (req, res) => {
     const { albumId, songId } = req.params;
-    const { action } = req.body; // 'add' | 'remove'
+    const { action } = req.body;
     if (!['add', 'remove'].includes(action)) {
         return res.status(400).json({ success: false, message: 'action must be "add" or "remove"' });
     }
@@ -805,17 +805,17 @@ export const updateAlbumSong = async (req, res) => {
     }
 };
 
-// ══════════════════════════════════════════════════════════════════════════════
-// ADMIN PLAYLISTS MANAGEMENT
-// ══════════════════════════════════════════════════════════════════════════════
 
-// GET /api/admin/playlists?page=1&limit=20&keyword=&visibility=&owner_id=
+
+
+
+
 export const getAdminPlaylists = async (req, res) => {
     const page    = Math.max(1, parseInt(req.query.page)  || 1);
     const limit   = Math.min(100, parseInt(req.query.limit) || 20);
     const offset  = (page - 1) * limit;
     const keyword = (req.query.keyword || req.query.q || '').trim();
-    const visibility = req.query.visibility || ''; // 'public' | 'private' | ''
+    const visibility = req.query.visibility || '';
     const ownerId = parseInt(req.query.owner_id) || 0;
 
     const VALID_SORT  = ['name', 'created_at', 'songs_count'];
@@ -841,7 +841,7 @@ export const getAdminPlaylists = async (req, res) => {
         const limitP  = addParam(limit);
         const offsetP = addParam(offset);
 
-        // Handle sorting by songs_count (computed field)
+
         let orderClause;
         if (sortBy === 'songs_count') {
             orderClause = `songs_count ${order}`;
@@ -851,9 +851,9 @@ export const getAdminPlaylists = async (req, res) => {
 
         const [[countRow], [playlists]] = await Promise.all([
             pool.query(
-                `SELECT COUNT(*)::int AS total 
-                 FROM playlists p 
-                 LEFT JOIN users u ON p.user_id = u.id 
+                `SELECT COUNT(*)::int AS total
+                 FROM playlists p
+                 LEFT JOIN users u ON p.user_id = u.id
                  ${where}`,
                 filterParams
             ),
@@ -885,7 +885,7 @@ export const getAdminPlaylists = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/playlists/:id
+
 export const updateAdminPlaylist = async (req, res) => {
     const { id } = req.params;
     const { name, description, is_public } = req.body;
@@ -938,7 +938,7 @@ export const updateAdminPlaylist = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/playlists/:id
+
 export const deleteAdminPlaylist = async (req, res) => {
     const { id } = req.params;
 
@@ -957,7 +957,7 @@ export const deleteAdminPlaylist = async (req, res) => {
     }
 };
 
-// GET /api/admin/playlists/:id/songs
+
 export const getAdminPlaylistSongs = async (req, res) => {
     const { id } = req.params;
 
@@ -1002,7 +1002,7 @@ export const getAdminPlaylistSongs = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/playlists/:playlistId/songs/:songId
+
 export const removeAdminPlaylistSong = async (req, res) => {
     const { playlistId, songId } = req.params;
 
@@ -1021,17 +1021,17 @@ export const removeAdminPlaylistSong = async (req, res) => {
     }
 };
 
-// ══════════════════════════════════════════════════════════════════════════════
-// ADMIN ARTISTS MANAGEMENT
-// ══════════════════════════════════════════════════════════════════════════════
 
-// PATCH /api/admin/artists/:id
+
+
+
+
 export const updateAdminArtist = async (req, res) => {
     const { id } = req.params;
     const { name, bio, image_url } = req.body;
 
     try {
-        // Check artist exists
+
         const [[artist]] = await pool.query(
             'SELECT id, name, bio, image_url, user_id FROM artists WHERE id = $1',
             [id]
@@ -1040,12 +1040,12 @@ export const updateAdminArtist = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Artist not found' });
         }
 
-        // Validate name if provided
+
         if (name !== undefined && !name?.trim()) {
             return res.status(400).json({ success: false, message: 'Artist name cannot be empty' });
         }
 
-        // Check for duplicate name (exclude self)
+
         if (name?.trim() && name.trim().toLowerCase() !== artist.name.toLowerCase()) {
             const [existing] = await pool.query(
                 'SELECT id FROM artists WHERE LOWER(name) = LOWER($1) AND id != $2',
@@ -1056,7 +1056,7 @@ export const updateAdminArtist = async (req, res) => {
             }
         }
 
-        // Build update query
+
         const setClauses = [];
         const setValues  = [];
 
@@ -1086,12 +1086,12 @@ export const updateAdminArtist = async (req, res) => {
             setValues
         );
 
-        // If artist is linked to a user, sync name to user's full_name
+
         if (artist.user_id && name?.trim()) {
             await pool.query(
                 'UPDATE users SET full_name = $1, updated_at = NOW() WHERE id = $2',
                 [name.trim(), artist.user_id]
-            ).catch(() => {}); // Non-fatal if sync fails
+            ).catch(() => {});
         }
 
         return res.json({
@@ -1105,7 +1105,7 @@ export const updateAdminArtist = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/artists/:id
+
 export const deleteAdminArtist = async (req, res) => {
     const { id } = req.params;
 
@@ -1118,15 +1118,15 @@ export const deleteAdminArtist = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Artist not found' });
         }
 
-        // Delete artist
+
         await pool.query('DELETE FROM artists WHERE id = $1', [id]);
 
-        // If artist was linked to a user, revert their role to 'user'
+
         if (artist.user_id) {
             await pool.query(
                 `UPDATE users SET role = 'user', updated_at = NOW() WHERE id = $1 AND role = 'artist'`,
                 [artist.user_id]
-            ).catch(() => {}); // Non-fatal
+            ).catch(() => {});
         }
 
         return res.json({

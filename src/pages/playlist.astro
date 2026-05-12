@@ -237,7 +237,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   const editCoverRemove      = document.getElementById('edit-cover-remove') as HTMLButtonElement;
   const editCoverErr         = document.getElementById('edit-cover-err') as HTMLElement;
 
-  let _editCoverRemoved = false; // track if user explicitly removed the existing cover
+  let _editCoverRemoved = false;
 
   function showEditCoverPreview(file: File) {
     const reader = new FileReader();
@@ -361,9 +361,9 @@ import PlayerBar from "../components/PlayerBar.astro";
   });
 
   let _activePlId: number   = 0;
-  let _plSongs: any[]       = [];  // songs currently in the playlist
+  let _plSongs: any[]       = [];
   let _plSongIds: Set<number> = new Set();
-  let _allSongs: any[]      = [];  // every song in DB
+  let _allSongs: any[]      = [];
   let _activeTab: 'in-pl' | 'add' = 'in-pl';
   let _allSongsLoaded       = false;
 
@@ -536,7 +536,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       });
       const song = _allSongs.find((s: any) => s.id === songId);
       if (song) { _plSongs.push(song); _plSongIds.add(songId); }
-      renderAllSongs(); // removes song from this panel
+      renderAllSongs();
       if (_activeTab === 'in-pl') renderInPlaylist();
       updateHeaderSongCount();
       showToast(`"${title}" added to playlist.`, 'success');

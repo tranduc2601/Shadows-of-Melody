@@ -23,7 +23,7 @@ async function main() {
   const user = rows[0];
   console.log('\n✔ Admin user ready:', user);
 
-  // Ensure subscription row exists for admin user
+
   await pool.query(
     `INSERT INTO subscriptions (user_id, subscription_type, start_date, end_date)
      VALUES (?, 'free', NOW(), NULL)

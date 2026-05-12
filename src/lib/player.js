@@ -1,5 +1,5 @@
-// Global audio player singleton — browser-only
-// Events dispatched on window: player:songchange, player:play, player:pause, player:timeupdate, player:ended
+
+
 
 import { API_BASE } from './api.js';
 
@@ -9,7 +9,11 @@ export const player = (() => {
       get current() { return null; }, get isPlaying() { return false; },
       get currentTime() { return 0; }, get duration() { return 0; },
       get shuffle() { return false; }, get repeat() { return 'none'; },
-      playSong() {}, toggle() {}, next() {}, prev() {},
+      /**
+       * @param {unknown} [_song]
+       * @param {unknown[] | null | undefined} [_queue]
+       */
+      playSong(_song, _queue) {}, toggle() {}, next() {}, prev() {},
       seek() {}, setVolume() {}, toggleShuffle() { return false; }, cycleRepeat() { return 'none'; },
       saveState() {}, restoreState() {}, reset() {},
     };
@@ -20,9 +24,9 @@ export const player = (() => {
   let _queue = [];
   let _queueIdx = -1;
   let _shuffle = false;
-  let _repeat = 'none'; // 'none' | 'all' | 'one'
-  let _loading = false; // true while src is being changed — suppresses spurious pause event
-  let _historyTimer = null; // 10-second timer for logging plays
+  let _repeat = 'none';
+  let _loading = false;
+  let _historyTimer = null;
 
   function getAudio() {
     if (!_audio) {
@@ -74,12 +78,12 @@ export const player = (() => {
     a.src = `${API_BASE}/stream/${song.id}`;
     _loading = false;
     _dispatch('songchange');
-    try { await a.play(); } catch { /* autoplay blocked */ }
+    try { await a.play(); } catch {  }
 
-    // Cancel any pending history log from the previous song
+
     if (_historyTimer) { clearTimeout(_historyTimer); _historyTimer = null; }
 
-    // Log to history after 10 seconds of listening
+
     const songId = song.id;
     _historyTimer = setTimeout(() => {
       _historyTimer = null;
@@ -100,12 +104,16 @@ export const player = (() => {
     get duration() { return _audio?.duration || 0; },
     get shuffle() { return _shuffle; },
     get repeat() { return _repeat; },
-    /** Read-only snapshot of the current play queue. */
+
     get queue() { return [..._queue]; },
-    /** Index of the currently playing song within the queue (-1 if none). */
+
     get queueIndex() { return _queueIdx; },
 
-    /** @param {any} song @param {any[] | null} [queue] */
+
+    /**
+     * @param {unknown} song
+     * @param {unknown[] | null | undefined} [queue]
+     */
     playSong(song, queue = null) {
       if (queue) {
         _queue = queue;
@@ -149,7 +157,7 @@ export const player = (() => {
       return _repeat;
     },
 
-    /** Save current playback state to sessionStorage so it survives page navigation. */
+
     saveState() {
       if (!_current) return;
       try {
@@ -166,15 +174,15 @@ export const player = (() => {
       } catch {}
     },
 
-    /** Restore saved playback state after a page navigation. */
+
     restoreState() {
       try {
         const raw = sessionStorage.getItem('player_state');
         if (!raw) return;
         const state = JSON.parse(raw);
         if (!state?.song) return;
-        // Keep the saved state so a second call (e.g. from another module) doesn't double-restore
-        // Only clear after successfully starting playback
+
+
         _current = state.song;
         _queue = state.queue || [];
         _queueIdx = state.queueIdx ?? -1;
@@ -185,7 +193,7 @@ export const player = (() => {
         _loading = true;
         a.src = `${API_BASE}/stream/${state.song.id}`;
         _loading = false;
-        // Seek to saved position once metadata is ready
+
         const targetTime = state.currentTime || 0;
         const doSeek = () => { if (targetTime > 0) a.currentTime = targetTime; };
         if (isFinite(a.duration) && a.duration > 0) {
@@ -194,8 +202,8 @@ export const player = (() => {
           a.addEventListener('loadedmetadata', doSeek, { once: true });
         }
         sessionStorage.removeItem('player_state');
-        // Dispatch after current synchronous execution so PlayerBar event
-        // listeners are guaranteed to be registered before the event fires.
+
+
         queueMicrotask(() => {
           _dispatch('songchange');
           if (state.isPlaying) {
@@ -205,7 +213,7 @@ export const player = (() => {
       } catch {}
     },
 
-    /** Stop playback and clear all player state (e.g. on logout). */
+
     reset() {
       if (_historyTimer) { clearTimeout(_historyTimer); _historyTimer = null; }
       if (_audio) {

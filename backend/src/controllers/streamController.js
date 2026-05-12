@@ -13,8 +13,8 @@ export const streamAudio = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Audio file not found' });
         }
 
-        // file_url là Cloudinary CDN URL — redirect trực tiếp.
-        // Cloudinary CDN hỗ trợ Range requests nên seek/scrub hoạt động bình thường.
+
+
         return res.redirect(302, song.file_url);
     } catch (error) {
         console.error('StreamAudio error:', error);
@@ -35,7 +35,7 @@ export const downloadAudio = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Audio file not found' });
         }
 
-        // Redirect về Cloudinary URL — Cloudinary hỗ trợ native range/download
+
         return res.redirect(302, song.file_url);
     } catch (error) {
         console.error('DownloadAudio error:', error);

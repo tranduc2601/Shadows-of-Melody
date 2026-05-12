@@ -64,7 +64,7 @@ export const addFavorite = async (req, res) => {
             });
         }
 
-        // Check if song exists
+
         const song = await Song.findById(songId);
         if (!song) {
             return res.status(404).json({
@@ -73,7 +73,7 @@ export const addFavorite = async (req, res) => {
             });
         }
 
-        // Check if already favorite
+
         const existingFavorite = await Favorite.findByUserAndSong(userId, songId);
         if (existingFavorite) {
             return res.status(409).json({

@@ -1,7 +1,7 @@
 import { pool } from '../config/database.js';
 
-// GET /api/admin/tasks
-// Managers see only their own tasks; admins/managers with admin see all
+
+
 export const listTasks = async (req, res) => {
     const { role, id: viewerId } = req.user;
     try {
@@ -36,7 +36,7 @@ export const listTasks = async (req, res) => {
     }
 };
 
-// POST /api/admin/tasks  (admin only — enforced in route via requireRole)
+
 export const createTask = async (req, res) => {
     const { title, description, assigned_to } = req.body;
     const assignedBy = req.user.id;
@@ -49,7 +49,7 @@ export const createTask = async (req, res) => {
     }
 
     try {
-        // Validate assignee is a manager
+
         const [users] = await pool.query('SELECT id, role FROM users WHERE id = ?', [assigned_to]);
         if (!users[0]) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -71,7 +71,7 @@ export const createTask = async (req, res) => {
     }
 };
 
-// PATCH /api/admin/tasks/:id/status
+
 export const updateTaskStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -90,7 +90,7 @@ export const updateTaskStatus = async (req, res) => {
         if (!tasks[0]) {
             return res.status(404).json({ success: false, message: 'Task not found' });
         }
-        // Managers can only update their own tasks
+
         if (userRole === 'manager' && tasks[0].assigned_to !== userId) {
             return res.status(403).json({ success: false, message: 'You can only update your own tasks' });
         }
@@ -106,7 +106,7 @@ export const updateTaskStatus = async (req, res) => {
     }
 };
 
-// GET /api/admin/managers  — list users with role='manager' for assignment dropdowns
+
 export const getManagers = async (req, res) => {
     try {
         const [rows] = await pool.query(

@@ -10,16 +10,16 @@ import {
 
 const router = express.Router();
 
-// User: submit artist request (rate-limited to prevent spam)
+
 router.post('/request-artist', requireAuth, roleRequestLimiter, requestArtist);
 
-// User: check own pending request
+
 router.get('/my-request', requireAuth, getMyRequest);
 
-// Manager / Admin: list pending requests
+
 router.get('/requests', requireAuth, requireRole('manager', 'admin'), listRequests);
 
-// Manager / Admin: approve or reject a request
+
 router.patch('/requests/:id', requireAuth, requireRole('manager', 'admin'), reviewRequest);
 
 export default router;

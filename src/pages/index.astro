@@ -33,7 +33,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             <input
               id="header-search-input"
               type="text"
-              placeholder="Tìm kiếm bài hát, nghệ sĩ..."
+              placeholder="Search songs, artists..."
               class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-2.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all backdrop-blur-md shadow-inner"
             />
           </div>
@@ -48,7 +48,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             </a>
           </div>
           <a href="/login" id="header-login-btn" class="hidden text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400/50">
-            Đăng nhập
+            Login
           </a>
         </div>
       </header>
@@ -69,9 +69,9 @@ import PlayerBar from "../components/PlayerBar.astro";
               <div class="flex items-center gap-3 mb-4">
                   <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-bold tracking-widest text-white border border-white/20 uppercase">
                      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                     Đang hot
+                     Trending
                   </span>
-                  <span id="hero-artist-label" class="text-sm font-medium text-purple-200">Nổi bật</span>
+                  <span id="hero-artist-label" class="text-sm font-medium text-purple-200">Featured</span>
               </div>
               
               <h1 id="hero-title" class="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight drop-shadow-xl">—</h1>
@@ -80,10 +80,10 @@ import PlayerBar from "../components/PlayerBar.astro";
               <div class="flex items-center gap-4">
                 <button id="hero-play-btn" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3.5 px-8 font-bold flex items-center gap-2 transition-all shadow-[0_8px_30px_rgba(168,85,247,0.4)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.6)]">
                   <span class="material-symbols-outlined fill-current text-[24px]">play_arrow</span>
-                  Phát ngay
+                  Play Now
                 </button>
                 <a id="hero-artist-link" href="/artists" class="bg-white/5 hover:bg-white/15 backdrop-blur-md border border-white/20 text-white rounded-full py-3.5 px-8 font-bold transition-all">
-                  Xem nghệ sĩ
+                  View Artist
                 </a>
               </div>
             </div>
@@ -97,11 +97,11 @@ import PlayerBar from "../components/PlayerBar.astro";
           <div class="flex items-end justify-between mb-6">
             <h2 class="text-2xl font-bold text-white flex items-center gap-2">
               <span class="material-symbols-outlined text-purple-400">history</span>
-              Nghe gần đây
+              Recently Played
             </h2>
           </div>
           <div id="recently-played-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Đang tải...</div>
+            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</div>
           </div>
         </section>
 
@@ -127,7 +127,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                   </tr>
                 </thead>
                 <tbody id="trending-tbody">
-                  <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">Đang tải...</td></tr>
+                  <tr><td colspan="5" class="px-4 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -136,11 +136,11 @@ import PlayerBar from "../components/PlayerBar.astro";
           <div>
             <div class="flex items-end justify-between mb-6">
                <h2 class="text-xl font-bold text-white">Top Artists</h2>
-               <a href="/artists" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">Xem tất cả</a>
+               <a href="/artists" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">View All</a>
             </div>
 
             <div id="artists-grid" class="grid grid-cols-2 gap-4">
-              <div class="col-span-2 text-gray-500 text-sm text-center py-4">Đang tải...</div>
+              <div class="col-span-2 text-gray-500 text-sm text-center py-4">Loading...</div>
             </div>
           </div>
         </div>
@@ -160,7 +160,7 @@ import PlayerBar from "../components/PlayerBar.astro";
 
             <div id="releases-scroll-wrapper" class="overflow-x-auto pb-2 no-scrollbar">
               <div id="releases-grid" class="flex gap-6 w-max">
-                <div class="text-gray-500 text-sm text-center py-4 w-48">Đang tải...</div>
+                <div class="text-gray-500 text-sm text-center py-4 w-48">Loading...</div>
               </div>
             </div>
         </div>
@@ -173,7 +173,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             </h2>
           </div>
           <div id="artist-members-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Đang tải...</div>
+            <div class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</div>
           </div>
         </div>
 
@@ -217,7 +217,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                 </tr>
               </thead>
               <tbody id="album-overlay-tbody">
-                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Đang tải...</td></tr>
+                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -279,7 +279,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     document.getElementById('header-login-btn')?.remove();
 
     const hour = new Date().getHours();
-    const timeGreeting = hour < 12 ? 'Chào buổi sáng' : hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
+    const timeGreeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
     const displayName = user.full_name || user.username || '';
     if (greetingEl) greetingEl.textContent = `${timeGreeting}, ${displayName}`;
 
@@ -314,12 +314,12 @@ import PlayerBar from "../components/PlayerBar.astro";
       const heroLink = document.getElementById('hero-artist-link') as HTMLAnchorElement;
 
       if (title) title.textContent = s.title;
-      if (artistLabel) artistLabel.textContent = s.artist_names || 'Nghệ sĩ';
+      if (artistLabel) artistLabel.textContent = s.artist_names || 'Artist';
 
       const plays = formatCount(s.plays_count || 0);
       const dur   = formatDuration(s.duration);
       if (desc) {
-        desc.textContent = `${plays} lượt nghe · ${dur}`;
+        desc.textContent = `${plays} plays · ${dur}`;
         desc.classList.remove('opacity-0');
       }
 
@@ -386,11 +386,11 @@ import PlayerBar from "../components/PlayerBar.astro";
           <td class="px-4 py-3 rounded-r-xl">
             <div class="flex items-center gap-1 justify-end">
               <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                      data-song="${encodeURIComponent(JSON.stringify(s))}" title="Thêm vào playlist">
+                      data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to playlist">
                 <span class="material-symbols-outlined text-[20px]">playlist_add</span>
               </button>
               <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                      data-id="${s.id}" data-liked="false" title="Yêu thích">
+                      data-id="${s.id}" data-liked="false" title="Like">
                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
               </button>
             </div>
@@ -547,7 +547,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const { data: songs } = await apiFetch('/songs?limit=50');
       if (tbody) {
         if (!songs?.length) {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Chưa có bài hát nào.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No songs yet.</td></tr>';
         } else {
           _allSongs = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
           renderTrendingRows(_allSongs.slice(0, 3));
@@ -562,7 +562,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         }
       }
     } catch {
-      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
     }
   }
 
@@ -580,7 +580,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   function renderOverlaySongs(songs: any[]) {
     const tb = document.getElementById('album-overlay-tbody')!;
     if (!songs.length) {
-      tb.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Album chưa có bài hát.</td></tr>';
+      tb.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">This album has no songs yet.</td></tr>';
       return;
     }
     tb.innerHTML = songs.map((s: any, i: number) => {
@@ -613,12 +613,12 @@ import PlayerBar from "../components/PlayerBar.astro";
     const overlay = document.getElementById('album-overlay')!;
     overlay.classList.remove('hidden');
     overlay.classList.add('flex', 'flex-col');
-    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Đang tải...';
+    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Loading...';
     (document.getElementById('album-overlay-meta') as HTMLElement).textContent = '';
     (document.getElementById('album-overlay-cover') as HTMLElement).innerHTML = '';
     (document.getElementById('album-overlay-count') as HTMLElement).textContent = '';
     (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
-      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Đang tải...</td></tr>';
+      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
     try {
       const { data: album } = await apiFetch(`/albums/${albumId}`);
       const g = GRADIENTS_HEX[(album.id - 1) % GRADIENTS_HEX.length];
@@ -631,11 +631,11 @@ import PlayerBar from "../components/PlayerBar.astro";
       _overlaySongs = album.songs || [];
       const count = _overlaySongs.length;
       (document.getElementById('album-overlay-meta') as HTMLElement).textContent =
-        [album.artist?.name, year, `${count} bài`].filter(Boolean).join(' · ');
-      (document.getElementById('album-overlay-count') as HTMLElement).textContent = `${count} bài`;
+        [album.artist?.name, year, `${count} songs`].filter(Boolean).join(' · ');
+      (document.getElementById('album-overlay-count') as HTMLElement).textContent = `${count} songs`;
       renderOverlaySongs(_overlaySongs);
     } catch {
-      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Tải thất bại';
+      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Failed to load';
     }
   }
 
@@ -708,12 +708,12 @@ import PlayerBar from "../components/PlayerBar.astro";
       btn.classList.add('text-pink-500');
       btn.classList.remove('text-gray-500', 'opacity-0');
       btn.classList.add('!opacity-100');
-      btn.title = 'Bỏ yêu thích';
+      btn.title = 'Unlike';
     } else {
       if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
       btn.classList.remove('text-pink-500', '!opacity-100');
       btn.classList.add('text-gray-500', 'opacity-0');
-      btn.title = 'Yêu thích';
+      btn.title = 'Like';
     }
   }
 

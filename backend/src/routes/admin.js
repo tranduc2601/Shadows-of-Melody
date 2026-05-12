@@ -7,7 +7,7 @@ import { uploadAudio, uploadImage } from '../config/multer.js';
 
 const router = express.Router();
 
-// All admin routes require auth + at least manager role
+
 router.use(requireAuth, requireRole('manager', 'admin'));
 
 router.get('/stats',                    getStats);
@@ -31,33 +31,33 @@ router.post('/albums',                  requireRole('admin'), createAlbum);
 router.patch('/albums/:id',             requireRole('admin'), updateAlbum);
 router.delete('/albums/:id',            requireRole('admin'), deleteAlbum);
 
-// Songs management (includes suppressed)
+
 router.get('/songs',                    getAdminSongs);
 
-// Transactional song upload with PostgreSQL + Cloudinary rollback
+
 router.post('/songs/upload', uploadAudio.single('audio'), adminUploadSong);
 
-// Update song metadata (title, cover, album, genres, artists)
+
 router.patch('/songs/:id', adminUpdateSong);
 
-// Toggle song published/suppressed status
+
 router.patch('/songs/:id/status', toggleSongStatus);
 
-// Album songs management
+
 router.get('/albums/:id/songs',                    getAlbumSongs);
 router.patch('/albums/:albumId/songs/:songId',     requireRole('admin'), updateAlbumSong);
 
-// Playlists management (admin can manage all playlists)
+
 router.get('/playlists',                           getAdminPlaylists);
 router.patch('/playlists/:id',                     requireRole('admin'), updateAdminPlaylist);
 router.delete('/playlists/:id',                    requireRole('admin'), deleteAdminPlaylist);
 router.get('/playlists/:id/songs',                 getAdminPlaylistSongs);
 router.delete('/playlists/:playlistId/songs/:songId', requireRole('admin'), removeAdminPlaylistSong);
 
-// Cover image upload → Cloudinary, returns secure URL
+
 router.post('/upload/cover', uploadImage.single('cover'), adminUploadCover);
 
-// Manager tasks
+
 router.get('/managers',            getManagers);
 router.get('/tasks',               listTasks);
 router.post('/tasks',              requireRole('admin'), createTask);

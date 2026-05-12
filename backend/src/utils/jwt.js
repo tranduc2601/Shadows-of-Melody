@@ -23,12 +23,12 @@ const decodeToken = (token) => {
     return jwt.decode(token);
 };
 
-/**
- * Revoke a token immediately (adds to in-memory blocklist).
- * Pass the decoded payload so we can read its `exp` without re-parsing.
- * @param {string} token  Raw JWT string.
- * @param {object} [decoded]  Decoded payload (optional — avoids a second verify call).
- */
+
+
+
+
+
+
 const revokeToken = (token, decoded) => {
     const payload = decoded ?? decodeToken(token);
     blockToken(token, payload?.exp);

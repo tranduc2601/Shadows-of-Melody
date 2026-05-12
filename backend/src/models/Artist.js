@@ -16,7 +16,6 @@ class Artist {
 
         const artist = rows[0];
 
-        // Get songs by artist
         const [songs] = await pool.query(
             `SELECT s.* FROM songs s
              JOIN song_artists sa ON s.id = sa.song_id

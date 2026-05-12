@@ -6,11 +6,11 @@ import { uploadImage } from '../config/multer.js';
 
 const router = express.Router();
 
-// Public routes
+
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);
 
-// Protected routes
+
 router.get('/me', requireAuth, authController.getMe);
 router.put('/profile', requireAuth, authController.updateProfile);
 router.post('/upload-avatar', requireAuth, uploadImage.single('avatar'), authController.uploadAvatar);

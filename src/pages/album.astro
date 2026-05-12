@@ -8,7 +8,7 @@ const album = {
   year: 2020,
   type: "Album",
   trackCount: 14,
-  duration: "56 phút",
+  duration: "56 minutes",
   label: "XO / Republic Records",
 };
 
@@ -55,10 +55,10 @@ const relatedAlbums = [
             <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
           </a>
           <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Tìm Kiếm
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Search
           </a>
           <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Nghệ Sĩ
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Artists
           </a>
         </nav>
 
@@ -98,7 +98,7 @@ const relatedAlbums = [
       <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none"></div>
 
       <header class="h-16 shrink-0 flex items-center px-6 gap-4 relative z-10">
-        <a href="javascript:history.back()" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-gray-400 hover:text-white" aria-label="Quay lại">
+        <a href="javascript:history.back()" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-gray-400 hover:text-white" aria-label="Go back">
           <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
         </a>
         <nav aria-label="Breadcrumb" class="text-sm text-gray-500 flex items-center gap-2">
@@ -131,19 +131,19 @@ const relatedAlbums = [
                 <span class="text-white/30" aria-hidden="true">·</span>
                 <span>{album.year}</span>
                 <span class="text-white/30" aria-hidden="true">·</span>
-                <span>{album.trackCount} bài hát</span>
+                <span>{album.trackCount} songs</span>
                 <span class="text-white/30" aria-hidden="true">·</span>
                 <span class="text-white/50">{album.duration}</span>
               </div>
               <div class="flex items-center gap-3 mt-4 flex-wrap">
                 <button type="button" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(168,85,247,0.4)]">
                   <span class="material-symbols-outlined text-[22px]">play_arrow</span>
-                  Phát
+                  Play
                 </button>
-                <button type="button" aria-label="Thêm vào yêu thích" class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center text-gray-300 hover:text-rose-400 hover:border-rose-400 transition-all">
+                <button type="button" aria-label="Add to favorites" class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center text-gray-300 hover:text-rose-400 hover:border-rose-400 transition-all">
                   <span class="material-symbols-outlined text-[22px]">favorite_border</span>
                 </button>
-                <button type="button" aria-label="Thêm tùy chọn" class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/30 transition-all">
+                <button type="button" aria-label="More options" class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/30 transition-all">
                   <span class="material-symbols-outlined text-[22px]">more_horiz</span>
                 </button>
               </div>
@@ -158,8 +158,8 @@ const relatedAlbums = [
               <thead>
                 <tr class="text-gray-500 border-b border-white/5">
                   <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Tên bài</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-12">Lượt nghe</th>
+                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Title</th>
+                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-12">Plays</th>
                   <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-16 text-center">
                     <span class="material-symbols-outlined text-[18px]">schedule</span>
                   </th>
@@ -191,7 +191,7 @@ const relatedAlbums = [
         </div>
 
         <div class="px-6 lg:px-8 mt-12 mb-6">
-          <h2 class="text-xl font-bold text-white mb-6">Thêm từ {album.artist}</h2>
+          <h2 class="text-xl font-bold text-white mb-6">More from {album.artist}</h2>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
             {relatedAlbums.map((rel) => (
               <a href="/album" class="group flex flex-col gap-3 cursor-pointer">

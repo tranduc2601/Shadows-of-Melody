@@ -1,7 +1,7 @@
 import { pool } from '../config/database.js';
 import { revokeToken } from '../utils/jwt.js';
 
-// ── POST /api/roles/request-artist ───────────────────────────────────────────
+
 export const requestArtist = async (req, res) => {
     const userId = req.user.id;
 
@@ -13,7 +13,7 @@ export const requestArtist = async (req, res) => {
     }
 
     try {
-        // Enforce one pending request at a time
+
         const [existing] = await pool.query(
             `SELECT id FROM role_requests WHERE user_id = $1 AND status = 'pending'`,
             [userId],
@@ -41,7 +41,7 @@ export const requestArtist = async (req, res) => {
     }
 };
 
-// ── GET /api/roles/my-request ─────────────────────────────────────────────────
+
 export const getMyRequest = async (req, res) => {
     const userId = req.user.id;
     try {
@@ -60,7 +60,7 @@ export const getMyRequest = async (req, res) => {
     }
 };
 
-// ── GET /api/roles/requests ───────────────────────────────────────────────────
+
 export const listRequests = async (req, res) => {
     const validStatuses = ['pending', 'approved', 'rejected'];
     const status = validStatuses.includes(req.query.status) ? req.query.status : 'pending';
@@ -93,10 +93,10 @@ export const listRequests = async (req, res) => {
     }
 };
 
-// ── PATCH /api/roles/requests/:id ────────────────────────────────────────────
+
 export const reviewRequest = async (req, res) => {
     const { id } = req.params;
-    const { action } = req.body; // 'approve' | 'reject'
+    const { action } = req.body;
     const reviewerId = req.user.id;
 
     if (!['approve', 'reject'].includes(action)) {
@@ -119,7 +119,7 @@ export const reviewRequest = async (req, res) => {
 
         const newStatus = action === 'approve' ? 'approved' : 'rejected';
 
-        // Update request row
+
         await pool.query(
             `UPDATE role_requests
              SET status = $1, reviewed_by = $2, reviewed_at = NOW()
@@ -127,14 +127,14 @@ export const reviewRequest = async (req, res) => {
             [newStatus, reviewerId, id],
         );
 
-        // Promote user on approval
+
         if (action === 'approve') {
             await pool.query(
                 `UPDATE users SET role = 'artist' WHERE id = $1`,
                 [request.user_id],
             );
 
-            // Create or update artist profile entry linked to this user
+
             try {
                 const [userInfo] = await pool.query(
                     `SELECT username, full_name, avatar_url FROM users WHERE id = $1`,
@@ -143,20 +143,20 @@ export const reviewRequest = async (req, res) => {
                 if (userInfo.length > 0) {
                     const u = userInfo[0];
                     const artistName = u.full_name || u.username;
-                    // Check if an artist record already exists for this user_id
+
                     const [existing] = await pool.query(
                         `SELECT id FROM artists WHERE user_id = $1`,
                         [request.user_id],
                     );
                     if (existing.length === 0) {
-                        // No existing record — insert a fresh one
+
                         await pool.query(
                             `INSERT INTO artists (name, image_url, user_id)
                              VALUES ($1, $2, $3)`,
                             [artistName, u.avatar_url || null, request.user_id],
                         );
                     } else {
-                        // Sync name & avatar in case they changed
+
                         await pool.query(
                             `UPDATE artists SET name = $1, image_url = $2, updated_at = NOW()
                              WHERE user_id = $3`,
@@ -165,7 +165,7 @@ export const reviewRequest = async (req, res) => {
                     }
                 }
             } catch (innerErr) {
-                // Non-fatal: artist profile creation failed but role was already updated
+
                 console.warn('Could not create artist profile entry:', innerErr.message);
             }
         }

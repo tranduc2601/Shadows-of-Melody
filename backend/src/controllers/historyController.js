@@ -67,7 +67,7 @@ export const clearHistory = async (req, res) => {
         if (days) {
             await History.deleteOlderThan(userId, parseInt(days, 10));
         } else {
-            // Clear all history for user
+
             await History.delete(userId);
         }
 
@@ -84,12 +84,12 @@ export const clearHistory = async (req, res) => {
     }
 };
 
-/**
- * POST /api/history/play-session
- * Records a completed play session. Only counts toward play_count and history if:
- *  - duration_played >= 30 seconds
- *  - no existing history entry for same user+song in the last 10 minutes
- */
+
+
+
+
+
+
 export const recordPlaySession = async (req, res) => {
     try {
         const { song_id, duration_played } = req.body;
@@ -101,21 +101,21 @@ export const recordPlaySession = async (req, res) => {
 
         const durationSec = parseInt(duration_played, 10) || 0;
 
-        // Require at least 30 seconds listened
+
         if (durationSec < 30) {
             return res.status(200).json({ success: true, counted: false, reason: 'too_short' });
         }
 
-        // Check if already counted in last 10 minutes (anti-spam)
+
         const hasRecent = await History.hasRecentEntry(userId, song_id, 10);
         if (hasRecent) {
             return res.status(200).json({ success: true, counted: false, reason: 'too_recent' });
         }
 
-        // Increment play_count
+
         await Song.incrementPlayCount(song_id);
 
-        // Add to history (upsert to safely handle the unique constraint)
+
         await History.upsert(userId, song_id, durationSec);
 
         return res.status(200).json({ success: true, counted: true });

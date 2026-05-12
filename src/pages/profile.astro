@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar.astro";
 import PlayerBar from "../components/PlayerBar.astro";
 ---
 
-<MainLayout title="Hồ sơ - Shadows of Melody">
+<MainLayout title="Profile - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <Sidebar currentPage="profile" />
@@ -35,7 +35,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                   <span class="material-symbols-outlined text-purple-300" style="font-size:3.5rem">person</span>
                 </div>
               </div>
-              <button id="avatar-upload-btn" type="button" aria-label="Đổi ảnh đại diện"
+              <button id="avatar-upload-btn" type="button" aria-label="Change profile picture"
                 class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-400 flex items-center justify-center transition-colors shadow-lg">
                 <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
               </button>
@@ -313,7 +313,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     setText('profile-handle', `@${user.username || '—'}`);
-    setText('profile-bio', user.bio || 'Không có mô tả.');
+    setText('profile-bio', user.bio || 'No description.');
 
     const bannerImg = document.getElementById('profile-banner-img') as HTMLImageElement | null;
     if (bannerImg) {
@@ -355,9 +355,9 @@ import PlayerBar from "../components/PlayerBar.astro";
   async function loadProfile() {
     const token = localStorage.getItem('auth_token');
     if (!token) {
-      setText('profile-name', 'Chưa đăng nhập');
+      setText('profile-name', 'Not logged in');
       document.getElementById('recent-tracks')!.innerHTML =
-        '<p class="text-center py-4"><a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng nhập</a> để xem hồ sơ.</p>';
+        '<p class="text-center py-4"><a href="/login" class="text-purple-400 hover:text-purple-300 font-semibold">Login</a> to view your profile.</p>';
       ['top-artists','user-playlists-grid','following-artists-grid'].forEach(id => {
         const el = document.getElementById(id); if (el) el.innerHTML = '';
       });
@@ -370,7 +370,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     try {
       const { data: user } = await apiFetch('/auth/me');
       applyUserInfo(user);
-    } catch { if (!cached) setText('profile-name', 'Không thể tải thông tin'); }
+    } catch { if (!cached) setText('profile-name', 'Failed to load profile'); }
 
     await Promise.allSettled([loadRecentTracks(), loadFollowedArtists(), loadPlaylists()]);
   }
@@ -380,7 +380,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     try {
       const { data: history } = await apiFetch('/history?limit=20');
       if (!history?.length) {
-        el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Chưa có lịch sử nghe.</p>';
+        el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No listening history yet.</p>';
         return;
       }
       el.innerHTML = history.map((h: any, i: number) => {
@@ -417,7 +417,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         } catch {}
       });
     } catch {
-      el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Không thể tải lịch sử.</p>';
+      el.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Failed to load history.</p>';
     }
   }
 
@@ -431,10 +431,10 @@ import PlayerBar from "../components/PlayerBar.astro";
       if (badge) badge.textContent = artists?.length ? `(${artists.length})` : '';
 
       if (!artists?.length) {
-        previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Chưa theo dõi nghệ sĩ nào.</p>';
+        previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Not following any artists yet.</p>';
         followingEl.innerHTML = `<p class="col-span-5 text-gray-500 text-sm text-center py-8">
-          Bạn chưa theo dõi nghệ sĩ nào.
-          <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Khám phá nghệ sĩ →</a></p>`;
+          You are not following any artists yet.
+          <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Discover artists →</a></p>`;
         return;
       }
 
@@ -477,10 +477,10 @@ import PlayerBar from "../components/PlayerBar.astro";
             if (badge2) badge2.textContent = remaining > 0 ? `(${remaining})` : '';
             setText('profile-following', formatCount(remaining));
             if (remaining === 0) {
-              previewEl.innerHTML = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Chưa theo dõi nghệ sĩ nào.</p>';
+              previewEl.innerHTML = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Not following any artists yet.</p>';
               followingEl.innerHTML = `<p class="col-span-5 text-gray-500 text-sm text-center py-8">
-                Bạn chưa theo dõi nghệ sĩ nào.
-                <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Khám phá nghệ sĩ →</a></p>`;
+                You are not following any artists yet.
+                <a href="/artists" class="text-purple-400 hover:text-purple-300 ml-1">Discover artists →</a></p>`;
             } else {
               const keep = Array.from(followingEl.querySelectorAll('div.group\\/card')).slice(0, 4);
               previewEl.innerHTML = keep.map(card => {
@@ -496,17 +496,17 @@ import PlayerBar from "../components/PlayerBar.astro";
                   <p class="text-xs font-semibold text-gray-200 group-hover:text-white transition-colors text-center truncate w-full">${name}</p></a>`;
               }).join('');
             }
-            showToast(`Đã bỏ theo dõi ${aName}`, 'info');
+            showToast(`Unfollowed ${aName}`, 'info');
           } catch (err: any) {
             btn.disabled = false;
             btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">person_remove</span>Unfollow';
-            showToast(err.message || 'Thất bại', 'error');
+            showToast(err.message || 'Failed', 'error');
           }
         });
       });
     } catch {
-      previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Không thể tải.</p>';
-      followingEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-8">Không thể tải.</p>';
+      previewEl.innerHTML   = '<p class="col-span-2 text-gray-500 text-sm text-center py-4">Failed to load.</p>';
+      followingEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-8">Failed to load.</p>';
     }
   }
 
@@ -517,7 +517,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const { data: playlists } = await apiFetch('/playlists/me');
       if (badge && playlists?.length) badge.textContent = `(${playlists.length})`;
       if (!playlists?.length) {
-        plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">Chưa có playlist. <a href="/playlist?create=1" class="text-purple-400 hover:text-purple-300">Tạo mới</a>.</p>';
+        plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">No playlists yet. <a href="/playlist?create=1" class="text-purple-400 hover:text-purple-300">Create one</a>.</p>';
         return;
       }
       plEl.innerHTML = playlists.map((pl: any) => `
@@ -534,7 +534,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           <p class="text-xs text-gray-500 mt-0.5">${pl.song_count != null ? pl.song_count + ' songs' : (pl.description || 'Playlist')}</p>
         </a>`).join('');
     } catch {
-      plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">Không thể tải playlist.</p>';
+      plEl.innerHTML = '<p class="col-span-5 text-gray-500 text-sm text-center py-4">Failed to load playlists.</p>';
     }
   }
 
@@ -542,16 +542,16 @@ import PlayerBar from "../components/PlayerBar.astro";
   loadProfile();
 
   document.getElementById('clear-history-btn')?.addEventListener('click', async () => {
-    if (!confirm('Xóa toàn bộ lịch sử nghe? Hành động này không thể hoàn tác.')) return;
+    if (!confirm('Clear all listening history? This action cannot be undone.')) return;
     const btn = document.getElementById('clear-history-btn') as HTMLButtonElement;
     btn.disabled = true;
     try {
       await apiFetch('/history', { method: 'DELETE' });
       document.getElementById('recent-tracks')!.innerHTML =
-        '<p class="text-gray-500 text-sm text-center py-8">Lịch sử đã được xóa.</p>';
-      showToast('Đã xóa lịch sử nghe.', 'success');
+        '<p class="text-gray-500 text-sm text-center py-8">History has been cleared.</p>';
+      showToast('Listening history cleared.', 'success');
     } catch (err: any) {
-      showToast(err.message || 'Xóa thất bại.', 'error');
+      showToast(err.message || 'Failed to clear history.', 'error');
     } finally { btn.disabled = false; }
   });
 
@@ -579,7 +579,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     const file = bannerFileInput.files?.[0];
     if (!file) return;
     const token = localStorage.getItem('auth_token');
-    if (!token) { showToast('Vui lòng đăng nhập.', 'error'); return; }
+    if (!token) { showToast('Please log in first.', 'error'); return; }
     const orig = bannerUploadBtn.innerHTML;
     bannerUploadBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span>';
     bannerUploadBtn.disabled = true;
@@ -587,13 +587,13 @@ import PlayerBar from "../components/PlayerBar.astro";
       const fd = new FormData(); fd.append('banner', file);
       const res  = await fetch(`${API_BASE}/auth/upload-banner`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       const url: string = json.data.url;
       const img = document.getElementById('profile-banner-img') as HTMLImageElement | null;
       if (img) { img.src = url; img.classList.remove('hidden'); }
       try { const s = JSON.parse(localStorage.getItem('auth_user')||'null'); if(s){s.banner_url=url;localStorage.setItem('auth_user',JSON.stringify(s));} } catch {}
-      showToast('Banner đã được cập nhật!', 'success');
-    } catch (err: any) { showToast(err.message || 'Upload banner thất bại', 'error'); }
+      showToast('Banner updated successfully!', 'success');
+    } catch (err: any) { showToast(err.message || 'Failed to upload banner', 'error'); }
     finally { bannerUploadBtn.innerHTML = orig; bannerUploadBtn.disabled = false; bannerFileInput.value = ''; }
   });
 
@@ -604,7 +604,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     const file = avatarFileInput.files?.[0];
     if (!file) return;
     const token = localStorage.getItem('auth_token');
-    if (!token) { showToast('Vui lòng đăng nhập.', 'error'); return; }
+    if (!token) { showToast('Please log in first.', 'error'); return; }
     const orig = avatarUploadBtn.innerHTML;
     avatarUploadBtn.innerHTML = '<span class="material-symbols-outlined text-white text-[16px] animate-spin">refresh</span>';
     avatarUploadBtn.disabled = true;
@@ -612,15 +612,15 @@ import PlayerBar from "../components/PlayerBar.astro";
       const fd = new FormData(); fd.append('avatar', file);
       const res  = await fetch(`${API_BASE}/auth/upload-avatar`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       const url: string = json.data.url;
       const inner = document.getElementById('profile-avatar-inner');
       if (inner) inner.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-full" alt="Avatar"/>`;
       const sidebarInner = document.getElementById('sidebar-avatar-inner');
       if (sidebarInner) sidebarInner.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-full" alt=""/>`;
       try { const s = JSON.parse(localStorage.getItem('auth_user')||'null'); if(s){s.avatar_url=url;localStorage.setItem('auth_user',JSON.stringify(s));} } catch {}
-      showToast('Ảnh đại diện đã được cập nhật!', 'success');
-    } catch (err: any) { showToast(err.message || 'Upload ảnh thất bại', 'error'); }
+      showToast('Profile picture updated successfully!', 'success');
+    } catch (err: any) { showToast(err.message || 'Failed to upload picture', 'error'); }
     finally { avatarUploadBtn.innerHTML = orig; avatarUploadBtn.disabled = false; avatarFileInput.value = ''; }
   });
 

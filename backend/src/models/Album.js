@@ -16,14 +16,12 @@ class Album {
 
         const album = rows[0];
 
-        // Get songs in album
         const [songs] = await pool.query(
             'SELECT * FROM songs WHERE album_id = ? ORDER BY created_at',
             [id]
         );
         album.songs = songs;
 
-        // Get artist info
         const [artists] = await pool.query(
             'SELECT id, name, image_url FROM artists WHERE id = ?',
             [album.artist_id]

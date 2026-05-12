@@ -12,7 +12,7 @@ const libItems = [
 ];
 ---
 
-<!-- Apply collapsed state BEFORE first paint to avoid flash -->
+
 <script is:inline>
   (function () {
     if (localStorage.getItem('sidebar_collapsed') === 'true') {
@@ -33,7 +33,7 @@ const libItems = [
   class="sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40
          transition-[width] duration-300 ease-in-out overflow-hidden">
 
-  <!-- Header: logo + toggle button -->
+
   <div class="h-20 flex items-center justify-between px-4 shrink-0">
     <a href="/" class="flex items-center gap-2 min-w-0 overflow-hidden">
       <span class="material-symbols-outlined text-purple-400 animate-pulse shrink-0">music_note</span>
@@ -91,7 +91,7 @@ const libItems = [
       ))}
     </nav>
 
-    <!-- Admin link -->
+
     <a id="sidebar-admin-link" href="/admin" title="Admin Panel"
        class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-purple-400 hover:text-white hover:bg-purple-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-purple-500/20 flex items-center justify-center shrink-0">
@@ -100,7 +100,7 @@ const libItems = [
       <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Admin Panel</span>
     </a>
 
-    <!-- Artist Studio link -->
+
     <a id="sidebar-studio-link" href="/studio" title="Artist Studio"
        class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-green-400 hover:text-white hover:bg-green-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center shrink-0">
@@ -109,7 +109,7 @@ const libItems = [
       <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Artist Studio</span>
     </a>
 
-    <!-- Upload button -->
+
     <a id="sidebar-upload-link" href="/upload" title="Upload Song"
        class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-indigo-400 hover:text-white hover:bg-indigo-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
@@ -118,7 +118,7 @@ const libItems = [
       <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Upload Song</span>
     </a>
 
-    <!-- Create Playlist button -->
+
     <button id="btn-new-playlist" title="Create new playlist"
        class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-gray-500 hover:text-white w-full rounded-lg hover:bg-white/5 transition-all duration-200 text-sm">
       <span class="w-8 h-8 rounded-md border border-dashed border-white/20 flex items-center justify-center shrink-0">
@@ -128,9 +128,9 @@ const libItems = [
     </button>
   </div>
 
-  <!-- User Profile -->
+
   <div class="p-3 border-t border-white/5 shrink-0">
-    <!-- Guest state -->
+
     <div id="sidebar-guest">
       <a href="/login" title="Đăng Nhập"
          class="sidebar-nav-item flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity">
@@ -138,7 +138,7 @@ const libItems = [
         <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Đăng Nhập</span>
       </a>
     </div>
-    <!-- Logged-in state -->
+
     <a href="/profile" id="sidebar-user" title="Profile"
        class="hidden sidebar-nav-item items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-all duration-200 group">
       <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0">
@@ -161,9 +161,9 @@ const libItems = [
     transition: none !important;
   }
 
-  /* Collapsed state */
+
   .sidebar-root.sidebar-collapsed {
-    width: 4.5rem; /* 72px */
+    width: 4.5rem;
   }
   .sidebar-root.sidebar-collapsed .sidebar-label {
     max-width: 0;
@@ -177,12 +177,12 @@ const libItems = [
     padding-right: 0;
     gap: 0;
   }
-  /* Center the header logo+toggle row */
+
   .sidebar-root.sidebar-collapsed > div:first-child {
     justify-content: center;
     gap: 0;
   }
-  /* Hide the logo link text but keep toggle visible */
+
   .sidebar-root.sidebar-collapsed > div:first-child > a {
     display: none;
   }
@@ -191,7 +191,7 @@ const libItems = [
     opacity: 1;
   }
 
-  /* Active item — collapsed: swap gradient+border for an icon badge */
+
   .sidebar-root.sidebar-collapsed .nav-active {
     background: transparent !important;
     box-shadow: none !important;
@@ -204,7 +204,7 @@ const libItems = [
   }
 </style>
 
-<!-- Create Playlist Modal -->
+
 <div id="modal-new-playlist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-pl-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4 max-h-[90vh] overflow-y-auto">
@@ -216,11 +216,11 @@ const libItems = [
     </div>
     <form id="form-sbpl-new" class="space-y-5" novalidate>
 
-      <!-- Cover Image -->
+
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Cover Image</label>
         <div class="flex items-start gap-4">
-          <!-- Preview -->
+
           <div id="sbpl-cover-preview"
                class="w-20 h-20 rounded-xl bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center shrink-0 overflow-hidden relative group cursor-pointer"
                title="Click to upload cover">
@@ -244,7 +244,7 @@ const libItems = [
         <p id="sbpl-cover-err" class="hidden mt-1 text-xs text-red-400"></p>
       </div>
 
-      <!-- Name -->
+
       <div>
         <label for="sbpl-name" class="block text-sm font-medium text-gray-300 mb-1.5">
           Name <span class="text-rose-400">*</span>
@@ -257,7 +257,7 @@ const libItems = [
         </div>
       </div>
 
-      <!-- Description -->
+
       <div>
         <label for="sbpl-desc" class="block text-sm font-medium text-gray-300 mb-1.5">Description</label>
         <textarea id="sbpl-desc" rows="3" maxlength="300" placeholder="What's this playlist about?"
@@ -265,7 +265,7 @@ const libItems = [
         <span id="sbpl-desc-count" class="block text-right text-xs text-gray-600 mt-1">0 / 300</span>
       </div>
 
-      <!-- Visibility -->
+
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Visibility</label>
         <div class="grid grid-cols-2 gap-3">
@@ -302,7 +302,7 @@ const libItems = [
 <script>
   import { getUser, apiFetch, getUserRole, hasMinRole, API_BASE } from '../lib/api.js';
 
-  // ── Auth state ──────────────────────────────────────────────────────────────
+
   const user = getUser();
   const role = getUserRole();
 
@@ -349,14 +349,14 @@ const libItems = [
       avatarInner.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full" alt="" />`;
     }
 
-    // Show admin link for manager/admin
+
     if (hasMinRole('manager') || user.is_admin) {
       const adminLink = document.getElementById('sidebar-admin-link') as HTMLElement;
       adminLink?.classList.remove('hidden');
       adminLink?.classList.add('flex');
     }
 
-    // Show upload + studio links for artist role
+
     if (role === 'artist') {
       const uploadLink = document.getElementById('sidebar-upload-link') as HTMLElement;
       uploadLink?.classList.remove('hidden');
@@ -368,7 +368,7 @@ const libItems = [
 
   }
 
-  // ── Create Playlist Modal ───────────────────────────────────────────────────
+
   const modal     = document.getElementById('modal-new-playlist') as HTMLElement;
   const modalBg   = document.getElementById('modal-pl-bg') as HTMLElement;
   const closeBtn  = document.getElementById('modal-pl-close') as HTMLElement;
@@ -381,7 +381,7 @@ const libItems = [
   const plDescCount = document.getElementById('sbpl-desc-count') as HTMLElement;
   const plNameErr   = document.getElementById('sbpl-name-err') as HTMLElement;
 
-  // Cover image elements
+
   const coverFile    = document.getElementById('sbpl-cover-file') as HTMLInputElement;
   const coverBtn     = document.getElementById('sbpl-cover-btn') as HTMLButtonElement;
   const coverPreview = document.getElementById('sbpl-cover-preview') as HTMLElement;
@@ -390,7 +390,7 @@ const libItems = [
   const coverRemove  = document.getElementById('sbpl-cover-remove') as HTMLButtonElement;
   const coverErr     = document.getElementById('sbpl-cover-err') as HTMLElement;
 
-  // Visibility options
+
   const visOptions = document.querySelectorAll('.vis-option') as NodeListOf<HTMLElement>;
   function updateVisStyles() {
     visOptions.forEach(lbl => {
@@ -406,7 +406,7 @@ const libItems = [
   }
   visOptions.forEach(lbl => lbl.querySelector('input')?.addEventListener('change', updateVisStyles));
 
-  // Cover image upload
+
   function showCoverPreview(file: File) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -446,7 +446,7 @@ const libItems = [
     showCoverPreview(file);
   });
 
-  // Character counters
+
   plName.addEventListener('input', () => {
     plNameCount.textContent = `${plName.value.length} / 100`;
     if (plName.value.trim()) {
@@ -479,10 +479,10 @@ const libItems = [
   modalBg?.addEventListener('click', () => modal?.classList.add('hidden'));
   closeBtn?.addEventListener('click', () => modal?.classList.add('hidden'));
 
-  // Allow other pages to open this modal via custom event
+
   window.addEventListener('open-create-playlist-modal', () => openSidebarModal());
 
-  // ── Sidebar toggle ──────────────────────────────────────────────────────────
+
   const sidebar     = document.getElementById('main-sidebar') as HTMLElement;
   const toggleBtn   = document.getElementById('sidebar-toggle') as HTMLButtonElement;
   const toggleIcon  = document.getElementById('sidebar-toggle-icon') as HTMLElement;
@@ -498,19 +498,19 @@ const libItems = [
     localStorage.setItem(COLLAPSED_KEY, String(collapsed));
   }
 
-  // Restore state on load — already applied by inline script, just sync the icon
+
   setSidebarState(localStorage.getItem(COLLAPSED_KEY) === 'true', true);
 
   toggleBtn?.addEventListener('click', () => {
     setSidebarState(!sidebar.classList.contains('sidebar-collapsed'));
   });
 
-  // ── Create Playlist form submit ───────────────────────────────────────────
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     plError?.classList.add('hidden');
 
-    // Validate name
+
     const nameVal = plName.value.trim();
     if (!nameVal) {
       plNameErr.classList.remove('hidden');
@@ -519,7 +519,7 @@ const libItems = [
       return;
     }
 
-    // Validate cover if selected
+
     const coverFileVal = coverFile.files?.[0];
     if (coverFileVal && coverFileVal.size > 5 * 1024 * 1024) {
       coverErr.textContent = 'Image must be under 5 MB.';

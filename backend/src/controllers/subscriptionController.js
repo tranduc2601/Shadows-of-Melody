@@ -56,11 +56,11 @@ export const upgradeSubscription = async (req, res) => {
         let existingSubscription = await Subscription.findByUserId(userId);
 
         if (!existingSubscription) {
-            // Create new subscription
+
             const subscriptionId = await Subscription.create(userId, subscriptionType, new Date(), null);
             existingSubscription = await Subscription.findById(subscriptionId);
         } else {
-            // Update subscription
+
             await Subscription.update(existingSubscription.id, {
                 subscription_type: subscriptionType,
                 start_date: new Date(),
@@ -128,20 +128,20 @@ export const createPayment = async (req, res) => {
             });
         }
 
-        // Create subscription first
+
         let subscription = await Subscription.findByUserId(userId);
         if (!subscription) {
             const subscriptionId = await Subscription.create(userId, subscriptionType || 'premium', new Date(), null);
             subscription = await Subscription.findById(subscriptionId);
         } else {
-            // Update subscription type
+
             await Subscription.update(subscription.id, {
                 subscription_type: subscriptionType || subscription.subscription_type,
             });
             subscription = await Subscription.findById(subscription.id);
         }
 
-        // Create payment record
+
         const paymentId = await Payment.create({
             user_id: userId,
             subscription_id: subscription.id,

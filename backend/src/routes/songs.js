@@ -7,17 +7,17 @@ import { uploadAudio } from '../config/multer.js';
 
 const router = express.Router();
 
-// Public routes
+
 router.get('/', songController.getAllSongs);
 router.get('/genres', songController.getGenres);
 router.get('/search', searchLimiter, songController.searchSongs);
 router.get('/by-genre/:genreId', songController.getSongsByGenre);
 router.get('/:id', songController.getSongById);
 
-// Protected routes
+
 router.post('/history', requireAuth, songController.addToHistory);
 
-// Artist + Admin routes (upload / manage songs)
+
 router.post('/upload', requireAuth, requireRole('artist', 'manager', 'admin'), uploadAudio.single('audio'), uploadSong);
 router.post('/', requireAuth, requireRole('artist', 'manager', 'admin'), songController.createSong);
 router.put('/:id', requireAuth, requireRole('artist', 'manager', 'admin'), songController.updateSong);

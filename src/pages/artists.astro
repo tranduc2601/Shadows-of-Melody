@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar.astro";
 import PlayerBar from "../components/PlayerBar.astro";
 ---
 
-<MainLayout title="Nghệ Sĩ - Shadows of Melody">
+<MainLayout title="Artists - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
 
     <Sidebar currentPage="artists" />
@@ -29,7 +29,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
           <div class="relative ml-auto hidden md:flex items-center">
             <span class="material-symbols-outlined absolute left-3 text-gray-400 text-[18px]">search</span>
-            <input id="artist-search-input" type="text" placeholder="Tìm nghệ sĩ..."
+            <input id="artist-search-input" type="text" placeholder="Search artists..."
               class="bg-black/30 border border-white/20 text-white placeholder-gray-400 rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 backdrop-blur-md w-48 focus:w-64 transition-all" />
           </div>
         </header>
@@ -69,7 +69,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
             </button>
             <a id="hero-view-btn" href="/artists" class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-purple-400 hover:text-purple-300 transition-colors text-sm">
-              Xem trang
+              View Page
             </a>
             <div class="ml-auto flex items-center gap-2 text-sm text-gray-400">
               <span class="material-symbols-outlined text-purple-400">people</span>
@@ -212,7 +212,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         .slice(0, 5);
 
       if (!topSongs.length) {
-        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Chưa có bài hát nào.</p>';
+        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs yet.</p>';
       } else {
         tracksEl.innerHTML = topSongs.map((s: any, i: number) => {
           const cover = s.cover_url
@@ -227,7 +227,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               ${cover}
               <div class="flex-1 min-w-0">
                 <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
-                <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'} · ${formatCount(s.plays_count)} lượt</p>
+                <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'} · ${formatCount(s.plays_count)} plays</p>
               </div>
               <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
             </div>`;
@@ -250,7 +250,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (!albumsEl) return;
     const toShow = showAll ? _allAlbums : _allAlbums.slice(0, 4);
     if (!toShow.length) {
-      albumsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Chưa có album nào.</p>';
+      albumsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No albums yet.</p>';
       return;
     }
     albumsEl.innerHTML = toShow.map((al: any) => {
@@ -275,7 +275,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     _albumsExpanded = !_albumsExpanded;
     renderAlbumCards(_albumsExpanded);
     const btn = document.getElementById('albums-see-all-btn') as HTMLButtonElement;
-    if (btn) btn.textContent = _albumsExpanded ? 'Thu gọn' : 'See all';
+    if (btn) btn.textContent = _albumsExpanded ? 'Collapse' : 'See all';
   });
 
   document.getElementById('albums-grid')?.addEventListener('click', (e) => {
@@ -288,7 +288,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     const artistsEl = document.getElementById('artists-grid');
     if (!artistsEl) return;
     if (!artists.length) {
-      artistsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">Không tìm thấy nghệ sĩ nào.</p>';
+      artistsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No artists found.</p>';
       return;
     }
     const token = localStorage.getItem('auth_token');
@@ -317,10 +317,10 @@ import PlayerBar from "../components/PlayerBar.astro";
           <div class="flex items-center justify-between gap-2 mt-2">
             <div class="min-w-0">
               ${monthly > 0
-                ? `<p class="text-xs text-gray-400 truncate"><span class="text-white font-medium">${formatCount(monthly)}</span> người nghe/tháng</p>`
-                : `<p class="text-xs text-gray-600">Chưa có lượt nghe</p>`}
+                ? `<p class="text-xs text-gray-400 truncate"><span class="text-white font-medium">${formatCount(monthly)}</span> monthly listeners</p>`
+                : `<p class="text-xs text-gray-600">No listeners yet</p>`}
             </div>
-            ${followBtnHtml || `<a href="/artist?id=${a.id}" class="px-3 py-1 rounded-full text-xs font-semibold border border-white/20 text-gray-300 hover:border-purple-400/60 hover:text-purple-300 transition-all shrink-0">Xem</a>`}
+            ${followBtnHtml || `<a href="/artist?id=${a.id}" class="px-3 py-1 rounded-full text-xs font-semibold border border-white/20 text-gray-300 hover:border-purple-400/60 hover:text-purple-300 transition-all shrink-0">View</a>`}
           </div>
         </div>`;
     }).join('');
@@ -405,11 +405,11 @@ import PlayerBar from "../components/PlayerBar.astro";
     document.getElementById('btn-nav-back')!.classList.add('hidden');
     document.getElementById('main-scroll')!.scrollTop = 0;
 
-    (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Đang tải...';
+    (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Loading...';
     (document.getElementById('album-hero-meta') as HTMLElement).textContent = '';
     (document.getElementById('album-hero-cover') as HTMLElement).innerHTML = '';
     (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
-      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Đang tải...</td></tr>';
+      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
     (document.getElementById('album-song-count') as HTMLElement).textContent = '';
 
     try {
@@ -424,8 +424,8 @@ import PlayerBar from "../components/PlayerBar.astro";
       const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
       const songCount = (album.songs || []).length;
       (document.getElementById('album-hero-meta') as HTMLElement).textContent =
-        [album.artist?.name, year, `${songCount} bài`].filter(Boolean).join(' · ');
-      (document.getElementById('album-song-count') as HTMLElement).textContent = `${songCount} bài`;
+        [album.artist?.name, year, `${songCount} songs`].filter(Boolean).join(' · ');
+      (document.getElementById('album-song-count') as HTMLElement).textContent = `${songCount} songs`;
 
       _albumSongs = album.songs || [];
       _albumFavorites = new Set();
@@ -439,9 +439,9 @@ import PlayerBar from "../components/PlayerBar.astro";
       }
       renderAlbumSongs();
     } catch {
-      (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Tải thất bại';
+      (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Failed to load';
       (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
-        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Không thể tải album.</td></tr>';
+        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Could not load album.</td></tr>';
     }
   }
 
@@ -459,7 +459,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   function renderAlbumSongs() {
     const tbody = document.getElementById('album-songs-tbody') as HTMLElement;
     if (!_albumSongs.length) {
-      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Album chưa có bài hát.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">This album has no songs yet.</td></tr>';
       return;
     }
     const token = localStorage.getItem('auth_token');
@@ -470,7 +470,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       const isFav = _albumFavorites.has(s.id);
       const favBtn = token ? `
         <button class="album-fav-btn ml-2 shrink-0 opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200 ${isFav ? 'text-rose-400 !opacity-100' : 'text-gray-600 hover:text-rose-400'}"
-          data-id="${s.id}" data-fav="${isFav ? '1' : '0'}" title="${isFav ? 'Bỏ thích' : 'Thêm vào yêu thích'}">
+          data-id="${s.id}" data-fav="${isFav ? '1' : '0'}" title="${isFav ? 'Unlike' : 'Add to favorites'}">
           <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' ${isFav ? 1 : 0}">favorite</span>
         </button>` : '';
       return `

@@ -49,7 +49,7 @@ import Sidebar from "../components/Sidebar.astro";
                 <h2 id="player-title" class="text-2xl font-black text-white truncate leading-tight">—</h2>
                 <p  id="player-artist" class="text-gray-400 text-sm mt-1 truncate">—</p>
               </div>
-              <button id="fav-btn" type="button" aria-label="Yêu thích"
+              <button id="fav-btn" type="button" aria-label="Like"
                       class="w-10 h-10 flex items-center justify-center text-gray-400
                              hover:text-rose-400 hover:scale-110 transition-all shrink-0 mt-0.5">
                 <span class="material-symbols-outlined text-[28px]">favorite_border</span>
@@ -58,7 +58,7 @@ import Sidebar from "../components/Sidebar.astro";
           </div>
 
           <div class="w-full mb-5">
-            <div id="seek-bar" role="slider" aria-label="Tiến độ phát" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+            <div id="seek-bar" role="slider" aria-label="Playback progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
                  class="w-full h-1.5 bg-white/10 rounded-full cursor-pointer group/seek relative mb-2
                         hover:h-2 transition-[height] duration-150">
               <div id="seek-progress"
@@ -76,18 +76,18 @@ import Sidebar from "../components/Sidebar.astro";
           </div>
 
           <div class="flex items-center justify-between w-full mb-6">
-            <button id="ctrl-shuffle" type="button" aria-label="Ngẫu nhiên" aria-pressed="false"
+            <button id="ctrl-shuffle" type="button" aria-label="Shuffle" aria-pressed="false"
                     class="p-2 text-gray-500 hover:text-white transition-colors rounded-lg hover:bg-white/5"
-                    title="Ngẫu nhiên (S)">
+                    title="Shuffle (S)">
               <span class="material-symbols-outlined text-[22px]">shuffle</span>
             </button>
 
-            <button id="ctrl-prev" type="button" aria-label="Bài trước (P)"
+            <button id="ctrl-prev" type="button" aria-label="Previous (P)"
                     class="p-2 text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-white/5">
               <span class="material-symbols-outlined text-[42px]">skip_previous</span>
             </button>
 
-            <button id="ctrl-play" type="button" aria-label="Phát (Space)"
+            <button id="ctrl-play" type="button" aria-label="Play (Space)"
                     class="w-16 h-16 rounded-full flex items-center justify-center
                            bg-gradient-to-r from-purple-600 to-indigo-600
                            hover:from-purple-500 hover:to-indigo-500
@@ -96,14 +96,14 @@ import Sidebar from "../components/Sidebar.astro";
               <span class="material-symbols-outlined text-white text-[42px]">play_arrow</span>
             </button>
 
-            <button id="ctrl-next" type="button" aria-label="Bài tiếp (N)"
+            <button id="ctrl-next" type="button" aria-label="Next (N)"
                     class="p-2 text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-white/5">
               <span class="material-symbols-outlined text-[42px]">skip_next</span>
             </button>
 
-            <button id="ctrl-repeat" type="button" aria-label="Lặp lại" aria-pressed="false"
+            <button id="ctrl-repeat" type="button" aria-label="Repeat" aria-pressed="false"
                     class="p-2 text-gray-500 hover:text-white transition-colors rounded-lg hover:bg-white/5 relative"
-                    title="Lặp lại">
+                    title="Repeat">
               <span class="material-symbols-outlined text-[22px]">repeat</span>
               <span id="repeat-dot"
                     class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full
@@ -112,18 +112,18 @@ import Sidebar from "../components/Sidebar.astro";
           </div>
 
           <div class="flex items-center gap-3 w-full">
-            <button id="vol-btn" type="button" aria-label="Bật/tắt âm thanh"
+            <button id="vol-btn" type="button" aria-label="Toggle mute"
                     class="text-gray-500 hover:text-white transition-colors shrink-0">
               <span class="material-symbols-outlined text-xl">volume_up</span>
             </button>
-            <div id="vol-track" role="slider" aria-label="Âm lượng" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"
+            <div id="vol-track" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="75"
                  class="flex-1 h-1 bg-white/10 rounded-full cursor-pointer hover:h-1.5 transition-[height] duration-150 relative">
               <div id="vol-bar"
                    class="h-full bg-white/60 hover:bg-purple-400 transition-colors rounded-full pointer-events-none"
                    style="width:75%"></div>
             </div>
             <button id="btn-queue-mobile" type="button"
-                    aria-label="Danh sách phát" title="Danh sách phát"
+                    aria-label="Queue" title="Queue"
                     class="xl:hidden p-1.5 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
               <span class="material-symbols-outlined text-xl">queue_music</span>
             </button>
@@ -139,18 +139,18 @@ import Sidebar from "../components/Sidebar.astro";
         <div class="flex border-b border-white/5 shrink-0" role="tablist">
           <button id="tab-queue" role="tab" aria-selected="true"
                   class="flex-1 py-4 text-sm font-semibold text-white border-b-2 border-purple-500 transition-all">
-            Danh sách phát
+            Queue
           </button>
           <button id="tab-lyrics" role="tab" aria-selected="false"
                   class="flex-1 py-4 text-sm font-semibold text-gray-400 border-b-2 border-transparent hover:text-white transition-all">
-            Lời bài hát
+            Lyrics
           </button>
         </div>
 
         <div id="panel-queue" role="tabpanel" class="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar">
-          <p class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 mb-3">Đang phát tiếp</p>
+          <p class="text-xs text-gray-500 font-bold uppercase tracking-wider px-3 mb-3">Up Next</p>
           <div id="queue-list" class="space-y-1">
-            <p class="px-3 py-10 text-sm text-gray-600 text-center">Chưa có bài hát nào trong hàng đợi</p>
+            <p class="px-3 py-10 text-sm text-gray-600 text-center">No songs in the queue</p>
           </div>
         </div>
 
@@ -158,8 +158,8 @@ import Sidebar from "../components/Sidebar.astro";
           <div id="lyrics-content" class="space-y-6 text-center">
             <div class="flex flex-col items-center gap-3 py-10 text-gray-600">
               <span class="material-symbols-outlined text-[48px]" aria-hidden="true">lyrics</span>
-              <p class="text-sm font-medium">Không có lời bài hát</p>
-              <p class="text-xs text-gray-700">Lời bài hát chưa được hỗ trợ</p>
+              <p class="text-sm font-medium">No lyrics available</p>
+              <p class="text-xs text-gray-700">Lyrics are not supported yet</p>
             </div>
           </div>
         </div>
@@ -170,14 +170,14 @@ import Sidebar from "../components/Sidebar.astro";
                   bg-[#0b1530]/95 backdrop-blur-xl rounded-t-2xl border-t border-white/10
                   max-h-[65vh] flex-col shadow-2xl">
         <div class="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
-          <p class="text-sm font-bold text-white uppercase tracking-wider">Danh sách phát</p>
-          <button id="mobile-drawer-close" type="button" aria-label="Đóng"
+          <p class="text-sm font-bold text-white uppercase tracking-wider">Queue</p>
+          <button id="mobile-drawer-close" type="button" aria-label="Close"
                   class="text-gray-400 hover:text-white transition-colors">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
         <div id="mobile-queue-list" class="flex-1 overflow-y-auto py-3 px-3 space-y-1 custom-scrollbar">
-          <p class="px-3 py-8 text-sm text-gray-600 text-center">Chưa có bài hát nào</p>
+          <p class="px-3 py-8 text-sm text-gray-600 text-center">No songs yet</p>
         </div>
       </div>
       <div id="mobile-drawer-bg"
@@ -286,7 +286,7 @@ import Sidebar from "../components/Sidebar.astro";
     function updatePlayBtn(playing: boolean) {
       const icon = ctrlPlay.querySelector('.material-symbols-outlined') as HTMLElement;
       if (icon) icon.textContent = playing ? 'pause' : 'play_arrow';
-      ctrlPlay.setAttribute('aria-label', playing ? 'Dừng (Space)' : 'Phát (Space)');
+      ctrlPlay.setAttribute('aria-label', playing ? 'Pause (Space)' : 'Play (Space)');
     }
 
     function queueItemHTML(s: any, isCurrent: boolean, idx: number): string {
@@ -305,7 +305,7 @@ import Sidebar from "../components/Sidebar.astro";
       return `
         <div class="queue-item flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all group ${activeClass}"
              data-queue-idx="${idx}" role="button" tabindex="0"
-             aria-label="Phát ${esc(s.title)}${isCurrent ? ' (đang phát)' : ''}">
+             aria-label="Play ${esc(s.title)}${isCurrent ? ' (now playing)' : ''}">
           <div class="w-10 h-10 rounded-lg shrink-0 relative overflow-hidden"
                style="background:${colorFor(s.id)}">${cover}${nowPlaying}</div>
           <div class="flex-1 min-w-0">
@@ -320,7 +320,7 @@ import Sidebar from "../components/Sidebar.astro";
       const q: any[] = player.queue || [];
       const idx = player.queueIndex;
       if (!q.length) {
-        const empty = '<p class="px-3 py-10 text-sm text-gray-600 text-center">Chưa có bài hát nào trong hàng đợi</p>';
+        const empty = '<p class="px-3 py-10 text-sm text-gray-600 text-center">No songs in the queue</p>';
         queueList.innerHTML  = empty;
         mobileQList.innerHTML = empty;
         return;
@@ -359,7 +359,7 @@ import Sidebar from "../components/Sidebar.astro";
       }
       favBtn.classList.toggle('text-rose-400', isFav);
       favBtn.classList.toggle('text-gray-400', !isFav);
-      favBtn.setAttribute('aria-label', isFav ? 'Bỏ yêu thích' : 'Yêu thích');
+      favBtn.setAttribute('aria-label', isFav ? 'Unlike' : 'Like');
     }
 
     async function checkFavoriteStatus(songId: number) {
@@ -586,7 +586,7 @@ import Sidebar from "../components/Sidebar.astro";
 
     window.addEventListener('player:play', () => {
       if (player.current && !_sessionStart) {
-        _sessionSongId = player.current.id;
+        _sessionSongId = Number(player.current.id);
         _sessionStart  = Date.now();
       }
       updatePlayBtn(true);
@@ -644,7 +644,7 @@ import Sidebar from "../components/Sidebar.astro";
       updatePlayBtn(player.isPlaying);
       if (player.isPlaying) startRaf();
       setFavUI(false);
-      checkFavoriteStatus(player.current.id);
+      checkFavoriteStatus(Number(player.current.id));
       renderQueue();
       if (player.shuffle) {
         ctrlShuffle.classList.add('text-purple-400');

@@ -8,7 +8,7 @@ export const register = async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
 
-        // Validation
+
         if (!username || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -44,7 +44,7 @@ export const register = async (req, res) => {
             });
         }
 
-        // Check if user exists
+
         const existingUserEmail = await User.findByEmail(email);
         if (existingUserEmail) {
             return res.status(409).json({
@@ -61,17 +61,17 @@ export const register = async (req, res) => {
             });
         }
 
-        // Create user
+
         const userId = await User.create({
             username,
             email,
             password,
         });
 
-        // Create free subscription
+
         await Subscription.create(userId, 'free', new Date(), null);
 
-        // Generate token — role defaults to 'user' on registration
+
         const token = generateToken({ id: userId, username, email, role: 'user', is_admin: false });
 
         return res.status(201).json({
@@ -97,7 +97,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validation
+
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -105,7 +105,7 @@ export const login = async (req, res) => {
             });
         }
 
-        // Find user
+
         const user = await User.findByEmail(email);
         if (!user) {
             return res.status(401).json({
@@ -114,7 +114,7 @@ export const login = async (req, res) => {
             });
         }
 
-        // Verify password
+
         const isPasswordValid = await User.verifyPassword(password, user.password_hash);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -123,7 +123,7 @@ export const login = async (req, res) => {
             });
         }
 
-        // Check if account is locked
+
         if (user.is_locked) {
             return res.status(403).json({
                 success: false,
@@ -132,10 +132,10 @@ export const login = async (req, res) => {
             });
         }
 
-        // Generate token — role is embedded so middleware can check it without a DB round-trip.
-        // ⚠ Known limitation: if the user's role is changed, their existing token stays valid
-        // until expiry. Use PATCH /api/admin/users/:id/role + ask the user to re-login, or
-        // configure a short JWT expiry and use refresh tokens.
+
+
+
+
         const token = generateToken({
             id: user.id,
             username: user.username,
@@ -221,7 +221,7 @@ export const updateProfile = async (req, res) => {
         const userId = req.user.id;
         const { username, full_name, bio, avatar_url, current_password, new_password } = req.body;
 
-        // Handle password change
+
         if (new_password) {
             if (!current_password) {
                 return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại là bắt buộc' });
@@ -251,7 +251,7 @@ export const updateProfile = async (req, res) => {
         await User.update(userId, updateData);
         const user = await User.findById(userId);
 
-        // Keep artists table in sync if this user is an artist
+
         if (user && user.role === 'artist') {
             try {
                 const artistName = user.full_name || user.username;
@@ -309,9 +309,9 @@ export const uploadAvatar = async (req, res) => {
         }
         const { uploadToCloudinary } = await import('../utils/cloudinaryStorage.js');
         const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'avatars', 'image');
-        // Persist avatar URL to DB
+
         await pool.query('UPDATE users SET avatar_url = ?, updated_at = NOW() WHERE id = ?', [secureUrl, req.user.id]);
-        // Sync avatar in artists table if this user is an artist
+
         try {
             await pool.query(
                 `UPDATE artists SET image_url = $1, updated_at = NOW() WHERE user_id = $2`,

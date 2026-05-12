@@ -1,16 +1,16 @@
 import Song from '../models/Song.js';
 import { uploadToCloudinary } from '../utils/cloudinaryStorage.js';
 
-/**
- * POST /api/songs/upload
- * Multipart form-data:
- *   - audio: audio file (required)
- *   - title: string (required)
- *   - duration: number in seconds (required — provided by client after reading metadata)
- *   - artist_ids: JSON array string e.g. "[1,2]"
- *   - album_id: number (optional)
- *   - cover_url: string url (optional)
- */
+
+
+
+
+
+
+
+
+
+
 export const uploadSong = async (req, res) => {
     try {
         if (!req.file) {
@@ -28,27 +28,27 @@ export const uploadSong = async (req, res) => {
             return res.status(400).json({ success: false, message: 'duration must be a positive integer (seconds)' });
         }
 
-        // Upload buffer lên Cloudinary (resource_type 'video' xử lý được cả audio)
+
         const { publicId, secureUrl, size } = await uploadToCloudinary(
             req.file.buffer,
             'songs',
             'video',
         );
 
-        // Lưu Cloudinary URL và public_id vào DB
-        // file_url  = HTTPS URL trực tiếp phát nhạc
-        // file_path = public_id Cloudinary (vd: songs/abcdef) — dùng khi cần xoá
+
+
+
         const songId = await Song.create({
             title:     title.trim(),
             album_id:  album_id ? parseInt(album_id) : null,
             duration:  durationSec,
-            file_url:  secureUrl,  // Cloudinary CDN URL
-            file_path: publicId,   // vd: songs/abcdef123 — dùng khi xoá
+            file_url:  secureUrl,
+            file_path: publicId,
             file_size: size,
             cover_url: cover_url || null,
         });
 
-        // Link artists
+
         let artistArr = [];
         try { artistArr = JSON.parse(artist_ids || '[]'); } catch {}
         for (const artistId of artistArr) {

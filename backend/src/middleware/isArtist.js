@@ -1,9 +1,5 @@
 import { pool } from '../config/database.js';
 
-/**
- * Middleware: requires role === 'artist' or 'admin'.
- * Must be used AFTER requireAuth.
- */
 const isArtist = (req, res, next) => {
     if (!req.user) {
         return res.status(401).json({ success: false, message: 'Authentication required' });
@@ -17,11 +13,6 @@ const isArtist = (req, res, next) => {
     next();
 };
 
-/**
- * Looks up artists.id for req.user.id and attaches it as req.artistId.
- * Returns 404 if the user has no linked artist profile.
- * Must be used AFTER requireAuth + isArtist.
- */
 export const attachArtistId = async (req, res, next) => {
     try {
         const [rows] = await pool.query(

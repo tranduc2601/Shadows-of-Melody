@@ -16,23 +16,23 @@ const songUpload = multer({ storage: mem, limits: { fileSize: 100 * 1024 * 1024 
 const imageUpload = multer({ storage: mem, limits: { fileSize: 5 * 1024 * 1024 } })
     .single('cover');
 
-// All studio routes: auth → artist guard → attach artist_id
+
 router.use(requireAuth, isArtist, attachArtistId);
 
-// Analytics
+
 router.get('/analytics', studio.getAnalytics);
 
-// Profile
+
 router.get('/profile',  studio.getProfile);
 router.put('/profile',  profileUpload, studio.updateProfile);
 
-// Songs
+
 router.get('/songs',          studio.getSongs);
 router.post('/songs',         songUpload,   studio.uploadSong);
 router.put('/songs/:id',      imageUpload,  studio.updateSong);
 router.delete('/songs/:id',   studio.deleteSong);
 
-// Albums
+
 router.get('/albums',         studio.getAlbums);
 router.post('/albums',        imageUpload,  studio.createAlbum);
 router.put('/albums/:id',     imageUpload,  studio.updateAlbum);

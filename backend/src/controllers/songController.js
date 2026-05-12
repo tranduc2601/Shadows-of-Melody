@@ -140,14 +140,14 @@ export const createSong = async (req, res) => {
             cover_url,
         });
 
-        // Add artists
+
         if (Array.isArray(artists)) {
             for (const artistId of artists) {
                 await Song.addArtist(songId, artistId);
             }
         }
 
-        // Add genres
+
         if (Array.isArray(genres)) {
             for (const genreId of genres) {
                 await Song.addGenre(songId, genreId);
@@ -246,7 +246,7 @@ export const addToHistory = async (req, res) => {
             });
         }
 
-        // Check if song exists
+
         const song = await Song.findById(songId);
         if (!song) {
             return res.status(404).json({
@@ -255,10 +255,10 @@ export const addToHistory = async (req, res) => {
             });
         }
 
-        // Increment play count
+
         await Song.incrementPlayCount(songId);
 
-        // Add to history
+
         const historyId = await History.create(userId, songId);
 
         return res.status(201).json({

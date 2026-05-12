@@ -1,6 +1,5 @@
 import rateLimit from 'express-rate-limit';
 
-// General rate limiter: 300 requests per 15 minutes (increased from 100 to prevent 429 on normal usage)
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 300,
@@ -9,7 +8,6 @@ const generalLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Auth rate limiter: 5 attempts per 15 minutes
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5,
@@ -19,7 +17,6 @@ const authLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Upload rate limiter: 10 uploads per hour
 const uploadLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 10,
@@ -28,7 +25,6 @@ const uploadLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Search rate limiter: 30 searches per minute
 const searchLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30,
@@ -37,7 +33,6 @@ const searchLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// Role request rate limiter: max 3 requests per hour — prevents spamming artist requests
 const roleRequestLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 3,

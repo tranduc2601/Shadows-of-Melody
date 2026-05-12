@@ -34,7 +34,7 @@ export const getPlaylistById = async (req, res) => {
             });
         }
 
-        // Privacy check: private playlists are only accessible by their owner
+
         if (!playlist.is_public && playlist.user_id !== req.user?.id) {
             return res.status(403).json({
                 success: false,
@@ -84,7 +84,7 @@ export const createPlaylist = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Description must be 500 characters or fewer.' });
         }
 
-        // Upload cover image to Cloudinary if provided
+
         let cover_url = null;
         console.log('[createPlaylist] req.file:', req.file ? `${req.file.fieldname} / ${req.file.originalname} / ${req.file.size}b` : 'NULL');
         console.log('[createPlaylist] Content-Type:', req.headers['content-type']);
@@ -146,15 +146,15 @@ export const updatePlaylist = async (req, res) => {
             });
         }
 
-        // Upload new cover image if provided, or remove if flagged
-        let finalCoverUrl = cover_url; // preserve existing unless overridden
+
+        let finalCoverUrl = cover_url;
         if (req.file) {
             const { secureUrl } = await uploadToCloudinary(req.file.buffer, 'playlist-covers', 'image');
             finalCoverUrl = secureUrl;
         } else if (req.body.remove_cover === 'true') {
             finalCoverUrl = null;
         } else if (finalCoverUrl === undefined) {
-            // cover_url not sent in body → keep existing value, don't update it
+
             finalCoverUrl = undefined;
         }
 
@@ -245,7 +245,7 @@ export const addSongToPlaylist = async (req, res) => {
             });
         }
 
-        // Prevent duplicates
+
         const alreadyIn = await Playlist.isSongInPlaylist(playlistId, songId);
         if (alreadyIn) {
             return res.status(409).json({ success: false, message: 'Song is already in this playlist.' });

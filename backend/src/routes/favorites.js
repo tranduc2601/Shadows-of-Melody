@@ -4,7 +4,7 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Protected routes (all require authentication)
+
 router.get('/', requireAuth, favoriteController.getFavorites);
 router.post('/', requireAuth, favoriteController.addFavorite);
 

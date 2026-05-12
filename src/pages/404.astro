@@ -2,7 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 ---d 
 
-<MainLayout title="404 - Trang không tìm thấy | Shadows of Melody">
+<MainLayout title="404 - Page Not Found | Shadows of Melody">
   <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased flex flex-col items-center justify-center relative overflow-hidden px-6">
 
     <div class="absolute top-0 left-[20%] w-[50%] h-[50%] bg-purple-600/10 blur-[180px] rounded-full pointer-events-none"></div>
@@ -28,10 +28,10 @@ import MainLayout from "../layouts/MainLayout.astro";
       </p>
 
       <h1 class="text-2xl sm:text-3xl font-bold text-white mb-3">
-        Trang Không Tìm Thấy
+        Page Not Found
       </h1>
       <p class="text-gray-400 text-base mb-10 leading-relaxed max-w-sm">
-        Có vẻ như bản nhạc bạn đang tìm không tồn tại. Hãy quay lại và khám phá thêm âm nhạc khác.
+        Looks like the track you're looking for doesn't exist. Head back and explore more music.
       </p>
 
       <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -40,25 +40,25 @@ import MainLayout from "../layouts/MainLayout.astro";
           class="flex items-center gap-2 bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3.5 px-8 font-bold transition-all hover:scale-105 shadow-[0_8px_30px_rgba(168,85,247,0.4)]"
         >
           <span class="material-symbols-outlined text-[20px]">home</span>
-          Về trang chủ
+          Back to Home
         </a>
         <a
           href="javascript:history.back()"
           class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-full py-3.5 px-8 font-bold transition-all"
         >
           <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
-          Quay lại
+          Go Back
         </a>
       </div>
 
       <div class="mt-14 flex flex-col items-center gap-4">
-        <p class="text-xs text-gray-600 uppercase tracking-widest font-semibold">Có thể bạn muốn:</p>
+        <p class="text-xs text-gray-600 uppercase tracking-widest font-semibold">You might want:</p>
         <div class="flex flex-wrap justify-center gap-3">
           <a href="/search"   class="flex items-center gap-2 px-4 py-2 bg-white/3 border border-white/8 hover:bg-white/8 hover:border-white/15 text-gray-400 hover:text-white rounded-full text-sm transition-all">
-            <span class="material-symbols-outlined text-[16px]">search</span>Tìm kiếm nhạc
+            <span class="material-symbols-outlined text-[16px]">search</span>Search Music
           </a>
           <a href="/artists"  class="flex items-center gap-2 px-4 py-2 bg-white/3 border border-white/8 hover:bg-white/8 hover:border-white/15 text-gray-400 hover:text-white rounded-full text-sm transition-all">
-            <span class="material-symbols-outlined text-[16px]">person</span>Khám phá nghệ sĩ
+            <span class="material-symbols-outlined text-[16px]">person</span>Discover Artists
           </a>
           <a href="/playlist" class="flex items-center gap-2 px-4 py-2 bg-white/3 border border-white/8 hover:bg-white/8 hover:border-white/15 text-gray-400 hover:text-white rounded-full text-sm transition-all">
             <span class="material-symbols-outlined text-[16px]">queue_music</span>Playlists

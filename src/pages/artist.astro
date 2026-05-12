@@ -43,7 +43,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               <div class="flex flex-wrap items-center gap-4 mt-1.5">
                 <p id="hero-monthly" class="text-white/90 text-sm font-medium">
                   <span id="hero-monthly-count">—</span>
-                  <span class="text-gray-400"> người nghe hàng tháng</span>
+                  <span class="text-gray-400"> monthly listeners</span>
                 </p>
                 <span class="text-gray-600 text-xs">·</span>
                 <p id="hero-followers" class="text-gray-300 text-sm">
@@ -173,9 +173,9 @@ import PlayerBar from "../components/PlayerBar.astro";
       const method = _isFollowing ? 'DELETE' : 'POST';
       const { data } = await apiFetch(`/artists/${artistId}/follow`, { method });
       setFollowUI(data.is_following, data.followers_count);
-      showToast(data.is_following ? 'Đang theo dõi' : 'Đã bỏ theo dõi', 'success');
+      showToast(data.is_following ? 'Following' : 'Unfollowed', 'success');
     } catch (err: any) {
-      showToast(err.message || 'Thất bại', 'error');
+      showToast(err.message || 'Failed', 'error');
     } finally {
       _followInFlight = false;
       if (btn) btn.disabled = false;
@@ -256,9 +256,9 @@ import PlayerBar from "../components/PlayerBar.astro";
               <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
             </div>
             <button class="add-to-playlist-btn material-symbols-outlined text-gray-600 hover:text-purple-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                    title="Thêm vào playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
+                    title="Add to playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
             <button class="btn-like-song text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                    data-id="${s.id}" data-liked="false" title="Yêu thích">
+                    data-id="${s.id}" data-liked="false" title="Like">
               <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
             </button>
             <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
@@ -267,7 +267,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     const countLabel = document.getElementById('song-count-label');
-    if (countLabel) countLabel.textContent = songs.length ? `${songs.length} bài hát` : '';
+    if (countLabel) countLabel.textContent = songs.length ? `${songs.length} songs` : '';
 
     document.getElementById('play-btn')?.addEventListener('click', () => {
       if (songs.length) player.playSong(songs[0], songs);
@@ -324,12 +324,12 @@ import PlayerBar from "../components/PlayerBar.astro";
       if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
       btn.classList.add('text-rose-400', '!opacity-100');
       btn.classList.remove('text-gray-600');
-      btn.title = 'Bỏ yêu thích';
+      btn.title = 'Unlike';
     } else {
       if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
       btn.classList.remove('text-rose-400', '!opacity-100');
       btn.classList.add('text-gray-600');
-      btn.title = 'Yêu thích';
+      btn.title = 'Like';
     }
   }
 

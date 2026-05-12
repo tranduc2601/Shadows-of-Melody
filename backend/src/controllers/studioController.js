@@ -1,7 +1,7 @@
 import { pool } from '../config/database.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryStorage.js';
 
-// ─── GET /api/studio/analytics ───────────────────────────────────────────────
+
 export const getAnalytics = async (req, res) => {
     const artistId = req.artistId;
     try {
@@ -52,7 +52,7 @@ export const getAnalytics = async (req, res) => {
         const topSongs     = topRes[0] ?? [];
         const dbChart      = chartRes[0] ?? [];
 
-        // Fill missing days with 0
+
         const chartMap = {};
         dbChart.forEach(r => { chartMap[r.day] = r.plays; });
         const chartData = [];
@@ -80,7 +80,7 @@ export const getAnalytics = async (req, res) => {
     }
 };
 
-// ─── GET /api/studio/profile ─────────────────────────────────────────────────
+
 export const getProfile = async (req, res) => {
     const artistId = req.artistId;
     try {
@@ -100,7 +100,7 @@ export const getProfile = async (req, res) => {
     }
 };
 
-// ─── PUT /api/studio/profile ──────────────────────────────────────────────────
+
 export const updateProfile = async (req, res) => {
     const artistId = req.artistId;
     const { name, bio } = req.body;
@@ -140,7 +140,7 @@ export const updateProfile = async (req, res) => {
     }
 };
 
-// ─── GET /api/studio/songs ────────────────────────────────────────────────────
+
 export const getSongs = async (req, res) => {
     const artistId = req.artistId;
     const page   = Math.max(1, parseInt(req.query.page)  || 1);
@@ -183,7 +183,7 @@ export const getSongs = async (req, res) => {
     }
 };
 
-// ─── POST /api/studio/songs ───────────────────────────────────────────────────
+
 export const uploadSong = async (req, res) => {
     const artistId = req.artistId;
     const audioFile = req.files?.audio?.[0];
@@ -232,7 +232,7 @@ export const uploadSong = async (req, res) => {
     }
 };
 
-// ─── PUT /api/studio/songs/:id ────────────────────────────────────────────────
+
 export const updateSong = async (req, res) => {
     const artistId = req.artistId;
     const { id }   = req.params;
@@ -282,7 +282,7 @@ export const updateSong = async (req, res) => {
     }
 };
 
-// ─── DELETE /api/studio/songs/:id ────────────────────────────────────────────
+
 export const deleteSong = async (req, res) => {
     const artistId = req.artistId;
     const { id }   = req.params;
@@ -298,7 +298,7 @@ export const deleteSong = async (req, res) => {
         const filePath = ownerRows[0].file_path;
         await pool.query('DELETE FROM songs WHERE id = $1', [id]);
 
-        // Non-blocking Cloudinary cleanup
+
         if (filePath) {
             deleteFromCloudinary(filePath, 'video').catch(() => {});
         }
@@ -309,7 +309,7 @@ export const deleteSong = async (req, res) => {
     }
 };
 
-// ─── GET /api/studio/albums ───────────────────────────────────────────────────
+
 export const getAlbums = async (req, res) => {
     const artistId = req.artistId;
     try {
@@ -330,7 +330,7 @@ export const getAlbums = async (req, res) => {
     }
 };
 
-// ─── POST /api/studio/albums ──────────────────────────────────────────────────
+
 export const createAlbum = async (req, res) => {
     const artistId = req.artistId;
     const { title, release_date, description } = req.body;
@@ -354,7 +354,7 @@ export const createAlbum = async (req, res) => {
     }
 };
 
-// ─── PUT /api/studio/albums/:id ───────────────────────────────────────────────
+
 export const updateAlbum = async (req, res) => {
     const artistId = req.artistId;
     const { id }   = req.params;
@@ -392,7 +392,7 @@ export const updateAlbum = async (req, res) => {
     }
 };
 
-// ─── DELETE /api/studio/albums/:id ───────────────────────────────────────────
+
 export const deleteAlbum = async (req, res) => {
     const artistId = req.artistId;
     const { id }   = req.params;
@@ -403,7 +403,7 @@ export const deleteAlbum = async (req, res) => {
         );
         if (!ownerRows[0]) return res.status(403).json({ success: false, message: 'You do not own this album' });
 
-        // Detach songs from this album but keep them
+
         await pool.query('UPDATE songs SET album_id = NULL WHERE album_id = $1', [id]);
         await pool.query('DELETE FROM albums WHERE id = $1', [id]);
         return res.json({ success: true, message: 'Album deleted' });

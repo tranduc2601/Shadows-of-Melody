@@ -122,7 +122,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             <p id="sidebar-admin-name" class="text-sm font-semibold text-white truncate">Admin</p>
             <p id="sidebar-admin-role" class="text-xs text-indigo-400 font-medium">Super Admin</p>
           </div>
-          <button id="admin-logout-btn" title="Đăng xuất"
+          <button id="admin-logout-btn" title="Sign Out"
             class="admin-sidebar-label shrink-0 text-gray-500 hover:text-red-400 transition-all duration-200 p-1 rounded-lg hover:bg-red-500/10
                    overflow-hidden whitespace-nowrap">
             <span class="material-symbols-outlined text-[18px]">logout</span>
@@ -928,7 +928,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/20 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-purple-400 text-[17px]">library_music</span>
         </span>
-        Quản Lý Bài Hát — <span id="album-songs-modal-title" class="text-purple-300 font-semibold"></span>
+        Manage Songs — <span id="album-songs-modal-title" class="text-purple-300 font-semibold"></span>
       </h2>
       <button id="modal-album-songs-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all duration-150">
         <span class="material-symbols-outlined text-[18px]">close</span>
@@ -937,20 +937,20 @@ import MainLayout from "../layouts/MainLayout.astro";
 
     <div class="flex gap-2 px-7 pt-4 pb-2 shrink-0">
       <button id="tab-album-current" class="album-songs-tab px-4 py-2 text-sm font-semibold rounded-lg bg-purple-600/90 text-white transition-all shadow-[0_2px_8px_rgba(124,58,237,0.3)]">
-        Bài hát trong album <span id="album-songs-count-badge" class="ml-1 text-xs bg-white/20 px-1.5 py-0.5 rounded-full">0</span>
+        Songs in album <span id="album-songs-count-badge" class="ml-1 text-xs bg-white/20 px-1.5 py-0.5 rounded-full">0</span>
       </button>
       <button id="tab-album-add" class="album-songs-tab px-4 py-2 text-sm font-semibold rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-150">
-        Thêm bài hát
+        Add songs
       </button>
     </div>
 
     <div id="album-songs-search-wrap" class="hidden px-7 pb-2 shrink-0">
-      <input id="album-songs-search" type="text" placeholder="Tìm bài hát..."
+      <input id="album-songs-search" type="text" placeholder="Search songs..."
         class="adm-input" />
     </div>
 
     <div id="album-songs-content" class="flex-1 overflow-y-auto adm-modal-scroll min-h-0 space-y-1 px-7 py-3">
-      <p class="text-gray-500 text-sm text-center py-8">Đang tải...</p>
+      <p class="text-gray-500 text-sm text-center py-8">Loading...</p>
     </div>
   </div>
 </div>
@@ -963,7 +963,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/20 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-purple-400 text-[17px]">album</span>
         </span>
-        Chỉnh Sửa Album
+        Edit Album
       </h2>
       <button id="modal-edit-album-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all duration-150">
         <span class="material-symbols-outlined text-[18px]">close</span>
@@ -971,40 +971,40 @@ import MainLayout from "../layouts/MainLayout.astro";
     </div>
     <form id="form-edit-album" class="space-y-4 px-7 py-6">
       <div class="adm-field">
-        <label class="adm-label">Tên album <span class="req">*</span></label>
-        <input id="edit-album-title" type="text" required placeholder="Tên album" class="adm-input" />
+        <label class="adm-label">Album name <span class="req">*</span></label>
+        <input id="edit-album-title" type="text" required placeholder="Album name" class="adm-input" />
       </div>
       <div class="adm-field">
-        <label class="adm-label">Nghệ sĩ</label>
+        <label class="adm-label">Artist</label>
         <select id="edit-album-artist" class="adm-input">
-          <option value="">— Không có nghệ sĩ —</option>
+          <option value="">— No artist —</option>
         </select>
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div class="adm-field">
-          <label class="adm-label">Ngày phát hành</label>
+          <label class="adm-label">Release date</label>
           <input id="edit-album-release-date" type="date" class="adm-input" />
         </div>
         <div class="adm-field">
-          <label class="adm-label">Ảnh bìa</label>
+          <label class="adm-label">Cover image</label>
           <div id="edit-album-cover-dropzone" class="adm-dropzone h-[46px] !py-2">
             <div id="edit-album-cover-preview" class="w-8 h-8 rounded-md shrink-0 bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
               <span class="material-symbols-outlined text-gray-500 text-base">image</span>
             </div>
-            <p class="text-xs text-gray-400 truncate flex-1">Click để chọn ảnh</p>
+            <p class="text-xs text-gray-400 truncate flex-1">Click to select image</p>
             <input id="edit-album-cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
           </div>
           <input id="edit-album-cover-url" type="hidden" />
         </div>
       </div>
       <div class="adm-field">
-        <label class="adm-label">Mô tả</label>
-        <textarea id="edit-album-description" rows="3" placeholder="Mô tả album (không bắt buộc)"
+        <label class="adm-label">Description</label>
+        <textarea id="edit-album-description" rows="3" placeholder="Album description (optional)"
           class="adm-input resize-none"></textarea>
       </div>
       <div id="edit-album-error" class="adm-error hidden"></div>
       <button type="submit" id="btn-edit-album-submit" class="adm-btn-submit">
-        <span class="material-symbols-outlined text-[18px]">save</span>Lưu Thay Đổi
+        <span class="material-symbols-outlined text-[18px]">save</span>Save Changes
       </button>
     </form>
   </div>
@@ -1018,7 +1018,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-emerald-400 text-[17px]">add_circle</span>
         </span>
-        Thêm Album Mới
+        Add New Album
       </h2>
       <button id="modal-add-album-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all duration-150">
         <span class="material-symbols-outlined text-[18px]">close</span>
@@ -1026,27 +1026,27 @@ import MainLayout from "../layouts/MainLayout.astro";
     </div>
     <form id="form-add-album" class="space-y-4 px-7 py-6">
       <div class="adm-field">
-        <label class="adm-label">Tên album <span class="req">*</span></label>
-        <input id="add-album-title" type="text" required placeholder="Tên album" class="adm-input" />
+        <label class="adm-label">Album name <span class="req">*</span></label>
+        <input id="add-album-title" type="text" required placeholder="Album name" class="adm-input" />
       </div>
       <div class="adm-field">
-        <label class="adm-label">Nghệ sĩ</label>
+        <label class="adm-label">Artist</label>
         <select id="add-album-artist" class="adm-input">
-          <option value="">— Không có nghệ sĩ —</option>
+          <option value="">— No artist —</option>
         </select>
       </div>
       <div class="adm-field">
-        <label class="adm-label">Ngày phát hành</label>
+        <label class="adm-label">Release date</label>
         <input id="add-album-release-date" type="date" class="adm-input" />
       </div>
       <div class="adm-field">
-        <label class="adm-label">Ảnh bìa <span class="opt">(jpg, png, webp · tối đa 5MB)</span></label>
+        <label class="adm-label">Cover image <span class="opt">(jpg, png, webp · max 5MB)</span></label>
         <div id="add-album-cover-dropzone" class="adm-dropzone">
           <div id="add-album-cover-preview" class="w-14 h-14 rounded-lg shrink-0 bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
             <span class="material-symbols-outlined text-gray-500 text-2xl">image</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm text-gray-400 mb-0.5">Click để chọn ảnh bìa</p>
+            <p class="text-sm text-gray-400 mb-0.5">Click to select cover image</p>
             <p id="add-album-cover-filename" class="text-xs text-purple-400 hidden truncate"></p>
           </div>
           <input id="add-album-cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
@@ -1054,13 +1054,13 @@ import MainLayout from "../layouts/MainLayout.astro";
         <input id="add-album-cover-url" type="hidden" />
       </div>
       <div class="adm-field">
-        <label class="adm-label">Mô tả</label>
-        <textarea id="add-album-description" rows="3" placeholder="Mô tả album (không bắt buộc)"
+        <label class="adm-label">Description</label>
+        <textarea id="add-album-description" rows="3" placeholder="Album description (optional)"
           class="adm-input resize-none"></textarea>
       </div>
       <div id="add-album-error" class="adm-error hidden"></div>
       <button type="submit" id="btn-add-album-submit" class="adm-btn-submit">
-        <span class="material-symbols-outlined text-[18px]">add</span>Tạo Album
+        <span class="material-symbols-outlined text-[18px]">add</span>Create Album
       </button>
     </form>
   </div>
@@ -1074,7 +1074,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-blue-400 text-[17px]">edit_note</span>
         </span>
-        Chỉnh Sửa Bài Hát
+        Edit Song
       </h2>
       <button id="modal-edit-song-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all duration-150">
         <span class="material-symbols-outlined text-[18px]">close</span>
@@ -1534,13 +1534,13 @@ import MainLayout from "../layouts/MainLayout.astro";
   import { apiFetch, getToken, getUser, colorFor, requireAuthClient, hasMinRole, API_BASE } from '../lib/api.js';
 
   if (!requireAuthClient('manager')) {
-    // requireAuthClient already redirected; stop executing
+
     throw new Error('redirecting');
   }
 
   function openAdminModal(el: HTMLElement) {
     el.classList.remove('hidden', 'modal-closing');
-    // Force reflow so the CSS entry animation replays
+
     void el.offsetWidth;
   }
 
@@ -1643,14 +1643,14 @@ import MainLayout from "../layouts/MainLayout.astro";
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   }
 
-  /**
-   * Render filter chips for a given section.
-   * @param chipsId  - id of the chips container div
-   * @param clearBtnId - id of the "Clear filters" button in the header
-   * @param countId  - id of the results count span (optional)
-   * @param filters  - array of active filter descriptors
-   * @param clearAllFn - called when "Clear all" or individual chip is clicked
-   */
+
+
+
+
+
+
+
+
   function renderFilterChips(
     chipsId: string,
     clearBtnId: string,
@@ -1700,13 +1700,13 @@ import MainLayout from "../layouts/MainLayout.astro";
     container.querySelector('.filter-chip-clear-all')?.addEventListener('click', clearAllFn);
   }
 
-  /** Mark a select as "active" (has non-empty value) */
+
   function syncFilterSelectStyle(sel: HTMLSelectElement | null) {
     if (!sel) return;
     sel.classList.toggle('adm-filter-active', sel.value !== '');
   }
 
-  /** Build pagination HTML buttons */
+
   function buildPaginationBtns(
     current: number, total: number, gotoFn: (p: number) => void,
   ): string {
@@ -2061,7 +2061,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       const key = d.toISOString().slice(0, 10);
-      labels.push(key.slice(5)); // MM-DD
+      labels.push(key.slice(5));
       values.push(map[key] ?? 0);
     }
     return { labels, values };
@@ -2632,7 +2632,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   let _userKeyword = '';
   let _userRole    = '';
   let _userLocked  = '';
-  // _userPlan and _userSort declared in the wiring section above
+
 
   async function loadUsers(page = 1) {
     _userPage = page;
@@ -2743,7 +2743,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
         if (lockBtn) {
           const id = lockBtn.dataset.id!;
-          if (_lockingUsers.has(id)) return; // spam guard
+          if (_lockingUsers.has(id)) return;
           const isLocked = lockBtn.dataset.locked === '1';
           const name = decodeURIComponent(lockBtn.dataset.name || `#${id}`);
           const confirmed = await showConfirm(
@@ -2846,7 +2846,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           showToast(`Role updated to "${newRole}".`, 'success');
         } catch (err: any) {
           showToast(err.message || 'Failed to update role.', 'error');
-          select.value = prev; // revert on failure
+          select.value = prev;
         }
       });
       btns?.addEventListener('click', (e: Event) => {
@@ -2862,7 +2862,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
   let _artistPage    = 1;
   let _artistKeyword = '';
-  // _artistHasAvatar and _artistSort declared with wiring above
+
 
   async function loadArtists(page = 1) {
     _artistPage = page;
@@ -3019,7 +3019,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   let _songPage    = 1;
   let _songKeyword = '';
   let _songStatus  = '';
-  // _songGenre and _songSort declared with wiring above
+
 
   async function loadSongs(page = 1) {
     _songPage = page;
@@ -3061,7 +3061,7 @@ import MainLayout from "../layouts/MainLayout.astro";
               ${(s.status || 'published') === 'suppressed'
                 ? 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
                 : 'bg-green-500/15 text-green-400 hover:bg-green-500/25'}"
-              data-id="${s.id}" data-status="${s.status || 'published'}" data-title="${encodeURIComponent(s.title)}" title="Nhấn để thay đổi trạng thái">
+              data-id="${s.id}" data-status="${s.status || 'published'}" data-title="${encodeURIComponent(s.title)}" title="Click to toggle status">
               <span class="material-symbols-outlined text-[13px]">${(s.status || 'published') === 'suppressed' ? 'visibility_off' : 'visibility'}</span>
               ${(s.status || 'published') === 'suppressed' ? 'Suppressed' : 'Published'}
             </button>
@@ -3069,10 +3069,10 @@ import MainLayout from "../layouts/MainLayout.astro";
           <td class="px-6 py-4">
             <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button class="btn-edit-song w-8 h-8 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 text-gray-500 flex items-center justify-center transition-all"
-                      data-id="${s.id}" data-song="${encodeURIComponent(JSON.stringify(s))}" title="Chỉnh sửa">
+                      data-id="${s.id}" data-song="${encodeURIComponent(JSON.stringify(s))}" title="Edit">
                 <span class="material-symbols-outlined text-[17px]">edit</span>
               </button>
-              <button class="btn-delete-song w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" data-id="${s.id}" title="Xóa">
+              <button class="btn-delete-song w-8 h-8 rounded-lg hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 flex items-center justify-center transition-all" data-id="${s.id}" title="Delete">
                 <span class="material-symbols-outlined text-[17px]">delete</span>
               </button>
             </div>
@@ -3091,7 +3091,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 
         if (statusBtn) {
           const id = statusBtn.dataset.id!;
-          if (_toggleStatusInFlight.has(id)) return; // spam guard
+          if (_toggleStatusInFlight.has(id)) return;
           const current = statusBtn.dataset.status!;
           const next = current === 'suppressed' ? 'published' : 'suppressed';
           const title = decodeURIComponent(statusBtn.dataset.title ?? '');
@@ -3166,7 +3166,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         });
       }
     } catch {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Không thể tải dữ liệu.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
     }
   }
 
@@ -3241,14 +3241,14 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (!file) return;
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type) || file.size > 5 * 1024 * 1024) {
-      editErrDiv.textContent = 'Ảnh phải là JPG/PNG/WebP, tối đa 5MB.';
+      editErrDiv.textContent = 'Image must be JPG/PNG/WebP, max 5MB.';
       editErrDiv.classList.remove('hidden');
       editCoverFile.value = '';
       return;
     }
     editCoverFilename.textContent = file.name;
     editCoverFilename.classList.remove('hidden');
-    editCoverStatus.textContent = 'Đang tải lên...';
+    editCoverStatus.textContent = 'Uploading...';
     editCoverStatus.classList.remove('hidden');
     const objUrl = URL.createObjectURL(file);
     editCoverPreview.innerHTML = `<img src="${objUrl}" class="w-full h-full object-cover" alt="" />`;
@@ -3262,12 +3262,12 @@ import MainLayout from "../layouts/MainLayout.astro";
         body: fd,
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       editCoverUrl.value = json.data.url;
-      editCoverStatus.textContent = '✓ Tải lên thành công';
+      editCoverStatus.textContent = '✓ Uploaded successfully';
       URL.revokeObjectURL(objUrl);
     } catch (err: any) {
-      editCoverStatus.textContent = `Lỗi: ${err.message}`;
+      editCoverStatus.textContent = `Error: ${err.message}`;
       editCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
       editCoverUrl.value = '';
       URL.revokeObjectURL(objUrl);
@@ -3286,7 +3286,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const artistIds = editArtistSelVal ? [editArtistSelVal] : [];
     const genreIds  = Array.from(editForm.querySelectorAll('input[name="edit_genre_ids"]:checked')).map((cb: any) => cb.value);
 
-    if (!title) { editErrDiv.textContent = 'Vui lòng nhập tên bài hát.'; editErrDiv.classList.remove('hidden'); return; }
+    if (!title) { editErrDiv.textContent = 'Please enter the song title.'; editErrDiv.classList.remove('hidden'); return; }
 
     const confirmed = await showConfirm({
       title: 'Save Song Changes',
@@ -3302,7 +3302,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const submitBtn = document.getElementById('btn-edit-song-submit') as HTMLButtonElement;
     submitBtn.disabled = true;
     const origText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Đang lưu...';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Saving...';
 
     try {
       await apiFetch(`/admin/songs/${_editSongId}`, {
@@ -3396,17 +3396,17 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (!file) return;
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type)) {
-      showErr('Ảnh bìa phải là định dạng JPG, PNG hoặc WebP.');
+      showErr('Cover image must be JPG, PNG, or WebP format.');
       coverFile.value = '';
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      showErr('Ảnh bìa không được vượt quá 5MB.');
+      showErr('Cover image must not exceed 5MB.');
       coverFile.value = '';
       return;
     }
     if (coverFilename) { coverFilename.textContent = file.name; coverFilename.classList.remove('hidden'); }
-    if (coverUploadStatus) { coverUploadStatus.textContent = 'Đang tải lên...'; coverUploadStatus.classList.remove('hidden'); }
+    if (coverUploadStatus) { coverUploadStatus.textContent = 'Uploading...'; coverUploadStatus.classList.remove('hidden'); }
     if (upCoverUrl) upCoverUrl.value = '';
     const objUrl = URL.createObjectURL(file);
     if (coverPreview) coverPreview.innerHTML = `<img src="${objUrl}" class="w-full h-full object-cover" alt="" />`;
@@ -3420,12 +3420,12 @@ import MainLayout from "../layouts/MainLayout.astro";
         body: imgFd,
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload ảnh thất bại');
+      if (!res.ok) throw new Error(json.message || 'Image upload failed');
       if (upCoverUrl) upCoverUrl.value = json.data.url;
-      if (coverUploadStatus) coverUploadStatus.textContent = '✓ Đã tải lên thành công';
+      if (coverUploadStatus) coverUploadStatus.textContent = '✓ Uploaded successfully';
       URL.revokeObjectURL(objUrl);
     } catch (err: any) {
-      if (coverUploadStatus) coverUploadStatus.textContent = `Lỗi: ${err.message}`;
+      if (coverUploadStatus) coverUploadStatus.textContent = `Error: ${err.message}`;
       if (coverPreview) coverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
       if (upCoverUrl) upCoverUrl.value = '';
       URL.revokeObjectURL(objUrl);
@@ -3449,7 +3449,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     try {
       const { data: albums } = await apiFetch('/admin/albums');
       if (upAlbum && albums?.length) {
-        upAlbum.innerHTML = '<option value="">— Không thuộc album —</option>' +
+        upAlbum.innerHTML = '<option value="">— No album —</option>' +
           albums.map((al: any) => `<option value="${al.id}">${al.title}${al.artist_name ? ' — ' + al.artist_name : ''}</option>`).join('');
       }
     } catch {}
@@ -3491,7 +3491,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   createGenreBtn?.addEventListener('click', async () => {
     const name = newGenreNameInput.value.trim();
     newGenreError.classList.add('hidden');
-    if (!name) { newGenreError.textContent = 'Vui lòng nhập tên thể loại.'; newGenreError.classList.remove('hidden'); return; }
+    if (!name) { newGenreError.textContent = 'Please enter a genre name.'; newGenreError.classList.remove('hidden'); return; }
 
     const confirmed = await showConfirm({
       title: 'Create Genre',
@@ -3603,9 +3603,9 @@ import MainLayout from "../layouts/MainLayout.astro";
     errDiv?.classList.add('hidden');
 
     const file = audioFile?.files?.[0];
-    if (!file) { showErr('Vui lòng chọn file âm thanh.'); return; }
-    if (!upTitle.value.trim()) { showErr('Vui lòng nhập tiêu đề.'); return; }
-    if (!upDuration.value || parseInt(upDuration.value) <= 0) { showErr('Vui lòng nhập thời lượng hợp lệ.'); return; }
+    if (!file) { showErr('Please select an audio file.'); return; }
+    if (!upTitle.value.trim()) { showErr('Please enter a title.'); return; }
+    if (!upDuration.value || parseInt(upDuration.value) <= 0) { showErr('Please enter a valid duration.'); return; }
 
     const artistsSel = document.getElementById('artists-checkboxes') as HTMLSelectElement;
     const genresSel  = document.getElementById('genres-checkboxes') as HTMLSelectElement;
@@ -3618,7 +3618,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     fd.append('duration', upDuration.value);
     if (upAlbum.value) fd.append('album_id', upAlbum.value);
     const hasCoverFile = (coverFile?.files?.length ?? 0) > 0;
-    if (hasCoverFile && !upCoverUrl.value) { showErr('Ảnh bìa đang tải lên hoặc bị lỗi. Vui lòng chọn lại ảnh bìa.'); return; }
+    if (hasCoverFile && !upCoverUrl.value) { showErr('Cover image is uploading or has an error. Please reselect the cover image.'); return; }
     if (upCoverUrl.value) fd.append('cover_url', upCoverUrl.value);
     fd.append('artist_ids', JSON.stringify(checkedArtists));
     fd.append('genre_ids',  JSON.stringify(checkedGenres));
@@ -3647,7 +3647,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       });
       if (uploadBar) uploadBar.style.width = '90%';
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       if (uploadBar) uploadBar.style.width = '100%';
       if (uploadStatus) uploadStatus.textContent = 'Upload successful!';
       showToast('Song uploaded successfully.', 'success');
@@ -3804,7 +3804,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const file = editAlbumCoverFile.files?.[0];
     if (!file) return;
     if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 5*1024*1024) {
-      editAlbumErrDiv.textContent = 'Ảnh phải là JPG/PNG/WebP, tối đa 5MB.';
+      editAlbumErrDiv.textContent = 'Image must be JPG/PNG/WebP, max 5MB.';
       editAlbumErrDiv.classList.remove('hidden');
       editAlbumCoverFile.value = '';
       return;
@@ -3820,11 +3820,11 @@ import MainLayout from "../layouts/MainLayout.astro";
         body: fd,
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       editAlbumCoverUrl.value = json.data.url;
       URL.revokeObjectURL(objUrl);
     } catch (err: any) {
-      editAlbumErrDiv.textContent = `Lỗi tải ảnh: ${err.message}`;
+      editAlbumErrDiv.textContent = `Image upload error: ${err.message}`;
       editAlbumErrDiv.classList.remove('hidden');
       editAlbumCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-base">image</span>';
       editAlbumCoverUrl.value = '';
@@ -3841,7 +3841,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const releaseDate = (document.getElementById('edit-album-release-date') as HTMLInputElement).value;
     const description = (document.getElementById('edit-album-description') as HTMLTextAreaElement).value.trim();
     const coverUrl    = editAlbumCoverUrl.value;
-    if (!title) { editAlbumErrDiv.textContent = 'Vui lòng nhập tên album.'; editAlbumErrDiv.classList.remove('hidden'); return; }
+    if (!title) { editAlbumErrDiv.textContent = 'Please enter the album name.'; editAlbumErrDiv.classList.remove('hidden'); return; }
 
     const confirmed = await showConfirm({
       title: 'Save Album Changes',
@@ -3857,7 +3857,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const submitBtn = document.getElementById('btn-edit-album-submit') as HTMLButtonElement;
     submitBtn.disabled = true;
     const origText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Đang lưu...';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Saving...';
     try {
       await apiFetch(`/admin/albums/${_editAlbumId}`, {
         method: 'PATCH',
@@ -3915,7 +3915,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const file = addAlbumCoverFile.files?.[0];
     if (!file) return;
     if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 5*1024*1024) {
-      addAlbumErrDiv.textContent = 'Ảnh phải là JPG/PNG/WebP, tối đa 5MB.';
+      addAlbumErrDiv.textContent = 'Image must be JPG/PNG/WebP, max 5MB.';
       addAlbumErrDiv.classList.remove('hidden');
       addAlbumCoverFile.value = '';
       return;
@@ -3932,11 +3932,11 @@ import MainLayout from "../layouts/MainLayout.astro";
         body: fd,
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Upload thất bại');
+      if (!res.ok) throw new Error(json.message || 'Upload failed');
       addAlbumCoverUrl.value = json.data.url;
       URL.revokeObjectURL(objUrl);
     } catch (err: any) {
-      addAlbumErrDiv.textContent = `Lỗi tải ảnh: ${err.message}`;
+      addAlbumErrDiv.textContent = `Image upload error: ${err.message}`;
       addAlbumErrDiv.classList.remove('hidden');
       addAlbumCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
       addAlbumCoverUrl.value = '';
@@ -3952,7 +3952,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const releaseDate = (document.getElementById('add-album-release-date') as HTMLInputElement).value;
     const description = (document.getElementById('add-album-description') as HTMLTextAreaElement).value.trim();
     const coverUrl    = addAlbumCoverUrl.value;
-    if (!title) { addAlbumErrDiv.textContent = 'Vui lòng nhập tên album.'; addAlbumErrDiv.classList.remove('hidden'); return; }
+    if (!title) { addAlbumErrDiv.textContent = 'Please enter the album name.'; addAlbumErrDiv.classList.remove('hidden'); return; }
 
     const confirmed = await showConfirm({
       title: 'Create Album',
@@ -3968,7 +3968,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const submitBtn = document.getElementById('btn-add-album-submit') as HTMLButtonElement;
     submitBtn.disabled = true;
     const origText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Đang tạo...';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Creating...';
     try {
       await apiFetch('/admin/albums', {
         method: 'POST',
@@ -4395,7 +4395,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     else if (_albumSort === 'title_desc') filtered.sort((a,b) => b.title.localeCompare(a.title));
     else if (_albumSort === 'songs_desc') filtered.sort((a,b) => (b.songs_count||0) - (a.songs_count||0));
     else if (_albumSort === 'oldest') filtered.sort((a,b) => (a.release_date||'').localeCompare(b.release_date||''));
-    else filtered.sort((a,b) => (b.release_date||'').localeCompare(a.release_date||'')); // newest first default
+    else filtered.sort((a,b) => (b.release_date||'').localeCompare(a.release_date||''));
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / ALBUM_PAGE_SIZE));
     const pg = Math.min(page, totalPages);
@@ -4852,7 +4852,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const name     = (document.getElementById('artist-name')     as HTMLInputElement)?.value.trim();
     const bio      = (document.getElementById('artist-bio')      as HTMLTextAreaElement)?.value.trim();
     const imageUrl = (document.getElementById('artist-image-url') as HTMLInputElement)?.value.trim();
-    if (!name) { artistErrDiv.textContent = 'Vui lòng nhập tên nghệ sĩ.'; artistErrDiv.classList.remove('hidden'); return; }
+    if (!name) { artistErrDiv.textContent = 'Please enter the artist name.'; artistErrDiv.classList.remove('hidden'); return; }
 
     const confirmed = await showConfirm({
       title: 'Add Artist',
@@ -4948,7 +4948,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const imageUrl = (document.getElementById('edit-artist-image-url') as HTMLInputElement).value.trim();
 
     if (!name) {
-      editArtistErrDiv.textContent = 'Vui lòng nhập tên nghệ sĩ.';
+      editArtistErrDiv.textContent = 'Please enter the artist name.';
       editArtistErrDiv.classList.remove('hidden');
       return;
     }
@@ -4967,7 +4967,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     const submitBtn = document.getElementById('btn-edit-artist-submit') as HTMLButtonElement;
     submitBtn.disabled = true;
     const origText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Đang lưu...';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Saving...';
 
     try {
       await apiFetch(`/admin/artists/${id}`, {
@@ -5090,7 +5090,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (_albumSongsTab === 'current') {
       const songs = _albumSongsData.album_songs;
       if (!songs.length) {
-        albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Album chưa có bài hát nào.</p>';
+        albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">This album has no songs yet.</p>';
         return;
       }
       albumSongsContent.innerHTML = songs.map((s: any) => `
@@ -5104,7 +5104,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
           <button class="btn-remove-from-album shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 transition-all"
                   data-song-id="${s.id}" data-song-title="${s.title}">
-            <span class="material-symbols-outlined text-[14px]">remove_circle</span>Xóa khỏi album
+            <span class="material-symbols-outlined text-[14px]">remove_circle</span>Remove from album
           </button>
         </div>`).join('');
     } else {
@@ -5113,7 +5113,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       let songs = _albumSongsData.all_songs.filter((s: any) => !inAlbumIds.has(String(s.id)));
       if (query) songs = songs.filter((s: any) => s.title.toLowerCase().includes(query) || (s.artist_names || '').toLowerCase().includes(query));
       if (!songs.length) {
-        albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Không tìm thấy bài hát nào.</p>';
+        albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No songs found.</p>';
         return;
       }
       albumSongsContent.innerHTML = songs.map((s: any) => `
@@ -5127,7 +5127,7 @@ import MainLayout from "../layouts/MainLayout.astro";
           </div>
           <button class="btn-add-to-album shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 hover:bg-green-500/20 hover:text-green-400 text-gray-500 transition-all"
                   data-song-id="${s.id}" data-song-title="${s.title}">
-            <span class="material-symbols-outlined text-[14px]">add_circle</span>Thêm vào album
+            <span class="material-symbols-outlined text-[14px]">add_circle</span>Add to album
           </button>
         </div>`).join('');
     }
@@ -5187,13 +5187,13 @@ import MainLayout from "../layouts/MainLayout.astro";
       renderAlbumSongsTab();
       showToast(
         action === 'remove'
-          ? `Đã xóa "${songTitle}" khỏi album.`
-          : `Đã thêm "${songTitle}" vào album.`,
+          ? `Removed "${songTitle}" from album.`
+          : `Added "${songTitle}" to album.`,
         'success'
       );
       _loadedSections.delete('albums');
     } catch (err: any) {
-      showToast(err.message || 'Thao tác thất bại.', 'error');
+      showToast(err.message || 'Operation failed.', 'error');
       btn.disabled = false;
       btn.innerHTML = origHTML;
     }
@@ -5208,7 +5208,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     if (albumSongsSearch) albumSongsSearch.value = '';
     tabAlbumCurrent.className = 'album-songs-tab px-4 py-2 text-sm font-semibold rounded-lg bg-purple-600/90 text-white transition-all shadow-[0_2px_8px_rgba(124,58,237,0.3)]';
     tabAlbumAdd.className     = 'album-songs-tab px-4 py-2 text-sm font-semibold rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-150';
-    albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Đang tải...</p>';
+    albumSongsContent.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Loading...</p>';
     openAdminModal(albumSongsModal as HTMLElement);
 
     try {
@@ -5234,7 +5234,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       const res = await apiFetch('/auth/me');
       meData = res.data;
     } catch {
-      // apiFetch already redirects on 401
+
       return;
     }
 
@@ -5257,7 +5257,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   document.getElementById('admin-logout-btn')?.addEventListener('click', async () => {
     const confirmed = await showConfirm({
       title: 'Log Out',
-      body: 'Đăng xuất khỏi Admin Panel?',
+      body: 'Sign out of Admin Panel?',
       confirmLabel: 'Log Out',
       confirmClass: 'bg-amber-600 hover:bg-amber-500',
       icon: 'logout',
@@ -5389,31 +5389,31 @@ import MainLayout from "../layouts/MainLayout.astro";
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-lg font-bold text-white">Thêm Nghệ Sĩ Mới</h2>
+      <h2 class="text-lg font-bold text-white">Add New Artist</h2>
       <button id="modal-artist-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all">
         <span class="material-symbols-outlined text-[18px]">close</span>
       </button>
     </div>
     <form id="form-add-artist" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">Tên nghệ sĩ <span class="text-rose-400">*</span></label>
-        <input id="artist-name" type="text" placeholder="Nhập tên nghệ sĩ..."
+        <label class="block text-sm font-medium text-gray-300 mb-2">Artist name <span class="text-rose-400">*</span></label>
+        <input id="artist-name" type="text" placeholder="Enter artist name..."
           class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">Avatar URL <span class="text-gray-500">(tùy chọn)</span></label>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Avatar URL <span class="text-gray-500">(optional)</span></label>
         <input id="artist-image-url" type="url" placeholder="https://..."
           class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-300 mb-2">Giới thiệu <span class="text-gray-500">(tùy chọn)</span></label>
-        <textarea id="artist-bio" rows="3" placeholder="Mô tả ngắn về nghệ sĩ..."
+        <label class="block text-sm font-medium text-gray-300 mb-2">Bio <span class="text-gray-500">(optional)</span></label>
+        <textarea id="artist-bio" rows="3" placeholder="Short description about the artist..."
           class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"></textarea>
       </div>
       <div id="artist-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
       <button type="submit" id="btn-artist-submit"
         class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">add</span>Thêm Nghệ Sĩ
+        <span class="material-symbols-outlined text-[18px]">add</span>Add Artist
       </button>
     </form>
   </div>
@@ -5427,7 +5427,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-8 h-8 rounded-lg bg-pink-500/15 border border-pink-500/20 flex items-center justify-center shrink-0">
           <span class="material-symbols-outlined text-pink-400 text-[17px]">edit</span>
         </span>
-        Chỉnh Sửa Nghệ Sĩ
+        Edit Artist
       </h2>
       <button id="modal-edit-artist-close" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-all duration-150">
         <span class="material-symbols-outlined text-[18px]">close</span>
@@ -5435,7 +5435,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     </div>
     <form id="form-edit-artist" class="space-y-4 px-7 py-6">
       <input id="edit-artist-id" type="hidden" value="" />
-      
+
       <div class="flex items-center gap-4 p-3.5 rounded-xl bg-white/3 border border-white/6">
         <div id="edit-artist-avatar-preview" class="w-14 h-14 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-white text-xl font-bold bg-gradient-to-br from-purple-600 to-indigo-600">
           <span class="material-symbols-outlined text-2xl text-white/70">person</span>
@@ -5447,28 +5447,28 @@ import MainLayout from "../layouts/MainLayout.astro";
       </div>
 
       <div class="adm-field">
-        <label class="adm-label">Tên nghệ sĩ <span class="req">*</span></label>
-        <input id="edit-artist-name" type="text" maxlength="100" placeholder="Nhập tên nghệ sĩ..." class="adm-input" />
+        <label class="adm-label">Artist name <span class="req">*</span></label>
+        <input id="edit-artist-name" type="text" maxlength="100" placeholder="Enter artist name..." class="adm-input" />
       </div>
       <div class="adm-field">
-        <label class="adm-label">Avatar URL <span class="opt">(tùy chọn)</span></label>
+        <label class="adm-label">Avatar URL <span class="opt">(optional)</span></label>
         <div class="flex gap-2">
           <input id="edit-artist-image-url" type="url" placeholder="https://..." class="adm-input flex-1" />
-          <button type="button" id="btn-clear-artist-image" title="Xóa ảnh"
+          <button type="button" id="btn-clear-artist-image" title="Remove image"
             class="shrink-0 px-3 py-2 bg-white/5 hover:bg-rose-500/15 border border-white/10 hover:border-rose-500/30 text-gray-400 hover:text-rose-400 rounded-xl transition-all duration-150">
             <span class="material-symbols-outlined text-[18px]">delete</span>
           </button>
         </div>
-        <p class="text-xs text-gray-600 mt-1.5">Để trống nếu muốn xóa ảnh hiện tại</p>
+        <p class="text-xs text-gray-600 mt-1.5">Leave blank to remove current image</p>
       </div>
       <div class="adm-field">
-        <label class="adm-label">Giới thiệu <span class="opt">(tùy chọn)</span></label>
-        <textarea id="edit-artist-bio" rows="3" maxlength="1000" placeholder="Mô tả ngắn về nghệ sĩ..."
+        <label class="adm-label">Bio <span class="opt">(optional)</span></label>
+        <textarea id="edit-artist-bio" rows="3" maxlength="1000" placeholder="Short description about the artist..."
           class="adm-input resize-none"></textarea>
       </div>
       <div id="edit-artist-error" class="adm-error hidden"></div>
       <button type="submit" id="btn-edit-artist-submit" class="adm-btn-submit">
-        <span class="material-symbols-outlined text-[18px]">save</span>Lưu Thay Đổi
+        <span class="material-symbols-outlined text-[18px]">save</span>Save Changes
       </button>
     </form>
   </div>
