@@ -109,10 +109,12 @@ export const getArtistById = async (req, res) => {
 
         const token = req.headers.authorization?.split(' ')[1];
         let is_following = false;
+        let currentUserId = null;
         if (token) {
             try {
                 const { verifyToken } = await import('../utils/jwt.js');
                 const decoded = verifyToken(token);
+                currentUserId = decoded?.id ?? null;
                 if (decoded?.id) {
                     const [[row]] = await pool.query(
                         `SELECT 1 FROM artist_follows WHERE user_id = $1 AND artist_id = $2`,
@@ -123,6 +125,8 @@ export const getArtistById = async (req, res) => {
             } catch {}
         }
         artist.is_following = is_following;
+        artist.can_follow = !currentUserId || String(artist.user_id) !== String(currentUserId);
+        artist.is_self = !!currentUserId && String(artist.user_id) === String(currentUserId);
 
         return res.status(200).json({ success: true, data: artist });
     } catch (error) {
@@ -136,11 +140,15 @@ export const getFollowStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.user.id;
+        const [[artist]] = await pool.query('SELECT user_id FROM artists WHERE id = $1', [id]);
+        if (!artist) {
+            return res.status(404).json({ success: false, message: 'Artist not found' });
+        }
         const [[row]] = await pool.query(
             `SELECT 1 FROM artist_follows WHERE user_id = $1 AND artist_id = $2`,
             [userId, id]
         );
-        return res.json({ success: true, data: { is_following: !!row } });
+        return res.json({ success: true, data: { is_following: !!row, can_follow: String(artist.user_id) !== String(userId) } });
     } catch (err) {
         console.error('getFollowStatus error:', err);
         return res.status(500).json({ success: false, message: 'Failed to get follow status' });
@@ -153,9 +161,11 @@ export const followArtist = async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
 
-        const [[artistRow]] = await pool.query('SELECT id, followers_count FROM artists WHERE id = $1', [id]);
+        const [[artistRow]] = await pool.query('SELECT id, followers_count, user_id FROM artists WHERE id = $1', [id]);
         if (!artistRow) return res.status(404).json({ success: false, message: 'Artist not found' });
-
+        if (String(artistRow.user_id) === String(userId)) {
+            return res.status(400).json({ success: false, message: 'You cannot follow your own artist profile' });
+        }
 
         const [inserted] = await pool.query(
             `INSERT INTO artist_follows (user_id, artist_id) VALUES ($1, $2)

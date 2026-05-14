@@ -340,6 +340,12 @@ import MainLayout from "../layouts/MainLayout.astro";
                 </div>
                 <span class="text-xs font-medium text-gray-300 group-hover:text-white">Manage Users</span>
               </button>
+              <button data-section="subscriptions" class="nav-btn flex flex-col items-center gap-2 p-4 bg-white/3 hover:bg-white/8 border border-white/5 hover:border-amber-500/30 rounded-xl transition-all group">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/15 group-hover:bg-amber-500/25 flex items-center justify-center transition-all">
+                  <span class="material-symbols-outlined text-amber-400 text-[20px]">workspace_premium</span>
+                </div>
+                <span class="text-xs font-medium text-gray-300 group-hover:text-white">Subscriptions</span>
+              </button>
               <button data-section="analytics" class="nav-btn flex flex-col items-center gap-2 p-4 bg-white/3 hover:bg-white/8 border border-white/5 hover:border-emerald-500/30 rounded-xl transition-all group">
                 <div class="w-10 h-10 rounded-xl bg-emerald-500/15 group-hover:bg-emerald-500/25 flex items-center justify-center transition-all">
                   <span class="material-symbols-outlined text-emerald-400 text-[20px]">bar_chart_4_bars</span>
@@ -432,6 +438,85 @@ import MainLayout from "../layouts/MainLayout.astro";
             </div>
             <div id="artist-requests-list" class="divide-y divide-white/5">
               <p class="px-6 py-6 text-sm text-gray-500 text-center">Loading...</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="section-subscriptions" class="hidden space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+              <p class="text-xs uppercase tracking-wider text-gray-500">Total users</p>
+              <p id="sub-total-users" class="text-2xl font-black text-white mt-2">0</p>
+            </div>
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+              <p class="text-xs uppercase tracking-wider text-gray-500">Active subs</p>
+              <p id="sub-active-count" class="text-2xl font-black text-white mt-2">0</p>
+            </div>
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+              <p class="text-xs uppercase tracking-wider text-gray-500">Revenue</p>
+              <p id="sub-revenue" class="text-2xl font-black text-white mt-2">0đ</p>
+            </div>
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5">
+              <p class="text-xs uppercase tracking-wider text-gray-500">Completed payments</p>
+              <p id="sub-payments-count" class="text-2xl font-black text-white mt-2">0</p>
+            </div>
+          </div>
+          <div class="bg-white/3 border border-white/5 rounded-2xl backdrop-blur-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+              <h2 class="text-base font-bold text-white">User Subscription Table</h2>
+              <div class="flex items-center gap-2">
+                <span id="sub-results-count" class="hidden text-xs text-gray-500 bg-white/5 px-2 py-1 rounded-lg"></span>
+                <button id="btn-sub-clear-filters" class="hidden flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-amber-400 hover:text-white bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[14px]">filter_alt_off</span>Clear
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 px-6 py-3 border-b border-white/5 bg-white/[0.02]">
+              <div class="relative flex-1 min-w-[180px]">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px] pointer-events-none">search</span>
+                <input id="sub-search" type="text" placeholder="Search users by name or email…" class="adm-filter-input w-full pl-9 pr-3 py-1.5" />
+              </div>
+              <select id="sub-filter-plan" class="adm-filter-select">
+                <option value="">All Plans</option>
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+                <option value="vip">VIP</option>
+              </select>
+              <select id="sub-filter-status" class="adm-filter-select">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
+                <option value="pending">Pending</option>
+              </select>
+              <select id="sub-filter-role" class="adm-filter-select">
+                <option value="">All Roles</option>
+                <option value="user">User</option>
+                <option value="artist">Artist</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div id="sub-filter-chips" class="hidden flex-wrap items-center gap-2 px-6 py-2 border-b border-white/5 bg-purple-500/3"></div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3">User</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Plan</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Status</th>
+                    <th class="px-6 py-3 hidden lg:table-cell">End date</th>
+                    <th class="px-6 py-3 hidden xl:table-cell">Payment</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-subscriptions-tbody" class="divide-y divide-white/3">
+                  <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4 border-t border-white/5">
+              <p id="sub-pagination-info" class="text-xs text-gray-500">Loading...</p>
+              <div class="flex items-center gap-1" id="sub-pagination-btns"></div>
             </div>
           </div>
         </div>
@@ -1436,22 +1521,39 @@ import MainLayout from "../layouts/MainLayout.astro";
   }
 
   .adm-filter-select {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 0.5rem;
-    color: #d1d5db;
-    font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: #1a2847;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.625rem;
+    color: #e2e8f0;
+    font-size: 0.8125rem;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
     cursor: pointer;
     outline: none;
-    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    min-height: 2.25rem;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%), linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
   }
-  .adm-filter-select:hover { border-color: rgba(255,255,255,0.2); }
-  .adm-filter-select:focus { border-color: rgba(139,92,246,0.5); color: #f1f5f9; }
+  .adm-filter-select:hover {
+    border-color: rgba(255,255,255,0.24);
+    background-color: #223157;
+  }
+  .adm-filter-select:focus {
+    border-color: rgba(139,92,246,0.6);
+    color: #f8fafc;
+    background-color: #223157;
+    box-shadow: 0 0 0 2px rgba(139,92,246,0.14);
+  }
   .adm-filter-select.adm-filter-active {
-    border-color: rgba(139,92,246,0.5);
-    background: rgba(139,92,246,0.1);
-    color: #c4b5fd;
+    border-color: rgba(139,92,246,0.7);
+    background-color: rgba(139,92,246,0.14);
+    color: #ede9fe;
   }
 
   .filter-chip {
@@ -1531,6 +1633,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 </style>
 
 <script>
+  // @ts-nocheck
   import { apiFetch, getToken, getUser, colorFor, requireAuthClient, hasMinRole, API_BASE } from '../lib/api.js';
 
   if (!requireAuthClient('manager')) {
@@ -1744,12 +1847,13 @@ import MainLayout from "../layouts/MainLayout.astro";
 
   let loadGenres: () => Promise<void>;
 
-  const ALL_SECTIONS = ['dashboard', 'users', 'songs', 'artists', 'playlists', 'albums', 'tasks', 'genres', 'analytics'] as const;
+  const ALL_SECTIONS = ['dashboard', 'users', 'subscriptions', 'songs', 'artists', 'playlists', 'albums', 'tasks', 'genres', 'analytics'] as const;
   type Section = typeof ALL_SECTIONS[number];
 
   const SECTION_TITLES: Record<string, string> = {
     dashboard: 'Dashboard',
     users:     'User Management',
+    subscriptions: 'Subscription Management',
     songs:     'Song Management',
     artists:   'Artist Management',
     playlists: 'Playlist Management',
@@ -1797,6 +1901,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       _loadedSections.add(section);
       switch (section) {
         case 'users':     loadUsers(); loadArtistRequests(); break;
+        case 'subscriptions': loadSubscriptionAdmin(); break;
         case 'songs':     loadSongs(); break;
         case 'artists':   loadArtists(); break;
         case 'playlists': loadPlaylists(); break;
@@ -1836,6 +1941,16 @@ import MainLayout from "../layouts/MainLayout.astro";
   const _userPlanSel    = document.getElementById('users-filter-plan')    as HTMLSelectElement;
   const _userSortSel    = document.getElementById('users-sort')           as HTMLSelectElement;
 
+  let _subPage = 1;
+  let _subKeyword = '';
+  let _subPlan = '';
+  let _subStatus = '';
+  let _subRole = '';
+  const _subSearchEl = document.getElementById('sub-search') as HTMLInputElement;
+  const _subPlanSel = document.getElementById('sub-filter-plan') as HTMLSelectElement;
+  const _subStatusSel = document.getElementById('sub-filter-status') as HTMLSelectElement;
+  const _subRoleSel = document.getElementById('sub-filter-role') as HTMLSelectElement;
+
   function _updateUserChips() {
     const active: Array<{label:string; value:string; clearFn:()=>void}> = [];
     if (_userKeyword)  active.push({ label: 'Search', value: _userKeyword, clearFn: () => { _userKeyword = ''; (document.getElementById('users-search') as HTMLInputElement).value = ''; syncFilterSelectStyle(_userRoleSel); loadUsers(1); } });
@@ -1851,6 +1966,24 @@ import MainLayout from "../layouts/MainLayout.astro";
       loadUsers(1);
     });
     [_userRoleSel, _userLockedSel, _userPlanSel].forEach(syncFilterSelectStyle);
+  }
+
+  function _updateSubscriptionChips(total = 0, filtered = 0) {
+    const active: Array<{label:string; value:string; clearFn:()=>void}> = [];
+    if (_subKeyword) active.push({ label: 'Search', value: _subKeyword, clearFn: () => { _subKeyword = ''; if (_subSearchEl) _subSearchEl.value = ''; loadSubscriptionAdmin(1); } });
+    if (_subPlan) active.push({ label: 'Plan', value: _subPlan.toUpperCase(), clearFn: () => { _subPlan = ''; if (_subPlanSel) _subPlanSel.value = ''; syncFilterSelectStyle(_subPlanSel); loadSubscriptionAdmin(1); } });
+    if (_subStatus) active.push({ label: 'Status', value: _subStatus, clearFn: () => { _subStatus = ''; if (_subStatusSel) _subStatusSel.value = ''; syncFilterSelectStyle(_subStatusSel); loadSubscriptionAdmin(1); } });
+    if (_subRole) active.push({ label: 'Role', value: _subRole, clearFn: () => { _subRole = ''; if (_subRoleSel) _subRoleSel.value = ''; syncFilterSelectStyle(_subRoleSel); loadSubscriptionAdmin(1); } });
+    renderFilterChips('sub-filter-chips', 'btn-sub-clear-filters', 'sub-results-count', total, filtered, active, () => {
+      _subKeyword = ''; _subPlan = ''; _subStatus = ''; _subRole = '';
+      if (_subSearchEl) _subSearchEl.value = '';
+      if (_subPlanSel) _subPlanSel.value = '';
+      if (_subStatusSel) _subStatusSel.value = '';
+      if (_subRoleSel) _subRoleSel.value = '';
+      [_subPlanSel, _subStatusSel, _subRoleSel].forEach(syncFilterSelectStyle);
+      loadSubscriptionAdmin(1);
+    });
+    [_subPlanSel, _subStatusSel, _subRoleSel].forEach(syncFilterSelectStyle);
   }
 
   _userRoleSel?.addEventListener('change', (e) => {
@@ -1874,6 +2007,33 @@ import MainLayout from "../layouts/MainLayout.astro";
     (document.getElementById('users-search') as HTMLInputElement).value = '';
     [_userRoleSel, _userLockedSel, _userPlanSel, _userSortSel].forEach(s => { if (s) s.value = ''; syncFilterSelectStyle(s); });
     loadUsers(1);
+  });
+
+  _subSearchEl?.addEventListener('input', (e) => {
+    _subKeyword = (e.target as HTMLInputElement).value.trim();
+    _subPage = 1;
+    loadSubscriptionAdmin(1);
+  });
+  _subPlanSel?.addEventListener('change', (e) => {
+    _subPlan = (e.target as HTMLSelectElement).value;
+    _subPage = 1;
+    loadSubscriptionAdmin(1);
+  });
+  _subStatusSel?.addEventListener('change', (e) => {
+    _subStatus = (e.target as HTMLSelectElement).value;
+    _subPage = 1;
+    loadSubscriptionAdmin(1);
+  });
+  _subRoleSel?.addEventListener('change', (e) => {
+    _subRole = (e.target as HTMLSelectElement).value;
+    _subPage = 1;
+    loadSubscriptionAdmin(1);
+  });
+  document.getElementById('btn-sub-clear-filters')?.addEventListener('click', () => {
+    _subKeyword = ''; _subPlan = ''; _subStatus = ''; _subRole = '';
+    if (_subSearchEl) _subSearchEl.value = '';
+    [_subPlanSel, _subStatusSel, _subRoleSel].forEach(s => { if (s) s.value = ''; syncFilterSelectStyle(s); });
+    loadSubscriptionAdmin(1);
   });
 
   let _songsSearchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -2633,6 +2793,104 @@ import MainLayout from "../layouts/MainLayout.astro";
   let _userRole    = '';
   let _userLocked  = '';
 
+
+  async function loadSubscriptionAdmin(page = 1) {
+    _subPage = page;
+    const tbody = document.getElementById('admin-subscriptions-tbody');
+    const info = document.getElementById('sub-pagination-info');
+    const btns = document.getElementById('sub-pagination-btns');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>';
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '10' });
+      if (_subKeyword) params.set('keyword', _subKeyword);
+      if (_subPlan) params.set('plan', _subPlan);
+      if (_subStatus) params.set('status', _subStatus);
+      if (_subRole) params.set('role', _subRole);
+      const { data } = await apiFetch(`/admin/subscriptions?${params}`);
+      const rows = data?.rows || [];
+      const stats = data?.stats || {};
+      const meta = data?.meta || { totalItems: rows.length, totalPages: 1, currentPage: page };
+      const total = meta.totalItems || rows.length;
+      const filtered = rows.length;
+
+      const set = (id: string, value: string) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+      set('sub-total-users', String(stats.total_users ?? total));
+      set('sub-active-count', String(stats.active_count ?? 0));
+      set('sub-revenue', `${Number(stats.revenue ?? 0).toLocaleString('vi-VN')}đ`);
+      set('sub-payments-count', String(stats.payments_count ?? 0));
+
+      _updateSubscriptionChips(total, filtered);
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No subscription records found.</td></tr>';
+        if (info) info.textContent = 'No records';
+        if (btns) btns.innerHTML = '';
+        return;
+      }
+
+      tbody.innerHTML = rows.map((u: any) => {
+        const plan = (u.subscription_type || 'free').toLowerCase();
+        const active = u.subscription_active || u.is_active;
+        const end = u.subscription_end_date || u.end_date || null;
+        const status = active ? 'Active' : (u.payment_status === 'pending' ? 'Pending' : 'Expired');
+        const planClass = plan === 'vip' ? 'bg-fuchsia-500/20 text-fuchsia-300' : plan === 'premium' ? 'bg-blue-500/20 text-blue-300' : 'bg-white/5 text-gray-400';
+        const statusClass = status === 'Active' ? 'bg-green-500/15 text-green-300' : status === 'Pending' ? 'bg-amber-500/15 text-amber-300' : 'bg-red-500/15 text-red-300';
+        return `<tr class="hover:bg-white/3 transition-colors group" data-sub-id="${u.id}">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-white text-sm font-bold" style="background:${colorFor(u.id)}">${u.avatar_url ? `<img src="${u.avatar_url}" class="w-full h-full object-cover" alt="" />` : (u.username || u.email || '?').charAt(0).toUpperCase()}</div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-100 truncate">${u.username || '—'}</p>
+                <p class="text-xs text-gray-500 truncate">${u.email || '—'}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 hidden sm:table-cell"><span class="text-xs font-semibold px-2 py-1 rounded-full ${planClass}">${plan.charAt(0).toUpperCase() + plan.slice(1)}</span></td>
+          <td class="px-6 py-4 hidden md:table-cell"><span class="text-xs font-semibold px-2 py-1 rounded-full ${statusClass}">${status}</span></td>
+          <td class="px-6 py-4 hidden lg:table-cell text-xs text-gray-400">${end ? fmtDate(end) : '—'}</td>
+          <td class="px-6 py-4 hidden xl:table-cell text-xs text-gray-400">${u.payment_method || 'MoMo'}${u.transaction_id ? ` · ${u.transaction_id}` : ''}</td>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="btn-sub-approve px-3 py-1.5 rounded-lg text-xs font-semibold bg-green-500/15 text-green-300 border border-green-500/20 hover:bg-green-500/25" data-id="${u.id}">Approve</button>
+              <button class="btn-sub-renew px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/20 hover:bg-blue-500/25" data-id="${u.id}">Renew</button>
+              <button class="btn-sub-cancel px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/20 hover:bg-rose-500/25" data-id="${u.id}">Cancel</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      if (info) info.innerHTML = `<span class="text-white font-semibold">${total}</span> subscriptions`;
+      if (btns) {
+        const totalPages = meta.totalPages || 1;
+        btns.innerHTML = buildPaginationBtns(page, totalPages, loadSubscriptionAdmin);
+        btns.querySelectorAll<HTMLElement>('[data-pg]').forEach(btn => {
+          btn.addEventListener('click', () => { const p = parseInt(btn.dataset.pg || '1'); if (p > 0 && !(btn as HTMLButtonElement).disabled) loadSubscriptionAdmin(p); });
+        });
+      }
+
+      tbody.querySelectorAll('.btn-sub-approve').forEach((btn) => btn.addEventListener('click', async () => {
+        const id = (btn as HTMLButtonElement).dataset.id;
+        if (!id) return;
+        await apiFetch(`/admin/subscriptions/${id}/activate`, { method: 'PATCH' });
+        loadSubscriptionAdmin(page);
+      }));
+      tbody.querySelectorAll('.btn-sub-renew').forEach((btn) => btn.addEventListener('click', async () => {
+        const id = (btn as HTMLButtonElement).dataset.id;
+        if (!id) return;
+        await apiFetch(`/admin/subscriptions/${id}/renew`, { method: 'PATCH' });
+        loadSubscriptionAdmin(page);
+      }));
+      tbody.querySelectorAll('.btn-sub-cancel').forEach((btn) => btn.addEventListener('click', async () => {
+        const id = (btn as HTMLButtonElement).dataset.id;
+        if (!id) return;
+        await apiFetch(`/admin/subscriptions/${id}/cancel`, { method: 'PATCH' });
+        loadSubscriptionAdmin(page);
+      }));
+    } catch (err: any) {
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-red-400 text-sm">${err.message || 'Failed to load subscription data.'}</td></tr>`;
+    }
+  }
 
   async function loadUsers(page = 1) {
     _userPage = page;
@@ -5302,16 +5560,21 @@ import MainLayout from "../layouts/MainLayout.astro";
 <style>
   .custom-select option {
     background-color: #1a2847;
-    color: #d1d5db;
+    color: #e2e8f0;
     padding: 6px 10px;
   }
   .custom-select option:hover,
   .custom-select option:focus {
     background-color: #312e81;
+    color: #fff;
   }
   .custom-select option:checked {
     background-color: #7c3aed;
     color: #fff;
+  }
+  .custom-select,
+  .custom-select option {
+    background-clip: padding-box;
   }
 </style>
 <div id="modal-assign-task" class="hidden fixed inset-0 z-[200] flex items-center justify-center">

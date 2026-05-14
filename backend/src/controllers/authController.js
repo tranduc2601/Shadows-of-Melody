@@ -195,11 +195,22 @@ export const getMe = async (req, res) => {
 
         const stats = statsRows[0] || {};
 
+        const subType = subscription?.subscription_type || 'free';
+        const isActive = !!subscription && (subscription.is_active ?? true) && (!subscription.end_date || new Date(subscription.end_date) > new Date());
+        const subscriptionBadge = {
+            subscription_type: subType,
+            is_active: isActive,
+            status: isActive ? 'active' : 'expired',
+            plan_name: subType === 'vip' ? 'VIP' : subType === 'premium' ? 'Premium' : 'Free',
+            end_date: subscription?.end_date || null,
+        };
+
         return res.status(200).json({
             success: true,
             data: {
                 ...user,
                 subscription,
+                subscription_badge: subscriptionBadge,
                 following_count:          stats.following_count           || 0,
                 liked_count:              stats.liked_count                || 0,
                 total_songs_listened:     stats.total_songs_listened       || 0,
@@ -219,38 +230,57 @@ export const getMe = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { username, full_name, bio, avatar_url, current_password, new_password } = req.body;
+        const { username, bio, avatar_url, current_password, new_password } = req.body;
 
-
-        if (new_password) {
+        if (new_password !== undefined) {
             if (!current_password) {
-                return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại là bắt buộc' });
+                return res.status(400).json({ success: false, message: 'Current password is required' });
+            }
+            if (!validatePassword(new_password)) {
+                return res.status(400).json({ success: false, message: 'Password must be at least 8 characters with uppercase, lowercase, and number' });
             }
             const [rows] = await pool.query('SELECT password_hash FROM users WHERE id = ?', [userId]);
             const hash = rows[0]?.password_hash;
             const valid = await User.verifyPassword(current_password, hash || '');
             if (!valid) {
-                return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại không đúng' });
+                return res.status(400).json({ success: false, message: 'Current password is incorrect' });
             }
             const bcryptjs = (await import('bcryptjs')).default;
             const newHash = await bcryptjs.hash(new_password, 10);
             await pool.query('UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?', [newHash, userId]);
-            return res.json({ success: true, message: 'Password updated' });
         }
 
         const updateData = {};
-        if (username !== undefined) updateData.username = username;
-        if (full_name !== undefined) updateData.full_name = full_name;
-        if (bio !== undefined) updateData.bio = bio;
+        if (username !== undefined) {
+            const normalized = String(username).trim();
+            if (!validateUsername(normalized)) {
+                return res.status(400).json({ success: false, message: 'Username must be 3-20 characters (alphanumeric and underscore)' });
+            }
+            const existing = await User.findByUsername(normalized);
+            if (existing && String(existing.id) !== String(userId)) {
+                return res.status(409).json({ success: false, message: 'Username already taken' });
+            }
+            updateData.username = normalized;
+        }
+        if (bio !== undefined) {
+            const normalized = String(bio).trim();
+            if (normalized.length > 300) {
+                return res.status(400).json({ success: false, message: 'Bio cannot exceed 300 characters' });
+            }
+            updateData.bio = normalized;
+        }
         if (avatar_url !== undefined) updateData.avatar_url = avatar_url;
 
         if (Object.keys(updateData).length === 0) {
+            if (new_password !== undefined) {
+                const user = await User.findById(userId);
+                return res.status(200).json({ success: true, message: 'Password updated', data: user });
+            }
             return res.status(400).json({ success: false, message: 'No fields to update' });
         }
 
         await User.update(userId, updateData);
         const user = await User.findById(userId);
-
 
         if (user && user.role === 'artist') {
             try {
@@ -324,5 +354,57 @@ export const uploadAvatar = async (req, res) => {
     } catch (error) {
         console.error('UploadAvatar error:', error);
         return res.status(500).json({ success: false, message: 'Failed to upload avatar' });
+    }
+};
+
+export const deleteAccount = async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const userId = req.user.id;
+        const { password } = req.body || {};
+        if (!password) {
+            return res.status(400).json({ success: false, message: 'Password confirmation is required' });
+        }
+
+        await client.query('BEGIN');
+        const [rows] = await client.query('SELECT password_hash, role FROM users WHERE id = $1 AND deleted_at IS NULL', [userId]);
+        const userRow = rows[0];
+        if (!userRow) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        const valid = await User.verifyPassword(password, userRow.password_hash || '');
+        if (!valid) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Password is incorrect' });
+        }
+
+        await client.query('DELETE FROM artist_follows WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM favorites WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM listening_history WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM playlist_songs WHERE playlist_id IN (SELECT id FROM playlists WHERE user_id = $1)', [userId]);
+        await client.query('DELETE FROM playlists WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM subscription_history WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM subscriptions WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM artist_requests WHERE user_id = $1', [userId]);
+
+        const [artistRows] = await client.query('SELECT id FROM artists WHERE user_id = $1', [userId]);
+        for (const artist of artistRows) {
+            await client.query('DELETE FROM song_artists WHERE artist_id = $1', [artist.id]);
+            await client.query('DELETE FROM artist_follows WHERE artist_id = $1', [artist.id]);
+            await client.query('DELETE FROM albums WHERE artist_id = $1', [artist.id]);
+            await client.query('DELETE FROM artists WHERE id = $1', [artist.id]);
+        }
+
+        await client.query('DELETE FROM users WHERE id = $1', [userId]);
+        await client.query('COMMIT');
+        revokeToken(req._token, req.user);
+        return res.status(200).json({ success: true, message: 'Account deleted successfully' });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('DeleteAccount error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to delete account' });
+    } finally {
+        client.release();
     }
 };

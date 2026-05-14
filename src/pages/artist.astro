@@ -9,15 +9,15 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <Sidebar currentPage="artists" />
 
-    <main class="flex-1 flex flex-col overflow-hidden relative">
+    <main class="flex-1 flex flex-col overflow-hidden relative min-w-0">
       <div class="absolute top-0 left-0 w-[55%] h-[55%] bg-purple-900/10 blur-[160px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-indigo-900/10 blur-[130px] rounded-full pointer-events-none"></div>
 
-      <div id="hero-section" class="relative shrink-0 h-72 overflow-hidden">
+      <div id="hero-section" class="relative shrink-0 h-[18rem] sm:h-72 overflow-hidden">
         <div id="hero-bg" class="absolute inset-0 opacity-70 transition-all duration-700" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
 
-        <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10 gap-3">
+        <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-4 sm:px-8 z-10 gap-3 min-w-0">
           <a href="/artists" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors" aria-label="Back">
             <span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span>
           </a>
@@ -30,16 +30,16 @@ import PlayerBar from "../components/PlayerBar.astro";
           </nav>
         </header>
 
-        <div class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
-          <div class="flex items-end gap-6">
-            <div id="hero-avatar" class="w-28 h-28 rounded-full shrink-0 border-4 border-white/10 shadow-2xl overflow-hidden" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
+        <div class="absolute bottom-0 left-0 right-0 px-4 sm:px-8 pb-5 sm:pb-6 z-10">
+          <div class="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+            <div id="hero-avatar" class="w-20 h-20 sm:w-28 sm:h-28 rounded-full shrink-0 border-4 border-white/10 shadow-2xl overflow-hidden self-start sm:self-auto" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1">
                 <span class="flex items-center gap-1 text-xs text-blue-400 font-semibold">
                   <span class="material-symbols-outlined text-sm">verified</span>Verified Artist
                 </span>
               </div>
-              <h1 id="hero-name" class="text-4xl sm:text-5xl font-black text-white drop-shadow-xl truncate">—</h1>
+              <h1 id="hero-name" class="text-3xl sm:text-5xl font-black text-white drop-shadow-xl truncate">—</h1>
               <div class="flex flex-wrap items-center gap-4 mt-1.5">
                 <p id="hero-monthly" class="text-white/90 text-sm font-medium">
                   <span id="hero-monthly-count">—</span>
@@ -56,9 +56,9 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10 custom-scrollbar">
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 relative z-10 custom-scrollbar">
 
-        <div class="flex items-center gap-3 py-6 flex-wrap">
+        <div class="flex flex-wrap items-center gap-3 py-5 sm:py-6">
           <button id="play-btn" class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
             <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
           </button>
@@ -77,14 +77,14 @@ import PlayerBar from "../components/PlayerBar.astro";
 
         <section class="mb-10">
           <h2 class="text-xl font-bold text-white mb-4">Songs</h2>
-          <div id="songs-list" class="space-y-1">
+          <div id="songs-list" class="space-y-1 overflow-hidden rounded-2xl">
             <p class="text-gray-500 text-sm text-center py-6">Loading…</p>
           </div>
         </section>
 
         <section class="mb-10" id="albums-section">
           <h2 class="text-xl font-bold text-white mb-4">Albums</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="albums-grid">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="albums-grid">
             <p class="col-span-4 text-gray-500 text-sm text-center py-6">Loading…</p>
           </div>
         </section>
@@ -95,8 +95,8 @@ import PlayerBar from "../components/PlayerBar.astro";
     </main>
   </div>
 
-  <div id="atp-backdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm">
-    <div id="atp-modal" class="bg-[#0f1a2e] border border-white/10 rounded-2xl shadow-2xl w-80 max-h-[70vh] flex flex-col overflow-hidden">
+  <div id="atp-backdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div id="atp-modal" class="bg-[#0f1a2e] border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm max-h-[80vh] flex flex-col overflow-hidden">
       <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <h3 class="text-white font-semibold text-base">Add to Playlist</h3>
         <button id="atp-close" class="text-gray-400 hover:text-white transition-colors">
@@ -137,6 +137,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   let _isFollowing = false;
   let _followersCount = 0;
   let _followInFlight = false;
+  let _canFollowArtist = true;
 
   function setFollowUI(following: boolean, count: number) {
     _isFollowing = following;
@@ -146,6 +147,12 @@ import PlayerBar from "../components/PlayerBar.astro";
     const label  = document.getElementById('follow-btn-label') as HTMLElement;
     const cntEl  = document.getElementById('hero-followers-count') as HTMLElement;
     if (!btn) return;
+    if (!_canFollowArtist) {
+      btn.disabled = true;
+      btn.classList.add('hidden');
+      if (cntEl) cntEl.textContent = formatCount(count);
+      return;
+    }
     if (following) {
       btn.classList.remove('border-white/30', 'text-white', 'hover:border-purple-400', 'hover:text-purple-300');
       btn.classList.add('border-purple-500', 'text-purple-300', 'bg-purple-500/10', 'hover:bg-red-500/10', 'hover:border-red-500/60', 'hover:text-red-400');
@@ -164,6 +171,12 @@ import PlayerBar from "../components/PlayerBar.astro";
     const token = localStorage.getItem('auth_token');
     if (!token) { window.location.href = '/login'; return; }
     if (_followInFlight || !artistId) return;
+
+    if (!_canFollowArtist) {
+      showToast('You cannot follow your own artist profile.', 'error');
+      return;
+    }
+
     _followInFlight = true;
 
     const btn = document.getElementById('follow-btn') as HTMLButtonElement;
@@ -228,7 +241,13 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (token && followBtn) {
       followBtn.classList.remove('hidden');
       followBtn.classList.add('flex');
-      setFollowUI(!!artist.is_following, followersCount);
+      _canFollowArtist = !(artist.is_self || artist.can_follow === false);
+      if (!_canFollowArtist) {
+        setFollowUI(false, followersCount);
+        followBtn.classList.add('hidden');
+      } else {
+        setFollowUI(!!artist.is_following, followersCount);
+      }
     }
 
     if (artist.bio) {
@@ -245,23 +264,29 @@ import PlayerBar from "../components/PlayerBar.astro";
           ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-lg" alt=""/>`
           : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
         return `
-          <div class="relative flex items-center gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden"
+          <div class="relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden"
                data-song="${encodeURIComponent(JSON.stringify(s))}">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-8 opacity-0 group-hover:opacity-100"></div>
             <span class="w-6 text-center text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
             <span class="material-symbols-outlined text-purple-400 w-6 text-sm absolute left-3 opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 scale-50">play_arrow</span>
             ${cover}
-            <div class="flex-1 min-w-0">
-              <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
-              <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
+            <div class="flex-1 min-w-0 w-full sm:w-auto">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
+                  <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
+                </div>
+                <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300 whitespace-nowrap">${formatDuration(s.duration)}</span>
+              </div>
             </div>
-            <button class="add-to-playlist-btn material-symbols-outlined text-gray-600 hover:text-purple-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                    title="Add to playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
-            <button class="btn-like-song text-gray-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                    data-id="${s.id}" data-liked="false" title="Like">
-              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
-            </button>
-            <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
+            <div class="flex items-center gap-2 self-end sm:self-auto sm:ml-auto">
+              <button class="add-to-playlist-btn material-symbols-outlined text-gray-600 hover:text-purple-400 transition-all duration-200 hover:scale-110"
+                      title="Add to playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
+              <button class="btn-like-song text-gray-600 hover:text-rose-400 transition-all duration-200 hover:scale-110"
+                      data-id="${s.id}" data-liked="false" title="Like">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
+              </button>
+            </div>
           </div>`;
       }).join('');
     }
@@ -348,8 +373,9 @@ import PlayerBar from "../components/PlayerBar.astro";
         await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
       }
       window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !isLiked } }));
-    } catch {
+    } catch (err: any) {
       setLikeState(btn, isLiked);
+      showToast(err?.message || 'Failed', 'error');
     } finally {
       _likingInFlight.delete(songId);
     }

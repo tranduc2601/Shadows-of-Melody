@@ -17,7 +17,17 @@ class Album {
         const album = rows[0];
 
         const [songs] = await pool.query(
-            'SELECT * FROM songs WHERE album_id = ? ORDER BY created_at',
+            `SELECT s.*,
+                    STRING_AGG(DISTINCT a.name, ',') AS artist_names,
+                    MAX(al.title) AS album_title
+             FROM songs s
+             LEFT JOIN albums al ON s.album_id = al.id
+             LEFT JOIN song_artists sa ON s.id = sa.song_id
+             LEFT JOIN artists a ON sa.artist_id = a.id
+             WHERE s.album_id = ?
+               AND (s.status IS NULL OR s.status = 'published')
+             GROUP BY s.id
+             ORDER BY s.created_at ASC`,
             [id]
         );
         album.songs = songs;

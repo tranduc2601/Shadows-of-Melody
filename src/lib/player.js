@@ -75,7 +75,9 @@ export const player = (() => {
     _current = song;
     const a = getAudio();
     _loading = true;
-    a.src = `${API_BASE}/stream/${song.id}`;
+    const user = typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('auth_user') || 'null') : null;
+    const quality = user?.subscription_badge?.is_active && ['premium', 'vip'].includes(String(user?.subscription_badge?.subscription_type || '').toLowerCase()) ? 'hi' : 'standard';
+    a.src = `${API_BASE}/stream/${song.id}?quality=${quality}`;
     _loading = false;
     _dispatch('songchange');
     try { await a.play(); } catch {  }
@@ -104,6 +106,7 @@ export const player = (() => {
     get duration() { return _audio?.duration || 0; },
     get shuffle() { return _shuffle; },
     get repeat() { return _repeat; },
+    get volume() { return _audio?.volume ?? 1; },
 
     get queue() { return [..._queue]; },
 
@@ -191,7 +194,7 @@ export const player = (() => {
         const a = getAudio();
         if (state.volume != null) a.volume = state.volume;
         _loading = true;
-        a.src = `${API_BASE}/stream/${state.song.id}`;
+        a.src = `${API_BASE}/stream/${state.song.id}?quality=standard`;
         _loading = false;
 
         const targetTime = state.currentTime || 0;

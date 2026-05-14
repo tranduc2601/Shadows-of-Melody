@@ -9,16 +9,16 @@ import Sidebar from "../components/Sidebar.astro";
 
     <Sidebar currentPage="liked" />
 
-    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] min-w-0">
       <div class="absolute top-[-5%] left-[-5%] w-[50%] h-[50%] bg-rose-900/15 blur-[160px] rounded-full pointer-events-none" aria-hidden="true"></div>
       <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none" aria-hidden="true"></div>
 
-      <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
+      <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth px-4 sm:px-6 lg:px-8">
 
         <section class="relative overflow-hidden" aria-label="Liked Songs overview">
           <div class="absolute inset-0 bg-linear-to-b from-rose-900/40 via-purple-900/20 to-transparent pointer-events-none" aria-hidden="true"></div>
-          <div class="relative z-10 flex flex-col sm:flex-row items-end gap-8 px-8 pt-10 pb-12">
-            <div class="w-52 h-52 rounded-2xl shrink-0 bg-linear-to-br from-rose-500 via-pink-600 to-purple-700 shadow-2xl shadow-rose-900/50 flex items-center justify-center relative overflow-hidden" aria-hidden="true">
+          <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-end gap-6 lg:gap-8 px-0 sm:px-2 pt-8 sm:pt-10 pb-10 sm:pb-12">
+            <div class="w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 rounded-2xl shrink-0 bg-linear-to-br from-rose-500 via-pink-600 to-purple-700 shadow-2xl shadow-rose-900/50 flex items-center justify-center relative overflow-hidden" aria-hidden="true">
               <div class="absolute inset-0 flex items-center justify-center opacity-15">
                 <span class="material-symbols-outlined text-white" style="font-size: 9rem;">favorite</span>
               </div>
@@ -30,7 +30,7 @@ import Sidebar from "../components/Sidebar.astro";
 
             <div class="flex flex-col gap-2 min-w-0">
               <span class="text-xs font-bold uppercase tracking-widest text-white/50">Playlist</span>
-              <h1 class="text-5xl sm:text-6xl font-black text-white drop-shadow-xl">Liked Songs</h1>
+              <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white drop-shadow-xl">Liked Songs</h1>
               <div class="flex items-center gap-2 text-sm text-gray-400 mt-1 flex-wrap">
                 <a href="/profile" id="hero-user-name" class="font-bold text-white hover:underline">—</a>
                 <span class="text-white/30" aria-hidden="true">·</span>
@@ -63,7 +63,7 @@ import Sidebar from "../components/Sidebar.astro";
           <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none" aria-hidden="true"></div>
         </section>
 
-        <div class="px-6 lg:px-8 mt-4 mb-4 flex items-center gap-4 flex-wrap">
+        <div class="mt-4 mb-4 flex flex-col lg:flex-row lg:items-center gap-4 flex-wrap">
           <div class="relative flex-1 max-w-xs">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]" aria-hidden="true">search</span>
             <input
@@ -125,12 +125,88 @@ import Sidebar from "../components/Sidebar.astro";
                 </button>
               </div>
             </div>
+            <button
+              id="liked-filter-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="liked-filter-panel"
+              class="flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition-colors font-medium px-3 py-2 rounded-xl border border-white/10 hover:bg-white/5 bg-white/[0.02]"
+            >
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">tune</span>
+              <span>Filters</span>
+              <span id="liked-filter-badge" class="hidden min-w-[1.25rem] h-5 px-1 rounded-full bg-purple-500/90 text-white text-[10px] font-bold flex items-center justify-center tabular-nums">0</span>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="liked-filter-panel"
+          role="region"
+          aria-label="Advanced filters"
+          class="hidden px-6 lg:px-8 pb-4"
+        >
+          <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-4 sm:p-5 backdrop-blur-sm max-w-6xl">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-400 text-[18px]" aria-hidden="true">filter_alt</span>
+                Advanced filters
+              </h2>
+              <button
+                id="liked-filter-reset"
+                type="button"
+                class="text-xs font-semibold text-gray-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                Reset all
+              </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 mb-5">
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Artist</p>
+                <div id="liked-filter-artists" class="max-h-36 overflow-y-auto custom-scrollbar rounded-xl border border-white/5 bg-white/[0.02] p-2 space-y-0.5"></div>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Album</p>
+                <div id="liked-filter-albums" class="max-h-36 overflow-y-auto custom-scrollbar rounded-xl border border-white/5 bg-white/[0.02] p-2 space-y-0.5"></div>
+              </div>
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Genre</p>
+                <div id="liked-filter-genres" class="max-h-36 overflow-y-auto custom-scrollbar rounded-xl border border-white/5 bg-white/[0.02] p-2 space-y-0.5"></div>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-end">
+              <div class="flex flex-col gap-1.5 min-w-[160px]">
+                <label for="liked-filter-duration" class="text-[11px] font-semibold uppercase tracking-wider text-gray-500">Duration</label>
+                <select
+                  id="liked-filter-duration"
+                  class="bg-white/5 border border-white/10 text-white text-sm rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                >
+                  <option value="any">Any length</option>
+                  <option value="under2">Under 2 min</option>
+                  <option value="2to4">2–4 min</option>
+                  <option value="4to6">4–6 min</option>
+                  <option value="over6">Over 6 min</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-1.5 min-w-[180px]">
+                <label for="liked-filter-date" class="text-[11px] font-semibold uppercase tracking-wider text-gray-500">Date added</label>
+                <select
+                  id="liked-filter-date"
+                  class="bg-white/5 border border-white/10 text-white text-sm rounded-xl py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                >
+                  <option value="any">Any time</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                  <option value="year">This year</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="px-6 lg:px-8">
-          <div class="bg-white/[0.02] border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
-            <table class="w-full text-left border-collapse" role="table" aria-label="Liked songs list">
+          <div class="bg-white/[0.02] border border-white/5 rounded-3xl p-2 sm:p-3 backdrop-blur-sm mobile-scroll-x">
+            <table class="w-full text-left border-collapse min-w-[760px]" role="table" aria-label="Liked songs list">
               <thead>
                 <tr class="text-gray-500 border-b border-white/5">
                   <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
@@ -213,6 +289,203 @@ import Sidebar from "../components/Sidebar.astro";
   let _searchQuery = '';
   let _sortKey: string = localStorage.getItem('liked_sort') || 'date_desc';
 
+  type DurationPreset = 'any' | 'under2' | '2to4' | '4to6' | 'over6';
+  type DatePreset = 'any' | '7d' | '30d' | '90d' | 'year';
+
+  let _advArtists: string[] = [];
+  let _advAlbums: string[] = [];
+  let _advGenres: string[] = [];
+  let _advDurationPreset: DurationPreset = 'any';
+  let _advDatePreset: DatePreset = 'any';
+
+  function loadAdvFiltersFromStorage() {
+    try {
+      const raw = localStorage.getItem('liked_adv_filters');
+      if (!raw) return;
+      const o = JSON.parse(raw);
+      if (Array.isArray(o.artists)) _advArtists = o.artists.filter((x: unknown) => typeof x === 'string');
+      if (Array.isArray(o.albums)) _advAlbums = o.albums.filter((x: unknown) => typeof x === 'string');
+      if (Array.isArray(o.genres)) _advGenres = o.genres.filter((x: unknown) => typeof x === 'string');
+      const dur = o.duration as string;
+      const dt = o.date as string;
+      if (['any', 'under2', '2to4', '4to6', 'over6'].includes(dur)) _advDurationPreset = dur as DurationPreset;
+      if (['any', '7d', '30d', '90d', 'year'].includes(dt)) _advDatePreset = dt as DatePreset;
+    } catch { /* ignore */ }
+  }
+
+  function saveAdvFiltersToStorage() {
+    localStorage.setItem(
+      'liked_adv_filters',
+      JSON.stringify({
+        artists: _advArtists,
+        albums: _advAlbums,
+        genres: _advGenres,
+        duration: _advDurationPreset,
+        date: _advDatePreset,
+      })
+    );
+  }
+
+  function splitCsvField(s: unknown): string[] {
+    return String(s ?? '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+  }
+
+  function durationBounds(preset: DurationPreset): { min: number | null; max: number | null } {
+    switch (preset) {
+      case 'under2':
+        return { min: null, max: 119 };
+      case '2to4':
+        return { min: 120, max: 239 };
+      case '4to6':
+        return { min: 240, max: 359 };
+      case 'over6':
+        return { min: 360, max: null };
+      default:
+        return { min: null, max: null };
+    }
+  }
+
+  function passesDatePreset(t: any, preset: DatePreset): boolean {
+    if (preset === 'any') return true;
+    const added = new Date(t.favorited_at || t.added_at || 0).getTime();
+    if (!Number.isFinite(added)) return false;
+    const now = Date.now();
+    const day = 86400000;
+    switch (preset) {
+      case '7d':
+        return now - added <= 7 * day;
+      case '30d':
+        return now - added <= 30 * day;
+      case '90d':
+        return now - added <= 90 * day;
+      case 'year':
+        return new Date(added).getFullYear() === new Date().getFullYear();
+      default:
+        return true;
+    }
+  }
+
+  function songMatchesMultiSelect(field: unknown, selected: string[]): boolean {
+    if (!selected.length) return true;
+    const parts = splitCsvField(field).map((p) => p.toLowerCase());
+    return selected.some((sel) => parts.includes(sel.toLowerCase()));
+  }
+
+  function songMatchesAlbums(t: any, selected: string[]): boolean {
+    if (!selected.length) return true;
+    const al = (t.album_title || '').trim();
+    return !!al && selected.includes(al);
+  }
+
+  function hasActiveAdvancedFilters(): boolean {
+    return (
+      _advArtists.length > 0 ||
+      _advAlbums.length > 0 ||
+      _advGenres.length > 0 ||
+      _advDurationPreset !== 'any' ||
+      _advDatePreset !== 'any'
+    );
+  }
+
+  function activeAdvancedFilterCount(): number {
+    let n = _advArtists.length + _advAlbums.length + _advGenres.length;
+    if (_advDurationPreset !== 'any') n++;
+    if (_advDatePreset !== 'any') n++;
+    return n;
+  }
+
+  function syncAdvFromDom() {
+    _advArtists = [...document.querySelectorAll<HTMLInputElement>('.filter-cb-artist:checked')].map((i) =>
+      decodeURIComponent(i.value)
+    );
+    _advAlbums = [...document.querySelectorAll<HTMLInputElement>('.filter-cb-album:checked')].map((i) =>
+      decodeURIComponent(i.value)
+    );
+    _advGenres = [...document.querySelectorAll<HTMLInputElement>('.filter-cb-genre:checked')].map((i) =>
+      decodeURIComponent(i.value)
+    );
+  }
+
+  function renderFilterCheckboxColumn(
+    containerId: string,
+    items: string[],
+    inputClass: string,
+    selected: string[]
+  ) {
+    const wrap = document.getElementById(containerId);
+    if (!wrap) return;
+    if (!items.length) {
+      wrap.innerHTML = '<p class="text-xs text-gray-500 py-1 px-1">No data</p>';
+      return;
+    }
+    const sel = new Set(selected.map((s) => s.toLowerCase()));
+    wrap.innerHTML = items
+      .map((item) => {
+        const enc = encodeURIComponent(item);
+        const checked = sel.has(item.toLowerCase()) ? ' checked' : '';
+        const esc = escapeHtml(item);
+        return `<label class="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-white/5 cursor-pointer text-sm text-gray-300">
+      <input type="checkbox" class="${inputClass} accent-purple-500 rounded border-white/20 shrink-0"${checked} value="${enc}" />
+      <span class="truncate min-w-0">${esc}</span>
+    </label>`;
+      })
+      .join('');
+  }
+
+  function rebuildFilterOptions() {
+    const artists = [
+      ...new Set(_tracks.flatMap((t: any) => splitCsvField(t.artist_names))),
+    ].sort((a, b) => a.localeCompare(b));
+    const albums = [
+      ...new Set(
+        _tracks.map((t: any) => (t.album_title || '').trim()).filter(Boolean)
+      ),
+    ].sort((a, b) => a.localeCompare(b));
+    const genres = [
+      ...new Set(_tracks.flatMap((t: any) => splitCsvField(t.genre_names))),
+    ].sort((a, b) => a.localeCompare(b));
+
+    _advArtists = _advArtists.filter((a) => artists.some((x) => x === a));
+    _advAlbums = _advAlbums.filter((a) => albums.some((x) => x === a));
+    _advGenres = _advGenres.filter((a) => genres.some((x) => x === a));
+
+    renderFilterCheckboxColumn('liked-filter-artists', artists, 'filter-cb-artist', _advArtists);
+    renderFilterCheckboxColumn('liked-filter-albums', albums, 'filter-cb-album', _advAlbums);
+    renderFilterCheckboxColumn('liked-filter-genres', genres, 'filter-cb-genre', _advGenres);
+
+    const durEl = document.getElementById('liked-filter-duration') as HTMLSelectElement | null;
+    const dateEl = document.getElementById('liked-filter-date') as HTMLSelectElement | null;
+    if (durEl) durEl.value = _advDurationPreset;
+    if (dateEl) dateEl.value = _advDatePreset;
+  }
+
+  function syncFilterBadge() {
+    const badge = document.getElementById('liked-filter-badge') as HTMLElement | null;
+    if (!badge) return;
+    const n = activeAdvancedFilterCount();
+    if (n > 0) {
+      badge.textContent = String(n);
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  function resetAdvancedFilters() {
+    _advArtists = [];
+    _advAlbums = [];
+    _advGenres = [];
+    _advDurationPreset = 'any';
+    _advDatePreset = 'any';
+    localStorage.removeItem('liked_adv_filters');
+    rebuildFilterOptions();
+    syncFilterBadge();
+    render();
+  }
+
   const SORT_LABELS: Record<string, string> = {
     date_desc:    'Date Added',
     date_asc:     'Date Added ↑',
@@ -227,12 +500,27 @@ import Sidebar from "../components/Sidebar.astro";
     let list = [..._tracks];
     if (_searchQuery) {
       const q = _searchQuery.toLowerCase();
-      list = list.filter((t: any) =>
-        (t.title || '').toLowerCase().includes(q) ||
-        (t.artist_names || '').toLowerCase().includes(q) ||
-        (t.album_title  || '').toLowerCase().includes(q)
+      list = list.filter(
+        (t: any) =>
+          (t.title || '').toLowerCase().includes(q) ||
+          (t.artist_names || '').toLowerCase().includes(q) ||
+          (t.album_title || '').toLowerCase().includes(q) ||
+          (t.genre_names || '').toLowerCase().includes(q)
       );
     }
+
+    const { min: dmin, max: dmax } = durationBounds(_advDurationPreset);
+    list = list.filter((t: any) => {
+      if (_advArtists.length && !songMatchesMultiSelect(t.artist_names, _advArtists)) return false;
+      if (_advAlbums.length && !songMatchesAlbums(t, _advAlbums)) return false;
+      if (_advGenres.length && !songMatchesMultiSelect(t.genre_names, _advGenres)) return false;
+      const d = parseInt(String(t.duration), 10) || 0;
+      if (dmin != null && d < dmin) return false;
+      if (dmax != null && d > dmax) return false;
+      if (!passesDatePreset(t, _advDatePreset)) return false;
+      return true;
+    });
+
     list.sort((a: any, b: any) => {
       switch (_sortKey) {
         case 'date_desc': return new Date(b.favorited_at || b.added_at || 0).getTime() - new Date(a.favorited_at || a.added_at || 0).getTime();
@@ -253,7 +541,7 @@ import Sidebar from "../components/Sidebar.astro";
     const durEl   = document.getElementById('total-duration') as HTMLElement;
     if (!countEl || !durEl) return;
 
-    if (_searchQuery) {
+    if (_searchQuery || hasActiveAdvancedFilters()) {
       countEl.textContent = `${getDisplayTracks().length} / ${_tracks.length}`;
     } else {
       countEl.textContent = String(_tracks.length);
@@ -315,13 +603,26 @@ import Sidebar from "../components/Sidebar.astro";
     }
 
     if (!display.length) {
+      const qEsc = escapeHtml(_searchQuery);
+      let body = '';
+      if (_searchQuery && !hasActiveAdvancedFilters()) {
+        body = `<p class="text-sm mt-1">No results for "<strong class="text-gray-300">${qEsc}</strong>"</p>`;
+      } else if (!_searchQuery && hasActiveAdvancedFilters()) {
+        body = `<p class="text-sm mt-1">No songs match your filters.</p>
+          <button type="button" id="liked-empty-reset-filters" class="mt-2 text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors">Reset filters</button>`;
+      } else if (_searchQuery && hasActiveAdvancedFilters()) {
+        body = `<p class="text-sm mt-1">No results for "<strong class="text-gray-300">${qEsc}</strong>" with current filters.</p>`;
+      } else {
+        body = '<p class="text-sm mt-1">No songs match.</p>';
+      }
       tbody.innerHTML = `
         <tr><td colspan="5" class="px-4 py-12 text-center">
           <div class="flex flex-col items-center gap-2 text-gray-500">
             <span class="material-symbols-outlined text-[40px] text-gray-600">search_off</span>
-            <p class="text-sm mt-1">No results for "<strong class="text-gray-300">${escapeHtml(_searchQuery)}</strong>"</p>
+            ${body}
           </div>
         </td></tr>`;
+      document.getElementById('liked-empty-reset-filters')?.addEventListener('click', resetAdvancedFilters);
       return;
     }
 
@@ -403,6 +704,8 @@ import Sidebar from "../components/Sidebar.astro";
         _tracks = [..._tracks, ...rest.flat()];
       }
 
+      rebuildFilterOptions();
+      syncFilterBadge();
       render();
     } catch {
       const tbody = document.getElementById('liked-tbody')!;
@@ -445,6 +748,8 @@ import Sidebar from "../components/Sidebar.astro";
       try {
         await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
         _tracks = _tracks.filter((t: any) => String(t.id) !== songId);
+        rebuildFilterOptions();
+        syncFilterBadge();
         render();
         showToast('Removed from liked songs', 'success');
         window.dispatchEvent(new CustomEvent('favorites:changed', {
@@ -524,12 +829,15 @@ import Sidebar from "../components/Sidebar.astro";
     const { songId, isFavorite } = e.detail;
     if (!isFavorite) {
       _tracks = _tracks.filter((t: any) => t.id !== songId);
+      rebuildFilterOptions();
+      syncFilterBadge();
       render();
     } else {
       loadFavorites();
     }
   });
 
+  loadAdvFiltersFromStorage();
   loadFavorites();
 
   const searchInput = document.getElementById('liked-search') as HTMLInputElement;
@@ -590,6 +898,8 @@ import Sidebar from "../components/Sidebar.astro";
   document.addEventListener('click', () => {
     sortMenu?.classList.add('hidden');
     sortBtn?.setAttribute('aria-expanded', 'false');
+    document.getElementById('liked-filter-panel')?.classList.add('hidden');
+    document.getElementById('liked-filter-toggle')?.setAttribute('aria-expanded', 'false');
   });
 
   document.querySelectorAll<HTMLElement>('.liked-sort-option').forEach((btn) => {
@@ -601,6 +911,53 @@ import Sidebar from "../components/Sidebar.astro";
       sortBtn?.setAttribute('aria-expanded', 'false');
       render();
     });
+  });
+
+  const filterToggle = document.getElementById('liked-filter-toggle') as HTMLButtonElement | null;
+  const filterPanel = document.getElementById('liked-filter-panel') as HTMLElement | null;
+
+  filterPanel?.addEventListener('click', (e) => e.stopPropagation());
+
+  filterToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    filterPanel?.classList.toggle('hidden');
+    const hidden = filterPanel?.classList.contains('hidden') ?? true;
+    filterToggle.setAttribute('aria-expanded', String(!hidden));
+  });
+
+  document.getElementById('liked-filter-reset')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetAdvancedFilters();
+  });
+
+  filterPanel?.addEventListener('change', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.matches('.filter-cb-artist, .filter-cb-album, .filter-cb-genre')) {
+      syncAdvFromDom();
+      saveAdvFiltersToStorage();
+      render();
+      syncFilterBadge();
+    }
+  });
+
+  document.getElementById('liked-filter-duration')?.addEventListener('change', (e) => {
+    const v = (e.target as HTMLSelectElement).value;
+    if (['any', 'under2', '2to4', '4to6', 'over6'].includes(v)) {
+      _advDurationPreset = v as DurationPreset;
+      saveAdvFiltersToStorage();
+      render();
+      syncFilterBadge();
+    }
+  });
+
+  document.getElementById('liked-filter-date')?.addEventListener('change', (e) => {
+    const v = (e.target as HTMLSelectElement).value;
+    if (['any', '7d', '30d', '90d', 'year'].includes(v)) {
+      _advDatePreset = v as DatePreset;
+      saveAdvFiltersToStorage();
+      render();
+      syncFilterBadge();
+    }
   });
 </script>
 

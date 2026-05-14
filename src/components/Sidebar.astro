@@ -3,8 +3,9 @@ const { currentPage = 'home' } = Astro.props;
 
 const navItems = [
   { href: '/',        icon: 'home',        label: 'Home',      page: 'home'    },
-  { href: '/search',  icon: 'search',      label: 'Search',  page: 'search'  },
+  { href: '/search',  icon: 'search',      label: 'Search',    page: 'search'  },
   { href: '/artists', icon: 'person',      label: 'Artists',   page: 'artists' },
+  { href: '/subscription', icon: 'workspace_premium', label: 'Subscription', page: 'subscription', iconClass: 'text-amber-400' },
 ];
 const libItems = [
   { href: '/liked',    icon: 'favorite',    label: 'Liked Songs', page: 'liked',    iconClass: 'text-rose-400' },
@@ -31,7 +32,7 @@ const libItems = [
 
 <aside id="main-sidebar"
   class="sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40
-         transition-[width] duration-300 ease-in-out overflow-hidden">
+         transition-[width] duration-300 ease-in-out overflow-hidden max-h-screen sticky top-0">
 
 
   <div class="h-20 flex items-center justify-between px-4 shrink-0">
@@ -148,7 +149,8 @@ const libItems = [
       </div>
       <div class="sidebar-label flex-1 min-w-0 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">
         <p id="sidebar-username" class="text-sm font-semibold text-white truncate">—</p>
-        <p id="sidebar-plan" class="text-xs text-purple-400 font-medium">Free</p>
+        <p class="text-xs text-gray-500 truncate">Membership</p>
+        <p id="sidebar-plan" class="text-xs text-purple-400 font-semibold uppercase tracking-wider">Free</p>
       </div>
       <span class="sidebar-label material-symbols-outlined text-gray-500 group-hover:text-white text-sm
                    transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">chevron_right</span>
@@ -300,6 +302,7 @@ const libItems = [
 </div>
 
 <script>
+  // @ts-nocheck
   import { getUser, apiFetch, getUserRole, hasMinRole, API_BASE } from '../lib/api.js';
 
 
@@ -338,10 +341,11 @@ const libItems = [
         planEl.textContent = 'Administrator';
         planEl.className = 'text-xs text-indigo-300 font-semibold';
       } else {
-        const plan = (user.subscription?.plan_name || 'Free').toLowerCase();
-        planEl.textContent = plan === 'premium' ? '✦ Premium' : 'Free';
-        planEl.className = plan === 'premium'
-          ? 'text-xs text-yellow-400 font-semibold'
+        const planType = (user.subscription_badge?.subscription_type || user.subscription?.subscription_type || user.subscription?.plan_name || 'free').toLowerCase();
+        const active = user.subscription_badge?.is_active ?? user.subscription?.is_active ?? false;
+        planEl.textContent = active && planType !== 'free' ? `✦ ${planType.toUpperCase()}` : 'Free';
+        planEl.className = active && planType !== 'free'
+          ? 'text-xs text-amber-300 font-semibold'
           : 'text-xs text-purple-400 font-medium';
       }
     }
@@ -367,7 +371,6 @@ const libItems = [
     }
 
   }
-
 
   const modal     = document.getElementById('modal-new-playlist') as HTMLElement;
   const modalBg   = document.getElementById('modal-pl-bg') as HTMLElement;

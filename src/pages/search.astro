@@ -9,10 +9,10 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <Sidebar currentPage="search" />
 
-    <main class="flex-1 flex flex-col overflow-hidden relative bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+    <main class="flex-1 flex flex-col overflow-hidden relative bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] min-w-0">
       <div class="absolute top-[-10%] left-[20%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none" aria-hidden="true"></div>
 
-      <header class="h-20 flex-shrink-0 flex items-center justify-between px-8 relative z-10 gap-4">
+      <header class="h-auto sm:h-20 flex-shrink-0 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 sm:px-8 py-3 sm:py-0 relative z-10 gap-3 sm:gap-4 min-w-0">
         <button id="btnBackCategories"
           class="hidden shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10
                  text-gray-300 hover:text-white hover:bg-white/10 text-sm font-medium
@@ -22,7 +22,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           <span class="hidden sm:inline">Genres</span>
         </button>
 
-        <div class="relative flex-1 max-w-2xl group">
+        <div class="relative flex-1 w-full max-w-none sm:max-w-2xl group order-3 sm:order-none mobile-full">
           <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors text-2xl" aria-hidden="true">search</span>
           <input
             id="searchInput"
@@ -39,7 +39,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           </button>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center justify-end gap-3 shrink-0 ml-auto sm:ml-0 order-2 sm:order-none">
           <a href="/profile" id="search-user-avatar"
              class="hidden w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-[2px] shrink-0 hover:opacity-90 transition-opacity"
              aria-label="Profile">
@@ -50,11 +50,11 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
       </header>
 
-      <div class="flex-1 overflow-y-auto px-8 pb-32 pt-2 relative z-10 custom-scrollbar">
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-2 relative z-10 custom-scrollbar">
 
         <div id="browseSection">
           <h2 class="text-xl font-bold text-white mb-6">Browse by genres</h2>
-          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10" role="list" aria-label="Genre categories">
+          <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-10" role="list" aria-label="Genre categories">
             {Array.from({length: 8}).map(() => (
               <div class="h-28 rounded-2xl bg-white/5 animate-pulse"></div>
             ))}
@@ -62,7 +62,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
 
         <div id="searchResults" class="hidden" role="region" aria-label="Search results" aria-live="polite">
-          <div class="flex gap-1 mb-6 border-b border-white/10" role="tablist">
+          <div class="flex gap-1 mb-6 border-b border-white/10 overflow-x-auto no-scrollbar mobile-scroll-x" role="tablist">
             {[
               { id: "all",     label: "All" },
               { id: "songs",   label: "Songs" },
@@ -71,7 +71,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             ].map((tab, i) => (
               <button
                 role="tab"
-                class={`search-tab px-5 py-2.5 font-semibold text-sm rounded-t-lg border-b-2 transition-all duration-200 cursor-pointer ${i === 0 ? "text-white border-purple-500 bg-purple-500/10" : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"}`}
+                class={`search-tab px-4 sm:px-5 py-2.5 font-semibold text-sm rounded-t-lg border-b-2 transition-all duration-200 cursor-pointer whitespace-nowrap ${i === 0 ? "text-white border-purple-500 bg-purple-500/10" : "text-gray-400 border-transparent hover:text-white hover:bg-white/5"}`}
                 data-tab={tab.id}
                 aria-selected={i === 0 ? "true" : "false"}
               >
@@ -108,7 +108,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-purple-400" aria-hidden="true">album</span>Albums
               </h3>
-              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" id="albums-all"></div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4" id="albums-all"></div>
             </div>
           </div>
 

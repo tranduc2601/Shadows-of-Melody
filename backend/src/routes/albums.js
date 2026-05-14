@@ -6,8 +6,8 @@ const router = express.Router();
 
 
 router.get('/', albumController.getAllAlbums);
-router.get('/:id', albumController.getAlbumById);
 router.get('/artist/:artistId', albumController.getAlbumsByArtist);
+router.get('/:id', albumController.getAlbumById);
 
 
 router.post('/', authMiddleware, adminMiddleware, albumController.createAlbum);

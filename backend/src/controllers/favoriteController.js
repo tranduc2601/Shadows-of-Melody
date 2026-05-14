@@ -1,5 +1,19 @@
 import Favorite from '../models/Favorite.js';
 import Song from '../models/Song.js';
+import { pool } from '../config/database.js';
+
+async function isOwnSong(userId, songId) {
+    const [[row]] = await pool.query(
+        `SELECT 1
+         FROM songs s
+         JOIN song_artists sa ON sa.song_id = s.id
+         JOIN artists a ON a.id = sa.artist_id
+         WHERE s.id = $1 AND a.user_id = $2
+         LIMIT 1`,
+        [songId, userId]
+    );
+    return !!row;
+}
 
 export const getFavorites = async (req, res) => {
     try {
@@ -73,6 +87,12 @@ export const addFavorite = async (req, res) => {
             });
         }
 
+        if (await isOwnSong(userId, songId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'You cannot like your own song',
+            });
+        }
 
         const existingFavorite = await Favorite.findByUserAndSong(userId, songId);
         if (existingFavorite) {

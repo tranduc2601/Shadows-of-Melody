@@ -31,6 +31,11 @@ testConnection();
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
     `ALTER TABLE artists ADD COLUMN IF NOT EXISTS cover_url VARCHAR(500)`,
     `ALTER TABLE albums   ALTER COLUMN artist_id DROP NOT NULL`,
+    `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS payment_provider VARCHAR(50) DEFAULT 'momo'`,
+    `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS plan_label VARCHAR(50)`,
+    `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS amount_paid NUMERIC(12,2) DEFAULT 0`,
+    `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS currency VARCHAR(10) DEFAULT 'VND'`,
+    `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`,
 
     `CREATE UNIQUE INDEX IF NOT EXISTS artists_user_id_unique ON artists (user_id) WHERE user_id IS NOT NULL`,
 

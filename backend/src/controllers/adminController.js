@@ -1,6 +1,8 @@
 import { pool } from '../config/database.js';
 import User from '../models/User.js';
 import Artist from '../models/Artist.js';
+import Subscription from '../models/Subscription.js';
+import Payment from '../models/Payment.js';
 import { revokeToken } from '../utils/jwt.js';
 
 
@@ -175,17 +177,17 @@ export const getUsers = async (req, res) => {
         const sortBy  = VALID_SORT.includes(req.query.sortBy)  ? req.query.sortBy  : 'created_at';
         const order   = VALID_ORDER.includes((req.query.order || '').toLowerCase()) ? req.query.order.toLowerCase() : 'desc';
 
-        const conditions = ['deleted_at IS NULL'];
+        const conditions = ['u.deleted_at IS NULL'];
         const params     = [];
         const addParam   = v => { params.push(v); return `$${params.length}`; };
 
         if (keyword) {
             const p = addParam(`%${keyword}%`);
-            conditions.push(`(username ILIKE ${p} OR email ILIKE ${p} OR full_name ILIKE ${p})`);
+            conditions.push(`(u.username ILIKE ${p} OR u.email ILIKE ${p} OR u.full_name ILIKE ${p})`);
         }
-        if (role) conditions.push(`role = ${addParam(role)}`);
-        if (isLocked === '1') conditions.push('is_locked = TRUE');
-        if (isLocked === '0') conditions.push('is_locked = FALSE');
+        if (role) conditions.push(`u.role = ${addParam(role)}`);
+        if (isLocked === '1') conditions.push('u.is_locked = TRUE');
+        if (isLocked === '0') conditions.push('u.is_locked = FALSE');
 
         const where = conditions.join(' AND ');
         const filterParams = [...params];
@@ -193,11 +195,26 @@ export const getUsers = async (req, res) => {
         const offsetP = addParam(offset);
 
         const [totalRes, usersRes] = await Promise.all([
-            pool.query(`SELECT COUNT(*)::int AS total FROM users WHERE ${where}`, filterParams),
+            pool.query(`SELECT COUNT(*)::int AS total FROM users u WHERE ${where}`, filterParams),
             pool.query(
-                `SELECT id, username, email, full_name, avatar_url, is_admin, role, is_verified, is_locked, created_at
-                 FROM users WHERE ${where}
-                 ORDER BY ${sortBy} ${order} LIMIT ${limitP} OFFSET ${offsetP}`,
+                `SELECT u.id, u.username, u.email, u.full_name, u.avatar_url, u.is_admin, u.role, u.is_verified, u.is_locked, u.created_at,
+                        COALESCE(s.subscription_type, 'free') AS subscription_type,
+                        COALESCE(s.is_active, FALSE) AS subscription_active,
+                        s.end_date AS subscription_end_date,
+                        p.payment_method,
+                        p.transaction_id,
+                        p.status AS payment_status,
+                        p.amount,
+                        p.payment_date
+                 FROM users u
+                 LEFT JOIN LATERAL (
+                    SELECT * FROM subscriptions s WHERE s.user_id = u.id ORDER BY s.updated_at DESC NULLS LAST, s.id DESC LIMIT 1
+                 ) s ON TRUE
+                 LEFT JOIN LATERAL (
+                    SELECT * FROM payments p WHERE p.user_id = u.id ORDER BY p.payment_date DESC NULLS LAST, p.id DESC LIMIT 1
+                 ) p ON TRUE
+                 WHERE ${where}
+                 ORDER BY ${sortBy === 'created_at' ? 'u.created_at' : sortBy === 'username' ? 'u.username' : sortBy === 'email' ? 'u.email' : 'u.role'} ${order} LIMIT ${limitP} OFFSET ${offsetP}`,
                 params
             ),
         ]);
@@ -215,6 +232,66 @@ export const getUsers = async (req, res) => {
     }
 };
 
+
+export const getSubscriptions = async (req, res) => {
+    try {
+        const page = Math.max(1, parseInt(req.query.page) || 1);
+        const limit = Math.min(100, parseInt(req.query.limit) || 10);
+        const offset = (page - 1) * limit;
+        const keyword = (req.query.keyword || '').trim();
+        const plan = req.query.plan || '';
+        const status = req.query.status || '';
+        const role = req.query.role || '';
+        const conditions = ['u.deleted_at IS NULL'];
+        const params = [];
+        const addParam = (v) => { params.push(v); return `$${params.length}`; };
+        if (keyword) {
+            const p = addParam(`%${keyword}%`);
+            conditions.push(`(u.username ILIKE ${p} OR u.email ILIKE ${p} OR u.full_name ILIKE ${p})`);
+        }
+        if (plan) conditions.push(`COALESCE(s.subscription_type, 'free') = ${addParam(plan)}`);
+        if (role) conditions.push(`u.role = ${addParam(role)}`);
+        if (status === 'active') conditions.push(`COALESCE(s.is_active, FALSE) = TRUE AND (s.end_date IS NULL OR s.end_date > NOW())`);
+        if (status === 'expired') conditions.push(`(COALESCE(s.is_active, FALSE) = FALSE OR (s.end_date IS NOT NULL AND s.end_date <= NOW()))`);
+        if (status === 'pending') conditions.push(`p.status = 'pending'`);
+        const where = conditions.join(' AND ');
+        const countQuery = `SELECT COUNT(*)::int AS total FROM users u LEFT JOIN LATERAL (SELECT * FROM subscriptions s WHERE s.user_id = u.id ORDER BY s.updated_at DESC NULLS LAST, s.id DESC LIMIT 1) s ON TRUE LEFT JOIN LATERAL (SELECT * FROM payments p WHERE p.user_id = u.id ORDER BY p.payment_date DESC NULLS LAST, p.id DESC LIMIT 1) p ON TRUE WHERE ${where}`;
+        const listQuery = `SELECT u.id, u.username, u.email, u.full_name, u.avatar_url, u.role, u.is_admin, u.is_locked, u.created_at,
+                                  COALESCE(s.subscription_type, 'free') AS subscription_type,
+                                  COALESCE(s.is_active, FALSE) AS subscription_active,
+                                  s.start_date, s.end_date,
+                                  p.payment_method, p.transaction_id, p.status AS payment_status, p.amount, p.payment_date
+                           FROM users u
+                           LEFT JOIN LATERAL (SELECT * FROM subscriptions s WHERE s.user_id = u.id ORDER BY s.updated_at DESC NULLS LAST, s.id DESC LIMIT 1) s ON TRUE
+                           LEFT JOIN LATERAL (SELECT * FROM payments p WHERE p.user_id = u.id ORDER BY p.payment_date DESC NULLS LAST, p.id DESC LIMIT 1) p ON TRUE
+                           WHERE ${where}
+                           ORDER BY u.created_at DESC LIMIT ${addParam(limit)} OFFSET ${addParam(offset)}`;
+        const [countRes, rowsRes, statsRes] = await Promise.all([
+            pool.query(countQuery, params),
+            pool.query(listQuery, params),
+            Promise.all([
+                pool.query(`SELECT COUNT(*)::int AS active_count FROM subscriptions WHERE is_active = TRUE AND (end_date IS NULL OR end_date > NOW())`),
+                pool.query(`SELECT COUNT(*)::int AS payments_count, COALESCE(SUM(amount),0)::numeric AS revenue FROM payments WHERE status = 'completed'`),
+                pool.query(`SELECT COUNT(*)::int AS total_users FROM users WHERE deleted_at IS NULL`),
+            ]),
+        ]);
+        const totalItems = countRes[0][0]?.total ?? 0;
+        return res.json({
+            success: true,
+            data: rowsRes[0],
+            meta: { totalItems, totalPages: Math.ceil(totalItems / limit) || 1, currentPage: page, limit },
+            stats: {
+                active_count: statsRes[0][0][0]?.active_count ?? 0,
+                payments_count: statsRes[0][1][0]?.payments_count ?? 0,
+                revenue: statsRes[0][1][0]?.revenue ?? 0,
+                total_users: statsRes[0][2][0]?.total_users ?? 0,
+            },
+        });
+    } catch (err) {
+        console.error('Admin getSubscriptions error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to load subscriptions' });
+    }
+};
 
 export const deleteUser = async (req, res) => {
     try {

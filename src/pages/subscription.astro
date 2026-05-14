@@ -1,0 +1,258 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import PlayerBar from "../components/PlayerBar.astro";
+---
+
+<MainLayout title="Subscription - Shadows of Melody">
+  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+    <Sidebar currentPage="subscription" />
+
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+      <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div class="absolute bottom-[0%] left-[-5%] w-[35%] h-[35%] bg-indigo-600/10 blur-[140px] rounded-full pointer-events-none"></div>
+
+      <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar">
+        <div class="px-6 lg:px-8 pt-8 max-w-7xl mx-auto">
+          <div class="flex items-start justify-between gap-4 flex-wrap mb-8">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.3em] text-purple-400 mb-2">Subscription</p>
+              <h1 class="text-3xl font-black text-white">Choose your listening plan</h1>
+              <p class="text-gray-500 text-sm mt-2 max-w-2xl">Upgrade your plan to unlock ad-free listening, higher audio quality, and priority features.</p>
+            </div>
+            <a href="/settings" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-semibold text-white transition-all">
+              <span class="material-symbols-outlined text-[18px]">settings</span>Account settings
+            </a>
+          </div>
+
+          <div id="subscription-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="rounded-3xl border border-white/5 bg-white/3 p-5 backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-wider text-gray-500 mb-1">Current plan</p>
+              <p id="current-plan" class="text-2xl font-black text-white">Loading...</p>
+              <p id="current-plan-status" class="text-sm text-gray-400 mt-2">—</p>
+            </div>
+            <div class="rounded-3xl border border-white/5 bg-white/3 p-5 backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-wider text-gray-500 mb-1">Next billing</p>
+              <p id="next-billing" class="text-2xl font-black text-white">—</p>
+              <p class="text-sm text-gray-400 mt-2">Current plan end date</p>
+            </div>
+            <div class="rounded-3xl border border-white/5 bg-white/3 p-5 backdrop-blur-sm">
+              <p class="text-xs uppercase tracking-wider text-gray-500 mb-1">Payment method</p>
+              <p id="payment-method" class="text-2xl font-black text-white">MoMo</p>
+              <p class="text-sm text-gray-400 mt-2">Internal demo payment flow for the checkout gateway</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-10" id="plan-grid"></div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+            <section class="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2"><span class="material-symbols-outlined text-purple-400 text-[20px]">receipt_long</span>Payment history</h2>
+                <button id="refresh-payments-btn" class="text-xs font-semibold text-purple-300 hover:text-purple-200 transition-colors">Refresh</button>
+              </div>
+              <div id="payment-history" class="space-y-2">
+                <p class="text-gray-500 text-sm text-center py-6">Loading...</p>
+              </div>
+            </section>
+
+            <section class="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-sm">
+              <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><span class="material-symbols-outlined text-purple-400 text-[20px]">shield</span>Feature gate preview</h2>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                  <span class="text-gray-300">No ads</span>
+                  <span id="gate-no-ads" class="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/15 text-red-300">Locked</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                  <span class="text-gray-300">Offline listening</span>
+                  <span id="gate-offline" class="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/15 text-red-300">Locked</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                  <span class="text-gray-300">Hi-fi audio</span>
+                  <span id="gate-hifi" class="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/15 text-red-300">Locked</span>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-4">Các tính năng sẽ tự động mở khi gói Premium/VIP được kích hoạt.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div id="subscription-toast" class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md whitespace-nowrap">
+          <span id="subscription-toast-icon" class="material-symbols-outlined text-[18px]">info</span>
+          <span id="subscription-toast-msg"></span>
+        </div>
+      </div>
+
+      <PlayerBar />
+    </main>
+  </div>
+
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+  </style>
+
+  <script>
+    // @ts-nocheck
+    import { apiFetch, getUser } from '../lib/api.js';
+
+    const PLAN_ORDER = ['free', 'premium', 'vip'];
+    const PLAN_META = {
+      free: { title: 'Free', price: '0đ / forever', accent: 'from-slate-500 to-slate-700', description: 'Basic access with ads and standard quality.', features: ['Free listening', 'Ads included', 'Basic playlists'] },
+      premium: { title: 'Premium', price: '59.000đ / month', accent: 'from-purple-600 to-indigo-600', description: 'Best value for most listeners.', features: ['Ad-free listening', 'Offline mode', 'High quality audio'] },
+      vip: { title: 'VIP', price: '99.000đ / month', accent: 'from-pink-600 to-fuchsia-600', description: 'For power users who want everything.', features: ['All Premium features', 'Priority support', 'Exclusive content'] },
+    };
+
+    let _subscription = null;
+    let _plans = null;
+    let _payments = [];
+
+    function toast(msg, type = 'info') {
+      const toastEl = document.getElementById('subscription-toast');
+      const iconEl = document.getElementById('subscription-toast-icon');
+      const msgEl = document.getElementById('subscription-toast-msg');
+      if (!toastEl || !iconEl || !msgEl) return;
+      msgEl.textContent = msg;
+      iconEl.textContent = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+      toastEl.classList.remove('opacity-0');
+      toastEl.classList.add('opacity-100');
+      setTimeout(() => { toastEl.classList.add('opacity-0'); toastEl.classList.remove('opacity-100'); }, 2500);
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderPlans() {
+      const grid = document.getElementById('plan-grid');
+      if (!grid) return;
+      const currentType = _subscription?.subscription_type || 'free';
+      grid.innerHTML = PLAN_ORDER.map((key) => {
+        const meta = PLAN_META[key];
+        const isCurrent = currentType === key;
+        const disabled = key === 'free';
+        return `
+          <article class="rounded-3xl border ${isCurrent ? 'border-purple-500/40 bg-purple-500/10' : 'border-white/5 bg-white/3'} p-6 backdrop-blur-sm flex flex-col">
+            <div class="h-2 rounded-full bg-gradient-to-r ${meta.accent} mb-5"></div>
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <h3 class="text-xl font-black text-white">${meta.title}</h3>
+              ${isCurrent ? '<span class="px-2 py-1 rounded-full text-[11px] font-bold bg-green-500/15 text-green-300 border border-green-500/20">Current</span>' : ''}
+            </div>
+            <p class="text-2xl font-black text-white mb-2">${meta.price}</p>
+            <p class="text-sm text-gray-400 mb-4">${meta.description}</p>
+            <ul class="space-y-2 mb-6 flex-1">
+              ${meta.features.map((f) => `<li class="flex items-start gap-2 text-sm text-gray-300"><span class="material-symbols-outlined text-[18px] text-purple-400 mt-0.5">check_circle</span><span>${f}</span></li>`).join('')}
+            </ul>
+            <button data-plan="${key}" ${disabled ? 'disabled' : ''} class="plan-btn mt-auto w-full rounded-2xl py-3 text-sm font-semibold transition-all ${disabled ? 'bg-white/5 text-gray-500 cursor-not-allowed' : isCurrent ? 'bg-green-500/15 text-green-300 border border-green-500/20' : 'bg-linear-to-r from-purple-500 to-indigo-600 text-white hover:scale-[1.01]'}">
+              ${disabled ? 'Free plan' : isCurrent ? 'Current plan' : 'Subscribe with MoMo'}
+            </button>
+          </article>`;
+      }).join('');
+    }
+
+    function renderSubscription() {
+      const sub = _subscription || {};
+      document.getElementById('current-plan').textContent = PLAN_META[sub.subscription_type || 'free']?.title || 'Free';
+      document.getElementById('current-plan-status').textContent = sub.exempt ? 'Admin/manager accounts do not require a plan.' : (sub.is_active ? 'Active subscription' : 'Inactive / expired');
+      document.getElementById('next-billing').textContent = fmtDate(sub.end_date);
+      document.getElementById('payment-method').textContent = sub.payment_provider ? sub.payment_provider.toUpperCase() : 'MoMo';
+      const map = [
+        ['gate-no-ads', sub.subscription_type === 'premium' || sub.subscription_type === 'vip'],
+        ['gate-offline', sub.subscription_type === 'premium' || sub.subscription_type === 'vip'],
+        ['gate-hifi', sub.subscription_type === 'vip'],
+      ];
+      map.forEach(([id, enabled]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = enabled ? 'Unlocked' : 'Locked';
+        el.className = `px-2 py-1 rounded-full text-xs font-semibold ${enabled ? 'bg-green-500/15 text-green-300' : 'bg-red-500/15 text-red-300'}`;
+      });
+      renderPlans();
+    }
+
+    function renderPayments(payments) {
+      const wrap = document.getElementById('payment-history');
+      if (!wrap) return;
+      if (!payments?.length) {
+        wrap.innerHTML = '<p class="text-gray-500 text-sm text-center py-6">No payment history yet.</p>';
+        return;
+      }
+      wrap.innerHTML = payments.map((p) => `
+        <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-white truncate">${p.description || 'Subscription payment'}</p>
+            <p class="text-xs text-gray-500">${fmtDate(p.payment_date)} · ${p.payment_method || 'MoMo'} · ${p.transaction_id || '—'}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-sm font-bold text-white">${Number(p.amount || 0).toLocaleString('vi-VN')} ${p.currency || 'VND'}</p>
+            <p class="text-xs text-green-300">${p.status || 'completed'}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadSubscription() {
+      const role = getUser()?.role;
+      if (role === 'admin' || role === 'manager') {
+        const grid = document.getElementById('plan-grid');
+        if (grid) grid.innerHTML = '<p class="text-gray-500 text-sm">Tài khoản quản trị/ quản lý không sử dụng subscription gói người dùng.</p>';
+      }
+      try {
+        const plansRes = await apiFetch('/subscriptions/plans');
+        _plans = plansRes.data;
+        const subRes = await apiFetch('/subscriptions');
+        _subscription = subRes.data;
+        renderSubscription();
+      } catch (err: any) {
+        toast(err.message || 'Failed to load subscription.', 'error');
+      }
+    }
+
+    async function loadPayments() {
+      try {
+        const res = await apiFetch('/subscriptions/payments?limit=10');
+        renderPayments(res.data || []);
+      } catch {
+        const wrap = document.getElementById('payment-history');
+        if (wrap) wrap.innerHTML = '<p class="text-red-400 text-sm text-center py-6">Failed to load payment history.</p>';
+      }
+    }
+
+    document.getElementById('plan-grid')?.addEventListener('click', async (e: Event) => {
+      const btn = (e.target as HTMLElement).closest('.plan-btn') as HTMLButtonElement | null;
+      if (!btn || btn.disabled) return;
+      const plan = btn.dataset.plan || 'free';
+      const confirmed = window.confirm(`Activate ${plan.toUpperCase()} plan via MoMo?`);
+      if (!confirmed) return;
+      btn.disabled = true;
+      const orig = btn.textContent;
+      btn.textContent = 'Processing...';
+      try {
+        const result = await apiFetch('/subscriptions/checkout', {
+          method: 'POST',
+          body: JSON.stringify({ plan, paymentMethod: 'momo' }),
+        });
+        _subscription = result.data.subscription;
+        renderSubscription();
+        await loadPayments();
+        toast('Subscription activated successfully.', 'success');
+      } catch (err) {
+        toast(err.message || 'Checkout failed.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    });
+
+    document.getElementById('refresh-payments-btn')?.addEventListener('click', loadPayments);
+
+    (async () => {
+      await loadSubscription();
+      await loadPayments();
+    })();
+  </script>
+</MainLayout>

@@ -9,16 +9,16 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <Sidebar currentPage="playlist" />
 
-    <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
+    <main class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative min-w-0">
       <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none"></div>
 
-      <header class="h-20 flex-shrink-0 flex items-center px-8 relative z-10">
+      <header class="h-auto sm:h-20 flex-shrink-0 flex items-center px-4 sm:px-8 py-4 sm:py-0 relative z-10 min-w-0">
         <h1 id="playlists-heading" class="text-2xl font-bold text-white">My Playlists</h1>
       </header>
 
-      <div class="flex-1 overflow-y-auto px-8 pb-32 relative z-10 custom-scrollbar">
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 relative z-10 custom-scrollbar">
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-5 mb-12" id="playlists-grid" style="">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-5 mb-12" id="playlists-grid" style="">
           <p class="col-span-6 text-gray-500 text-sm text-center py-10">Loading...</p>
         </div>
 
@@ -27,9 +27,9 @@ import PlayerBar from "../components/PlayerBar.astro";
             <span class="material-symbols-outlined text-[20px] transition-transform duration-150 group-hover:-translate-x-0.5">arrow_back</span>
             <span class="font-medium">My Playlists</span>
           </button>
-          <div class="flex flex-col md:flex-row gap-8 mb-6 p-6 bg-white/[0.02] rounded-3xl border border-white/5" id="featured-header"></div>
+          <div class="flex flex-col lg:flex-row gap-5 lg:gap-8 mb-6 p-4 sm:p-6 bg-white/[0.02] rounded-3xl border border-white/5" id="featured-header"></div>
 
-          <div class="flex items-center gap-2 mb-4 flex-wrap">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
             <button id="tab-in-pl" class="pl-tab flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-purple-600 text-white transition-all">
               <span class="material-symbols-outlined text-[16px]">queue_music</span>
               In Playlist
@@ -41,10 +41,10 @@ import PlayerBar from "../components/PlayerBar.astro";
               <span id="all-songs-count" class="ml-1 bg-white/10 text-gray-400 text-xs px-1.5 py-0.5 rounded-full min-w-[20px] text-center">0</span>
             </button>
             <div id="add-songs-search-wrap" class="hidden ml-auto">
-              <div class="relative">
+              <div class="relative w-full sm:w-auto">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[18px]">search</span>
                 <input id="add-songs-search" type="text" placeholder="Search songs..."
-                  class="bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 w-56 transition-all" />
+                  class="bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 w-full sm:w-56 transition-all" />
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     </div>
 
     <div id="modal-edit-pl" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div class="bg-[#0f1b35] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-8 relative">
+      <div class="bg-[#0f1b35] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-5 sm:p-8 relative">
         <button id="edit-modal-close" type="button" class="absolute top-5 right-5 text-gray-500 hover:text-white transition-colors">
           <span class="material-symbols-outlined">close</span>
         </button>

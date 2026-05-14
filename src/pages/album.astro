@@ -1,216 +1,130 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import PlayerBar from "../components/PlayerBar.astro";
-
-const album = {
-  title: "After Hours",
-  artist: "The Weeknd",
-  year: 2020,
-  type: "Album",
-  trackCount: 14,
-  duration: "56 minutes",
-  label: "XO / Republic Records",
-};
-
-const tracks = [
-  { id: 1,  title: "Alone Again",                 duration: "4:10", plays: "234M", cover: "bg-gradient-to-br from-red-700 to-rose-900",    liked: false },
-  { id: 2,  title: "Too Late",                     duration: "3:58", plays: "341M", cover: "bg-gradient-to-br from-red-600 to-orange-800",   liked: true  },
-  { id: 3,  title: "Hardest to Love",              duration: "3:31", plays: "289M", cover: "bg-gradient-to-br from-rose-600 to-red-900",     liked: false },
-  { id: 4,  title: "Scared to Live",               duration: "3:11", plays: "198M", cover: "bg-gradient-to-br from-red-500 to-fuchsia-700",  liked: false },
-  { id: 5,  title: "Snowchild",                    duration: "4:07", plays: "256M", cover: "bg-gradient-to-br from-indigo-600 to-red-800",   liked: true  },
-  { id: 6,  title: "Escape from LA",               duration: "5:54", plays: "312M", cover: "bg-gradient-to-br from-orange-600 to-red-800",   liked: false },
-  { id: 7,  title: "Until I Bleed Out",            duration: "3:36", plays: "178M", cover: "bg-gradient-to-br from-red-800 to-gray-900",     liked: false },
-  { id: 8,  title: "Heartless",                    duration: "2:53", plays: "512M", cover: "bg-gradient-to-br from-rose-700 to-red-900",     liked: true  },
-  { id: 9,  title: "Faith",                        duration: "5:14", plays: "287M", cover: "bg-gradient-to-br from-purple-700 to-red-900",   liked: false },
-  { id: 10, title: "Blinding Lights",              duration: "3:20", plays: "3.1B", cover: "bg-gradient-to-br from-red-500 to-fuchsia-500",  liked: true  },
-  { id: 11, title: "In Your Eyes",                 duration: "3:57", plays: "445M", cover: "bg-gradient-to-br from-rose-500 to-orange-600",  liked: false },
-  { id: 12, title: "Save Your Tears",              duration: "3:35", plays: "789M", cover: "bg-gradient-to-br from-blue-500 to-cyan-500",    liked: true  },
-  { id: 13, title: "Repeat After Me (Interlude)",  duration: "3:38", plays: "156M", cover: "bg-gradient-to-br from-red-600 to-rose-900",     liked: false },
-  { id: 14, title: "After Hours",                  duration: "6:01", plays: "198M", cover: "bg-gradient-to-br from-red-900 to-gray-900",     liked: false },
-];
-
-const relatedAlbums = [
-  { title: "Starboy",                      year: 2016, color: "from-rose-500 to-orange-600"  },
-  { title: "Beauty Behind the Madness",    year: 2015, color: "from-orange-400 to-red-500"   },
-  { title: "Dawn FM",                      year: 2022, color: "from-purple-500 to-indigo-600" },
-  { title: "Trilogy",                      year: 2013, color: "from-gray-600 to-gray-900"    },
-];
+import Sidebar from "../components/Sidebar.astro";
 ---
 
-<MainLayout title="After Hours - Shadows of Melody">
+<MainLayout title="Album - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+    <Sidebar currentPage="search" />
 
-    <aside class="w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40">
-      <div class="h-20 flex items-center px-6">
-        <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-indigo-400 to-purple-400 flex items-center gap-2">
-          <span class="material-symbols-outlined text-purple-400 animate-pulse">music_note</span>
-          Melody
-        </a>
-      </div>
-
-      <div class="px-4 py-6 flex-1 overflow-y-auto">
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Menu</p>
-        <nav class="space-y-1 mb-8">
-          <a href="/" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>Home
-          </a>
-          <a href="/search" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">search</span>Search
-          </a>
-          <a href="/artists" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">person</span>Artists
-          </a>
-        </nav>
-
-        <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Library</p>
-        <nav class="space-y-1">
-          <a href="/liked" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-rose-400">favorite</span>Liked Songs
-          </a>
-          <a href="/playlist" class="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all group">
-            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">queue_music</span>Playlists
-          </a>
-        </nav>
-      </div>
-
-      <div class="p-4 border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
-          <a href="/profile" class="flex items-center gap-3 flex-1 min-w-0">
-            <div class="w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 p-0.5 shrink-0">
-              <div class="w-full h-full rounded-full bg-[#0a1229] flex items-center justify-center">
-                <span class="material-symbols-outlined text-purple-400">person</span>
-              </div>
-            </div>
-            <div class="min-w-0">
-              <p class="text-sm font-semibold text-white truncate">Duy Ho</p>
-              <p class="text-xs text-purple-400 font-medium truncate">Premium</p>
-            </div>
-          </a>
-          <a href="/settings" class="shrink-0 text-gray-500 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/5">
-            <span class="material-symbols-outlined text-[20px]">settings</span>
-          </a>
-        </div>
-      </div>
-    </aside>
-
-    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <div class="absolute top-0 left-0 w-[55%] h-[55%] bg-red-900/15 blur-[160px] rounded-full pointer-events-none"></div>
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] min-w-0">
+      <div class="absolute top-0 left-0 w-[55%] h-[55%] bg-indigo-900/10 blur-[160px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-purple-900/10 blur-[130px] rounded-full pointer-events-none"></div>
 
-      <header class="h-16 shrink-0 flex items-center px-6 gap-4 relative z-10">
+      <header class="h-16 shrink-0 flex items-center px-4 sm:px-6 gap-3 relative z-10 min-w-0">
         <a href="javascript:history.back()" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all text-gray-400 hover:text-white" aria-label="Go back">
           <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
         </a>
-        <nav aria-label="Breadcrumb" class="text-sm text-gray-500 flex items-center gap-2">
-          <a href="/" class="hover:text-white transition-colors">Home</a>
+        <nav id="album-breadcrumb" aria-label="Breadcrumb" class="text-xs sm:text-sm text-gray-500 flex items-center gap-2 min-w-0 overflow-hidden">
+          <a href="/" class="hover:text-white transition-colors shrink-0">Home</a>
           <span aria-hidden="true">›</span>
-          <a href="/artists" class="hover:text-white transition-colors">The Weeknd</a>
+          <a id="bc-artist" href="/artists" class="hover:text-white transition-colors truncate">…</a>
           <span aria-hidden="true">›</span>
-          <span class="text-gray-200">After Hours</span>
+          <span id="bc-album" class="text-gray-200 truncate">…</span>
         </nav>
       </header>
 
-      <div class="flex-1 overflow-y-auto pb-32 relative z-10 custom-scrollbar scroll-smooth">
-
-        <section class="relative overflow-hidden">
-          <div class="absolute inset-0 bg-linear-to-b from-red-900/60 via-red-950/40 to-transparent pointer-events-none"></div>
-          <div class="relative z-10 flex flex-col sm:flex-row items-end gap-8 px-8 pt-10 pb-12">
-            <div class="w-52 h-52 rounded-2xl shrink-0 bg-linear-to-br from-red-700 via-rose-800 to-gray-900 shadow-2xl shadow-red-900/50 flex items-center justify-center relative overflow-hidden group cursor-pointer">
-              <span class="material-symbols-outlined text-white/10 select-none" style="font-size: 8rem;">album</span>
-              <div class="absolute inset-0 bg-linear-to-br from-red-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span class="material-symbols-outlined text-white text-6xl drop-shadow-lg">play_circle</span>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2 min-w-0">
-              <span class="text-xs font-bold uppercase tracking-widest text-white/50">{album.type}</span>
-              <h1 class="text-4xl sm:text-6xl font-black text-white drop-shadow-xl leading-tight">{album.title}</h1>
-              <div class="flex items-center gap-2 text-sm text-gray-300 flex-wrap mt-1">
-                <a href="/artists" class="font-bold text-white hover:underline">{album.artist}</a>
-                <span class="text-white/30" aria-hidden="true">·</span>
-                <span>{album.year}</span>
-                <span class="text-white/30" aria-hidden="true">·</span>
-                <span>{album.trackCount} songs</span>
-                <span class="text-white/30" aria-hidden="true">·</span>
-                <span class="text-white/50">{album.duration}</span>
-              </div>
-              <div class="flex items-center gap-3 mt-4 flex-wrap">
-                <button type="button" class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(168,85,247,0.4)]">
-                  <span class="material-symbols-outlined text-[22px]">play_arrow</span>
-                  Play
-                </button>
-                <button type="button" aria-label="Add to favorites" class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center text-gray-300 hover:text-rose-400 hover:border-rose-400 transition-all">
-                  <span class="material-symbols-outlined text-[22px]">favorite_border</span>
-                </button>
-                <button type="button" aria-label="More options" class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/30 transition-all">
-                  <span class="material-symbols-outlined text-[22px]">more_horiz</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none"></div>
-        </section>
-
-        <div class="px-6 lg:px-8 mt-2">
-          <div class="bg-white/2 border border-white/5 rounded-3xl p-3 backdrop-blur-sm">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="text-gray-500 border-b border-white/5">
-                  <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Title</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-12">Plays</th>
-                  <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-16 text-center">
-                    <span class="material-symbols-outlined text-[18px]">schedule</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {tracks.map((track, i) => (
-                  <tr class="group hover:bg-white/5 transition-colors cursor-pointer">
-                    <td class="px-4 py-3 text-center rounded-l-xl">
-                      <span class="text-gray-500 font-medium group-hover:hidden">{i + 1}</span>
-                      <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]">play_arrow</span>
-                    </td>
-                    <td class="px-4 py-3">
-                      <div class="flex items-center gap-4">
-                        <div class={`w-10 h-10 rounded-lg shrink-0 ${track.cover} relative overflow-hidden group-hover:scale-105 transition-transform shadow-md`}>
-                          <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                        </div>
-                        <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">{track.title}</p>
-                      </div>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-12 font-medium">{track.plays}</td>
-                    <td class="px-4 py-3 text-sm text-gray-500 text-center rounded-r-xl">{track.duration}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p class="text-xs text-gray-600 mt-4 px-2">{album.year} · {album.label}</p>
-        </div>
-
-        <div class="px-6 lg:px-8 mt-12 mb-6">
-          <h2 class="text-xl font-bold text-white mb-6">More from {album.artist}</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            {relatedAlbums.map((rel) => (
-              <a href="/album" class="group flex flex-col gap-3 cursor-pointer">
-                <div class={`aspect-square rounded-xl bg-linear-to-br ${rel.color} shadow-lg group-hover:shadow-2xl group-hover:shadow-purple-500/10 group-hover:scale-[1.03] transition-all duration-300 relative overflow-hidden flex items-center justify-center`}>
-                  <span class="material-symbols-outlined text-white/10 select-none" style="font-size: 5rem;">album</span>
-                </div>
-                <div>
-                  <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">{rel.title}</p>
-                  <p class="text-xs text-gray-500 mt-0.5">{rel.year} · Album</p>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-
+      <div id="album-error-state" class="hidden flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+        <span class="material-symbols-outlined text-[56px] text-gray-600 mb-3">album</span>
+        <p id="album-error-msg" class="text-gray-400 text-center max-w-sm"></p>
+        <a href="/search" class="mt-6 text-sm font-semibold text-purple-400 hover:text-purple-300">Browse music</a>
       </div>
 
-      <PlayerBar />
+      <div id="album-content" class="hidden flex-1 flex flex-col overflow-hidden relative z-10">
+        <div class="flex-1 overflow-y-auto pb-32 scroll-smooth custom-scrollbar">
+          <section class="relative overflow-hidden" aria-label="Album header">
+            <div id="album-hero-gradient" class="absolute inset-0 bg-linear-to-b from-indigo-900/50 via-purple-900/25 to-transparent pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-end gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-10 sm:pb-12">
+              <div
+                id="album-cover-wrap"
+                class="w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 rounded-2xl shrink-0 shadow-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer bg-linear-to-br from-indigo-600 to-purple-800"
+                role="button"
+                tabindex="0"
+                aria-label="Play album"
+              >
+                <img id="album-cover-img" src="" alt="" class="hidden absolute inset-0 w-full h-full object-cover" />
+                <span id="album-cover-fallback" class="material-symbols-outlined text-white/20 select-none" style="font-size: 8rem;">album</span>
+                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors flex items-center justify-center">
+                  <span class="material-symbols-outlined text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" aria-hidden="true">play_circle</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2 min-w-0">
+                <span class="text-xs font-bold uppercase tracking-widest text-white/50">Album</span>
+                <h1 id="album-title" class="text-3xl sm:text-5xl lg:text-6xl font-black text-white drop-shadow-xl leading-tight">—</h1>
+                <div class="flex items-center gap-2 text-sm text-gray-300 flex-wrap mt-1">
+                  <a id="album-artist-link" href="/artists" class="font-bold text-white hover:underline">—</a>
+                  <span class="text-white/30" aria-hidden="true">·</span>
+                  <span id="album-year">—</span>
+                  <span class="text-white/30" aria-hidden="true">·</span>
+                  <span><span id="album-track-count">0</span> songs</span>
+                  <span class="text-white/30" aria-hidden="true">·</span>
+                  <span id="album-total-duration" class="text-white/50">—</span>
+                </div>
+                <div class="flex items-center gap-3 mt-4 flex-wrap">
+                  <button
+                    id="album-btn-play"
+                    type="button"
+                    class="bg-linear-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white rounded-full py-3 px-8 font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-[0_8px_30px_rgba(168,85,247,0.4)]"
+                  >
+                    <span class="material-symbols-outlined text-[22px]" aria-hidden="true">play_arrow</span>
+                    Play
+                  </button>
+                  <button
+                    id="album-btn-shuffle"
+                    type="button"
+                    class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all"
+                  >
+                    <span class="material-symbols-outlined text-[18px]" aria-hidden="true">shuffle</span>
+                    Shuffle
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-[#060e20] to-transparent pointer-events-none"></div>
+          </section>
+
+          <div class="px-4 sm:px-6 lg:px-8 mt-2">
+            <div class="bg-white/[0.02] border border-white/5 rounded-3xl p-2 sm:p-3 backdrop-blur-sm mobile-scroll-x">
+              <table class="w-full text-left border-collapse min-w-[640px]" role="table" aria-label="Album tracks">
+                <thead>
+                  <tr class="text-gray-500 border-b border-white/5">
+                    <th scope="col" class="font-medium text-xs px-4 py-3 w-12 text-center pb-4">#</th>
+                    <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 uppercase tracking-wider">Title</th>
+                    <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 hidden sm:table-cell uppercase tracking-wider text-right pr-12">Plays</th>
+                    <th scope="col" class="font-medium text-xs px-4 py-3 pb-4 w-28 text-center">
+                      <span class="material-symbols-outlined text-[18px]" aria-label="Duration">schedule</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="album-tbody"></tbody>
+              </table>
+            </div>
+            <p id="album-footer-note" class="text-xs text-gray-600 mt-4 px-2 hidden"></p>
+          </div>
+
+          <div id="related-section" class="px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12 mb-6 hidden">
+            <h2 id="related-heading" class="text-xl font-bold text-white mb-6">More albums</h2>
+            <div id="related-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"></div>
+          </div>
+        </div>
+
+        <PlayerBar />
+      </div>
     </main>
+  </div>
+
+  <div
+    id="album-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-36 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-300"
+  >
+    <div class="flex items-center gap-3 bg-[#1e2a45] border border-white/10 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md">
+      <span id="album-toast-icon" class="material-symbols-outlined text-purple-400 text-[18px]" aria-hidden="true">info</span>
+      <span id="album-toast-msg"></span>
+    </div>
   </div>
 
   <style>
@@ -222,4 +136,389 @@ const relatedAlbums = [
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
+
+  <script>
+    import { apiFetch, formatDuration, formatCount, colorFor, API_BASE } from '../lib/api.js';
+    import { player } from '../lib/player.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const rawId = params.get('id');
+    const albumId = rawId ? parseInt(rawId, 10) : NaN;
+
+    const elErr = document.getElementById('album-error-state')!;
+    const elContent = document.getElementById('album-content')!;
+    const elMsg = document.getElementById('album-error-msg')!;
+
+    function showError(msg: string) {
+      elContent.classList.add('hidden');
+      elErr.classList.remove('hidden');
+      elErr.classList.add('flex');
+      elMsg.textContent = msg;
+    }
+
+    function escapeHtml(str: unknown): string {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatAlbumDuration(totalSec: number): string {
+      if (!totalSec) return '—';
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      if (h > 0) return `${h} hr ${m} min`;
+      return `${m} min`;
+    }
+
+    function shuffleArray<T>(arr: T[]): T[] {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    let _album: any = null;
+    let _songs: any[] = [];
+
+    let _likesLoaded = false;
+
+    let _toastTimer: ReturnType<typeof setTimeout> | null = null;
+    function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
+      const toast = document.getElementById('album-toast')!;
+      const msgEl = document.getElementById('album-toast-msg')!;
+      const iconEl = document.getElementById('album-toast-icon')!;
+      const iconMap = { success: 'check_circle', error: 'error_outline', info: 'info' };
+      const clsMap = { success: 'text-green-400', error: 'text-red-400', info: 'text-purple-400' };
+      msgEl.textContent = msg;
+      iconEl.textContent = iconMap[type];
+      iconEl.className = `material-symbols-outlined text-[18px] ${clsMap[type]}`;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      if (_toastTimer) clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2800);
+    }
+
+    const _liking = new Set<string>();
+
+    function setLikeBtn(btn: HTMLElement, liked: boolean) {
+      const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+      btn.dataset.liked = String(liked);
+      if (liked) {
+        if (icon) {
+          icon.textContent = 'favorite';
+          icon.style.fontVariationSettings = "'FILL' 1";
+        }
+        btn.classList.add('text-rose-400');
+        btn.classList.remove('text-gray-400');
+        btn.title = 'Unlike';
+      } else {
+        if (icon) {
+          icon.textContent = 'favorite_border';
+          icon.style.fontVariationSettings = "'FILL' 0";
+        }
+        btn.classList.remove('text-rose-400');
+        btn.classList.add('text-gray-400');
+        btn.title = 'Like';
+      }
+    }
+
+    async function toggleLike(btn: HTMLElement) {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        window.location.href = '/login?reason=auth_required';
+        return;
+      }
+      const songId = btn.dataset.id!;
+      if (_liking.has(songId)) return;
+      _liking.add(songId);
+      const was = btn.dataset.liked === 'true';
+      setLikeBtn(btn, !was);
+      try {
+        if (was) {
+          await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
+        } else {
+          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId: Number(songId) }) });
+        }
+        window.dispatchEvent(
+          new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !was } })
+        );
+      } catch {
+        setLikeBtn(btn, was);
+        showToast('Could not update favorite', 'error');
+      } finally {
+        _likesLoaded = true;
+        _liking.delete(songId);
+      }
+    }
+
+    function renderTracks() {
+      const tbody = document.getElementById('album-tbody')!;
+      if (!_songs.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="4" class="px-4 py-12 text-center text-gray-500 text-sm">No tracks in this album yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = _songs
+        .map((t: any, i: number) => {
+          const coverHtml = t.cover_url
+            ? `<img src="${escapeHtml(t.cover_url)}" loading="lazy" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
+            : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${colorFor(t.id)}" aria-hidden="true"></div>`;
+          const titleEsc = escapeHtml(t.title);
+          const subEsc = escapeHtml(t.artist_names || 'Unknown');
+          return `
+          <tr
+            class="group hover:bg-white/5 transition-colors cursor-pointer song-row"
+            data-id="${t.id}"
+            role="row"
+            tabindex="0"
+            aria-label="Play ${titleEsc}"
+          >
+            <td class="px-4 py-3 text-center rounded-l-xl select-none pointer-events-none">
+              <span class="text-gray-500 font-medium group-hover:hidden">${i + 1}</span>
+              <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]" aria-hidden="true">play_arrow</span>
+            </td>
+            <td class="px-4 py-3 pointer-events-none select-none">
+              <div class="flex items-center gap-4 min-w-0">
+                ${coverHtml}
+                <div class="min-w-0">
+                  <p class="font-semibold text-gray-100 group-hover:text-purple-400 transition-colors truncate text-sm">${titleEsc}</p>
+                  <p class="text-xs text-gray-500 truncate mt-0.5">${subEsc}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500 hidden sm:table-cell text-right pr-12 font-medium pointer-events-none select-none">${formatCount(t.plays_count)}</td>
+            <td class="px-4 py-3 rounded-r-xl">
+              <div class="flex items-center justify-center gap-0.5 sm:gap-1">
+                <button
+                  type="button"
+                  class="add-to-pl-btn opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white transition-all p-1 rounded-lg hover:bg-white/10"
+                  data-id="${t.id}"
+                  aria-label="Add ${titleEsc} to playlist"
+                  title="Add to playlist"
+                >
+                  <span class="material-symbols-outlined text-[18px]" aria-hidden="true">playlist_add</span>
+                </button>
+                <button
+                  type="button"
+                  class="like-btn opacity-0 group-hover:opacity-100 text-gray-400 hover:text-rose-400 transition-all p-1 rounded-lg hover:bg-rose-500/10 like-track-btn"
+                  data-id="${t.id}"
+                  data-liked="false"
+                  aria-label="Like ${titleEsc}"
+                  title="Like"
+                >
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 0" aria-hidden="true">favorite_border</span>
+                </button>
+                <span class="text-sm text-gray-500 pointer-events-none tabular-nums ml-0.5 min-w-[2.5rem] text-right">${formatDuration(t.duration)}</span>
+              </div>
+            </td>
+          </tr>`;
+        })
+        .join('');
+    }
+
+    async function syncFavoriteButtons() {
+      const token = localStorage.getItem('auth_token');
+      if (!token || !_songs.length) return;
+      try {
+        const res = await fetch(`${API_BASE}/favorites`, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const favs = json.data || [];
+        const favSet = new Set<number>((favs || []).map((f: any) => Number(f.id)));
+        document.querySelectorAll<HTMLElement>('.like-track-btn').forEach((btn) => {
+          const id = Number(btn.dataset.id);
+          if (favSet.has(id)) setLikeBtn(btn, true);
+        });
+        _likesLoaded = true;
+      } catch { /* ignore */ }
+    }
+
+    async function loadRelated(artistId: number | null, currentAlbumId: number) {
+      const section = document.getElementById('related-section')!;
+      const grid = document.getElementById('related-grid')!;
+      const heading = document.getElementById('related-heading')!;
+      if (!artistId) {
+        section.classList.add('hidden');
+        return;
+      }
+      heading.textContent = `More from ${_album?.artist?.name || 'this artist'}`;
+      try {
+        const { data: albums } = await apiFetch(`/albums/artist/${artistId}?limit=12`);
+        const list = (albums || []).filter((a: any) => Number(a.id) !== currentAlbumId);
+        if (!list.length) {
+          section.classList.add('hidden');
+          return;
+        }
+        section.classList.remove('hidden');
+        grid.innerHTML = list
+          .map((al: any) => {
+            const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
+            const cover = al.cover_url
+              ? `<img src="${escapeHtml(al.cover_url)}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+              : '';
+            const titleEsc = escapeHtml(al.title);
+            return `
+            <a href="/album?id=${al.id}" class="group flex flex-col gap-3 cursor-pointer">
+              <div class="aspect-square rounded-xl shadow-lg relative overflow-hidden group-hover:scale-[1.03] transition-all duration-300 flex items-center justify-center" style="background:${colorFor(al.id)}">
+                ${cover}
+                <span class="material-symbols-outlined text-white/15 select-none absolute pointer-events-none" style="font-size:4rem;">album</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-200 group-hover:text-white transition-colors text-sm truncate">${titleEsc}</p>
+                <p class="text-xs text-gray-500 mt-0.5">${year ? `${year} · ` : ''}Album</p>
+              </div>
+            </a>`;
+          })
+          .join('');
+      } catch {
+        section.classList.add('hidden');
+      }
+    }
+
+    async function init() {
+      if (!Number.isFinite(albumId) || albumId < 1) {
+        showError('Missing or invalid album. Open this page from search or an artist profile.');
+        return;
+      }
+
+      try {
+        const { data: album } = await apiFetch(`/albums/${albumId}`);
+        _album = album;
+        _songs = Array.isArray(album.songs) ? album.songs : [];
+
+        document.title = `${album.title || 'Album'} - Shadows of Melody`;
+
+        const artistName = album.artist?.name || 'Unknown artist';
+        const artistId = album.artist_id ?? album.artist?.id ?? null;
+
+        (document.getElementById('bc-artist') as HTMLAnchorElement).textContent = artistName;
+        (document.getElementById('bc-artist') as HTMLAnchorElement).href = artistId ? `/artist?id=${artistId}` : '/artists';
+        (document.getElementById('bc-album') as HTMLElement).textContent = album.title || 'Album';
+
+        (document.getElementById('album-title') as HTMLElement).textContent = album.title || 'Album';
+
+        const artistLink = document.getElementById('album-artist-link') as HTMLAnchorElement;
+        artistLink.textContent = artistName;
+        artistLink.href = artistId ? `/artist?id=${artistId}` : '/artists';
+
+        const yearEl = document.getElementById('album-year')!;
+        if (album.release_date) {
+          yearEl.textContent = String(new Date(album.release_date).getFullYear());
+        } else {
+          yearEl.textContent = '—';
+        }
+
+        (document.getElementById('album-track-count') as HTMLElement).textContent = String(_songs.length);
+
+        const totalSec = _songs.reduce((s: number, t: any) => s + (parseInt(String(t.duration), 10) || 0), 0);
+        (document.getElementById('album-total-duration') as HTMLElement).textContent = formatAlbumDuration(totalSec);
+
+        const coverImg = document.getElementById('album-cover-img') as HTMLImageElement;
+        const coverFb = document.getElementById('album-cover-fallback') as HTMLElement;
+        if (album.cover_url) {
+          coverImg.src = album.cover_url;
+          coverImg.alt = album.title || 'Album cover';
+          coverImg.classList.remove('hidden');
+          coverFb.classList.add('hidden');
+        } else {
+          coverImg.classList.add('hidden');
+          coverFb.classList.remove('hidden');
+        }
+
+        const footer = document.getElementById('album-footer-note')!;
+        if (album.description) {
+          footer.textContent = album.description;
+          footer.classList.remove('hidden');
+        } else {
+          footer.classList.add('hidden');
+        }
+
+        elErr.classList.add('hidden');
+        elErr.classList.remove('flex');
+        elContent.classList.remove('hidden');
+
+        renderTracks();
+        await syncFavoriteButtons();
+        await loadRelated(artistId ? Number(artistId) : null, albumId);
+      } catch (e: any) {
+        showError(e?.message || 'Could not load this album.');
+      }
+    }
+
+    function playAlbum(shuffle = false) {
+      if (!_songs.length) {
+        showToast('No songs to play.', 'info');
+        return;
+      }
+      let list = [..._songs];
+      if (shuffle) list = shuffleArray(list);
+      player.playSong(list[0], list);
+    }
+
+    document.getElementById('album-btn-play')?.addEventListener('click', () => playAlbum(false));
+    document.getElementById('album-btn-shuffle')?.addEventListener('click', () => playAlbum(true));
+
+    document.getElementById('album-cover-wrap')?.addEventListener('click', () => playAlbum(false));
+    document.getElementById('album-cover-wrap')?.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        playAlbum(false);
+      }
+    });
+
+    document.getElementById('album-tbody')?.addEventListener('click', async (e) => {
+      const target = e.target as HTMLElement;
+      const atp = target.closest('.add-to-pl-btn') as HTMLElement | null;
+      if (atp) {
+        e.stopPropagation();
+        const sid = Number(atp.dataset.id);
+        const song = _songs.find((t) => t.id === sid);
+        if (song && typeof (window as any).openAddToPlaylist === 'function') {
+          (window as any).openAddToPlaylist(song);
+        }
+        return;
+      }
+      const likeBtn = target.closest('.like-track-btn') as HTMLElement | null;
+      if (likeBtn) {
+        e.stopPropagation();
+        await toggleLike(likeBtn);
+        return;
+      }
+      const row = target.closest('.song-row') as HTMLElement | null;
+      if (row) {
+        const sid = Number(row.dataset.id);
+        const song = _songs.find((t) => t.id === sid);
+        if (song) player.playSong(song, _songs);
+      }
+    });
+
+    document.getElementById('album-tbody')?.addEventListener('keydown', (e: KeyboardEvent) => {
+      const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
+      if (!row) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        row.click();
+      }
+    });
+
+    window.addEventListener('favorites:changed', (ev: Event) => {
+      const d = (ev as CustomEvent).detail;
+      if (!d || !_likesLoaded) return;
+      const btn = document.querySelector(`.like-track-btn[data-id="${d.songId}"]`) as HTMLElement | null;
+      if (btn) setLikeBtn(btn, !!d.isFavorite);
+    });
+
+    init();
+  </script>
 </MainLayout>
