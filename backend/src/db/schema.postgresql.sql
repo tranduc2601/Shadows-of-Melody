@@ -180,6 +180,16 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     updated_at        TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── Password Reset Tokens ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id          SERIAL PRIMARY KEY,
+    user_id     INT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    token_hash  VARCHAR(128) NOT NULL UNIQUE,
+    expires_at  TIMESTAMPTZ NOT NULL,
+    used_at     TIMESTAMPTZ,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── Payments ──────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS payments (
     id              SERIAL PRIMARY KEY,

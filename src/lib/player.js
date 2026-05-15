@@ -14,7 +14,7 @@ export const player = (() => {
        * @param {unknown[] | null | undefined} [_queue]
        */
       playSong(_song, _queue) {}, toggle() {}, next() {}, prev() {},
-      seek() {}, setVolume() {}, toggleShuffle() { return false; }, cycleRepeat() { return 'none'; },
+      seek() {}, setVolume() {}, setPlaybackRate() {}, toggleShuffle() { return false; }, cycleRepeat() { return 'none'; },
       saveState() {}, restoreState() {}, reset() {},
     };
   }
@@ -25,6 +25,7 @@ export const player = (() => {
   let _queueIdx = -1;
   let _shuffle = false;
   let _repeat = 'none';
+  let _playbackRate = 1;
   let _loading = false;
   let _historyTimer = null;
 
@@ -37,6 +38,7 @@ export const player = (() => {
       _audio.addEventListener('pause', () => { if (!_loading) _dispatch('pause'); });
       _audio.addEventListener('loadedmetadata', () => _dispatch('loaded'));
     }
+    _audio.playbackRate = _playbackRate;
     return _audio;
   }
 
@@ -107,6 +109,7 @@ export const player = (() => {
     get shuffle() { return _shuffle; },
     get repeat() { return _repeat; },
     get volume() { return _audio?.volume ?? 1; },
+    get playbackRate() { return _audio?.playbackRate ?? _playbackRate; },
 
     get queue() { return [..._queue]; },
 
@@ -153,6 +156,12 @@ export const player = (() => {
       if (_audio) _audio.volume = Math.max(0, Math.min(1, v));
     },
 
+    setPlaybackRate(rate) {
+      const next = [0.5, 0.75, 1, 1.25, 1.5, 2].includes(rate) ? rate : 1;
+      _playbackRate = next;
+      if (_audio) _audio.playbackRate = next;
+    },
+
     toggleShuffle() { _shuffle = !_shuffle; return _shuffle; },
 
     cycleRepeat() {
@@ -171,6 +180,7 @@ export const player = (() => {
           currentTime: _audio?.currentTime || 0,
           isPlaying: _audio ? !_audio.paused : false,
           volume: _audio?.volume ?? 1,
+          playbackRate: _audio?.playbackRate ?? _playbackRate,
           shuffle: _shuffle,
           repeat: _repeat,
         }));
@@ -191,8 +201,10 @@ export const player = (() => {
         _queueIdx = state.queueIdx ?? -1;
         _shuffle = state.shuffle ?? false;
         _repeat = state.repeat ?? 'none';
+        _playbackRate = [0.5, 0.75, 1, 1.25, 1.5, 2].includes(state.playbackRate) ? state.playbackRate : 1;
         const a = getAudio();
         if (state.volume != null) a.volume = state.volume;
+        a.playbackRate = _playbackRate;
         _loading = true;
         a.src = `${API_BASE}/stream/${state.song.id}?quality=standard`;
         _loading = false;

@@ -13,7 +13,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[150px] rounded-full pointer-events-none"></div>
       <div class="absolute bottom-[20%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-      <header class="h-auto md:h-20 shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 px-4 sm:px-6 lg:px-8 py-4 md:py-0 relative z-10 w-full transition-all duration-300 mobile-stack">
+      <header class="h-auto md:h-20 shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 px-4 sm:px-6 lg:px-8 py-4 md:py-0 relative z-20 w-full transition-all duration-300 mobile-stack">
         <div class="flex items-center justify-between w-full md:w-auto gap-3">
           <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
              <span class="material-symbols-outlined">menu</span>
@@ -40,12 +40,22 @@ import PlayerBar from "../components/PlayerBar.astro";
         </div>
 
         <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto ml-0 md:ml-4 shrink-0">
-          <div id="header-user" class="hidden sm:flex items-center gap-2.5">
-            <p id="header-greeting" class="text-sm text-gray-400 hidden md:block"></p>
-            <a href="/profile" id="header-avatar-wrap" class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white/10 hover:ring-purple-500/60 transition-all shrink-0 flex items-center justify-center bg-white/5">
-              <img id="header-avatar-img" src="" alt="" class="hidden w-full h-full object-cover" />
-              <span id="header-avatar-initials" class="text-xs font-bold text-gray-300"></span>
-            </a>
+          <div id="header-user" class="hidden sm:flex items-center gap-2.5 relative z-30">
+            <p id="header-greeting" class="text-sm text-gray-400 hidden md:block relative z-30"></p>
+            <div id="header-avatar-wrap" class="relative z-40 w-9 h-9 rounded-full overflow-visible ring-2 ring-white/10 hover:ring-purple-500/60 transition-all shrink-0 flex items-center justify-center bg-white/5 cursor-pointer select-none shadow-lg shadow-black/25">
+              <img id="header-avatar-img" src="" alt="" class="hidden w-full h-full object-cover rounded-full" />
+              <span id="header-avatar-initials" class="text-xs font-bold text-gray-300 relative z-10"></span>
+              <div id="header-avatar-dropdown" class="hidden absolute right-0 top-full mt-2 w-44 rounded-2xl border border-white/10 bg-[#0a1229]/95 backdrop-blur-xl shadow-2xl shadow-black/40 z-[150] overflow-hidden py-1">
+                <a href="/profile" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 transition-colors">
+                  <span class="material-symbols-outlined text-[18px] text-purple-400">person</span>
+                  <span>Profile</span>
+                </a>
+                <button type="button" id="header-logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm text-gray-200 hover:bg-white/5 transition-colors">
+                  <span class="material-symbols-outlined text-[18px] text-rose-400">logout</span>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
           </div>
           <a href="/login" id="header-login-btn" class="hidden text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors px-3 py-1.5 rounded-full border border-purple-500/30 hover:border-purple-400/50">
             Login
@@ -56,14 +66,15 @@ import PlayerBar from "../components/PlayerBar.astro";
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-4 relative z-10 custom-scrollbar scroll-smooth">
         
         <section class="mb-10 group cursor-pointer relative z-20" id="hero-section">
-          <div id="hero-card" class="relative rounded-3xl md:rounded-4xl overflow-hidden shadow-2xl shadow-purple-900/20 p-5 sm:p-8 md:p-12 min-h-[22rem] md:min-h-85 flex flex-col justify-end transition-all duration-500 hover:shadow-purple-900/40"
-               style="background: linear-gradient(135deg, #1e1b4b, #312e81)">
-            <div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
-               <div class="absolute right-0 top-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-pink-500/60 via-transparent to-transparent"></div>
-               <div class="absolute -bottom-24 -right-24 w-125 h-125 bg-indigo-500 rounded-full blur-[100px]"></div>
-               <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtbDktNS05LTV2LThsOS01IDktNXY4bDkgNSA5IDV2OGwtOSA1LTkgNXY4bC05IDUtOSA1di04bC05LTUtOS01eiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+PC9nPjwvc3ZnPg==')]"></div>
+          <div class="absolute -inset-3 md:-inset-4 rounded-[2rem] md:rounded-[2.25rem] bg-purple-500/10 blur-2xl opacity-70 pointer-events-none"></div>
+          <div id="hero-card" class="relative rounded-3xl md:rounded-4xl overflow-hidden border border-white/12 bg-[linear-gradient(135deg,rgba(18,24,54,0.88),rgba(15,18,38,0.72))] shadow-[0_24px_90px_rgba(0,0,0,0.45)] ring-1 ring-white/6 backdrop-blur-xl p-5 sm:p-8 md:p-12 min-h-[22rem] md:min-h-85 flex flex-col justify-end transition-all duration-500 hover:shadow-[0_30px_110px_rgba(0,0,0,0.58)] hover:border-white/20"
+               style="background: linear-gradient(135deg, rgba(30,27,75,0.92), rgba(49,46,129,0.72))">
+            <div class="absolute inset-0 opacity-45 mix-blend-screen pointer-events-none">
+               <div class="absolute right-0 top-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-fuchsia-500/55 via-transparent to-transparent"></div>
+               <div class="absolute -bottom-24 -right-24 w-125 h-125 bg-indigo-500 rounded-full blur-[110px]"></div>
+               <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtbDktNS05LTV2LThsOS01IDktNXY4bDkgNSA5IDV2OGwtOSA1LTkgNXY4bC05IDUtOSA1di04bC05LTUtOS01eiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-60"></div>
             </div>
-            <div id="hero-cover-bg" class="absolute inset-0 opacity-25 transition-opacity duration-700 bg-cover bg-center pointer-events-none"></div>
+            <div id="hero-cover-bg" class="absolute inset-0 opacity-18 transition-opacity duration-700 bg-cover bg-center blur-[2px] scale-105 pointer-events-none"></div>
 
             <div class="relative z-10 max-w-2xl">
               <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -88,8 +99,8 @@ import PlayerBar from "../components/PlayerBar.astro";
               </div>
             </div>
 
-            <div class="absolute right-12 top-1/2 -translate-y-1/2 w-64 h-64 bg-linear-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div id="hero-cover-art" class="absolute right-10 top-1/2 -translate-y-1/2 w-40 h-40 md:w-52 md:h-52 rounded-2xl shadow-2xl overflow-hidden opacity-0 transition-all duration-700 hidden md:block border border-white/10"></div>
+            <div class="absolute right-12 top-1/2 -translate-y-1/2 w-72 h-72 bg-linear-to-tr from-purple-500/18 via-fuchsia-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+            <div id="hero-cover-art" class="absolute right-10 top-1/2 -translate-y-1/2 w-40 h-40 md:w-52 md:h-52 rounded-2xl shadow-[0_18px_50px_rgba(0,0,0,0.35)] overflow-hidden opacity-0 transition-all duration-700 hidden md:block border border-white/12 ring-1 ring-white/10"></div>
           </div>
         </section>
 
@@ -241,7 +252,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   </style>
 
 <script>
-  import { apiFetch, formatDuration, formatCount, getUser, getToken } from '../lib/api.js';
+  import { apiFetch, formatDuration, formatCount, getUser, getToken, clearAuth } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
   const GRADIENTS_HEX = [
@@ -272,8 +283,11 @@ import PlayerBar from "../components/PlayerBar.astro";
   if (user) {
     const greetingEl  = document.getElementById('header-greeting');
     const avatarWrap  = document.getElementById('header-user');
+    const avatarToggle = document.getElementById('header-avatar-wrap') as HTMLElement;
     const avatarImg   = document.getElementById('header-avatar-img') as HTMLImageElement;
     const initials    = document.getElementById('header-avatar-initials');
+    const avatarDropdown = document.getElementById('header-avatar-dropdown') as HTMLElement;
+    const logoutBtn = document.getElementById('header-logout-btn') as HTMLButtonElement;
 
     if (avatarWrap) avatarWrap.classList.remove('hidden');
     document.getElementById('header-login-btn')?.remove();
@@ -290,6 +304,22 @@ import PlayerBar from "../components/PlayerBar.astro";
     } else if (initials) {
       initials.textContent = (displayName || '?').slice(0, 2).toUpperCase();
     }
+
+    const closeAvatarDropdown = () => avatarDropdown?.classList.add('hidden');
+    const toggleAvatarDropdown = () => avatarDropdown?.classList.toggle('hidden');
+
+    avatarToggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleAvatarDropdown();
+    });
+    avatarDropdown?.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', (e) => {
+      if (!avatarToggle?.contains(e.target as Node)) closeAvatarDropdown();
+    });
+    logoutBtn?.addEventListener('click', () => {
+      clearAuth();
+      window.location.href = '/login';
+    });
   } else {
     document.getElementById('header-user')?.classList.add('hidden');
     document.getElementById('header-login-btn')?.classList.remove('hidden');

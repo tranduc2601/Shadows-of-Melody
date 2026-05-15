@@ -3,6 +3,9 @@ import Subscription from '../models/Subscription.js';
 import { generateToken, revokeToken, decodeToken } from '../utils/jwt.js';
 import { validateEmail, validatePassword, validateUsername } from '../utils/validators.js';
 import { pool } from '../config/database.js';
+import crypto from 'crypto';
+import config from '../config/env.js';
+import nodemailer from 'nodemailer';
 
 export const register = async (req, res) => {
     try {
@@ -305,6 +308,108 @@ export const updateProfile = async (req, res) => {
             success: false,
             message: 'Failed to update profile',
         });
+    }
+};
+
+const createMailTransport = () => {
+    if (!config.mail.host || !config.mail.user || !config.mail.pass) return null;
+    return nodemailer.createTransport({
+        host: config.mail.host,
+        port: config.mail.port,
+        secure: config.mail.secure,
+        auth: { user: config.mail.user, pass: config.mail.pass },
+    });
+};
+
+export const requestPasswordReset = async (req, res) => {
+    try {
+        const { email } = req.body || {};
+        if (!email || !validateEmail(email)) {
+            return res.status(400).json({ success: false, message: 'Please enter a valid email address' });
+        }
+
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(200).json({ success: true, message: 'If an account exists for that email, we sent a reset link.' });
+        }
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        await User.createPasswordResetToken(user.id, token, expiresAt);
+
+        const resetUrl = `${process.env.PUBLIC_WEB_URL || 'http://localhost:4321'}/reset-password?token=${token}`;
+        const transporter = createMailTransport();
+        if (transporter) {
+            await transporter.sendMail({
+                from: config.mail.from,
+                to: user.email,
+                subject: 'Reset your Shadows of Melody password',
+                html: `
+                    <p>You requested a password reset for your Shadows of Melody account.</p>
+                    <p>Click the link below to set a new password. This link expires in 15 minutes.</p>
+                    <p><a href="${resetUrl}">${resetUrl}</a></p>
+                    <p>If you didn’t request this, you can ignore this email.</p>
+                `,
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'If an account exists for that email, we sent a reset link.',
+        });
+    } catch (error) {
+        console.error('RequestPasswordReset error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to request password reset' });
+    }
+};
+
+export const validatePasswordResetToken = async (req, res) => {
+    try {
+        const { token } = req.query;
+        if (!token) {
+            return res.status(400).json({ success: false, message: 'Reset token is required' });
+        }
+        const tokenRow = await User.findPasswordResetToken(token);
+        if (!tokenRow) {
+            return res.status(400).json({ success: false, message: 'Invalid reset token' });
+        }
+        if (new Date(tokenRow.expires_at) <= new Date()) {
+            return res.status(400).json({ success: false, message: 'Reset token has expired' });
+        }
+        return res.status(200).json({ success: true, data: { email: tokenRow.email, username: tokenRow.username } });
+    } catch (error) {
+        console.error('ValidatePasswordResetToken error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to validate reset token' });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token, password, confirmPassword } = req.body || {};
+        if (!token || !password || !confirmPassword) {
+            return res.status(400).json({ success: false, message: 'Token and new password are required' });
+        }
+        if (password !== confirmPassword) {
+            return res.status(400).json({ success: false, message: 'Passwords do not match' });
+        }
+        if (!validatePassword(password)) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 8 characters with uppercase, lowercase, and number' });
+        }
+
+        const tokenRow = await User.findPasswordResetToken(token);
+        if (!tokenRow) {
+            return res.status(400).json({ success: false, message: 'Invalid reset token' });
+        }
+        if (new Date(tokenRow.expires_at) <= new Date()) {
+            return res.status(400).json({ success: false, message: 'Reset token has expired' });
+        }
+
+        await User.updatePassword(tokenRow.user_id, password);
+        await User.consumePasswordResetToken(token);
+
+        return res.status(200).json({ success: true, message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('ResetPassword error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to reset password' });
     }
 };
 

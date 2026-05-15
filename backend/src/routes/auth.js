@@ -9,6 +9,9 @@ const router = express.Router();
 
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);
+router.post('/forgot-password', authLimiter, authController.requestPasswordReset);
+router.get('/reset-password/validate', authController.validatePasswordResetToken);
+router.post('/reset-password', authLimiter, authController.resetPassword);
 
 
 router.get('/me', requireAuth, authController.getMe);

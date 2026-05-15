@@ -12,7 +12,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     <main class="flex-1 flex flex-col overflow-hidden relative bg-gradient-to-br from-[#0c1328] via-[#060e20] to-[#040813] min-w-0">
       <div class="absolute top-[-10%] left-[20%] w-[50%] h-[50%] bg-purple-600/10 blur-[150px] rounded-full pointer-events-none" aria-hidden="true"></div>
 
-      <header class="h-auto sm:h-20 flex-shrink-0 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 sm:px-8 py-3 sm:py-0 relative z-10 gap-3 sm:gap-4 min-w-0">
+      <header class="h-auto sm:h-20 flex-shrink-0 flex flex-wrap sm:flex-nowrap items-center justify-between px-4 sm:px-8 py-3 sm:py-0 relative z-10 gap-3 sm:gap-4 min-w-0 mobile-page-padding">
         <button id="btnBackCategories"
           class="hidden shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10
                  text-gray-300 hover:text-white hover:bg-white/10 text-sm font-medium
@@ -30,7 +30,7 @@ import PlayerBar from "../components/PlayerBar.astro";
             autocomplete="off"
             aria-label="Search songs, artists, albums (press / to focus)"
             placeholder="Search songs, artists, albums..."
-            class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-lg"
+            class="w-full bg-white/5 border border-white/10 text-white placeholder-gray-500 rounded-full py-3 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all text-sm sm:text-base lg:text-lg"
           />
           <button id="clearSearchBtn"
             class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
@@ -53,7 +53,7 @@ import PlayerBar from "../components/PlayerBar.astro";
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-2 relative z-10 custom-scrollbar">
 
         <div id="browseSection">
-          <h2 class="text-xl font-bold text-white mb-6">Browse by genres</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Browse by genres</h2>
           <div id="categoriesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-10" role="list" aria-label="Genre categories">
             {Array.from({length: 8}).map(() => (
               <div class="h-28 rounded-2xl bg-white/5 animate-pulse"></div>
@@ -201,7 +201,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     const searchResults = document.getElementById('searchResults') as HTMLElement;
     const btnBack       = document.getElementById('btnBackCategories') as HTMLButtonElement;
 
-    let currentSongs: any[]   = [];
     let allArtists: any[]     = [];
     let allAlbums: any[]      = [];
     let _preloadPromise: Promise<void> | null = null;
@@ -431,7 +430,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     function renderSongs(songs: any[]) {
-      currentSongs = songs;
       renderSongsAllPanel(songs);
       renderSongsToEl(document.getElementById('songs-only'), songs);
       syncFavoriteButtons();

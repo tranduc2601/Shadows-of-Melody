@@ -24,6 +24,14 @@ const config = {
     cors: {
         origin: process.env.CORS_ORIGIN || 'http://localhost:4321',
     },
+    mail: {
+        host: process.env.SMTP_HOST || '',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true',
+        user: process.env.SMTP_USER || '',
+        pass: process.env.SMTP_PASS || '',
+        from: process.env.SMTP_FROM || 'Shadows of Melody <no-reply@shadows-of-melody.local>',
+    },
     upload: {
         maxFileSize: parseInt(process.env.MAX_FILE_SIZE) || 524288000, // 500MB
         // uploadDir không còn dùng (Firebase Storage thay thế local disk)

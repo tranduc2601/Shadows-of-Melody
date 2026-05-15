@@ -573,7 +573,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     _activePlId = 0;
     document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('ring-2','ring-purple-500/60'));
   });
-  async function loadPlaylists(keepActive = false) {
+  async function loadPlaylists(_keepActive = false) {
     const grid  = document.getElementById('playlists-grid')!;
     const token = localStorage.getItem('auth_token');
 

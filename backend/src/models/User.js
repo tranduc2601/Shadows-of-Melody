@@ -1,5 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import { pool } from '../config/database.js';
+import crypto from 'crypto';
 
 class User {
     static async create({ username, email, password }) {
@@ -40,6 +41,47 @@ class User {
 
     static async verifyPassword(password, hashedPassword) {
         return bcryptjs.compare(password, hashedPassword);
+    }
+
+    static async createPasswordResetToken(userId, token, expiresAt) {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        await pool.query(
+            `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+             VALUES (?, ?, ?)
+             ON CONFLICT (user_id) DO UPDATE SET
+                token_hash = EXCLUDED.token_hash,
+                expires_at = EXCLUDED.expires_at,
+                used_at = NULL,
+                created_at = NOW()`,
+            [userId, tokenHash, expiresAt]
+        );
+    }
+
+    static async findPasswordResetToken(token) {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const [rows] = await pool.query(
+            `SELECT prt.*, u.id AS user_id, u.email, u.username
+             FROM password_reset_tokens prt
+             JOIN users u ON u.id = prt.user_id
+             WHERE prt.token_hash = ? AND prt.used_at IS NULL`,
+            [tokenHash]
+        );
+        return rows[0];
+    }
+
+    static async consumePasswordResetToken(token) {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        await pool.query(
+            `UPDATE password_reset_tokens
+             SET used_at = NOW()
+             WHERE token_hash = ? AND used_at IS NULL`,
+            [tokenHash]
+        );
+    }
+
+    static async updatePassword(id, password) {
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        await pool.query('UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?', [hashedPassword, id]);
     }
 
     static async findAll(limit = 20, offset = 0) {
