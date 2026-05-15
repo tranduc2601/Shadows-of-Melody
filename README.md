@@ -1,27 +1,28 @@
 ﻿# Shadows of Melody — Tài liệu Kỹ thuật
 
-> **Phiên bản:** 1.0.0 | **Ngày cập nhật:** 11/04/2026
-> Tài liệu này mô tả toàn bộ kiến trúc, API, luồng dữ liệu và logic nghiệp vụ của hệ thống streaming nhạc **Shadows of Melody**.
+> **Phiên bản:** 1.1.0 | **Ngày cập nhật:** 15/05/2026
+> Tài liệu này mô tả toàn bộ kiến trúc, API, luồng dữ liệu, logic nghiệp vụ và tiến độ phát triển hiện tại của hệ thống streaming nhạc **Shadows of Melody**.
 
 ---
 
 ## Mục lục
 
 1. [Tổng quan dự án](#1-tổng-quan-dự-án)
-2. [Kiến trúc hệ thống](#2-kiến-trúc-hệ-thống)
-3. [Cấu trúc thư mục](#3-cấu-trúc-thư-mục)
-4. [Cài đặt và Khởi chạy](#4-cài-đặt-và-khởi-chạy)
-5. [Cấu hình môi trường](#5-cấu-hình-môi-trường-environment-variables)
-6. [Kết nối Database](#6-kết-nối-database)
-7. [Schema Database](#7-schema-database)
-8. [Tài liệu API](#8-tài-liệu-api)
-9. [Luồng dữ liệu và Logic nghiệp vụ](#9-luồng-dữ-liệu-và-logic-nghiệp-vụ)
-10. [Cơ chế xác thực và Phân quyền](#10-cơ-chế-xác-thực-và-phân-quyền)
-11. [Giải thích code quan trọng](#11-giải-thích-code-quan-trọng)
-12. [Middleware và Bảo mật](#12-middleware-và-bảo-mật)
-13. [Upload File và Cloudinary](#13-upload-file-và-cloudinary)
-14. [Frontend Architecture](#14-frontend-architecture)
-15. [Ghi chú kỹ thuật](#15-ghi-chú-kỹ-thuật-và-điểm-cải-thiện)
+2. [Tiến độ hiện tại](#2-tiến-độ-hiện-tại)
+3. [Kiến trúc hệ thống](#3-kiến-trúc-hệ-thống)
+4. [Cấu trúc thư mục](#4-cấu-trúc-thư-mục)
+5. [Cài đặt và Khởi chạy](#5-cài-đặt-và-khởi-chạy)
+6. [Cấu hình môi trường](#6-cấu-hình-môi-trường-environment-variables)
+7. [Kết nối Database](#7-kết-nối-database)
+8. [Schema Database](#8-schema-database)
+9. [Tài liệu API](#9-tài-liệu-api)
+10. [Luồng dữ liệu và Logic nghiệp vụ](#10-luồng-dữ-liệu-và-logic-nghiệp-vụ)
+11. [Cơ chế xác thực và Phân quyền](#11-cơ-chế-xác-thực-và-phân-quyền)
+12. [Giải thích code quan trọng](#12-giải-thích-code-quan-trọng)
+13. [Middleware và Bảo mật](#13-middleware-và-bảo-mật)
+14. [Upload File và Cloudinary](#14-upload-file-và-cloudinary)
+15. [Frontend Architecture](#15-frontend-architecture)
+16. [Ghi chú kỹ thuật](#16-ghi-chú-kỹ-thuật-và-điểm-cải-thiện)
 
 ---
 
@@ -50,7 +51,28 @@
 
 ---
 
-## 2. Kiến trúc hệ thống
+## 2. Tiến độ hiện tại
+
+### Đã hoàn thành gần đây
+- Chuyển sang kiến trúc frontend Astro + backend Express/Node.js với PostgreSQL.
+- Hoàn thiện luồng xác thực cơ bản: đăng ký, đăng nhập, `/me`, logout và phân quyền theo role.
+- Xây dựng hệ thống player toàn cục, sidebar, layout và các trang chính của app.
+- Bổ sung luồng khôi phục mật khẩu với token có thời hạn, email reset và trang reset password.
+- Tăng cường trải nghiệm UI cho các trang auth với trạng thái loading, lỗi và thông báo thành công.
+
+### Đang ưu tiên
+- Hoàn thiện kiểm thử và rà soát linter cho cả frontend/backend.
+- Chuẩn hóa tài liệu môi trường `.env` cho local và production.
+- Cải thiện khả năng gửi email reset trong môi trường thật bằng SMTP đầy đủ.
+
+### Ghi chú về phạm vi hiện tại
+- Backend vẫn dùng stack hiện có, chưa thêm framework mới.
+- Chức năng reset mật khẩu đã được thiết kế để không ảnh hưởng đến luồng auth cũ.
+- Các thay đổi mới nhất tập trung vào trải nghiệm người dùng và bảo mật tài khoản.
+
+---
+
+## 3. Kiến trúc hệ thống
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -215,7 +237,7 @@ Shadows_of_Melody/
 
 ---
 
-## 4. Cài đặt và Khởi chạy
+## 4. Cấu trúc thư mục
 
 ### Yêu cầu hệ thống
 
@@ -270,7 +292,7 @@ curl http://localhost:5000/health
 
 ---
 
-## 5. Cấu hình môi trường (Environment Variables)
+## 5. Cài đặt và Khởi chạy
 
 File: `backend/.env`
 
@@ -304,7 +326,7 @@ CHUNK_SIZE=65536            # 64 KB (reserved, không dùng trực tiếp)
 
 ---
 
-## 6. Kết nối Database
+## 6. Cấu hình môi trường (Environment Variables)
 
 Backend sử dụng thư viện **`pg`** (node-postgres) với cơ chế **connection pool**.
 
@@ -366,7 +388,7 @@ FROM users WHERE role = 'artist' AND deleted_at IS NULL
 
 ---
 
-## 7. Schema Database
+## 7. Kết nối Database
 
 ### Sơ đồ quan hệ (ERD tóm tắt)
 
@@ -427,7 +449,7 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 
 ---
 
-## 8. Tài liệu API
+## 8. Schema Database
 
 **Base URL:** `http://localhost:5000/api`
 
@@ -676,7 +698,7 @@ Tất cả endpoint đều yêu cầu JWT. User chỉ thao tác được playlis
 
 ---
 
-## 9. Luồng dữ liệu và Logic nghiệp vụ
+## 9. Tài liệu API
 
 ### 9.1 Luồng Upload bài hát (Artist → Cloudinary → DB)
 
@@ -779,7 +801,7 @@ authController.login()
 
 ---
 
-## 10. Cơ chế xác thực và Phân quyền
+## 10. Luồng dữ liệu và Logic nghiệp vụ
 
 ### 10.1 Hệ thống Role (RBAC)
 
@@ -864,7 +886,7 @@ Manager/Admin → PATCH /api/roles/requests/:id  { action: 'approve'/'reject' }
 
 ---
 
-## 11. Giải thích code quan trọng
+## 11. Cơ chế xác thực và Phân quyền
 
 ### 11.1 Database Pool & Query Wrapper (`database.js`)
 
@@ -1157,7 +1179,7 @@ export const getStats = async (req, res) => {
 
 ---
 
-## 12. Middleware và Bảo mật
+## 12. Giải thích code quan trọng
 
 ### Rate Limiters (`rateLimiter.js`)
 
@@ -1203,7 +1225,7 @@ const errorHandler = (err, req, res, next) => {
 
 ---
 
-## 13. Upload File và Cloudinary
+## 13. Middleware và Bảo mật
 
 ### Luồng xử lý file (Zero-Disk Strategy)
 
@@ -1255,7 +1277,7 @@ await deleteFromCloudinary('songs/abc123', 'video');
 
 ---
 
-## 14. Frontend Architecture
+## 14. Upload File và Cloudinary
 
 ### Astro Pages & Routing
 
@@ -1345,7 +1367,7 @@ async function _playSong(song) {
 
 ---
 
-## 15. Ghi chú kỹ thuật và Điểm cải thiện
+## 15. Frontend Architecture
 
 | Hạng mục | Trạng thái hiện tại | Đề xuất cải thiện |
 |---|---|---|
@@ -1361,5 +1383,30 @@ async function _playSong(song) {
 
 ---
 
-*Tài liệu được phân tích và tổng hợp từ toàn bộ source code dự án — 11/04/2026.*
+## 16. Ghi chú kỹ thuật và Điểm cải thiện
+
+| Hạng mục | Trạng thái hiện tại | Đề xuất cải thiện |
+|---|---|---|
+| **Token Blocklist** | In-memory Map, process-local | Chuyển sang **Redis** cho multi-instance deployment |
+| **JWT Role Caching** | Role embed trong token, không realtime khi role thay đổi | Thêm **refresh token** hoặc giảm JWT expiry xuống 1h |
+| **Password Reset** | Đã có token một lần, hết hạn 15 phút, gửi email reset | Bổ sung SMTP production và trang email template đẹp hơn |
+| **Full-text Search** | PostgreSQL tsvector trên `songs.title` | Mở rộng thêm `unaccent` cho `artists.name` |
+| **Subscription/Payment** | Stub implementation (không có gateway thật) | Tích hợp **Stripe** hoặc **VNPay** |
+| **File Upload** | Single upload, tối đa 500MB | Xem xét **resumable/chunked upload** cho file lớn |
+| **Test Coverage** | Chưa có unit/integration tests | Thêm **Jest** + **Supertest** |
+| **API Documentation** | README này | Generate **Swagger/OpenAPI** spec tự động |
+| **Logging** | Console log cơ bản | Tích hợp **Winston** + structured log format |
+| **Monitoring** | Chưa có | Thêm health check endpoint đã có, cân nhắc **Prometheus** metrics |
+
+---
+
+### Trạng thái tính năng auth hiện tại
+- Đăng ký, đăng nhập và đăng xuất đã hoạt động ổn định.
+- Khôi phục mật khẩu đã được bổ sung với token an toàn và giới hạn thời gian.
+- Email reset password sẽ hoạt động khi cấu hình SMTP được cung cấp.
+- Token reset sẽ bị vô hiệu hóa ngay sau khi đổi mật khẩu thành công.
+
+---
+
+*Tài liệu được cập nhật theo tiến độ hiện tại của dự án — 15/05/2026.*
 
