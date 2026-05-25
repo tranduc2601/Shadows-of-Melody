@@ -91,6 +91,8 @@ import MainLayout from "../layouts/MainLayout.astro";
         </div>
 
         <button
+          type="button"
+          id="googleLoginBtn"
           class="w-full py-3 bg-[#1a2847] border border-white/10 text-gray-300 font-medium rounded-lg hover:bg-[#233d5d] transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -108,16 +110,16 @@ import MainLayout from "../layouts/MainLayout.astro";
       </div>
 
       <p class="text-center text-gray-500 text-xs mt-6">
-        By logging in, you agree to the 
-        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Terms of Service</a>
+        By continuing, you agree to our
+        <a href="/terms" class="text-purple-400 hover:text-purple-300 transition-colors">Terms of Service</a>
         and
-        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">Privacy Policy</a>
+        <a href="/privacy" class="text-purple-400 hover:text-purple-300 transition-colors">Privacy Policy</a>
       </p>
     </div>
   </div>
 
 <script>
-  import { API_BASE } from '../lib/api.js';
+  import { API_BASE, setAuth } from '../lib/api.js';
 
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
     let container = document.getElementById('toast-container');
@@ -141,6 +143,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   const errDiv  = document.getElementById('loginError') as HTMLElement;
   const banner  = document.getElementById('sessionBanner') as HTMLElement;
   const btn     = document.getElementById('loginBtn') as HTMLButtonElement;
+  const googleBtn = document.getElementById('googleLoginBtn') as HTMLButtonElement;
 
   const reason = new URLSearchParams(window.location.search).get('reason');
   if (reason === 'session_expired' && banner) banner.classList.remove('hidden');
@@ -158,6 +161,88 @@ import MainLayout from "../layouts/MainLayout.astro";
   const existingToken = localStorage.getItem('auth_token');
   if (existingToken && reason !== 'session_expired') {
     window.location.href = '/';
+  }
+
+  function completeAuth(data: any, successMsg: string) {
+    setAuth(data.token, data);
+    localStorage.setItem('me_cache', JSON.stringify(data));
+    showToast(successMsg, 'success');
+    setTimeout(() => { window.location.href = '/'; }, 800);
+  }
+
+  function loadGoogleScript() {
+    return new Promise<void>((resolve, reject) => {
+      if ((window as any).google?.accounts?.id) return resolve();
+      const existing = document.querySelector('script[data-google-gis="true"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener('error', () => reject(new Error('Failed to load Google script')), { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.dataset.googleGis = 'true';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Failed to load Google script'));
+      document.head.appendChild(script);
+    });
+  }
+
+  async function ensureGoogleInitialized() {
+    const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) throw new Error('Google login is not configured.');
+    await loadGoogleScript();
+    const google = (window as any).google;
+    if (!google?.accounts?.id) throw new Error('Google Identity Services did not load.');
+
+    if (!(window as any).__googleLoginInitialized) {
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (response: any) => {
+          if (response?.credential) loginWithGoogle(response.credential);
+        },
+      });
+      (window as any).__googleLoginInitialized = true;
+    }
+  }
+
+  async function startGoogleLogin() {
+    await ensureGoogleInitialized();
+    (window as any).google.accounts.id.prompt();
+  }
+
+  async function loginWithGoogle(credential: string) {
+    googleBtn.disabled = true;
+    googleBtn.textContent = 'Signing in with Google...';
+    errDiv.classList.add('hidden');
+    try {
+      const res = await fetch(`${API_BASE}/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        const msg = json.message || 'Google login failed';
+        if (json.code === 'ACCOUNT_LOCKED') {
+          errDiv.textContent = msg;
+          errDiv.classList.remove('hidden');
+          showToast(msg, 'error');
+          return;
+        }
+        throw new Error(msg);
+      }
+      completeAuth(json.data, 'Google login successful! Redirecting...');
+    } catch (err: any) {
+      errDiv.textContent = err.message;
+      errDiv.classList.remove('hidden');
+      showToast(err.message, 'error');
+    } finally {
+      googleBtn.disabled = false;
+      googleBtn.textContent = 'Login with Google';
+    }
   }
 
   form?.addEventListener('submit', async (e) => {
@@ -189,17 +274,30 @@ import MainLayout from "../layouts/MainLayout.astro";
         throw new Error(msg);
       }
 
-      localStorage.setItem('auth_token', json.data.token);
-      localStorage.setItem('auth_user', JSON.stringify(json.data));
-      localStorage.setItem('me_cache', JSON.stringify(json.data));
-      showToast('Login successful! Redirecting...', 'success');
-      setTimeout(() => { window.location.href = '/'; }, 800);
+      completeAuth(json.data, 'Login successful! Redirecting...');
     } catch (err: any) {
       errDiv.textContent = err.message;
       errDiv.classList.remove('hidden');
       showToast(err.message, 'error');
       btn.disabled = false;
       btn.textContent = 'Login';
+    }
+  });
+
+  googleBtn?.addEventListener('click', async () => {
+    errDiv.classList.add('hidden');
+    googleBtn.disabled = true;
+    googleBtn.textContent = 'Preparing Google...';
+    try {
+      await startGoogleLogin();
+    } catch (error: any) {
+      const msg = error?.message || 'Google login failed';
+      errDiv.textContent = msg;
+      errDiv.classList.remove('hidden');
+      showToast(msg, 'error');
+    } finally {
+      googleBtn.disabled = false;
+      googleBtn.textContent = 'Login with Google';
     }
   });
 </script>

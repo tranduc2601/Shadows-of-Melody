@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS users (
     full_name     VARCHAR(100),
     avatar_url    VARCHAR(500),
     bio           TEXT,
+    auth_provider VARCHAR(20)  NOT NULL DEFAULT 'local',
+    google_id     VARCHAR(100) UNIQUE,
     is_admin      BOOLEAN   NOT NULL DEFAULT FALSE,
     is_verified   BOOLEAN   NOT NULL DEFAULT FALSE,
     role          user_role NOT NULL DEFAULT 'user',

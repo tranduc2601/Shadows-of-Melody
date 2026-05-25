@@ -3,7 +3,7 @@ const { currentPage = 'home' } = Astro.props;
 
 const navItems = [
   { href: '/',        icon: 'home',        label: 'Home',      page: 'home'    },
-  { href: '/search',  icon: 'search',      label: 'Search',    page: 'search'  },
+  { href: '/songs',   icon: 'music_note',   label: 'Songs',     page: 'songs'   },
   { href: '/artists', icon: 'person',      label: 'Artists',   page: 'artists' },
   { href: '/subscription', icon: 'workspace_premium', label: 'Subscription', page: 'subscription', iconClass: 'text-amber-400' },
 ];
@@ -136,7 +136,7 @@ const libItems = [
       <a href="/login" title="Đăng Nhập"
          class="sidebar-nav-item flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity">
         <span class="material-symbols-outlined text-base shrink-0">login</span>
-        <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Đăng Nhập</span>
+        <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Login</span>
       </a>
     </div>
 

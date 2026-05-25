@@ -1,0 +1,88 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const sections = [
+  {
+    heading: '1. Acceptance of Terms',
+    body: 'By accessing or using Shadows of Melody, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform.',
+  },
+  {
+    heading: '2. Eligibility',
+    body: 'You must be at least 13 years old to use this service. By registering, you confirm that you meet this requirement.',
+  },
+  {
+    heading: '3. User Accounts',
+    body: 'You are responsible for maintaining the confidentiality of your account credentials. You agree not to share your account or use another user\'s account without permission. We reserve the right to suspend or terminate accounts that violate these terms.',
+  },
+  {
+    heading: '4. Content & Intellectual Property',
+    body: 'All music, artwork, and content available on Shadows of Melody are either owned by us or licensed from rights holders. You may not reproduce, distribute, or create derivative works from any content on this platform without explicit written permission.',
+  },
+  {
+    heading: '5. User-Generated Content',
+    body: 'If you upload or submit any content (e.g. playlists, profile information), you grant Shadows of Melody a non-exclusive license to display and use that content within the platform. You confirm you have the right to submit such content.',
+  },
+  {
+    heading: '6. Prohibited Conduct',
+    body: 'You agree not to: attempt to hack, reverse-engineer, or disrupt the platform; upload malicious content; impersonate others; or use the service for any unlawful purpose.',
+  },
+  {
+    heading: '7. Subscription & Payments',
+    body: 'Certain features may require a paid subscription. All payments are non-refundable unless required by applicable law. We reserve the right to change pricing with reasonable advance notice.',
+  },
+  {
+    heading: '8. Termination',
+    body: 'We may suspend or terminate your access at any time for violation of these terms or for any other reason at our discretion.',
+  },
+  {
+    heading: '9. Disclaimer of Warranties',
+    body: 'Shadows of Melody is provided "as is" without warranties of any kind. We do not guarantee uninterrupted or error-free service.',
+  },
+  {
+    heading: '10. Limitation of Liability',
+    body: 'To the fullest extent permitted by law, Shadows of Melody shall not be liable for any indirect, incidental, or consequential damages arising from your use of the platform.',
+  },
+  {
+    heading: '11. Changes to Terms',
+    body: 'We may update these terms at any time. Continued use of the platform after changes constitutes acceptance of the new terms.',
+  },
+  {
+    heading: '12. Contact',
+    body: 'For questions regarding these terms, contact us at: support@shadowsofmelody.com',
+  },
+];
+---
+
+<MainLayout title="Terms of Service - Shadows of Melody">
+  <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <a id="policy-back-link" href="/login" class="inline-flex items-center gap-2 text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors mb-8">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back
+      </a>
+
+      <div class="rounded-3xl border border-white/10 bg-[#0a1229]/85 backdrop-blur-xl shadow-2xl shadow-black/30 p-6 sm:p-8 lg:p-10">
+        <div class="mb-8 border-b border-white/10 pb-6">
+          <p class="text-sm font-medium uppercase tracking-[0.2em] text-purple-300">Shadows of Melody</p>
+          <h1 class="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">Terms of Service</h1>
+          <p class="mt-2 text-sm text-gray-400">Last updated: May 20, 2026</p>
+        </div>
+
+        <div class="space-y-8">
+          {sections.map((section) => (
+            <section>
+              <h2 class="text-lg font-bold text-white mb-3">{section.heading}</h2>
+              <p class="text-gray-300 leading-7">{section.body}</p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const backLink = document.getElementById('policy-back-link') as HTMLAnchorElement | null;
+    const token = localStorage.getItem('auth_token');
+    if (backLink) backLink.href = token ? '/' : '/login';
+  </script>
+</MainLayout>

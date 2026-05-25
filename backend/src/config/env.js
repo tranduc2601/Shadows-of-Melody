@@ -4,7 +4,6 @@ dotenv.config();
 
 const config = {
     db: {
-        // PostgreSQL connection string (dùng cho pool trong database.js)
         url: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/shadows_of_melody',
         ssl: process.env.DB_SSL === 'true',
     },
@@ -21,6 +20,9 @@ const config = {
         secret: process.env.JWT_SECRET || 'your_jwt_secret_key_change_in_production',
         expiresIn: process.env.JWT_EXPIRE || '7d',
     },
+    google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || '',
+    },
     cors: {
         origin: process.env.CORS_ORIGIN || 'http://localhost:4321',
     },
@@ -33,11 +35,10 @@ const config = {
         from: process.env.SMTP_FROM || 'Shadows of Melody <no-reply@shadows-of-melody.local>',
     },
     upload: {
-        maxFileSize: parseInt(process.env.MAX_FILE_SIZE) || 524288000, // 500MB
-        // uploadDir không còn dùng (Firebase Storage thay thế local disk)
+        maxFileSize: parseInt(process.env.MAX_FILE_SIZE) || 524288000,
     },
     streaming: {
-        chunkSize: parseInt(process.env.CHUNK_SIZE) || 65536, // 64KB
+        chunkSize: parseInt(process.env.CHUNK_SIZE) || 65536,
     },
 };
 

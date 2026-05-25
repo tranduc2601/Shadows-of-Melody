@@ -42,13 +42,19 @@ import PlayerBar from "../components/PlayerBar.astro";
         <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto ml-0 md:ml-4 shrink-0">
           <div id="header-user" class="hidden sm:flex items-center gap-2.5 relative z-30">
             <p id="header-greeting" class="text-sm text-gray-400 hidden md:block relative z-30"></p>
-            <div id="header-avatar-wrap" class="relative z-40 w-9 h-9 rounded-full overflow-visible ring-2 ring-white/10 hover:ring-purple-500/60 transition-all shrink-0 flex items-center justify-center bg-white/5 cursor-pointer select-none shadow-lg shadow-black/25">
-              <img id="header-avatar-img" src="" alt="" class="hidden w-full h-full object-cover rounded-full" />
-              <span id="header-avatar-initials" class="text-xs font-bold text-gray-300 relative z-10"></span>
+            <div id="header-avatar-wrap" class="relative z-40 w-10 aspect-square rounded-full overflow-visible ring-2 ring-white/10 hover:ring-purple-500/60 transition-all shrink-0 cursor-pointer select-none shadow-lg shadow-black/25">
+              <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-white/5">
+                <img id="header-avatar-img" src="" alt="" class="hidden w-full h-full object-cover rounded-full" />
+                <span id="header-avatar-initials" class="text-xs font-bold text-gray-300 relative z-10"></span>
+              </div>
               <div id="header-avatar-dropdown" class="hidden absolute right-0 top-full mt-2 w-44 rounded-2xl border border-white/10 bg-[#0a1229]/95 backdrop-blur-xl shadow-2xl shadow-black/40 z-[150] overflow-hidden py-1">
                 <a href="/profile" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 transition-colors">
                   <span class="material-symbols-outlined text-[18px] text-purple-400">person</span>
                   <span>Profile</span>
+                </a>
+                <a href="/settings" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-white/5 transition-colors">
+                  <span class="material-symbols-outlined text-[18px] text-cyan-400">settings</span>
+                  <span>Settings</span>
                 </a>
                 <button type="button" id="header-logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-left text-sm text-gray-200 hover:bg-white/5 transition-colors">
                   <span class="material-symbols-outlined text-[18px] text-rose-400">logout</span>
@@ -306,15 +312,19 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     const closeAvatarDropdown = () => avatarDropdown?.classList.add('hidden');
-    const toggleAvatarDropdown = () => avatarDropdown?.classList.toggle('hidden');
 
     avatarToggle?.addEventListener('click', (e) => {
       e.stopPropagation();
-      toggleAvatarDropdown();
+      const isHidden = avatarDropdown?.classList.contains('hidden');
+      document.querySelectorAll('#header-avatar-dropdown').forEach((el) => {
+        if (el !== avatarDropdown) el.classList.add('hidden');
+      });
+      if (isHidden) avatarDropdown?.classList.remove('hidden');
+      else closeAvatarDropdown();
     });
     avatarDropdown?.addEventListener('click', (e) => e.stopPropagation());
     document.addEventListener('click', (e) => {
-      if (!avatarToggle?.contains(e.target as Node)) closeAvatarDropdown();
+      if (!avatarToggle?.contains(e.target as Node) && !avatarDropdown?.contains(e.target as Node)) closeAvatarDropdown();
     });
     logoutBtn?.addEventListener('click', () => {
       clearAuth();
@@ -415,11 +425,11 @@ import PlayerBar from "../components/PlayerBar.astro";
           <td class="px-4 py-3 text-sm text-gray-400 text-center transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
           <td class="px-4 py-3 rounded-r-xl">
             <div class="flex items-center gap-1 justify-end">
-              <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-500 hover:text-purple-400 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+              <button class="btn-add-to-pl w-8 h-8 flex items-center justify-center text-gray-400 hover:text-purple-400 hover:scale-110 transition-all duration-200"
                       data-song="${encodeURIComponent(JSON.stringify(s))}" title="Add to playlist">
                 <span class="material-symbols-outlined text-[20px]">playlist_add</span>
               </button>
-              <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-500 hover:text-pink-500 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100"
+              <button class="btn-like-song w-8 h-8 flex items-center justify-center text-gray-400 hover:text-pink-500 hover:scale-110 transition-all duration-200"
                       data-id="${s.id}" data-liked="false" title="Like">
                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
               </button>
@@ -720,8 +730,7 @@ import PlayerBar from "../components/PlayerBar.astro";
     if (!row) return;
     try {
       const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-      const allRows = Array.from(document.querySelectorAll('.song-row'));
-      const queue = allRows.map(r => {
+      const queue = _allSongs.length ? _allSongs : Array.from(document.querySelectorAll('.song-row')).map(r => {
         try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
       }).filter(Boolean);
       player.playSong(song, queue);

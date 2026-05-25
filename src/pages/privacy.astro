@@ -1,0 +1,80 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const sections = [
+  {
+    heading: '1. Information We Collect',
+    body: 'Account data: name, email address, password (hashed), profile picture. Usage data: songs played, playlists created, liked songs, listening history. Technical data: IP address, browser type, device information, cookies.',
+  },
+  {
+    heading: '2. How We Use Your Information',
+    body: 'To create and manage your account. To personalize your music experience and recommendations. To process subscription payments. To send transactional emails (OTP verification, password reset). To improve platform performance and fix issues.',
+  },
+  {
+    heading: '3. Data Sharing',
+    body: 'We do not sell your personal data. We may share data with trusted third-party service providers (e.g. payment processors, email services) solely to operate the platform. We may disclose data if required by law.',
+  },
+  {
+    heading: '4. Cookies',
+    body: 'We use cookies to maintain your session, remember preferences, and analyze usage. You may disable cookies in your browser settings, though some features may not function correctly.',
+  },
+  {
+    heading: '5. Data Retention',
+    body: 'We retain your data for as long as your account is active. If you delete your account, your personal data will be permanently removed within 30 days, except where retention is required by law.',
+  },
+  {
+    heading: '6. Security',
+    body: 'We implement industry-standard security measures including password hashing, HTTPS, and access controls. However, no system is 100% secure and we cannot guarantee absolute security.',
+  },
+  {
+    heading: '7. Your Rights',
+    body: 'You have the right to: access your personal data, correct inaccurate data, request deletion of your data, and withdraw consent at any time by contacting us.',
+  },
+  {
+    heading: '8. Children\'s Privacy',
+    body: 'Shadows of Melody is not intended for children under 13. We do not knowingly collect data from children under 13.',
+  },
+  {
+    heading: '9. Changes to This Policy',
+    body: 'We may update this Privacy Policy periodically. We will notify you of significant changes via email or an in-app notice.',
+  },
+  {
+    heading: '10. Contact',
+    body: 'For privacy-related requests, contact us at: privacy@shadowsofmelody.com',
+  },
+];
+---
+
+<MainLayout title="Privacy Policy - Shadows of Melody">
+  <div class="min-h-screen bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+    <main class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <a id="policy-back-link" href="/login" class="inline-flex items-center gap-2 text-sm font-medium text-purple-300 hover:text-purple-200 transition-colors mb-8">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back
+      </a>
+
+      <div class="rounded-3xl border border-white/10 bg-[#0a1229]/85 backdrop-blur-xl shadow-2xl shadow-black/30 p-6 sm:p-8 lg:p-10">
+        <div class="mb-8 border-b border-white/10 pb-6">
+          <p class="text-sm font-medium uppercase tracking-[0.2em] text-purple-300">Shadows of Melody</p>
+          <h1 class="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">Privacy Policy</h1>
+          <p class="mt-2 text-sm text-gray-400">Last updated: May 20, 2026</p>
+        </div>
+
+        <div class="space-y-8">
+          {sections.map((section) => (
+            <section>
+              <h2 class="text-lg font-bold text-white mb-3">{section.heading}</h2>
+              <p class="text-gray-300 leading-7 whitespace-pre-line">{section.body}</p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const backLink = document.getElementById('policy-back-link') as HTMLAnchorElement | null;
+    const token = localStorage.getItem('auth_token');
+    if (backLink) backLink.href = token ? '/' : '/login';
+  </script>
+</MainLayout>

@@ -12,9 +12,6 @@
       <span id="pb-title" class="font-bold text-white text-[15px] truncate">No Music Playing</span>
       <span id="pb-artist" class="text-xs text-gray-400 truncate mt-0.5">-</span>
     </div>
-    <button id="pb-fav" type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
-      <span class="material-symbols-outlined">favorite_border</span>
-    </button>
   </div>
 
 
@@ -35,6 +32,9 @@
       <button id="pb-repeat" type="button" aria-label="Lặp lại" class="text-gray-500 hover:text-white transition-colors relative">
         <span class="material-symbols-outlined text-xl">repeat</span>
         <span id="pb-repeat-dot" class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-current opacity-0"></span>
+      </button>
+      <button id="pb-fav" type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
+        <span class="material-symbols-outlined">favorite_border</span>
       </button>
     </div>
     <div class="w-full flex items-center gap-3">
@@ -205,6 +205,7 @@
   });
 
 
+  player.preloadLibrary?.();
   player.restoreState();
   syncVolumeUI(player.volume ?? 1);
   syncSpeedUI(player.playbackRate ?? 1);
@@ -430,8 +431,11 @@
   });
 
   function setFavUI(isFav: boolean) {
-    const icon = pbFav?.querySelector('.material-symbols-outlined');
-    if (icon) icon.textContent = isFav ? 'favorite' : 'favorite_border';
+    const icon = pbFav?.querySelector('.material-symbols-outlined') as HTMLElement | null;
+    if (icon) {
+      icon.textContent = isFav ? 'favorite' : 'favorite_border';
+      icon.style.fontVariationSettings = isFav ? "'FILL' 1" : "'FILL' 0";
+    }
     pbFav?.classList.toggle('text-pink-500', isFav);
     pbFav?.classList.toggle('text-gray-400', !isFav);
   }
@@ -445,25 +449,31 @@
     } catch { setFavUI(false); }
   }
 
+  async function refreshLikedPages(songId: number, isFavorite: boolean) {
+    window.dispatchEvent(new CustomEvent('favorites:changed', {
+      detail: { songId, isFavorite },
+    }));
+    window.dispatchEvent(new CustomEvent('liked:refresh', {
+      detail: { songId, isFavorite },
+    }));
+  }
+
   pbFav?.addEventListener('click', async () => {
     const song = player.current;
     if (!song) return;
     const token = localStorage.getItem('auth_token');
     if (!token) { window.location.href = '/login'; return; }
-    const icon = pbFav.querySelector('.material-symbols-outlined');
-    const isFav = icon?.textContent === 'favorite';
+    const isFav = pbFav.dataset.liked === 'true';
     try {
+      setFavUI(!isFav);
       if (isFav) {
         await apiFetch(`/favorites/${song.id}`, { method: 'DELETE' });
-        setFavUI(false);
       } else {
         await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: song.id }) });
-        setFavUI(true);
       }
-
-      window.dispatchEvent(new CustomEvent('favorites:changed', {
-        detail: { songId: song.id, isFavorite: !isFav },
-      }));
-    } catch {}
+      await refreshLikedPages(song.id, !isFav);
+    } catch {
+      setFavUI(isFav);
+    }
   });
 </script>

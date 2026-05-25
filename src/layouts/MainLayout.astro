@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import Footer from '../components/Footer.astro';
 const { title = "Music App" } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -8,40 +7,51 @@ const { title = "Music App" } = Astro.props;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="src/assets/images/favicon.png" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="/images/hero.jpg" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" /></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" /></noscript>
   <title>{title}</title>
-
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 </head>
 
 <body>
   <div id="app" class="min-h-screen flex flex-col">
     <slot />
-    <Footer />
   </div>
 
 
-  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-    <div class="bg-[#0f1b35] border border-white/10 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative">
-      <button id="global-atp-close" type="button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <h3 class="text-white font-bold text-lg mb-1 flex items-center gap-2">
-        <span class="material-symbols-outlined text-purple-400 text-[20px]">playlist_add</span>
-        Add to Playlist
-      </h3>
-      <p id="global-atp-song-name" class="text-gray-400 text-sm mb-4 truncate"></p>
-      <div id="global-atp-list" class="space-y-1 max-h-72 overflow-y-auto pr-1">
-        <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
+  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-[#020617]/80 backdrop-blur-md p-4 sm:p-6">
+    <div class="w-full max-w-lg overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98)_0%,rgba(9,15,29,0.98)_100%)] shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
+      <div class="relative border-b border-white/10 px-5 py-4 sm:px-6 sm:py-5">
+        <div class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-purple-400/40 to-transparent"></div>
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0 pr-10">
+            <h3 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span class="material-symbols-outlined text-purple-400 text-[20px]">playlist_add</span>
+              Add to Playlist
+            </h3>
+            <p id="global-atp-song-name" class="mt-1 text-sm leading-6 text-slate-400 truncate"></p>
+          </div>
+          <button id="global-atp-close" type="button" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-colors hover:bg-white/10 hover:text-white">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
       </div>
-      <p id="global-atp-feedback" class="hidden text-xs mt-2 font-medium"></p>
-      <a href="/playlist" class="mt-4 flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors font-medium">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        Create new playlist
-      </a>
+      <div class="px-5 py-5 sm:px-6 sm:py-6">
+        <div id="global-atp-list" class="space-y-2 max-h-72 overflow-y-auto pr-1 rounded-2xl">
+          <p class="text-slate-400 text-sm text-center py-4">Loading...</p>
+        </div>
+        <p id="global-atp-feedback" class="hidden mt-3 text-xs font-medium"></p>
+        <a href="/playlist" class="mt-4 inline-flex items-center gap-2 text-sm text-purple-300 hover:text-purple-200 transition-colors font-medium">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          Create new playlist
+        </a>
+      </div>
     </div>
   </div>
 

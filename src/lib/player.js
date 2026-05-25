@@ -23,6 +23,10 @@ export const player = (() => {
   let _current = null;
   let _queue = [];
   let _queueIdx = -1;
+  let _libraryQueue = [];
+  let _fallbackAllSongs = null;
+  let _librarySignature = '';
+  let _libraryPromise = null;
   let _shuffle = false;
   let _repeat = 'none';
   let _playbackRate = 1;
@@ -56,21 +60,80 @@ export const player = (() => {
     }
     if (_queue.length > 0 && (_queueIdx < _queue.length - 1 || _repeat === 'all')) {
       _nextInternal();
-    } else {
-      _dispatch('ended');
+      return;
     }
+    _ensureFallbackQueue().then(() => {
+      if (_fallbackAllSongs?.length) {
+        _nextInternal();
+      } else {
+        _dispatch('ended');
+      }
+    });
+  }
+
+  async function _ensureFallbackQueue() {
+    if (_fallbackAllSongs?.length) return _fallbackAllSongs;
+    if (_libraryPromise) return _libraryPromise;
+    _libraryPromise = fetch(`${API_BASE}/songs?limit=500`)
+      .then((res) => res.json())
+      .then((json) => {
+        _fallbackAllSongs = Array.isArray(json?.data) ? json.data : [];
+        return _fallbackAllSongs;
+      })
+      .catch(() => {
+        _fallbackAllSongs = [];
+        return _fallbackAllSongs;
+      })
+      .finally(() => {
+        _libraryPromise = null;
+      });
+    return _libraryPromise;
+  }
+
+  function _activeQueue() {
+    return _queue.length ? _queue : _libraryQueue.length ? _libraryQueue : (_fallbackAllSongs || []);
+  }
+
+  function _syncLibraryQueueFromStoredQueue() {
+    if (!_queue.length || !_libraryQueue.length || _queue === _libraryQueue) return;
+    const queueIds = _queue.map((song) => song?.id).join(',');
+    if (queueIds && queueIds === _librarySignature) return;
+    _libraryQueue = [..._queue];
+    _librarySignature = queueIds;
+  }
+
+  async function _ensureLibraryQueue() {
+    if (_libraryQueue.length || _fallbackAllSongs?.length) return _activeQueue();
+    return await _ensureFallbackQueue();
   }
 
   function _nextInternal() {
-    if (!_queue.length) return;
+    _syncLibraryQueueFromStoredQueue();
+    const queue = _activeQueue();
+    if (!queue.length) return;
+
+    const currentId = _current?.id;
+    const queueIsComplete = !_queue.length || queue.length > _queue.length;
+
     if (_shuffle) {
-      _queueIdx = Math.floor(Math.random() * _queue.length);
+      _queueIdx = Math.floor(Math.random() * queue.length);
+    } else if (_repeat === 'all') {
+      _queueIdx = (_queueIdx + 1) % queue.length;
+    } else if (_queueIdx >= queue.length - 1 && queueIsComplete && _fallbackAllSongs?.length) {
+      const currentIndex = _fallbackAllSongs.findIndex((song) => song?.id === currentId);
+      if (currentIndex >= 0 && currentIndex < _fallbackAllSongs.length - 1) {
+        _libraryQueue = _fallbackAllSongs;
+        _queue = _fallbackAllSongs;
+        _librarySignature = _fallbackAllSongs.map((song) => song?.id).join(',');
+        _queueIdx = currentIndex + 1;
+      } else {
+        _queueIdx = Math.min(_queueIdx + 1, queue.length - 1);
+      }
     } else {
-      _queueIdx = _repeat === 'all'
-        ? (_queueIdx + 1) % _queue.length
-        : Math.min(_queueIdx + 1, _queue.length - 1);
+      _queueIdx = Math.min(_queueIdx + 1, queue.length - 1);
     }
-    _playSong(_queue[_queueIdx]);
+
+    _playSong(queue[_queueIdx]);
   }
 
   async function _playSong(song) {
@@ -115,6 +178,9 @@ export const player = (() => {
 
     get queueIndex() { return _queueIdx; },
 
+    preloadLibrary() {
+      return _ensureFallbackQueue();
+    },
 
     /**
      * @param {unknown} song
@@ -123,7 +189,13 @@ export const player = (() => {
     playSong(song, queue = null) {
       if (queue) {
         _queue = queue;
+        _libraryQueue = queue;
+        _librarySignature = queue.map((s) => s?.id).join(',');
         _queueIdx = queue.findIndex(s => s.id === song.id);
+        if (_queueIdx < 0) _queueIdx = 0;
+      } else if (!_queue.length && _libraryQueue.length) {
+        _queue = _libraryQueue;
+        _queueIdx = _queue.findIndex(s => s.id === song.id);
         if (_queueIdx < 0) _queueIdx = 0;
       }
       _playSong(song);
@@ -134,13 +206,19 @@ export const player = (() => {
       _audio.paused ? _audio.play() : _audio.pause();
     },
 
-    next() { _nextInternal(); },
+    async next() {
+      await _ensureLibraryQueue();
+      _nextInternal();
+    },
 
-    prev() {
+    async prev() {
       if (_audio && _audio.currentTime > 3) { _audio.currentTime = 0; return; }
-      if (!_queue.length) return;
+      _syncLibraryQueueFromStoredQueue();
+      await _ensureLibraryQueue();
+      const queue = _activeQueue();
+      if (!queue.length) return;
       _queueIdx = Math.max(0, _queueIdx - 1);
-      _playSong(_queue[_queueIdx]);
+      _playSong(queue[_queueIdx]);
     },
 
     seek(fraction) {
@@ -198,6 +276,8 @@ export const player = (() => {
 
         _current = state.song;
         _queue = state.queue || [];
+        _libraryQueue = [..._queue];
+        _librarySignature = _libraryQueue.map((s) => s?.id).join(',');
         _queueIdx = state.queueIdx ?? -1;
         _shuffle = state.shuffle ?? false;
         _repeat = state.repeat ?? 'none';
@@ -237,6 +317,9 @@ export const player = (() => {
       }
       _current = null;
       _queue = [];
+      _libraryQueue = [];
+      _fallbackAllSongs = null;
+      _librarySignature = '';
       _queueIdx = -1;
       _shuffle = false;
       _repeat = 'none';

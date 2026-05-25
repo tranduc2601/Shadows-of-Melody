@@ -6,6 +6,7 @@ import { pool } from '../config/database.js';
 import crypto from 'crypto';
 import config from '../config/env.js';
 import nodemailer from 'nodemailer';
+import { OAuth2Client } from 'google-auth-library';
 
 export const register = async (req, res) => {
     try {
@@ -93,6 +94,136 @@ export const register = async (req, res) => {
             success: false,
             message: 'Registration failed',
         });
+    }
+};
+
+const googleClient = config.google?.clientId ? new OAuth2Client(config.google.clientId) : null;
+
+function buildUsernameFromGoogle(name, email) {
+    const base = (name || email?.split('@')[0] || 'user')
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .slice(0, 20);
+    return base || `user_${Date.now()}`;
+}
+
+async function ensureUniqueUsername(baseUsername) {
+    let username = baseUsername;
+    let suffix = 0;
+    while (await User.findByUsername(username)) {
+        suffix += 1;
+        const trimmedBase = baseUsername.slice(0, Math.max(1, 20 - String(suffix).length - 1));
+        username = `${trimmedBase}_${suffix}`;
+    }
+    return username;
+}
+
+async function syncGoogleUser({ googleSub, email, name, picture, emailVerified }) {
+    let user = await User.findByGoogleId(googleSub);
+    if (user) {
+        const updateData = {};
+        if (picture && user.avatar_url !== picture) updateData.avatar_url = picture;
+        if (!user.is_verified && emailVerified) updateData.is_verified = true;
+        if (!user.auth_provider) updateData.auth_provider = 'google';
+        if (Object.keys(updateData).length) {
+            await User.update(user.id, updateData);
+            user = { ...user, ...updateData };
+        }
+        return user;
+    }
+
+    user = await User.findByEmail(email);
+    if (user) {
+        const updateData = {
+            google_id: googleSub,
+            auth_provider: user.auth_provider || 'google',
+            is_verified: true,
+        };
+        if (picture && !user.avatar_url) updateData.avatar_url = picture;
+        await User.update(user.id, updateData);
+        return { ...user, ...updateData };
+    }
+
+    const username = await ensureUniqueUsername(buildUsernameFromGoogle(name, email));
+    const userId = await User.createOAuthUser({
+        username,
+        email,
+        avatarUrl: picture || null,
+        authProvider: 'google',
+        googleId: googleSub,
+    });
+
+    return User.findById(userId);
+}
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { credential } = req.body || {};
+        if (!credential) {
+            return res.status(400).json({ success: false, message: 'Google credential is required' });
+        }
+        if (!googleClient) {
+            return res.status(500).json({ success: false, message: 'Google login is not configured' });
+        }
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: config.google.clientId,
+        });
+        const payload = ticket.getPayload();
+        if (!payload?.email || !payload?.sub) {
+            return res.status(400).json({ success: false, message: 'Invalid Google account data' });
+        }
+        if (payload.email_verified === false) {
+            return res.status(400).json({ success: false, message: 'Google email is not verified' });
+        }
+
+        if (config.google.clientId && payload.aud !== config.google.clientId) {
+            return res.status(400).json({ success: false, message: 'Google token audience mismatch' });
+        }
+
+        const user = await syncGoogleUser({
+            googleSub: payload.sub,
+            email: payload.email,
+            name: payload.name,
+            picture: payload.picture,
+            emailVerified: payload.email_verified,
+        });
+
+        if (user.is_locked) {
+            return res.status(403).json({
+                success: false,
+                message: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.',
+                code: 'ACCOUNT_LOCKED',
+            });
+        }
+
+        const token = generateToken({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role ?? 'user',
+            is_admin: user.is_admin,
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Google login successful',
+            data: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                avatar_url: user.avatar_url,
+                role: user.role ?? 'user',
+                is_admin: user.is_admin,
+                token,
+            },
+        });
+    } catch (error) {
+        console.error('GoogleLogin error:', error);
+        return res.status(500).json({ success: false, message: 'Google login failed' });
     }
 };
 
@@ -462,18 +593,44 @@ export const uploadAvatar = async (req, res) => {
     }
 };
 
+export const validateAccountPassword = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { password } = req.body || {};
+        if (!password || !String(password).trim()) {
+            return res.status(400).json({ success: false, message: 'Password confirmation is required' });
+        }
+
+        const [rows] = await pool.query('SELECT password_hash FROM users WHERE id = ? AND deleted_at IS NULL', [userId]);
+        const userRow = rows[0];
+        if (!userRow) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const valid = await User.verifyPassword(password, userRow.password_hash || '');
+        if (!valid) {
+            return res.status(400).json({ success: false, message: 'Password is incorrect' });
+        }
+
+        return res.status(200).json({ success: true, message: 'Password verified' });
+    } catch (error) {
+        console.error('ValidateAccountPassword error:', error);
+        return res.status(500).json({ success: false, message: 'Failed to validate password' });
+    }
+};
+
 export const deleteAccount = async (req, res) => {
     const client = await pool.connect();
     try {
         const userId = req.user.id;
         const { password } = req.body || {};
-        if (!password) {
+        if (!password || !String(password).trim()) {
             return res.status(400).json({ success: false, message: 'Password confirmation is required' });
         }
 
         await client.query('BEGIN');
-        const [rows] = await client.query('SELECT password_hash, role FROM users WHERE id = $1 AND deleted_at IS NULL', [userId]);
-        const userRow = rows[0];
+        const userResult = await client.query('SELECT password_hash, role FROM users WHERE id = $1 AND deleted_at IS NULL', [userId]);
+        const userRow = userResult.rows[0];
         if (!userRow) {
             await client.query('ROLLBACK');
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -484,24 +641,53 @@ export const deleteAccount = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Password is incorrect' });
         }
 
-        await client.query('DELETE FROM artist_follows WHERE user_id = $1', [userId]);
         await client.query('DELETE FROM favorites WHERE user_id = $1', [userId]);
         await client.query('DELETE FROM listening_history WHERE user_id = $1', [userId]);
         await client.query('DELETE FROM playlist_songs WHERE playlist_id IN (SELECT id FROM playlists WHERE user_id = $1)', [userId]);
         await client.query('DELETE FROM playlists WHERE user_id = $1', [userId]);
-        await client.query('DELETE FROM subscription_history WHERE user_id = $1', [userId]);
         await client.query('DELETE FROM subscriptions WHERE user_id = $1', [userId]);
-        await client.query('DELETE FROM artist_requests WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM payments WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM role_requests WHERE user_id = $1', [userId]);
+        // Some deployments do not include optional tables; ignore missing-table errors.
+        const optionalCleanup = [
+            ['DELETE FROM subscription_history WHERE user_id = $1', [userId]],
+            ['DELETE FROM artist_requests WHERE user_id = $1', [userId]],
+            ['DELETE FROM artist_follows WHERE user_id = $1', [userId]],
+            ['DELETE FROM artist_follows WHERE artist_id = $1', [userId]],
+        ];
+        for (const [sql, params] of optionalCleanup) {
+            try {
+                await client.query(sql, params);
+            } catch (err) {
+                if (err?.code !== '42P01') throw err;
+            }
+        }
 
-        const [artistRows] = await client.query('SELECT id FROM artists WHERE user_id = $1', [userId]);
-        for (const artist of artistRows) {
+        const artistResult = await client.query('SELECT id FROM artists WHERE user_id = $1', [userId]);
+        for (const artist of artistResult.rows) {
             await client.query('DELETE FROM song_artists WHERE artist_id = $1', [artist.id]);
-            await client.query('DELETE FROM artist_follows WHERE artist_id = $1', [artist.id]);
             await client.query('DELETE FROM albums WHERE artist_id = $1', [artist.id]);
             await client.query('DELETE FROM artists WHERE id = $1', [artist.id]);
         }
 
-        await client.query('DELETE FROM users WHERE id = $1', [userId]);
+        await client.query(
+            `UPDATE users
+             SET deleted_at = NOW(),
+                 email = CONCAT('deleted_', id, '@deleted.local'),
+                 username = CONCAT('deleted_user_', id),
+                 full_name = NULL,
+                 avatar_url = NULL,
+                 bio = NULL,
+                 auth_provider = 'deleted',
+                 google_id = NULL,
+                 is_admin = FALSE,
+                 is_verified = FALSE,
+                 role = 'user',
+                 is_locked = TRUE,
+                 updated_at = NOW()
+             WHERE id = $1`,
+            [userId]
+        );
         await client.query('COMMIT');
         revokeToken(req._token, req.user);
         return res.status(200).json({ success: true, message: 'Account deleted successfully' });

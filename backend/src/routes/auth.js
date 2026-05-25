@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.post('/register', authLimiter, authController.register);
 router.post('/login', authLimiter, authController.login);
+router.post('/google', authLimiter, authController.googleLogin);
 router.post('/forgot-password', authLimiter, authController.requestPasswordReset);
 router.get('/reset-password/validate', authController.validatePasswordResetToken);
 router.post('/reset-password', authLimiter, authController.resetPassword);
@@ -16,6 +17,7 @@ router.post('/reset-password', authLimiter, authController.resetPassword);
 
 router.get('/me', requireAuth, authController.getMe);
 router.put('/profile', requireAuth, authController.updateProfile);
+router.post('/account/validate-password', requireAuth, authController.validateAccountPassword);
 router.delete('/account', requireAuth, authController.deleteAccount);
 router.post('/upload-avatar', requireAuth, uploadImage.single('avatar'), authController.uploadAvatar);
 router.post('/upload-banner', requireAuth, uploadImage.single('banner'), authController.uploadBanner);

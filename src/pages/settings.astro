@@ -1,5 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import Modal from "../components/Modal.astro";
 
 const categories = [
   { id: "account", label: "Account", icon: "manage_accounts" },
@@ -167,6 +168,33 @@ const categories = [
             </div>
           </div>
 
+          <Modal id="delete-account-modal" title="Delete Account" description="Enter your password to continue, then confirm permanently deleting your account.">
+            <div id="delete-account-step-1" class="space-y-4 transition-all duration-200 ease-out">
+              <div>
+                <label for="delete-account-password" class="text-sm font-medium text-gray-300 mb-2 block">Current Password</label>
+                <div class="relative">
+                  <input id="delete-account-password" type="password" autocomplete="current-password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 text-white rounded-xl py-2.5 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all placeholder-gray-600" />
+                  <button type="button" id="toggle-delete-password" class="absolute inset-y-0 right-0 flex items-center justify-center w-11 text-gray-400 hover:text-white transition-colors" aria-label="Show password">
+                    <span class="material-symbols-outlined text-[20px]" data-password-toggle-icon>visibility</span>
+                  </button>
+                </div>
+                <p id="delete-account-password-error" class="mt-2 text-xs text-red-400 hidden"></p>
+              </div>
+              <div class="flex items-center justify-end gap-3">
+                <button type="button" data-delete-cancel class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all">Cancel</button>
+                <button type="button" data-delete-next class="px-4 py-2 bg-red-500/15 border border-red-500/30 hover:bg-red-500/25 text-red-300 rounded-xl text-sm font-medium transition-all">Continue</button>
+              </div>
+            </div>
+
+            <div id="delete-account-step-2" class="hidden space-y-4 transition-all duration-200 ease-out">
+              <p class="text-sm text-gray-300 leading-7">Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost.</p>
+              <div class="flex items-center justify-end gap-3">
+                <button type="button" data-delete-back class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all">Cancel</button>
+                <button type="button" data-delete-confirm class="px-4 py-2 bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 text-red-200 rounded-xl text-sm font-medium transition-all">Confirm Delete</button>
+              </div>
+            </div>
+          </Modal>
+
         </div>
       </div>
     </main>
@@ -252,7 +280,7 @@ const categories = [
   }
 
   const uploadBtn  = document.getElementById('upload-avatar-btn') as HTMLButtonElement;
-  const deleteBtn  = document.getElementById('delete-avatar-btn') as HTMLButtonElement;
+  const removeAvatarBtn  = document.getElementById('delete-avatar-btn') as HTMLButtonElement;
   const fileInput  = document.getElementById('avatar-file-input') as HTMLInputElement;
 
   uploadBtn?.addEventListener('click', () => fileInput?.click());
@@ -285,7 +313,7 @@ const categories = [
     }
   });
 
-  deleteBtn?.addEventListener('click', async () => {
+  removeAvatarBtn?.addEventListener('click', async () => {
     setAvatarPreview(null);
     try {
       await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ avatar_url: null }) });
@@ -400,9 +428,9 @@ const categories = [
 
     const section = document.getElementById('artist-request-section') as HTMLElement;
     const btn     = document.getElementById('settings-artist-request-btn') as HTMLButtonElement;
-    const label   = document.getElementById('settings-artist-label') as HTMLElement;
-    const status  = document.getElementById('artist-request-status') as HTMLElement;
-    if (!section || !btn) return;
+    const label   = document.getElementById('settings-artist-label') as HTMLElement | null;
+    const status  = document.getElementById('artist-request-status') as HTMLElement | null;
+    if (!section || !btn || !label) return;
 
     try {
       const { data: req } = await apiFetch('/roles/my-request');
@@ -433,18 +461,123 @@ const categories = [
         btn.disabled = false;
         if (status) status.textContent = '\u26A0\uFE0F ' + (err.message || 'Failed to submit request.');
       }
-});
+    });
   })();
 
-  document.getElementById('delete-account-btn')?.addEventListener('click', async () => {
-    const confirmed = window.confirm('Are you sure you want to permanently delete your account? This cannot be undone.');
-    if (!confirmed) return;
-    const password = window.prompt('Enter your current password to confirm deletion:');
-    if (!password) return;
-    const btn = document.getElementById('delete-account-btn') as HTMLButtonElement;
-    const prevText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = 'Deleting...';
+  const deleteAccountBtn = document.getElementById('delete-account-btn') as HTMLButtonElement | null;
+  const deleteStep1 = document.getElementById('delete-account-step-1') as HTMLElement | null;
+  const deleteStep2 = document.getElementById('delete-account-step-2') as HTMLElement | null;
+  const deletePassword = document.getElementById('delete-account-password') as HTMLInputElement | null;
+  const deletePasswordError = document.getElementById('delete-account-password-error') as HTMLElement | null;
+  const toggleDeletePassword = document.getElementById('toggle-delete-password') as HTMLButtonElement | null;
+  const deletePasswordIcon = document.querySelector('[data-password-toggle-icon]') as HTMLElement | null;
+  const deleteModal = document.getElementById('delete-account-modal') as HTMLElement | null;
+  const deleteModalClose = deleteModal?.querySelector('[data-modal-close]') as HTMLButtonElement | null;
+  const deleteCancelBtns = deleteModal?.querySelectorAll('[data-delete-cancel]') ?? [];
+  const deleteNextBtn = deleteModal?.querySelector('[data-delete-next]') as HTMLButtonElement | null;
+  const deleteBackBtn = deleteModal?.querySelector('[data-delete-back]') as HTMLButtonElement | null;
+  const deleteConfirmBtn = deleteModal?.querySelector('[data-delete-confirm]') as HTMLButtonElement | null;
+
+  async function validateDeletePassword(password: string) {
+    const response = await apiFetch('/auth/account/validate-password', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    });
+    return response;
+  }
+
+  function setDeletePasswordError(message: string) {
+    if (!deletePasswordError) return;
+    deletePasswordError.textContent = message;
+    deletePasswordError.classList.toggle('hidden', !message);
+  }
+
+  function openDeleteModal() {
+    if (!deleteModal || !deleteStep1 || !deleteStep2) return;
+    deleteModal.classList.remove('hidden');
+    deleteModal.classList.add('flex');
+    deleteStep1.classList.remove('hidden');
+    deleteStep2.classList.add('hidden');
+    deleteStep1.classList.remove('translate-x-[-24px]', 'opacity-0');
+    deleteStep1.classList.add('translate-x-0', 'opacity-100');
+    deleteStep2.classList.remove('translate-x-0', 'opacity-100');
+    deleteStep2.classList.add('translate-x-full', 'opacity-0');
+    if (deletePassword) {
+      deletePassword.value = '';
+      deletePassword.type = 'password';
+    }
+    setDeletePasswordError('');
+    if (deletePasswordIcon) deletePasswordIcon.textContent = 'visibility';
+    toggleDeletePassword?.setAttribute('aria-label', 'Show password');
+    deletePassword?.focus();
+  }
+
+  function closeDeleteModal() {
+    if (!deleteModal) return;
+    deleteModal.classList.add('hidden');
+    deleteModal.classList.remove('flex');
+  }
+
+  function goDeleteStep2() {
+    if (!deleteStep1 || !deleteStep2) return;
+    deleteStep1.classList.add('opacity-0', 'translate-x-[-24px]');
+    deleteStep1.classList.remove('opacity-100', 'translate-x-0');
+    setTimeout(() => {
+      deleteStep1.classList.add('hidden');
+      deleteStep2.classList.remove('hidden');
+      deleteStep2.classList.remove('translate-x-full', 'opacity-0');
+      deleteStep2.classList.add('translate-x-0', 'opacity-100');
+    }, 180);
+  }
+
+  deleteAccountBtn?.addEventListener('click', openDeleteModal);
+  deleteModalClose?.addEventListener('click', closeDeleteModal);
+  deleteCancelBtns.forEach(btn => btn.addEventListener('click', closeDeleteModal));
+  deletePassword?.addEventListener('input', () => setDeletePasswordError(''));
+  toggleDeletePassword?.addEventListener('click', () => {
+    if (!deletePassword || !deletePasswordIcon) return;
+    const isHidden = deletePassword.type === 'password';
+    deletePassword.type = isHidden ? 'text' : 'password';
+    deletePasswordIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+    toggleDeletePassword.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+  });
+  deleteBackBtn?.addEventListener('click', () => {
+    if (!deleteStep1 || !deleteStep2) return;
+    deleteStep2.classList.add('opacity-0', 'translate-x-full');
+    deleteStep2.classList.remove('opacity-100', 'translate-x-0');
+    setTimeout(() => {
+      deleteStep2.classList.add('hidden');
+      deleteStep1.classList.remove('hidden');
+      deleteStep1.classList.remove('translate-x-[-24px]', 'opacity-0');
+      deleteStep1.classList.add('translate-x-0', 'opacity-100');
+    }, 180);
+  });
+  deleteNextBtn?.addEventListener('click', async () => {
+    const password = deletePassword?.value.trim();
+    if (!password) { setDeletePasswordError('Please enter your current password.'); return; }
+    const prevText = deleteNextBtn.innerHTML;
+    deleteNextBtn.disabled = true;
+    deleteNextBtn.innerHTML = 'Checking...';
+    try {
+      await validateDeletePassword(password);
+      setDeletePasswordError('');
+      goDeleteStep2();
+    } catch (err: any) {
+      const message = err?.message || 'Password is incorrect.';
+      setDeletePasswordError(message);
+      showToast(message, 'error');
+    } finally {
+      deleteNextBtn.disabled = false;
+      deleteNextBtn.innerHTML = prevText;
+    }
+  });
+  deleteConfirmBtn?.addEventListener('click', async () => {
+    const password = deletePassword?.value.trim();
+    if (!password) { setDeletePasswordError('Please enter your current password.'); return; }
+    if (password.length < 8) { setDeletePasswordError('Password must be at least 8 characters.'); return; }
+    const prevText = deleteConfirmBtn.innerHTML;
+    deleteConfirmBtn.disabled = true;
+    deleteConfirmBtn.innerHTML = 'Deleting...';
     try {
       await apiFetch('/auth/account', {
         method: 'DELETE',
@@ -455,9 +588,9 @@ const categories = [
       clearAuth();
       window.location.href = '/signup';
     } catch (err: any) {
-      showToast('Failed to delete account: ' + err.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = prevText;
+      showToast(err?.message || 'Failed to delete account.', 'error');
+      deleteConfirmBtn.disabled = false;
+      deleteConfirmBtn.innerHTML = prevText;
     }
   });
 

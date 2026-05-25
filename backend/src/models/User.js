@@ -12,6 +12,40 @@ class User {
         return rows[0].id;
     }
 
+    static async createOAuthUser({ username, email, avatarUrl = null, password = null, authProvider = 'google', googleId = null }) {
+        const rawPassword = password || crypto.randomBytes(32).toString('hex');
+        const hashedPassword = await bcryptjs.hash(rawPassword, 10);
+        const [rows] = await pool.query(
+            `INSERT INTO users (username, email, password_hash, avatar_url, is_verified, auth_provider, google_id)
+             VALUES (?, ?, ?, ?, TRUE, ?, ?)
+             RETURNING id`,
+            [username, email, hashedPassword, avatarUrl, authProvider, googleId]
+        );
+        return rows[0].id;
+    }
+
+    static async findByGoogleId(googleId) {
+        const [rows] = await pool.query('SELECT * FROM users WHERE google_id = ? AND deleted_at IS NULL', [googleId]);
+        return rows[0];
+    }
+
+    static async findByGoogleEmail(email) {
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ? AND deleted_at IS NULL', [email]);
+        return rows[0];
+    }
+
+    static async updateById(id, data) {
+        const fields = Object.keys(data)
+            .map(key => `${key} = ?`)
+            .join(', ');
+        const values = Object.values(data);
+
+        await pool.query(
+            `UPDATE users SET ${fields}, updated_at = NOW() WHERE id = ?`,
+            [...values, id]
+        );
+    }
+
     static async findByEmail(email) {
         const [rows] = await pool.query('SELECT * FROM users WHERE email = ? AND deleted_at IS NULL', [email]);
         return rows[0];

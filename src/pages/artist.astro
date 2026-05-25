@@ -6,111 +6,22 @@ import PlayerBar from "../components/PlayerBar.astro";
 
 <MainLayout title="Artist - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
-
     <Sidebar currentPage="artists" />
-
-    <main class="flex-1 flex flex-col overflow-hidden relative min-w-0">
-      <div class="absolute top-0 left-0 w-[55%] h-[55%] bg-purple-900/10 blur-[160px] rounded-full pointer-events-none"></div>
-      <div class="absolute bottom-[20%] right-0 w-[35%] h-[40%] bg-indigo-900/10 blur-[130px] rounded-full pointer-events-none"></div>
-
-      <div id="hero-section" class="relative shrink-0 h-[18rem] sm:h-72 overflow-hidden">
-        <div id="hero-bg" class="absolute inset-0 opacity-70 transition-all duration-700" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-[#060e20]"></div>
-
-        <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-4 sm:px-8 z-10 gap-3 min-w-0">
-          <a href="/artists" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors" aria-label="Back">
-            <span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span>
-          </a>
-          <nav class="text-sm text-gray-400 flex items-center gap-2">
-            <a href="/" class="hover:text-white transition-colors">Home</a>
-            <span>›</span>
-            <a href="/artists" class="hover:text-white transition-colors">Artists</a>
-            <span>›</span>
-            <span id="breadcrumb-name" class="text-gray-200">Loading…</span>
-          </nav>
-        </header>
-
-        <div class="absolute bottom-0 left-0 right-0 px-4 sm:px-8 pb-5 sm:pb-6 z-10">
-          <div class="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
-            <div id="hero-avatar" class="w-20 h-20 sm:w-28 sm:h-28 rounded-full shrink-0 border-4 border-white/10 shadow-2xl overflow-hidden self-start sm:self-auto" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="flex items-center gap-1 text-xs text-blue-400 font-semibold">
-                  <span class="material-symbols-outlined text-sm">verified</span>Verified Artist
-                </span>
-              </div>
-              <h1 id="hero-name" class="text-3xl sm:text-5xl font-black text-white drop-shadow-xl truncate">—</h1>
-              <div class="flex flex-wrap items-center gap-4 mt-1.5">
-                <p id="hero-monthly" class="text-white/90 text-sm font-medium">
-                  <span id="hero-monthly-count">—</span>
-                  <span class="text-gray-400"> monthly listeners</span>
-                </p>
-                <span class="text-gray-600 text-xs">·</span>
-                <p id="hero-followers" class="text-gray-300 text-sm">
-                  <span id="hero-followers-count">—</span>
-                  <span class="text-gray-400"> followers</span>
-                </p>
-              </div>
-            </div>
-          </div>
+    <main class="flex-1 flex flex-col overflow-hidden relative min-w-0 bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-8 custom-scrollbar">
+        <div class="flex items-center gap-4 mb-6">
+          <a href="/artists" class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"><span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span></a>
+          <h1 id="artist-name" class="text-3xl font-black text-white">Artist</h1>
         </div>
+        <section class="mb-10"><h2 class="text-xl font-bold text-white mb-4">Songs</h2><div id="artist-songs" class="space-y-2"></div></section>
+        <section><h2 class="text-xl font-bold text-white mb-4">Albums</h2><div id="artist-albums" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div></section>
       </div>
-
-      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 relative z-10 custom-scrollbar">
-
-        <div class="flex flex-wrap items-center gap-3 py-5 sm:py-6">
-          <button id="play-btn" class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
-            <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
-          </button>
-          <button id="shuffle-btn" class="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
-            <span class="material-symbols-outlined text-[18px]">shuffle</span>Shuffle
-          </button>
-          <button id="follow-btn"
-            class="hidden items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border-2 transition-all duration-200
-                   border-white/30 text-white hover:border-purple-400 hover:text-purple-300">
-            <span id="follow-btn-icon" class="material-symbols-outlined text-[18px]">person_add</span>
-            <span id="follow-btn-label">Follow</span>
-          </button>
-          <span id="song-count-label" class="text-sm text-gray-500"></span>
-          <div class="ml-auto text-sm text-gray-500 italic max-w-xs truncate hidden md:block" id="bio-text"></div>
-        </div>
-
-        <section class="mb-10">
-          <h2 class="text-xl font-bold text-white mb-4">Songs</h2>
-          <div id="songs-list" class="space-y-1 overflow-hidden rounded-2xl">
-            <p class="text-gray-500 text-sm text-center py-6">Loading…</p>
-          </div>
-        </section>
-
-        <section class="mb-10" id="albums-section">
-          <h2 class="text-xl font-bold text-white mb-4">Albums</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="albums-grid">
-            <p class="col-span-4 text-gray-500 text-sm text-center py-6">Loading…</p>
-          </div>
-        </section>
-
-      </div>
-
       <PlayerBar />
     </main>
   </div>
-
-  <div id="atp-backdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div id="atp-modal" class="bg-[#0f1a2e] border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm max-h-[80vh] flex flex-col overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-        <h3 class="text-white font-semibold text-base">Add to Playlist</h3>
-        <button id="atp-close" class="text-gray-400 hover:text-white transition-colors">
-          <span class="material-symbols-outlined text-xl">close</span>
-        </button>
-      </div>
-      <div id="atp-list" class="overflow-y-auto flex-1 p-3 space-y-1 custom-scrollbar">
-        <p class="text-gray-500 text-sm text-center py-4">Loading playlists…</p>
-      </div>
-    </div>
-  </div>
-
 <script>
-  import { apiFetch, formatCount, formatDuration } from '../lib/api.js';
+  // @ts-nocheck
+  import { apiFetch, formatDuration } from '../lib/api.js';
   import { player } from '../lib/player.js';
 
   const GRADS = [
@@ -123,375 +34,66 @@ import PlayerBar from "../components/PlayerBar.astro";
     'linear-gradient(135deg,#d946ef,#7c3aed)',
     'linear-gradient(135deg,#fb923c,#fb7185)',
   ];
-  const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
 
-  const params = new URLSearchParams(window.location.search);
-  const artistId = params.get('id');
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) location.href = '/artists';
 
-  if (!artistId) {
-    window.location.href = '/artists';
-  } else {
-    loadArtist(artistId);
-  }
+  const nameEl = document.getElementById('artist-name');
+  const songsEl = document.getElementById('artist-songs');
+  const albumsEl = document.getElementById('artist-albums');
 
-  let _isFollowing = false;
-  let _followersCount = 0;
-  let _followInFlight = false;
-  let _canFollowArtist = true;
+  async function loadArtist() {
+    const { data: a } = await apiFetch(`/artists/${id}`);
+    if (!a) return;
 
-  function setFollowUI(following: boolean, count: number) {
-    _isFollowing = following;
-    _followersCount = count;
-    const btn    = document.getElementById('follow-btn') as HTMLButtonElement;
-    const icon   = document.getElementById('follow-btn-icon') as HTMLElement;
-    const label  = document.getElementById('follow-btn-label') as HTMLElement;
-    const cntEl  = document.getElementById('hero-followers-count') as HTMLElement;
-    if (!btn) return;
-    if (!_canFollowArtist) {
-      btn.disabled = true;
-      btn.classList.add('hidden');
-      if (cntEl) cntEl.textContent = formatCount(count);
-      return;
-    }
-    if (following) {
-      btn.classList.remove('border-white/30', 'text-white', 'hover:border-purple-400', 'hover:text-purple-300');
-      btn.classList.add('border-purple-500', 'text-purple-300', 'bg-purple-500/10', 'hover:bg-red-500/10', 'hover:border-red-500/60', 'hover:text-red-400');
-      if (icon)  icon.textContent  = 'how_to_reg';
-      if (label) label.textContent = 'Following';
-    } else {
-      btn.classList.add('border-white/30', 'text-white', 'hover:border-purple-400', 'hover:text-purple-300');
-      btn.classList.remove('border-purple-500', 'text-purple-300', 'bg-purple-500/10', 'hover:bg-red-500/10', 'hover:border-red-500/60', 'hover:text-red-400');
-      if (icon)  icon.textContent  = 'person_add';
-      if (label) label.textContent = 'Follow';
-    }
-    if (cntEl) cntEl.textContent = formatCount(count);
-  }
+    if (nameEl) nameEl.textContent = a.name;
+    document.title = `${a.name} - Shadows of Melody`;
 
-  document.getElementById('follow-btn')?.addEventListener('click', async () => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) { window.location.href = '/login'; return; }
-    if (_followInFlight || !artistId) return;
-
-    if (!_canFollowArtist) {
-      showToast('You cannot follow your own artist profile.', 'error');
-      return;
+    if (songsEl) {
+      const songs = Array.isArray(a.songs) ? a.songs : [];
+      songsEl.innerHTML = songs.map((s, i) => `
+        <div class="group flex items-center gap-4 px-4 py-4 rounded-2xl hover:bg-white/[0.05] transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
+          <span class="w-6 text-center text-gray-500 group-hover:hidden">${i + 1}</span>
+          <span class="material-symbols-outlined text-purple-400 hidden group-hover:block text-[20px]">play_arrow</span>
+          <div class="w-12 h-12 rounded-lg shrink-0 overflow-hidden" style="background:${GRADS[(s.id - 1) % GRADS.length]}">
+            ${s.cover_url ? `<img src="${s.cover_url}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt=""/>` : ''}
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-white group-hover:text-purple-300 truncate">${s.title}</p>
+            <p class="text-xs text-gray-500">${s.artist_names || a.name}</p>
+          </div>
+          <span class="text-sm text-gray-500">${formatDuration(s.duration)}</span>
+        </div>
+      `).join('') || '<p class="text-gray-500 text-sm">No songs yet.</p>';
     }
 
-    _followInFlight = true;
-
-    const btn = document.getElementById('follow-btn') as HTMLButtonElement;
-    if (btn) btn.disabled = true;
-
-    try {
-      const method = _isFollowing ? 'DELETE' : 'POST';
-      const { data } = await apiFetch(`/artists/${artistId}/follow`, { method });
-      setFollowUI(data.is_following, data.followers_count);
-      showToast(data.is_following ? 'Following' : 'Unfollowed', 'success');
-    } catch (err: any) {
-      showToast(err.message || 'Failed', 'error');
-    } finally {
-      _followInFlight = false;
-      if (btn) btn.disabled = false;
-    }
-  });
-
-  async function loadArtist(id: string) {
-    const token = localStorage.getItem('auth_token');
-
-    const [artistRes, albumsRes] = await Promise.allSettled([
-      apiFetch(`/artists/${id}`),
-      apiFetch(`/albums/artist/${id}?limit=8`),
-    ]);
-
-    if (artistRes.status === 'rejected' || !artistRes.value?.success) {
-      document.getElementById('hero-name')!.textContent = 'Artist not found';
-      document.getElementById('songs-list')!.innerHTML = '<p class="text-gray-500 text-sm text-center py-6">Could not load artist data.</p>';
-      document.getElementById('albums-grid')!.innerHTML = '';
-      return;
-    }
-
-    const artist = artistRes.value.data;
-    const albums: any[] = albumsRes.status === 'fulfilled' ? (albumsRes.value.data || []) : [];
-
-    document.title = `${artist.name} - Shadows of Melody`;
-
-    const g = grad(artist.id);
-    const heroBg = document.getElementById('hero-bg') as HTMLElement;
-    heroBg.style.background = g;
-    if (artist.cover_url) {
-      heroBg.style.backgroundImage = `url('${artist.cover_url}')`;
-      heroBg.style.backgroundSize = 'cover';
-      heroBg.style.backgroundPosition = 'center';
-      heroBg.style.opacity = '0.5';
-    }
-    const avatar = document.getElementById('hero-avatar') as HTMLElement;
-    avatar.style.background = g;
-    if (artist.image_url) {
-      avatar.innerHTML = `<img src="${artist.image_url}" class="w-full h-full object-cover" alt="${artist.name}"/>`;
-    }
-    (document.getElementById('hero-name') as HTMLElement).textContent = artist.name;
-    (document.getElementById('breadcrumb-name') as HTMLElement).textContent = artist.name;
-
-    const monthlyCount = artist.monthly_listeners ?? 0;
-    const followersCount = artist.followers_count ?? 0;
-    (document.getElementById('hero-monthly-count') as HTMLElement).textContent = formatCount(monthlyCount);
-    (document.getElementById('hero-followers-count') as HTMLElement).textContent = formatCount(followersCount);
-
-    const followBtn = document.getElementById('follow-btn') as HTMLElement;
-    if (token && followBtn) {
-      followBtn.classList.remove('hidden');
-      followBtn.classList.add('flex');
-      _canFollowArtist = !(artist.is_self || artist.can_follow === false);
-      if (!_canFollowArtist) {
-        setFollowUI(false, followersCount);
-        followBtn.classList.add('hidden');
-      } else {
-        setFollowUI(!!artist.is_following, followersCount);
-      }
-    }
-
-    if (artist.bio) {
-      (document.getElementById('bio-text') as HTMLElement).textContent = artist.bio;
-    }
-
-    const songs: any[] = artist.songs || [];
-    const songsEl = document.getElementById('songs-list')!;
-    if (!songs.length) {
-      songsEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-6">No songs yet.</p>';
-    } else {
-      songsEl.innerHTML = songs.map((s: any, i: number) => {
-        const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-lg" alt=""/>`
-          : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
-        return `
-          <div class="relative flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden"
-               data-song="${encodeURIComponent(JSON.stringify(s))}">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-8 opacity-0 group-hover:opacity-100"></div>
-            <span class="w-6 text-center text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
-            <span class="material-symbols-outlined text-purple-400 w-6 text-sm absolute left-3 opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 scale-50">play_arrow</span>
-            ${cover}
-            <div class="flex-1 min-w-0 w-full sm:w-auto">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
-                  <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${formatCount(s.plays_count)} listens</p>
-                </div>
-                <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300 whitespace-nowrap">${formatDuration(s.duration)}</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 self-end sm:self-auto sm:ml-auto">
-              <button class="add-to-playlist-btn material-symbols-outlined text-gray-600 hover:text-purple-400 transition-all duration-200 hover:scale-110"
-                      title="Add to playlist" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}">playlist_add</button>
-              <button class="btn-like-song text-gray-600 hover:text-rose-400 transition-all duration-200 hover:scale-110"
-                      data-id="${s.id}" data-liked="false" title="Like">
-                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 0">favorite_border</span>
-              </button>
-            </div>
-          </div>`;
-      }).join('');
-    }
-
-    const countLabel = document.getElementById('song-count-label');
-    if (countLabel) countLabel.textContent = songs.length ? `${songs.length} songs` : '';
-
-    document.getElementById('play-btn')?.addEventListener('click', () => {
-      if (songs.length) player.playSong(songs[0], songs);
-    });
-
-    document.getElementById('shuffle-btn')?.addEventListener('click', () => {
-      if (!songs.length) return;
-      const shuffled = [...songs].sort(() => Math.random() - 0.5);
-      player.playSong(shuffled[0], shuffled);
-    });
-
-    if (token && songs.length) {
-      try {
-        const { data: favs } = await apiFetch('/favorites');
-        const favSet = new Set<number>((favs || []).map((f: any) => Number(f.id)));
-        document.querySelectorAll('.btn-like-song').forEach((btn) => {
-          const b = btn as HTMLElement;
-          const sid = Number(b.dataset.id);
-          if (favSet.has(sid)) setLikeState(b, true);
-        });
-      } catch {}
-    }
-
-    const albumsEl = document.getElementById('albums-grid')!;
-    if (!albums.length) {
-      albumsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-6">No albums yet.</p>';
-    } else {
-      albumsEl.innerHTML = albums.map((al: any) => {
-        const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
-        const cover = al.cover_url
-          ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
-          : '';
-        return `
-          <a href="/album?id=${al.id}" class="group cursor-pointer block">
-            <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform duration-200" style="background:${grad(al.id)}">
-              ${cover}
-              <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
-                <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100">play_circle</span>
-              </div>
-            </div>
-            <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400 transition-colors">${al.title}</p>
-            <p class="text-gray-500 text-xs">${year}${year ? ' · ' : ''}Album</p>
-          </a>`;
-      }).join('');
+    if (albumsEl) {
+      const albums = Array.isArray(a.albums) ? a.albums : [];
+      albumsEl.innerHTML = albums.map((al) => `
+        <a href="/album?id=${al.id}" class="group block">
+          <div class="aspect-square rounded-2xl mb-3 overflow-hidden" style="background:${GRADS[(al.id - 1) % GRADS.length]}">
+            ${al.cover_url ? `<img src="${al.cover_url}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt=""/>` : ''}
+          </div>
+          <p class="text-white font-semibold text-sm truncate group-hover:text-purple-300">${al.title}</p>
+        </a>
+      `).join('') || '<p class="text-gray-500 text-sm">No albums yet.</p>';
     }
   }
 
-  const _likingInFlight = new Set<string>();
-
-  function setLikeState(btn: HTMLElement, liked: boolean) {
-    const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
-    btn.dataset.liked = String(liked);
-    if (liked) {
-      if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
-      btn.classList.add('text-rose-400', '!opacity-100');
-      btn.classList.remove('text-gray-600');
-      btn.title = 'Unlike';
-    } else {
-      if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
-      btn.classList.remove('text-rose-400', '!opacity-100');
-      btn.classList.add('text-gray-600');
-      btn.title = 'Like';
-    }
-  }
-
-  async function toggleLike(btn: HTMLElement) {
-    const token = localStorage.getItem('auth_token');
-    if (!token) { window.location.href = '/login'; return; }
-    const songId = btn.dataset.id!;
-    if (_likingInFlight.has(songId)) return;
-    _likingInFlight.add(songId);
-    const isLiked = btn.dataset.liked === 'true';
-    setLikeState(btn, !isLiked);
-    try {
-      if (isLiked) {
-        await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
-      } else {
-        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
-      }
-      window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !isLiked } }));
-    } catch (err: any) {
-      setLikeState(btn, isLiked);
-      showToast(err?.message || 'Failed', 'error');
-    } finally {
-      _likingInFlight.delete(songId);
-    }
-  }
-
-  document.getElementById('songs-list')?.addEventListener('click', (e) => {
-    const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement | null;
-    if (likeBtn) { e.stopPropagation(); toggleLike(likeBtn); return; }
-
-    const btn = (e.target as HTMLElement).closest('.add-to-playlist-btn') as HTMLElement | null;
-    if (btn) {
-      e.stopPropagation();
-      openAddToPlaylist(btn.dataset.songId!, decodeURIComponent(btn.dataset.songTitle || ''));
-      return;
-    }
-    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement | null;
-    if (!row) return;
+  songsEl?.addEventListener('click', (e) => {
+    const target = e.target;
+    const row = target instanceof HTMLElement ? target.closest('.song-row') : null;
+    if (!row || !songsEl) return;
+    const songRows = [...songsEl.querySelectorAll('.song-row')];
+    const songs = songRows.map((r) => {
+      try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
+    }).filter(Boolean);
     try {
       const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-      const allRows = Array.from(document.querySelectorAll('#songs-list .song-row'));
-      const queue = allRows.map(r => {
-        try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
-      }).filter(Boolean);
-      player.playSong(song, queue);
+      player.playSong(song, songs);
     } catch {}
   });
 
-  let atpSongId: string | null = null;
-
-  function openAddToPlaylist(songId: string, songTitle: string) {
-    atpSongId = songId;
-    const backdrop = document.getElementById('atp-backdrop')!;
-    const listEl = document.getElementById('atp-list')!;
-    backdrop.classList.remove('hidden');
-    backdrop.classList.add('flex');
-    listEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Loading playlists…</p>';
-
-    apiFetch('/playlists/me').then(res => {
-      const playlists: any[] = res?.data || [];
-      if (!playlists.length) {
-        listEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No playlists found.</p>';
-        return;
-      }
-      listEl.innerHTML = playlists.map((pl: any) => `
-        <button class="atp-playlist-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/8 transition-colors text-left group"
-                data-playlist-id="${pl.id}" data-playlist-name="${encodeURIComponent(pl.name)}">
-          <span class="material-symbols-outlined text-purple-400 text-lg">queue_music</span>
-          <span class="flex-1 text-white text-sm truncate group-hover:text-purple-300">${pl.name}</span>
-          <span class="text-gray-600 text-xs">${pl.song_count ?? ''}</span>
-        </button>`).join('');
-      listEl.querySelectorAll('.atp-playlist-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const playlistId = (btn as HTMLElement).dataset.playlistId!;
-          const playlistName = decodeURIComponent((btn as HTMLElement).dataset.playlistName || '');
-          addSongToPlaylist(playlistId, playlistName);
-        });
-      });
-    }).catch(() => {
-      listEl.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Failed to load playlists.</p>';
-    });
-  }
-
-  async function addSongToPlaylist(playlistId: string, playlistName: string) {
-    if (!atpSongId) return;
-    try {
-      const res = await apiFetch(`/playlists/${playlistId}/songs`, {
-        method: 'POST',
-        body: JSON.stringify({ songId: atpSongId }),
-      });
-      closeAtpModal();
-      if (res?.success) {
-        showToast(`Added to "${playlistName}"`, 'success');
-      } else {
-        showToast(res?.message || 'Failed to add song.', 'error');
-      }
-    } catch (err: any) {
-      closeAtpModal();
-      const msg = err?.message || '';
-      if (msg.includes('409') || msg.toLowerCase().includes('already')) {
-        showToast(`Song is already in "${playlistName}"`, 'warn');
-      } else {
-        showToast('Failed to add song.', 'error');
-      }
-    }
-  }
-
-  function closeAtpModal() {
-    const backdrop = document.getElementById('atp-backdrop')!;
-    backdrop.classList.add('hidden');
-    backdrop.classList.remove('flex');
-    atpSongId = null;
-  }
-
-  document.getElementById('atp-close')?.addEventListener('click', closeAtpModal);
-  document.getElementById('atp-backdrop')?.addEventListener('click', (e) => {
-    if (e.target === document.getElementById('atp-backdrop')) closeAtpModal();
-  });
-
-  function showToast(message: string, type: 'success' | 'error' | 'warn' = 'success') {
-    const colors = { success: 'bg-purple-600', error: 'bg-red-600', warn: 'bg-yellow-600' };
-    const toast = document.createElement('div');
-    toast.className = `fixed bottom-28 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-xl text-white text-sm font-medium shadow-xl transition-all duration-300 opacity-0 ${colors[type]}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => { toast.style.opacity = '1'; });
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
-    }, 2800);
-  }
+  loadArtist();
 </script>
-
-<style>
-  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
-</style>
 </MainLayout>

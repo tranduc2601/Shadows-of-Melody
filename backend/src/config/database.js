@@ -10,7 +10,7 @@ const { Pool } = pg;
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    max: 10,               // kích thước pool tối đa
+    max: 10,             
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
@@ -25,7 +25,6 @@ pool.query = async (sql, params = []) => {
     return [result.rows, result.fields ?? []];
 };
 
-// ─── Test connection ──────────────────────────────────────────────────────────
 const testConnection = async () => {
     try {
         const client = await pool.connect();

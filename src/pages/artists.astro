@@ -6,533 +6,79 @@ import PlayerBar from "../components/PlayerBar.astro";
 
 <MainLayout title="Artists - Shadows of Melody">
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
-
     <Sidebar currentPage="artists" />
 
-    <main class="flex-1 flex flex-col overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative">
+    <main class="flex-1 flex flex-col overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative min-w-0">
+      <div class="absolute top-0 left-0 w-[50%] h-[50%] bg-purple-900/10 blur-[150px] rounded-full pointer-events-none"></div>
 
-      <div class="relative shrink-0 h-72 overflow-hidden">
-        <div id="hero-bg" class="absolute inset-0 opacity-60" style="background:linear-gradient(135deg,#f43f5e,#f97316)"></div>
-        <div class="absolute inset-0 bg-linear-to-b from-transparent via-black/30 to-[#060e20]"></div>
-
-        <header class="absolute top-0 left-0 right-0 h-16 flex items-center px-8 z-10 gap-3">
-          <div class="flex items-center gap-2">
-            <button id="btn-back-to-artists" class="hidden w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
-              <span class="material-symbols-outlined text-white text-xl">arrow_back</span>
-            </button>
-            <button id="btn-nav-back" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors">
-              <span class="material-symbols-outlined text-white text-xl">arrow_back_ios_new</span>
-            </button>
-            <button id="btn-nav-forward" class="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center hover:bg-black/50 transition-colors opacity-50">
-              <span class="material-symbols-outlined text-white text-xl">arrow_forward_ios</span>
-            </button>
-          </div>
-          <div class="relative ml-auto hidden md:flex items-center">
-            <span class="material-symbols-outlined absolute left-3 text-gray-400 text-[18px]">search</span>
-            <input id="artist-search-input" type="text" placeholder="Search artists..."
-              class="bg-black/30 border border-white/20 text-white placeholder-gray-400 rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 backdrop-blur-md w-48 focus:w-64 transition-all" />
-          </div>
-        </header>
-
-        <div id="hero-artist-info" class="absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
-          <div class="flex items-end gap-6">
-            <div id="hero-avatar" class="w-28 h-28 rounded-full shrink-0 border-4 border-white/10 shadow-2xl overflow-hidden" style="background:linear-gradient(135deg,#f43f5e,#f97316)"></div>
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="flex items-center gap-1 text-xs text-blue-400 font-semibold">
-                  <span class="material-symbols-outlined text-sm">verified</span>Verified Artist
-                </span>
-              </div>
-              <h1 id="hero-name" class="text-5xl font-black text-white drop-shadow-xl">—</h1>
-              <p id="hero-monthly" class="text-gray-300 mt-1">— monthly listeners</p>
-            </div>
-          </div>
+      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-8 custom-scrollbar">
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <h1 class="text-3xl font-black text-white">Artists</h1>
+          <p class="text-sm text-gray-500">Follow artists you like</p>
         </div>
-
-        <div id="hero-album-info" class="hidden absolute bottom-0 left-0 right-0 px-8 pb-6 z-10">
-          <div class="flex items-end gap-5">
-            <div id="album-hero-cover" class="w-24 h-24 rounded-xl shrink-0 shadow-2xl overflow-hidden border border-white/10"></div>
-            <div class="min-w-0">
-              <p class="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">Album</p>
-              <h1 id="album-hero-title" class="text-4xl font-black text-white drop-shadow-xl truncate">—</h1>
-              <p id="album-hero-meta" class="text-gray-300 mt-1">—</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto pb-32 relative z-10" id="main-scroll">
-
-        <div id="view-artists" class="px-8">
-          <div class="flex items-center gap-4 py-6">
-            <button id="hero-play-btn" class="w-14 h-14 rounded-full bg-linear-to-r from-purple-600 to-indigo-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">
-              <span class="material-symbols-outlined text-white text-3xl">play_arrow</span>
-            </button>
-            <a id="hero-view-btn" href="/artists" class="px-6 py-2.5 border-2 border-white/30 text-white font-semibold rounded-full hover:border-purple-400 hover:text-purple-300 transition-colors text-sm">
-              View Page
-            </a>
-            <div class="ml-auto flex items-center gap-2 text-sm text-gray-400">
-              <span class="material-symbols-outlined text-purple-400">people</span>
-              <span id="hero-followers">—</span>
-            </div>
-          </div>
-
-          <section class="mb-10">
-            <h2 class="text-xl font-bold text-white mb-4">Most Popular</h2>
-            <div class="space-y-1" id="top-tracks">
-              <p class="text-gray-500 text-sm text-center py-4">Loading...</p>
-            </div>
-          </section>
-
-          <section class="mb-10">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-bold text-white">Albums</h2>
-              <button id="albums-see-all-btn" class="text-sm font-semibold text-purple-400 hover:text-purple-300 uppercase tracking-wider">See all</button>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="albums-grid">
-              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
-            </div>
-          </section>
-
-          <section>
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-xl font-bold text-white">All Artists</h2>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="artists-grid">
-              <p class="col-span-4 text-gray-500 text-sm text-center py-4">Loading...</p>
-            </div>
-          </section>
-        </div>
-
-        <div id="view-album" class="hidden px-6 lg:px-8">
-          <div class="flex items-center gap-4 py-6">
-            <button id="album-play-all" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-900/40">
-              <span class="material-symbols-outlined text-[20px]">play_arrow</span>Play All
-            </button>
-            <button id="album-shuffle" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 hover:text-white rounded-full font-semibold text-sm transition-all">
-              <span class="material-symbols-outlined text-[18px]">shuffle</span>Shuffle
-            </button>
-            <span id="album-song-count" class="ml-auto text-sm text-gray-500"></span>
-          </div>
-
-          <div class="bg-white/2 border border-white/5 rounded-2xl overflow-hidden">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="text-gray-500 border-b border-white/5">
-                  <th class="font-medium text-xs px-5 py-3 w-12 text-center">#</th>
-                  <th class="font-medium text-xs px-4 py-3 uppercase tracking-wider">Title</th>
-                  <th class="font-medium text-xs px-4 py-3 w-16 text-center"><span class="material-symbols-outlined text-[16px]">schedule</span></th>
-                </tr>
-              </thead>
-              <tbody id="album-songs-tbody">
-                <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+        <div id="artists-list" class="space-y-2"></div>
       </div>
 
       <PlayerBar />
     </main>
   </div>
 
-<script>
-  import { apiFetch, formatCount, formatDuration } from '../lib/api.js';
-  import { player } from '../lib/player.js';
+  <script>
+    // @ts-nocheck
+    import { apiFetch, formatCount } from '../lib/api.js';
 
-  const GRADS = [
-    'linear-gradient(135deg,#6366f1,#8b5cf6)',
-    'linear-gradient(135deg,#f43f5e,#f97316)',
-    'linear-gradient(135deg,#ec4899,#7c3aed)',
-    'linear-gradient(135deg,#ef4444,#d946ef)',
-    'linear-gradient(135deg,#3b82f6,#06b6d4)',
-    'linear-gradient(135deg,#06b6d4,#10b981)',
-    'linear-gradient(135deg,#d946ef,#7c3aed)',
-    'linear-gradient(135deg,#fb923c,#fb7185)',
-  ];
-  const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
+    const GRADS = [
+      'linear-gradient(135deg,#6366f1,#8b5cf6)',
+      'linear-gradient(135deg,#f43f5e,#f97316)',
+      'linear-gradient(135deg,#ec4899,#7c3aed)',
+      'linear-gradient(135deg,#ef4444,#d946ef)',
+      'linear-gradient(135deg,#3b82f6,#06b6d4)',
+      'linear-gradient(135deg,#06b6d4,#10b981)',
+      'linear-gradient(135deg,#d946ef,#7c3aed)',
+      'linear-gradient(135deg,#fb923c,#fb7185)',
+    ];
 
-  document.getElementById('btn-nav-back')?.addEventListener('click', () => history.back());
-  document.getElementById('btn-nav-forward')?.addEventListener('click', () => history.forward());
+    const list = document.getElementById('artists-list');
 
-  let _featuredArtistSongs: any[] = [];
-  let _allArtists: any[] = [];
-  let _allAlbums: any[] = [];
-  let _albumSongs: any[] = [];
-  let _albumFavorites = new Set<number>();
-  let _albumsExpanded = false;
-
-  async function loadArtists() {
-    const [artistsRes, songsRes, albumsRes] = await Promise.allSettled([
-      apiFetch('/artists?limit=50'),
-      apiFetch('/songs?limit=50'),
-      apiFetch('/albums?limit=8'),
-    ]);
-
-    _allArtists = artistsRes.status === 'fulfilled' ? (artistsRes.value.data || []) : [];
-    const allSongs: any[] = songsRes.status === 'fulfilled' ? (songsRes.value.data || []) : [];
-    _allAlbums = albumsRes.status === 'fulfilled' ? (albumsRes.value.data || []) : [];
-
-    if (_allArtists.length > 0) {
-      const sorted = [..._allArtists].sort((a: any, b: any) => (b.followers_count || 0) - (a.followers_count || 0));
-      const f = sorted[0];
-      const g = grad(f.id);
-
-      (document.getElementById('hero-bg') as HTMLElement).style.background = g;
-      const avatar = document.getElementById('hero-avatar') as HTMLElement;
-      avatar.style.background = g;
-      if (f.image_url) avatar.innerHTML = `<img src="${f.image_url}" class="w-full h-full object-cover" alt="${f.name}"/>`;
-      avatar.style.cursor = 'pointer';
-      avatar.onclick = () => { window.location.href = `/artist?id=${f.id}`; };
-
-      const heroName = document.getElementById('hero-name') as HTMLElement;
-      heroName.textContent = f.name;
-      heroName.style.cursor = 'pointer';
-      heroName.onclick = () => { window.location.href = `/artist?id=${f.id}`; };
-
-      (document.getElementById('hero-monthly') as HTMLElement).textContent =
-        `${formatCount(f.monthly_listeners ?? f.followers_count)} monthly listeners`;
-      (document.getElementById('hero-followers') as HTMLElement).textContent =
-        `${formatCount(f.followers_count)} followers`;
-
-      const viewBtn = document.getElementById('hero-view-btn') as HTMLAnchorElement;
-      if (viewBtn) viewBtn.href = `/artist?id=${f.id}`;
-
-      try {
-        const { data: artistDetail } = await apiFetch(`/artists/${f.id}`);
-        _featuredArtistSongs = artistDetail?.songs || [];
-      } catch {}
-    }
-
-    const tracksEl = document.getElementById('top-tracks');
-    if (tracksEl) {
-      const topSongs = [...allSongs]
-        .sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0))
-        .slice(0, 5);
-
-      if (!topSongs.length) {
-        tracksEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No songs yet.</p>';
-      } else {
-        tracksEl.innerHTML = topSongs.map((s: any, i: number) => {
-          const cover = s.cover_url
-            ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shrink-0 shadow-md object-cover transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30 group-hover:shadow-lg" alt=""/>`
-            : `<div class="w-12 h-12 rounded-lg shrink-0 shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
-          return `
-            <div class="relative flex items-center gap-4 p-3 rounded-xl cursor-pointer group transition-all duration-200 ease-out hover:bg-white/[0.06] hover:translate-x-1 song-row overflow-hidden"
-                 data-song="${encodeURIComponent(JSON.stringify(s))}">
-              <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-8 opacity-0 group-hover:opacity-100"></div>
-              <span class="w-6 text-center text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75">${i + 1}</span>
-              <span class="material-symbols-outlined text-purple-400 w-6 text-sm absolute left-3 opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
-              ${cover}
-              <div class="flex-1 min-w-0">
-                <p class="text-white font-medium truncate transition-colors duration-200 group-hover:text-purple-300">${s.title}</p>
-                <p class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'} · ${formatCount(s.plays_count)} plays</p>
-              </div>
-              <span class="text-gray-500 text-sm transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</span>
-            </div>`;
-        }).join('');
-      }
-    }
-
-    renderAlbumCards(false);
-    renderArtistCards(_allArtists);
-  }
-
-  document.getElementById('hero-play-btn')?.addEventListener('click', () => {
-    if (_featuredArtistSongs.length) {
-      player.playSong(_featuredArtistSongs[0], _featuredArtistSongs);
-    }
-  });
-
-  function renderAlbumCards(showAll: boolean) {
-    const albumsEl = document.getElementById('albums-grid');
-    if (!albumsEl) return;
-    const toShow = showAll ? _allAlbums : _allAlbums.slice(0, 4);
-    if (!toShow.length) {
-      albumsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No albums yet.</p>';
-      return;
-    }
-    albumsEl.innerHTML = toShow.map((al: any) => {
-      const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
-      const cover = al.cover_url ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '';
-      const artistName = al.artist_name || al.artist?.name || '';
-      return `
-        <div class="group cursor-pointer album-card" data-album-id="${al.id}">
-          <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden group-hover:scale-105 transition-transform duration-200" style="background:${grad(al.id)}">
-            ${cover}
-            <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
-              <span class="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100">play_circle</span>
-            </div>
+    async function loadArtists() {
+      const { data } = await apiFetch('/artists?limit=500');
+      const artists = [...(data || [])];
+      if (!list) return;
+      list.innerHTML = artists.map((a) => `
+        <div class="artist-row group flex items-center gap-4 px-4 py-4 rounded-2xl hover:bg-white/[0.05] transition-colors cursor-pointer" data-id="${a.id}">
+          <div class="w-12 h-12 rounded-full overflow-hidden shrink-0" style="background:${GRADS[(a.id - 1) % GRADS.length]}">
+            ${a.image_url ? `<img src="${a.image_url}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="${a.name}"/>` : ''}
           </div>
-          <p class="text-white font-semibold text-sm truncate group-hover:text-purple-400 transition-colors">${al.title}</p>
-          <p class="text-gray-500 text-xs">${[artistName, year].filter(Boolean).join(' · ')}</p>
-        </div>`;
-    }).join('');
-  }
-
-  document.getElementById('albums-see-all-btn')?.addEventListener('click', () => {
-    _albumsExpanded = !_albumsExpanded;
-    renderAlbumCards(_albumsExpanded);
-    const btn = document.getElementById('albums-see-all-btn') as HTMLButtonElement;
-    if (btn) btn.textContent = _albumsExpanded ? 'Collapse' : 'See all';
-  });
-
-  document.getElementById('albums-grid')?.addEventListener('click', (e) => {
-    const card = (e.target as HTMLElement).closest('.album-card') as HTMLElement | null;
-    if (!card?.dataset.albumId) return;
-    showAlbumView(card.dataset.albumId);
-  });
-
-  function renderArtistCards(artists: any[]) {
-    const artistsEl = document.getElementById('artists-grid');
-    if (!artistsEl) return;
-    if (!artists.length) {
-      artistsEl.innerHTML = '<p class="col-span-4 text-gray-500 text-sm text-center py-4">No artists found.</p>';
-      return;
-    }
-    const token = localStorage.getItem('auth_token');
-    artistsEl.innerHTML = artists.map((a: any) => {
-      const img = a.image_url ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt="${a.name}"/>` : '';
-      const monthly = a.monthly_listeners ?? 0;
-      const isFollowing = !!a.is_following;
-      const followBtnHtml = token ? `
-        <button class="artist-follow-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border-2 transition-all duration-200 shrink-0
-          ${isFollowing
-            ? 'border-purple-500 text-purple-300 bg-purple-500/10 hover:bg-red-500/10 hover:border-red-500/60 hover:text-red-400'
-            : 'border-white/25 text-gray-300 hover:border-purple-400 hover:text-purple-300'}"
-          data-artist-id="${a.id}" data-following="${isFollowing ? '1' : '0'}">
-          <span class="material-symbols-outlined text-[14px]">${isFollowing ? 'how_to_reg' : 'person_add'}</span>
-          <span class="follow-label">${isFollowing ? 'Following' : 'Follow'}</span>
-        </button>` : '';
-      return `
-        <div class="artist-card bg-white/3 border border-white/5 rounded-2xl p-5 transition-all duration-200 group hover:bg-white/8 hover:border-purple-500/30 hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-900/20">
-          <a href="/artist?id=${a.id}" class="flex items-center gap-4 mb-3">
-            <div class="w-16 h-16 rounded-full shrink-0 shadow-lg overflow-hidden transition-transform duration-200 group-hover:scale-110" style="background:${grad(a.id)}">${img}</div>
-            <div class="min-w-0 flex-1">
-              <p class="text-white font-semibold truncate group-hover:text-purple-400 transition-colors">${a.name}</p>
-              <p class="text-gray-500 text-xs mt-0.5">${formatCount(a.followers_count)} followers</p>
-            </div>
-          </a>
-          <div class="flex items-center justify-between gap-2 mt-2">
-            <div class="min-w-0">
-              ${monthly > 0
-                ? `<p class="text-xs text-gray-400 truncate"><span class="text-white font-medium">${formatCount(monthly)}</span> monthly listeners</p>`
-                : `<p class="text-xs text-gray-600">No listeners yet</p>`}
-            </div>
-            ${followBtnHtml || `<a href="/artist?id=${a.id}" class="px-3 py-1 rounded-full text-xs font-semibold border border-white/20 text-gray-300 hover:border-purple-400/60 hover:text-purple-300 transition-all shrink-0">View</a>`}
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-white group-hover:text-purple-300 truncate">${a.name}</p>
+            <p class="text-xs text-gray-500">${formatCount(a.followers_count)} followers</p>
           </div>
-        </div>`;
-    }).join('');
+          <button class="artist-follow-btn shrink-0 text-gray-400 hover:text-purple-400 transition-colors" data-id="${a.id}" data-following="${a.is_following ? '1' : '0'}">
+            <span class="material-symbols-outlined">${a.is_following ? 'how_to_reg' : 'person_add'}</span>
+          </button>
+        </div>
+      `).join('');
+    }
 
-    artistsEl.querySelectorAll('.artist-follow-btn').forEach((btn) => {
-      btn.addEventListener('click', async (e) => {
-        e.preventDefault();
+    list?.addEventListener('click', async (e) => {
+      const target = e.target;
+      const follow = target instanceof HTMLElement ? target.closest('.artist-follow-btn') : null;
+      if (follow) {
         e.stopPropagation();
-        const b = btn as HTMLElement;
-        const aId = b.dataset.artistId!;
-        const following = b.dataset.following === '1';
-        b.setAttribute('disabled', 'true');
+        const id = follow.dataset.id;
+        const following = follow.dataset.following === '1';
         try {
-          const method = following ? 'DELETE' : 'POST';
-          const { data } = await apiFetch(`/artists/${aId}/follow`, { method });
-          b.dataset.following = data.is_following ? '1' : '0';
-          const icon  = b.querySelector('.material-symbols-outlined') as HTMLElement;
-          const label = b.querySelector('.follow-label') as HTMLElement;
-          if (data.is_following) {
-            b.classList.remove('border-white/25','text-gray-300','hover:border-purple-400','hover:text-purple-300');
-            b.classList.add('border-purple-500','text-purple-300','bg-purple-500/10','hover:bg-red-500/10','hover:border-red-500/60','hover:text-red-400');
-            if (icon) icon.textContent = 'how_to_reg';
-            if (label) label.textContent = 'Following';
-          } else {
-            b.classList.add('border-white/25','text-gray-300','hover:border-purple-400','hover:text-purple-300');
-            b.classList.remove('border-purple-500','text-purple-300','bg-purple-500/10','hover:bg-red-500/10','hover:border-red-500/60','hover:text-red-400');
-            if (icon) icon.textContent = 'person_add';
-            if (label) label.textContent = 'Follow';
-          }
-          const card = b.closest('.artist-card');
-          const fcEl = card?.querySelector('.text-gray-500.text-xs') as HTMLElement;
-          if (fcEl) fcEl.textContent = `${formatCount(data.followers_count)} followers`;
+          const { data } = await apiFetch(`/artists/${id}/follow`, { method: following ? 'DELETE' : 'POST' });
+          follow.dataset.following = data.is_following ? '1' : '0';
+          follow.innerHTML = `<span class="material-symbols-outlined">${data.is_following ? 'how_to_reg' : 'person_add'}</span>`;
         } catch {}
-        b.removeAttribute('disabled');
-      });
+        return;
+      }
+
+      const row = target instanceof HTMLElement ? target.closest('.artist-row') : null;
+      if (row) window.location.href = `/artist?id=${row.dataset.id}`;
     });
-  }
 
-  const searchInput = document.getElementById('artist-search-input') as HTMLInputElement;
-  let _searchTimer: ReturnType<typeof setTimeout>;
-  searchInput?.addEventListener('input', () => {
-    clearTimeout(_searchTimer);
-    _searchTimer = setTimeout(() => {
-      const q = searchInput.value.trim().toLowerCase();
-      if (!q) { renderArtistCards(_allArtists); return; }
-      renderArtistCards(_allArtists.filter((a: any) => a.name.toLowerCase().includes(q)));
-    }, 200);
-  });
-
-  document.getElementById('top-tracks')?.addEventListener('click', (e) => {
-    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
-    if (!row) return;
-    try {
-      const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-      const allRows = Array.from(document.querySelectorAll('#top-tracks .song-row'));
-      const queue = allRows.map(r => {
-        try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
-      }).filter(Boolean);
-      player.playSong(song, queue);
-    } catch {}
-  });
-
-  let _savedHeroBg = 'linear-gradient(135deg,#f43f5e,#f97316)';
-
-  function showArtistsView() {
-    document.getElementById('view-artists')!.classList.remove('hidden');
-    document.getElementById('view-album')!.classList.add('hidden');
-    document.getElementById('hero-artist-info')!.classList.remove('hidden');
-    document.getElementById('hero-album-info')!.classList.add('hidden');
-    document.getElementById('btn-back-to-artists')!.classList.add('hidden');
-    document.getElementById('btn-nav-back')!.classList.remove('hidden');
-    (document.getElementById('hero-bg') as HTMLElement).style.background = _savedHeroBg;
-    document.getElementById('main-scroll')!.scrollTop = 0;
-  }
-
-  async function showAlbumView(albumId: string) {
-    document.getElementById('view-artists')!.classList.add('hidden');
-    document.getElementById('view-album')!.classList.remove('hidden');
-    document.getElementById('hero-artist-info')!.classList.add('hidden');
-    document.getElementById('hero-album-info')!.classList.remove('hidden');
-    document.getElementById('btn-back-to-artists')!.classList.remove('hidden');
-    document.getElementById('btn-nav-back')!.classList.add('hidden');
-    document.getElementById('main-scroll')!.scrollTop = 0;
-
-    (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Loading...';
-    (document.getElementById('album-hero-meta') as HTMLElement).textContent = '';
-    (document.getElementById('album-hero-cover') as HTMLElement).innerHTML = '';
-    (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
-      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
-    (document.getElementById('album-song-count') as HTMLElement).textContent = '';
-
-    try {
-      const { data: album } = await apiFetch(`/albums/${albumId}`);
-      const g = grad(album.id);
-      _savedHeroBg = g;
-      (document.getElementById('hero-bg') as HTMLElement).style.background = g;
-      const coverEl = document.getElementById('album-hero-cover') as HTMLElement;
-      coverEl.style.background = g;
-      if (album.cover_url) coverEl.innerHTML = `<img src="${album.cover_url}" class="w-full h-full object-cover" alt=""/>`;
-      (document.getElementById('album-hero-title') as HTMLElement).textContent = album.title;
-      const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
-      const songCount = (album.songs || []).length;
-      (document.getElementById('album-hero-meta') as HTMLElement).textContent =
-        [album.artist?.name, year, `${songCount} songs`].filter(Boolean).join(' · ');
-      (document.getElementById('album-song-count') as HTMLElement).textContent = `${songCount} songs`;
-
-      _albumSongs = album.songs || [];
-      _albumFavorites = new Set();
-      const token = localStorage.getItem('auth_token');
-      if (token && _albumSongs.length) {
-        try {
-          const { data: favs } = await apiFetch('/favorites');
-          const favSet = new Set<number>((favs || []).map((f: any) => Number(f.id)));
-          _albumSongs.forEach((s: any) => { if (favSet.has(s.id)) _albumFavorites.add(s.id); });
-        } catch {}
-      }
-      renderAlbumSongs();
-    } catch {
-      (document.getElementById('album-hero-title') as HTMLElement).textContent = 'Failed to load';
-      (document.getElementById('album-songs-tbody') as HTMLElement).innerHTML =
-        '<tr><td colspan="3" class="px-4 py-10 text-center text-red-400 text-sm">Could not load album.</td></tr>';
-    }
-  }
-
-  document.getElementById('btn-back-to-artists')?.addEventListener('click', showArtistsView);
-
-  function shuffleArr<T>(arr: T[]): T[] {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  function renderAlbumSongs() {
-    const tbody = document.getElementById('album-songs-tbody') as HTMLElement;
-    if (!_albumSongs.length) {
-      tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">This album has no songs yet.</td></tr>';
-      return;
-    }
-    const token = localStorage.getItem('auth_token');
-    tbody.innerHTML = _albumSongs.map((s: any, i: number) => {
-      const cover = s.cover_url
-        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" alt=""/>`
-        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow transition-transform duration-300 group-hover:scale-105 group-hover:shadow-purple-500/30" style="background:${grad(s.id)}"></div>`;
-      const isFav = _albumFavorites.has(s.id);
-      const favBtn = token ? `
-        <button class="album-fav-btn ml-2 shrink-0 opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200 ${isFav ? 'text-rose-400 !opacity-100' : 'text-gray-600 hover:text-rose-400'}"
-          data-id="${s.id}" data-fav="${isFav ? '1' : '0'}" title="${isFav ? 'Unlike' : 'Add to favorites'}">
-          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' ${isFav ? 1 : 0}">favorite</span>
-        </button>` : '';
-      return `
-        <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer album-song-row" data-idx="${i}">
-          <td class="px-5 py-3 text-center relative overflow-hidden">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
-            <span class="text-gray-500 text-sm transition-all duration-150 group-hover:opacity-0 group-hover:scale-75 inline-block">${i + 1}</span>
-            <span class="material-symbols-outlined text-purple-400 text-[20px] absolute inset-0 flex items-center justify-center opacity-0 scale-50 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100">play_arrow</span>
-          </td>
-          <td class="px-4 py-3">
-            <div class="flex items-center gap-3">
-              ${cover}
-              <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold text-gray-100 group-hover:text-purple-300 truncate transition-colors duration-200">${s.title}</p>
-                <p class="text-xs text-gray-500 truncate transition-colors duration-200 group-hover:text-gray-400">${s.artist_names || '—'}</p>
-              </div>
-              ${favBtn}
-            </div>
-          </td>
-          <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap transition-colors duration-200 group-hover:text-gray-300">${formatDuration(s.duration)}</td>
-        </tr>`;
-    }).join('');
-  }
-
-  document.getElementById('album-songs-tbody')?.addEventListener('click', async (e: Event) => {
-    const target = e.target as HTMLElement;
-    const favBtn = target.closest('.album-fav-btn') as HTMLElement | null;
-    if (favBtn) {
-      e.stopPropagation();
-      const id = Number(favBtn.dataset.id);
-      const wasFav = favBtn.dataset.fav === '1';
-      favBtn.dataset.fav = wasFav ? '0' : '1';
-      const icon = favBtn.querySelector('.material-symbols-outlined') as HTMLElement;
-      if (wasFav) {
-        _albumFavorites.delete(id);
-        favBtn.classList.remove('text-rose-400', '!opacity-100');
-        favBtn.classList.add('text-gray-600');
-        if (icon) icon.style.fontVariationSettings = "'FILL' 0";
-        try { await apiFetch(`/favorites/${id}`, { method: 'DELETE' }); } catch { _albumFavorites.add(id); favBtn.dataset.fav = '1'; renderAlbumSongs(); }
-      } else {
-        _albumFavorites.add(id);
-        favBtn.classList.add('text-rose-400', '!opacity-100');
-        favBtn.classList.remove('text-gray-600');
-        if (icon) icon.style.fontVariationSettings = "'FILL' 1";
-        try { await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: id }) }); } catch { _albumFavorites.delete(id); favBtn.dataset.fav = '0'; renderAlbumSongs(); }
-      }
-      return;
-    }
-    const row = target.closest('.album-song-row') as HTMLElement | null;
-    if (row && _albumSongs.length) player.playSong(_albumSongs[Number(row.dataset.idx)], _albumSongs);
-  });
-
-  document.getElementById('album-play-all')?.addEventListener('click', () => {
-    if (_albumSongs.length) player.playSong(_albumSongs[0], _albumSongs);
-  });
-  document.getElementById('album-shuffle')?.addEventListener('click', () => {
-    if (!_albumSongs.length) return;
-    const s = shuffleArr(_albumSongs);
-    player.playSong(s[0], s);
-  });
-
-  loadArtists().catch(console.error);
-</script>
-
+    loadArtists();
+  </script>
 </MainLayout>
