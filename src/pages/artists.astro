@@ -10,13 +10,89 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     <main class="flex-1 flex flex-col overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] relative min-w-0">
       <div class="absolute top-0 left-0 w-[50%] h-[50%] bg-purple-900/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div class="absolute right-0 top-24 w-[32rem] h-[32rem] bg-cyan-500/10 blur-[160px] rounded-full pointer-events-none"></div>
 
       <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-8 custom-scrollbar">
-        <div class="flex items-center justify-between gap-4 mb-6">
-          <h1 class="text-3xl font-black text-white">Artists</h1>
-          <p class="text-sm text-gray-500">Follow artists you like</p>
-        </div>
-        <div id="artists-list" class="space-y-2"></div>
+        <section class="mb-8 rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
+          <div class="p-6 sm:p-8 border-b border-white/10 bg-linear-to-r from-purple-500/10 via-fuchsia-500/5 to-cyan-500/10">
+            <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div class="max-w-2xl">
+                <p class="inline-flex items-center gap-2 rounded-full border border-purple-400/20 bg-purple-400/10 px-3 py-1 text-xs font-semibold text-purple-200 mb-4">
+                  <span class="material-symbols-outlined text-sm">mic_external_on</span>
+                  Discover artists
+                </p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">Artists</h1>
+                <p class="mt-3 text-sm sm:text-base text-gray-300 max-w-xl">
+                  Explore the most listened artists, follow the voices you love, and jump into their music with one tap.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center min-w-[240px]">
+                <div class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <p id="stat-total" class="text-2xl font-black text-white">0</p>
+                  <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mt-1">Artists</p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <p id="stat-following" class="text-2xl font-black text-white">0</p>
+                  <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mt-1">Following</p>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <p id="stat-trending" class="text-2xl font-black text-white">0</p>
+                  <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mt-1">Top picked</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 sm:p-6 flex flex-col gap-4">
+            <div class="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-3 sm:p-4 shadow-[0_16px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl">
+              <div class="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                <div class="flex-1 relative">
+                  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">search</span>
+                  <input id="artist-search" type="search" placeholder="Search artists" class="w-full rounded-2xl border border-white/10 bg-[#091024]/70 pl-12 pr-4 py-3 text-sm text-white placeholder:text-gray-500 outline-none transition focus:border-purple-400/40 focus:bg-[#0b1329] focus:shadow-[0_0_0_4px_rgba(168,85,247,0.12)]" />
+                </div>
+                <button id="refresh-artists" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-purple-400/20 bg-purple-400/10 px-4 py-3 text-sm font-semibold text-purple-100 transition hover:bg-purple-400/15 hover:border-purple-300/30 xl:shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">refresh</span>
+                  Refresh
+                </button>
+              </div>
+
+              <div class="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex flex-wrap items-center gap-2" id="artist-filters" aria-label="Artist filters">
+                  <span class="mr-1 text-xs uppercase tracking-[0.2em] text-gray-500">Filter</span>
+                  <button data-filter="all" class="artist-filter-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-medium text-white transition hover:bg-white/[0.1]">
+                    <span class="h-1.5 w-1.5 rounded-full bg-purple-400"></span>
+                    All
+                  </button>
+                  <button data-filter="following" class="artist-filter-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-white/[0.08] hover:text-white">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-400/80"></span>
+                    Following
+                  </button>
+                  <button data-filter="popular" class="artist-filter-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-white/[0.08] hover:text-white">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan-400/80"></span>
+                    Popular
+                  </button>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2" id="artist-sorts" aria-label="Artist sorting">
+                  <span class="mr-1 text-xs uppercase tracking-[0.2em] text-gray-500">Sort</span>
+                  <button data-sort="name" class="artist-sort-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-medium text-white transition hover:bg-white/[0.1]">
+                    Name
+                  </button>
+                  <button data-sort="followers" class="artist-sort-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-white/[0.08] hover:text-white">
+                    Followers
+                  </button>
+                  <button data-sort="recently_added" class="artist-sort-btn inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-white/[0.08] hover:text-white">
+                    Recently added
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div id="artists-status" class="mb-4 text-sm text-gray-400"></div>
+        <div id="artists-list"></div>
       </div>
 
       <PlayerBar />
@@ -38,47 +114,216 @@ import PlayerBar from "../components/PlayerBar.astro";
       'linear-gradient(135deg,#fb923c,#fb7185)',
     ];
 
-    const list = document.getElementById('artists-list');
+    let list = null;
+    let status = null;
+    let search = null;
+    let refresh = null;
+    let filterButtons = [];
+    let sortButtons = [];
+    let statTotal = null;
+    let statFollowing = null;
+    let statTrending = null;
 
-    async function loadArtists() {
-      const { data } = await apiFetch('/artists?limit=500');
-      const artists = [...(data || [])];
-      if (!list) return;
-      list.innerHTML = artists.map((a) => `
-        <div class="artist-row group flex items-center gap-4 px-4 py-4 rounded-2xl hover:bg-white/[0.05] transition-colors cursor-pointer" data-id="${a.id}">
-          <div class="w-12 h-12 rounded-full overflow-hidden shrink-0" style="background:${GRADS[(a.id - 1) % GRADS.length]}">
-            ${a.image_url ? `<img src="${a.image_url}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="${a.name}"/>` : ''}
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="font-semibold text-white group-hover:text-purple-300 truncate">${a.name}</p>
-            <p class="text-xs text-gray-500">${formatCount(a.followers_count)} followers</p>
-          </div>
-          <button class="artist-follow-btn shrink-0 text-gray-400 hover:text-purple-400 transition-colors" data-id="${a.id}" data-following="${a.is_following ? '1' : '0'}">
-            <span class="material-symbols-outlined">${a.is_following ? 'how_to_reg' : 'person_add'}</span>
-          </button>
-        </div>
-      `).join('');
+    function getEls() {
+      list = document.getElementById('artists-list');
+      status = document.getElementById('artists-status');
+      search = document.getElementById('artist-search');
+      refresh = document.getElementById('refresh-artists');
+      filterButtons = [...document.querySelectorAll('.artist-filter-btn')];
+      sortButtons = [...document.querySelectorAll('.artist-sort-btn')];
+      statTotal = document.getElementById('stat-total');
+      statFollowing = document.getElementById('stat-following');
+      statTrending = document.getElementById('stat-trending');
     }
 
-    list?.addEventListener('click', async (e) => {
-      const target = e.target;
-      const follow = target instanceof HTMLElement ? target.closest('.artist-follow-btn') : null;
-      if (follow) {
-        e.stopPropagation();
-        const id = follow.dataset.id;
-        const following = follow.dataset.following === '1';
-        try {
-          const { data } = await apiFetch(`/artists/${id}/follow`, { method: following ? 'DELETE' : 'POST' });
-          follow.dataset.following = data.is_following ? '1' : '0';
-          follow.innerHTML = `<span class="material-symbols-outlined">${data.is_following ? 'how_to_reg' : 'person_add'}</span>`;
-        } catch {}
+    let artists = [];
+    let filter = 'all';
+    let sortBy = 'name';
+    let query = '';
+
+    function setStatus(message) {
+      if (status) status.textContent = message;
+    }
+
+    function render() {
+      if (!list) getEls();
+      if (!list) return;
+      const filtered = artists
+        .filter((a) => filter === 'following' ? a.is_following : true)
+        .filter((a) => filter === 'popular' ? Number(a.followers_count || 0) >= 1000 : true)
+        .filter((a) => `${a.name || ''}`.toLowerCase().includes(query.toLowerCase()))
+        .sort((a, b) => {
+          if (sortBy === 'followers') return Number(b.followers_count || 0) - Number(a.followers_count || 0);
+          if (sortBy === 'recently_added') return Number(b.id) - Number(a.id);
+          return String(a.name || '').localeCompare(String(b.name || ''));
+        });
+
+      if (statTotal) statTotal.textContent = String(artists.length);
+      if (statFollowing) statFollowing.textContent = String(artists.filter((a) => a.is_following).length);
+      if (statTrending) statTrending.textContent = String(artists.filter((a) => Number(a.followers_count || 0) >= 1000).length);
+
+      if (!filtered.length) {
+        list.innerHTML = `
+          <div class="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-8 text-center">
+            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/5 text-purple-300">
+              <span class="material-symbols-outlined">music_off</span>
+            </div>
+            <h3 class="text-lg font-semibold text-white">No artists found</h3>
+            <p class="mt-2 text-sm text-gray-400">Try a different keyword or switch to another filter.</p>
+          </div>
+        `;
         return;
       }
 
-      const row = target instanceof HTMLElement ? target.closest('.artist-row') : null;
-      if (row) window.location.href = `/artist?id=${row.dataset.id}`;
-    });
+      list.innerHTML = `
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          ${filtered.map((a) => {
+            const avatar = a.image_url || a.avatar_url || '';
+            const initials = (a.name || 'A').slice(0, 1).toUpperCase();
+            return `
+              <article class="artist-row group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-4 transition duration-300 ease-out hover:-translate-y-1 hover:border-purple-400/20 hover:bg-white/[0.06] hover:shadow-[0_18px_60px_rgba(0,0,0,0.25)] cursor-pointer" data-id="${a.id}">
+                <div class="absolute inset-0 bg-linear-to-br from-white/[0.06] via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100"></div>
+                <div class="relative flex flex-col gap-4">
+                  <div class="relative mx-auto aspect-square w-full max-w-[13rem] overflow-hidden rounded-full border border-white/10 bg-white/[0.04] shadow-lg shadow-black/20" style="background:${GRADS[(a.id - 1) % GRADS.length]}">
+                    ${avatar ? `<img src="${avatar}" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105" alt="${a.name}"/>` : `<div class="absolute inset-0 flex items-center justify-center">
+                        <div class="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_48%)]">
+                          <div class="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-4xl font-black text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">${initials}</div>
+                        </div>
+                      </div>`}
+                    <div class="absolute inset-0 bg-linear-to-t from-black/55 via-black/10 to-transparent"></div>
+                    <div class="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/35 to-transparent"></div>
+                    ${a.is_following ? '<span class="absolute left-3 top-3 rounded-full bg-emerald-400/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-200 backdrop-blur">Following</span>' : ''}
+                  </div>
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="truncate text-base font-semibold text-white transition-colors duration-300 group-hover:text-purple-300">${a.name}</p>
+                      <p class="mt-1 text-xs text-gray-400">${formatCount(a.followers_count)} followers</p>
+                    </div>
+                    <button class="artist-follow-btn shrink-0 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition duration-300 ease-out hover:border-purple-400/30 hover:bg-purple-400/10 hover:text-purple-200" data-id="${a.id}" data-following="${a.is_following ? '1' : '0'}" aria-label="Toggle follow">
+                      <span class="material-symbols-outlined">${a.is_following ? 'how_to_reg' : 'person_add'}</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
 
-    loadArtists();
+    function skeletonMarkup() {
+      return `
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          ${Array.from({ length: 8 }).map(() => `
+            <div class="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-4">
+              <div class="animate-pulse space-y-4">
+                <div class="aspect-[4/3] rounded-[1.25rem] bg-white/5"></div>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0 flex-1 space-y-2">
+                    <div class="h-4 w-3/4 rounded-full bg-white/5"></div>
+                    <div class="h-3 w-1/2 rounded-full bg-white/5"></div>
+                  </div>
+                  <div class="h-11 w-11 rounded-full bg-white/5"></div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function loadArtists() {
+      getEls();
+      if (status) status.textContent = 'Loading artists...';
+      if (list) list.innerHTML = skeletonMarkup();
+      try {
+        const { data } = await apiFetch('/artists?limit=500&sortBy=followers_count&order=desc');
+        console.log('[Artists] raw response', data);
+        artists = Array.isArray(data) ? data : [];
+        setStatus(`${artists.length} artists available`);
+        render();
+      } catch (err) {
+        setStatus('Failed to load artists.');
+        if (list) {
+          list.innerHTML = `
+            <div class="rounded-[1.75rem] border border-rose-400/20 bg-rose-500/10 p-8 text-center text-rose-100">
+              <p class="font-semibold">Unable to load artists right now.</p>
+              <p class="mt-2 text-sm text-rose-100/80">Please try refreshing the page in a moment.</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    let artistsPageBound = false;
+
+    function bindArtistsPage() {
+      if (artistsPageBound) return;
+      artistsPageBound = true;
+      getEls();
+
+      list?.addEventListener('click', async (e) => {
+        const target = e.target;
+        const follow = target instanceof HTMLElement ? target.closest('.artist-follow-btn') : null;
+        if (follow) {
+          e.stopPropagation();
+          const id = follow.dataset.id;
+          const following = follow.dataset.following === '1';
+          try {
+            const { data } = await apiFetch(`/artists/${id}/follow`, { method: following ? 'DELETE' : 'POST' });
+            artists = artists.map((a) => a.id === Number(id) ? { ...a, is_following: !!data.is_following } : a);
+            render();
+          } catch {}
+          return;
+        }
+
+        const row = target instanceof HTMLElement ? target.closest('.artist-row') : null;
+        if (row) window.location.href = `/artist?id=${row.dataset.id}`;
+      });
+
+      search?.addEventListener('input', () => {
+        query = search.value || '';
+        render();
+      });
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          filter = btn.dataset.filter || 'all';
+          filterButtons.forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('bg-white/[0.06]', active);
+            b.classList.toggle('bg-white/[0.03]', !active);
+            b.classList.toggle('text-white', active);
+            b.classList.toggle('text-gray-300', !active);
+          });
+          render();
+        });
+      });
+
+      sortButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          sortBy = btn.dataset.sort || 'name';
+          sortButtons.forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('bg-white/[0.06]', active);
+            b.classList.toggle('bg-white/[0.03]', !active);
+            b.classList.toggle('text-white', active);
+            b.classList.toggle('text-gray-300', !active);
+          });
+          render();
+        });
+      });
+
+      refresh?.addEventListener('click', loadArtists);
+    }
+
+    function bootArtistsPage() {
+      artistsPageBound = false;
+      bindArtistsPage();
+      loadArtists();
+    }
+
+    document.addEventListener('astro:page-load', bootArtistsPage);
+    bootArtistsPage();
   </script>
 </MainLayout>

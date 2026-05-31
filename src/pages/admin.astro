@@ -780,13 +780,15 @@ import MainLayout from "../layouts/MainLayout.astro";
               <table class="w-full text-left">
                 <thead>
                   <tr class="border-b border-white/5 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                    <th class="px-6 py-3 w-20">Image</th>
                     <th class="px-6 py-3">Genre</th>
                     <th class="px-6 py-3 hidden sm:table-cell">Description</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Created</th>
                     <th class="px-6 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="admin-genres-tbody" class="divide-y divide-white/3">
-                  <tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
+                  <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">Loading...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -983,7 +985,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   </div>
 
 <div id="modal-confirm" class="admin-modal hidden fixed inset-0 z-[300] flex items-center justify-center">
-  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-md" id="modal-confirm-bg"></div>
+  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-confirm-bg"></div>
   <div class="admin-modal-panel relative rounded-2xl p-7 w-full max-w-md z-10 mx-4">
     <div class="flex items-start gap-4 mb-6">
       <div id="modal-confirm-icon-wrap" class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-rose-500/15 border border-rose-500/20">
@@ -1006,7 +1008,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 </div>
 
 <div id="modal-album-songs" class="admin-modal hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-md" id="modal-album-songs-bg"></div>
+  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-album-songs-bg"></div>
   <div class="admin-modal-panel relative rounded-2xl w-full max-w-2xl z-10 mx-4 max-h-[90vh] flex flex-col overflow-hidden">
     <div class="flex items-center justify-between px-7 py-5 border-b border-white/6 shrink-0">
       <h2 class="text-base font-bold text-white flex items-center gap-2.5">
@@ -1412,6 +1414,31 @@ import MainLayout from "../layouts/MainLayout.astro";
   .adm-label .opt { color: #6b7280; font-weight: 400; margin-left: 0.25em; font-size: 0.75rem; }
 
   .adm-field { margin-bottom: 0; }
+  .admin-modal-panel form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .admin-modal-panel form > .adm-field,
+  .admin-modal-panel form > .grid,
+  .admin-modal-panel form > .flex,
+  .admin-modal-panel form > button,
+  .admin-modal-panel form > #upload-progress {
+    margin-top: 0;
+  }
+  .admin-modal-panel .adm-field > .adm-input,
+  .admin-modal-panel .adm-field > .adm-dropzone,
+  .admin-modal-panel .adm-field > select,
+  .admin-modal-panel .adm-field > textarea {
+    margin-top: 0;
+  }
+  .admin-modal-panel .adm-field .adm-label {
+    margin-bottom: 0.55rem;
+  }
+  .admin-modal-panel .adm-field .opt,
+  .admin-modal-panel .adm-field .req {
+    white-space: nowrap;
+  }
 
   .adm-error {
     display: none;
@@ -1496,10 +1523,170 @@ import MainLayout from "../layouts/MainLayout.astro";
     background: rgba(139, 92, 246, 0.08);
   }
 
-  .admin-modal-panel {
+  .admin-modal-panel,
+  .admin-modal > .relative,
+  #modal-assign-task > .relative,
+  #modal-artist-detail > .relative,
+  #modal-add-artist > .relative {
     background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(9,15,29,0.98));
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(168,85,247,0.08) inset;
+    overflow: hidden;
+  }
+
+  .admin-modal-panel form,
+  .admin-modal > .relative form,
+  #modal-assign-task form,
+  #modal-add-artist form,
+  #modal-edit-artist form,
+  #modal-genre form,
+  #modal-edit-playlist form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .admin-modal-panel form > *,
+  .admin-modal > .relative form > *,
+  #modal-assign-task form > *,
+  #modal-add-artist form > *,
+  #modal-edit-artist form > *,
+  #modal-genre form > *,
+  #modal-edit-playlist form > * {
+    margin-top: 0 !important;
+  }
+
+  .admin-modal-panel form > .adm-field,
+  .admin-modal > .relative form > .adm-field,
+  #modal-assign-task form > div,
+  #modal-add-artist form > div,
+  #modal-edit-artist form > div,
+  #modal-genre form > div,
+  #modal-edit-playlist form > div {
+    padding: 0.95rem 1rem;
+    margin-bottom: 0;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 0.95rem;
+  }
+
+  .admin-modal-panel form > .grid,
+  .admin-modal > .relative form > .grid {
+    gap: 0.85rem;
+  }
+
+  .admin-modal-panel form > .adm-field .adm-input,
+  .admin-modal-panel form > .adm-field .adm-dropzone,
+  .admin-modal-panel form > .adm-field > select,
+  .admin-modal-panel form > .adm-field > textarea,
+  .admin-modal > .relative .adm-input,
+  #modal-assign-task .adm-input,
+  #modal-add-artist input,
+  #modal-add-artist textarea,
+  #modal-edit-artist .adm-input,
+  #modal-genre .adm-input,
+  #modal-edit-playlist .adm-input {
+    margin-top: 0;
+  }
+
+  .admin-modal-panel form > .adm-field .adm-label,
+  .admin-modal > .relative form > .adm-field .adm-label,
+  #modal-assign-task form label,
+  #modal-add-artist form label,
+  #modal-edit-artist form label,
+  #modal-genre form label,
+  #modal-edit-playlist form label {
+    margin-bottom: 0.55rem;
+  }
+
+  .admin-modal-panel form > .adm-field:last-child,
+  .admin-modal > .relative form > .adm-field:last-child,
+  #modal-assign-task form > div:last-child,
+  #modal-add-artist form > div:last-child,
+  #modal-edit-artist form > div:last-child,
+  #modal-genre form > div:last-child,
+  #modal-edit-playlist form > div:last-child {
+    margin-bottom: 0;
+  }
+
+  .admin-modal-panel .modal-section,
+  .admin-modal > .relative .modal-section,
+  #modal-assign-task .modal-section,
+  #modal-add-artist .modal-section,
+  #modal-edit-artist .modal-section,
+  #modal-genre .modal-section,
+  #modal-edit-playlist .modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.95rem 1rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 0.95rem;
+  }
+
+  .admin-modal-panel .modal-section > :first-child,
+  .admin-modal > .relative .modal-section > :first-child,
+  #modal-assign-task .modal-section > :first-child,
+  #modal-add-artist .modal-section > :first-child,
+  #modal-edit-artist .modal-section > :first-child,
+  #modal-genre .modal-section > :first-child,
+  #modal-edit-playlist .modal-section > :first-child {
+    margin-top: 0;
+  }
+
+  .admin-modal-panel .modal-section .adm-label,
+  .admin-modal > .relative .modal-section .adm-label,
+  #modal-assign-task .modal-section label,
+  #modal-add-artist .modal-section label,
+  #modal-edit-artist .modal-section label,
+  #modal-genre .modal-section label,
+  #modal-edit-playlist .modal-section label {
+    margin-bottom: 0;
+  }
+
+  .admin-modal-panel .modal-grid,
+  .admin-modal > .relative .modal-grid,
+  #modal-assign-task .modal-grid,
+  #modal-add-artist .modal-grid,
+  #modal-edit-artist .modal-grid,
+  #modal-genre .modal-grid,
+  #modal-edit-playlist .modal-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .admin-modal-panel .modal-grid.two,
+  .admin-modal > .relative .modal-grid.two,
+  #modal-assign-task .modal-grid.two,
+  #modal-add-artist .modal-grid.two,
+  #modal-edit-artist .modal-grid.two,
+  #modal-genre .modal-grid.two,
+  #modal-edit-playlist .modal-grid.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-modal-panel .modal-actions,
+  .admin-modal > .relative .modal-actions,
+  #modal-assign-task .modal-actions,
+  #modal-add-artist .modal-actions,
+  #modal-edit-artist .modal-actions,
+  #modal-genre .modal-actions,
+  #modal-edit-playlist .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .admin-modal-panel .modal-actions > button,
+  .admin-modal > .relative .modal-actions > button,
+  #modal-assign-task .modal-actions > button,
+  #modal-add-artist .modal-actions > button,
+  #modal-edit-artist .modal-actions > button,
+  #modal-genre .modal-actions > button,
+  #modal-edit-playlist .modal-actions > button {
+    flex: 1 1 180px;
   }
 
   .adm-modal-scroll::-webkit-scrollbar { width: 4px; }
@@ -1653,8 +1840,37 @@ import MainLayout from "../layouts/MainLayout.astro";
     throw new Error('redirecting');
   }
 
+  let _adminModalOpenCount = 0;
+  let _adminScrollY = 0;
+
+  function lockAdminPageScroll() {
+    if (_adminModalOpenCount === 0) {
+      _adminScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${_adminScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    }
+    _adminModalOpenCount += 1;
+  }
+
+  function unlockAdminPageScroll() {
+    _adminModalOpenCount = Math.max(0, _adminModalOpenCount - 1);
+    if (_adminModalOpenCount !== 0) return;
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, _adminScrollY);
+  }
+
   function openAdminModal(el: HTMLElement) {
     el.classList.remove('hidden', 'modal-closing');
+    lockAdminPageScroll();
 
     void el.offsetWidth;
   }
@@ -1665,6 +1881,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     setTimeout(() => {
       el.classList.add('hidden');
       el.classList.remove('modal-closing');
+      unlockAdminPageScroll();
     }, 180);
   }
 
@@ -4826,20 +5043,23 @@ import MainLayout from "../layouts/MainLayout.astro";
     renderFilterChips('genres-filter-chips','btn-genres-clear-filters','genres-results-count', _allGenres.length, filtered.length, genreChipFilters, ()=>{ _genreKeyword=''; _genreSort=''; _genreSearchEl.value=''; _genreSortSel.value=''; _renderGenres(); });
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-gray-500 text-sm">${_allGenres.length ? 'No genres match.' : 'No genres found.'}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">${_allGenres.length ? 'No genres match.' : 'No genres found.'}</td></tr>`;
       return;
     }
     tbody.innerHTML = filtered.map((g: any) => `
       <tr class="group hover:bg-white/3 transition-colors">
         <td class="px-6 py-4">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-indigo-400 text-[16px]">label</span>
-            </div>
-            <span class="text-sm font-semibold text-gray-100">${g.name}</span>
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0 overflow-hidden border border-white/8">
+            ${g.image_url
+              ? `<img src="${g.image_url}" class="w-full h-full object-cover" alt="" />`
+              : `<span class="material-symbols-outlined text-indigo-400 text-[16px]">label</span>`}
           </div>
         </td>
+        <td class="px-6 py-4">
+          <span class="text-sm font-semibold text-gray-100">${g.name}</span>
+        </td>
         <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400">${g.description || '—'}</td>
+        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-400">${fmtDate(g.created_at)}</td>
         <td class="px-6 py-4">
           <div class="flex items-center justify-end gap-1 min-w-max">
             <button class="btn-edit-genre w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-blue-200 border border-blue-500/15 flex items-center justify-center transition-all"
@@ -4863,6 +5083,13 @@ import MainLayout from "../layouts/MainLayout.astro";
       const { data: genres } = await apiFetch('/admin/genres');
       _allGenres = genres || [];
 
+      const songGenreSel = document.getElementById('songs-filter-genre') as HTMLSelectElement;
+      if (songGenreSel && _allGenres.length) {
+        const curVal = songGenreSel.value;
+        songGenreSel.innerHTML = '<option value="">All Genres</option>' +
+          _allGenres.map((g:any) => `<option value="${g.id}"${String(g.id)===curVal?' selected':''}>${g.name}</option>`).join('');
+      }
+
       if (!(_genreSearchEl as any)._genreWired) {
         (_genreSearchEl as any)._genreWired = true;
         let _genreTimer: ReturnType<typeof setTimeout>|null = null;
@@ -4874,13 +5101,6 @@ import MainLayout from "../layouts/MainLayout.astro";
         document.getElementById('btn-genres-clear-filters')?.addEventListener('click', () => {
           _genreKeyword=''; _genreSort=''; _genreSearchEl.value=''; _genreSortSel.value=''; _renderGenres();
         });
-      }
-
-      const songGenreSel = document.getElementById('songs-filter-genre') as HTMLSelectElement;
-      if (songGenreSel && _allGenres.length) {
-        const curVal = songGenreSel.value;
-        songGenreSel.innerHTML = '<option value="">All Genres</option>' +
-          _allGenres.map((g:any) => `<option value="${g.id}"${String(g.id)===curVal?' selected':''}>${g.name}</option>`).join('');
       }
 
       _renderGenres();
@@ -5590,7 +5810,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   }
 </style>
 <div id="modal-assign-task" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-task-bg"></div>
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]" id="modal-task-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -5629,7 +5849,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 </div>
 
 <div id="modal-artist-detail" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-detail-bg"></div>
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]" id="modal-artist-detail-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl z-10 mx-4 max-h-[85vh] flex flex-col overflow-hidden">
     <div class="flex items-center justify-between px-6 py-4 border-b border-white/5 shrink-0">
       <div class="flex items-center gap-3">
@@ -5661,7 +5881,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 </div>
 
 <div id="modal-add-artist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-artist-bg"></div>
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]" id="modal-artist-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-lg font-bold text-white">Add New Artist</h2>

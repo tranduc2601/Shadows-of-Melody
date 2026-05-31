@@ -200,11 +200,16 @@ CREATE TABLE IF NOT EXISTS payments (
     amount          NUMERIC(10, 2) NOT NULL,
     currency        VARCHAR(3) DEFAULT 'USD',
     payment_method  VARCHAR(50),
+    payment_provider VARCHAR(50) DEFAULT 'vnpay',
     transaction_id  VARCHAR(100) UNIQUE,
+    order_id        VARCHAR(100),
+    response_code   VARCHAR(20),
     status          payment_status_enum DEFAULT 'pending',
     description     TEXT,
     payment_date    TIMESTAMPTZ DEFAULT NOW(),
-    created_at      TIMESTAMPTZ DEFAULT NOW()
+    paid_at         TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_payments_user_date ON payments(user_id, payment_date);

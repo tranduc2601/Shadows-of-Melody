@@ -1,5 +1,6 @@
 ---
 const { currentPage = 'home' } = Astro.props;
+const isAuthed = Astro.url.searchParams.get('auth') === '1';
 
 const navItems = [
   { href: '/',        icon: 'home',        label: 'Home',      page: 'home'    },
@@ -32,7 +33,8 @@ const libItems = [
 
 <aside id="main-sidebar"
   class="sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40
-         transition-[width] duration-300 ease-in-out overflow-hidden max-h-screen sticky top-0">
+         transition-[width] duration-300 ease-in-out overflow-hidden max-h-screen sticky top-0"
+  data-authed={isAuthed ? 'true' : 'false'}>
 
 
   <div class="h-20 flex items-center justify-between px-4 shrink-0">
@@ -145,6 +147,14 @@ const libItems = [
 </aside>
 
 <style>
+  [data-authed='true'] #main-sidebar,
+  [data-authed='true'] #header-user {
+    display: flex;
+  }
+  [data-authed='false'] #main-sidebar {
+    display: none;
+  }
+
   .sidebar-root.no-sidebar-transition {
     transition: none !important;
   }
@@ -192,6 +202,55 @@ const libItems = [
   }
 </style>
 
+<script is:inline>
+  (function () {
+    function readUser() {
+      try {
+        return JSON.parse(localStorage.getItem('auth_user') || 'null');
+      } catch {
+        return null;
+      }
+    }
+
+    function readRole(user) {
+      return String(user?.role || user?.user_role || user?.account_role || '').trim().toLowerCase();
+    }
+
+    function syncSidebarAuth() {
+      const user = readUser();
+      const role = readRole(user);
+      const isAuthed = !!localStorage.getItem('auth_token');
+      const adminAllowed = role === 'admin' || !!user?.is_admin;
+      const artistAllowed = role === 'artist' || role === 'manager' || !!user?.is_artist;
+
+      const guestEl = document.getElementById('sidebar-guest');
+      const userEl = document.getElementById('sidebar-user');
+      const btnNew = document.getElementById('btn-new-playlist');
+      const adminLink = document.getElementById('sidebar-admin-link');
+      const studioLink = document.getElementById('sidebar-studio-link');
+      const uploadLink = document.getElementById('sidebar-upload-link');
+
+      document.documentElement.dataset.authed = isAuthed ? 'true' : 'false';
+      const sidebar = document.getElementById('main-sidebar');
+      if (sidebar) sidebar.dataset.authed = isAuthed ? 'true' : 'false';
+
+      guestEl?.classList.toggle('hidden', isAuthed);
+      userEl?.classList.toggle('hidden', !isAuthed);
+      if (isAuthed) userEl?.classList.add('flex');
+      btnNew?.classList.toggle('hidden', !isAuthed);
+      if (isAuthed) btnNew?.classList.add('flex');
+      adminLink?.classList.toggle('hidden', !adminAllowed);
+      if (adminAllowed) adminLink?.classList.add('flex');
+      studioLink?.classList.toggle('hidden', !artistAllowed);
+      if (artistAllowed) studioLink?.classList.add('flex');
+      uploadLink?.classList.toggle('hidden', !artistAllowed);
+      if (artistAllowed) uploadLink?.classList.add('flex');
+    }
+
+    document.addEventListener('astro:page-load', syncSidebarAuth);
+    syncSidebarAuth();
+  })();
+</script>
 
 <div id="modal-new-playlist" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
   <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-pl-bg"></div>

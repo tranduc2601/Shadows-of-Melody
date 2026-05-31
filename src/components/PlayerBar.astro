@@ -1,4 +1,4 @@
-﻿<div id="playerBar" class="fixed bottom-0 left-0 right-0 w-full bg-[#0a1229]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4 sm:py-4 lg:py-5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" style="display:none">
+﻿<div id="playerBar" class="fixed bottom-0 left-0 right-0 w-full bg-[#0a1229]/80 border-t border-white/5 z-50 flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4 sm:py-4 lg:py-5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" style="display:none; transform: translateZ(0); will-change: transform;">
 
 
   <div class="flex items-center gap-3 w-full sm:w-1/4 min-w-0 sm:min-w-[180px]">
@@ -39,9 +39,11 @@
     </div>
     <div class="w-full flex items-center gap-3">
       <span id="pb-curtime" class="text-[11px] font-medium text-gray-400 w-10 text-right tabular-nums">0:00</span>
-      <div id="pb-seek" class="flex-1 h-1 bg-white/10 rounded-full overflow-visible group hover:h-1.5 transition-all cursor-pointer relative">
-        <div id="pb-progress" class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none" style="width:0%">
-          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
+      <div id="pb-seek-hit" class="flex-1 py-1.5 cursor-pointer group">
+        <div id="pb-seek" class="relative h-1 bg-white/10 rounded-full overflow-visible transition-all group-hover:h-1.5">
+          <div id="pb-progress" class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none" style="width:0%">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
+          </div>
         </div>
       </div>
       <span id="pb-duration" class="text-[11px] font-medium text-gray-400 w-10 tabular-nums">0:00</span>
@@ -54,23 +56,30 @@
       <button id="pb-volbtn" type="button" class="text-gray-400 hover:text-white transition-colors shrink-0" aria-label="Volume">
         <span class="material-symbols-outlined text-xl">volume_up</span>
       </button>
-      <div id="pb-voltrack" class="relative flex-1 h-1.5 bg-white/10 rounded-full overflow-visible cursor-pointer transition-all hover:h-2">
-        <div id="pb-volbar" class="h-full bg-white hover:bg-purple-400 transition-colors rounded-full pointer-events-none" style="width:100%"></div>
-        <div id="pb-volknob" class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-md border border-white/20 pointer-events-none" style="left:100%"></div>
+      <div id="pb-volhit" class="relative flex-1 py-1.5 cursor-pointer group">
+        <div id="pb-voltrack" class="relative h-1.5 bg-white/10 rounded-full overflow-visible transition-all group-hover:h-2">
+          <div id="pb-volbar" class="h-full bg-white hover:bg-purple-400 transition-colors rounded-full pointer-events-none" style="width:100%"></div>
+          <div id="pb-volknob" class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-md border border-white/20 pointer-events-none" style="left:100%"></div>
+          <div id="pb-voltooltip" class="absolute bottom-[calc(100%+0.4rem)] left-0 -translate-x-1/2 hidden bg-gray-800 text-white text-xs rounded px-2 py-0.5 pointer-events-none whitespace-nowrap">100%</div>
+        </div>
       </div>
       <div id="pb-speed-wrap" class="relative shrink-0">
-        <button id="pb-speed-btn" type="button" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold tracking-wide flex items-center gap-1.5" aria-haspopup="menu" aria-expanded="false" aria-label="Playback speed">
+        <button id="pb-speed-btn" type="button" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-semibold tracking-wide flex items-center gap-1.5" aria-haspopup="dialog" aria-expanded="false" aria-label="Playback speed">
           <span class="material-symbols-outlined text-sm">speed</span>
           <span data-speed-label>1x</span>
         </button>
-        <div id="pb-speed-menu" class="absolute right-0 bottom-[calc(100%+0.5rem)] min-w-24 rounded-2xl border border-white/10 bg-[#10182f]/95 backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.45)] p-1.5 hidden">
-          <div class="flex flex-col gap-1">
-            <button type="button" data-speed-option="0.5" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">0.5x</button>
-            <button type="button" data-speed-option="0.75" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">0.75x</button>
-            <button type="button" data-speed-option="1" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">1x</button>
-            <button type="button" data-speed-option="1.25" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">1.25x</button>
-            <button type="button" data-speed-option="1.5" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">1.5x</button>
-            <button type="button" data-speed-option="2" class="px-3 py-2 rounded-xl text-left text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">2x</button>
+        <div id="pb-speed-popover" class="absolute right-0 bottom-[calc(100%+0.5rem)] w-72 rounded-2xl border border-white/10 bg-[#10182f]/95 shadow-[0_16px_40px_rgba(0,0,0,0.45)] p-4 hidden">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <span class="text-sm font-semibold text-white">Playback speed</span>
+            <button type="button" id="pb-speed-reset" class="text-xs font-medium text-gray-300 hover:text-white transition-colors">Reset to 1x</button>
+          </div>
+          <div class="space-y-3">
+            <input id="pb-speed-range" type="range" min="0.25" max="3.0" step="0.05" value="1" class="w-full accent-purple-500" />
+            <div class="flex items-center gap-3">
+              <input id="pb-speed-input" type="number" min="0.25" max="3.0" step="0.05" value="1" class="w-24 bg-white/5 border border-white/10 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40" />
+              <span class="text-xs text-gray-400">x playback</span>
+            </div>
+            <p id="pb-speed-empty" class="text-xs text-gray-400 hidden">No track playing</p>
           </div>
         </div>
       </div>
@@ -83,6 +92,9 @@
   import { player } from '../lib/player.js';
   import { apiFetch, API_BASE } from '../lib/api.js';
 
+  const w = window as any;
+  if (!w.__playerBarInitialized) w.__playerBarInitialized = true;
+
   const pbTitle    = document.getElementById('pb-title') as HTMLElement;
   const pbArtist   = document.getElementById('pb-artist') as HTMLElement;
   const pbCover    = document.getElementById('pb-cover') as HTMLElement;
@@ -92,17 +104,24 @@
   const pbShuffle  = document.getElementById('pb-shuffle') as HTMLButtonElement;
   const pbRepeat   = document.getElementById('pb-repeat') as HTMLButtonElement;
   const pbRepeatDot = document.getElementById('pb-repeat-dot') as HTMLElement;
+  const pbSeekHit  = document.getElementById('pb-seek-hit') as HTMLElement;
   const pbSeek     = document.getElementById('pb-seek') as HTMLElement;
   const pbProgress = document.getElementById('pb-progress') as HTMLElement;
   const pbCurtime  = document.getElementById('pb-curtime') as HTMLElement;
   const pbDuration = document.getElementById('pb-duration') as HTMLElement;
+  const pbVolHit   = document.getElementById('pb-volhit') as HTMLElement;
   const pbVolTrack = document.getElementById('pb-voltrack') as HTMLElement;
   const pbVolBar   = document.getElementById('pb-volbar') as HTMLElement;
   const pbVolKnob  = document.getElementById('pb-volknob') as HTMLElement;
+  const pbVolTooltip = document.getElementById('pb-voltooltip') as HTMLElement;
   const pbVolbtn   = document.getElementById('pb-volbtn') as HTMLButtonElement;
   const pbSpeedWrap = document.getElementById('pb-speed-wrap') as HTMLElement;
   const pbSpeedBtn = document.getElementById('pb-speed-btn') as HTMLButtonElement;
-  const pbSpeedMenu = document.getElementById('pb-speed-menu') as HTMLElement;
+  const pbSpeedPopover = document.getElementById('pb-speed-popover') as HTMLElement;
+  const pbSpeedRange = document.getElementById('pb-speed-range') as HTMLInputElement;
+  const pbSpeedInput = document.getElementById('pb-speed-input') as HTMLInputElement;
+  const pbSpeedReset = document.getElementById('pb-speed-reset') as HTMLButtonElement;
+  const pbSpeedEmpty = document.getElementById('pb-speed-empty') as HTMLElement;
   const pbFav      = document.getElementById('pb-fav') as HTMLButtonElement;
 
   const GRADS = [
@@ -140,33 +159,84 @@
     const value = Math.max(0, Math.min(1, v));
     if (pbVolBar) pbVolBar.style.width = `${value * 100}%`;
     if (pbVolKnob) pbVolKnob.style.left = `${value * 100}%`;
+    if (pbVolTooltip) {
+      pbVolTooltip.textContent = `${Math.round(value * 100)}%`;
+      pbVolTooltip.style.left = `${value * 100}%`;
+    }
     const icon = pbVolbtn?.querySelector('.material-symbols-outlined');
     if (icon) icon.textContent = volumeIconFor(value);
   }
 
-  const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+  function clampSpeed(rate: number) {
+    return Math.max(0.25, Math.min(3, Number(rate) || 1));
+  }
 
   function fmtSpeed(rate: number) {
-    return `${rate % 1 === 0 ? rate.toFixed(0) : rate.toFixed(rate === 0.75 ? 2 : 1)}x`;
+    const value = clampSpeed(rate);
+    return `${value.toFixed(value % 1 === 0 ? 0 : 2)}x`;
   }
 
   function syncSpeedUI(rate: number) {
-    const value = SPEED_OPTIONS.includes(rate) ? rate : 1;
+    const value = clampSpeed(rate);
     if (pbSpeedBtn) {
       const label = pbSpeedBtn.querySelector('[data-speed-label]') as HTMLElement | null;
       if (label) label.textContent = fmtSpeed(value);
     }
-    pbSpeedMenu?.querySelectorAll('[data-speed-option]').forEach((el) => {
-      const btn = el as HTMLButtonElement;
-      const active = Number(btn.dataset.speedOption) === value;
-      btn.classList.toggle('bg-white/10', active);
-      btn.classList.toggle('text-white', active);
-      btn.classList.toggle('text-gray-300', !active);
-      btn.setAttribute('aria-pressed', String(active));
-    });
+    if (pbSpeedRange) pbSpeedRange.value = String(value);
+    if (pbSpeedInput) pbSpeedInput.value = String(value);
   }
 
+  function syncSpeedAvailability() {
+    const hasTrack = !!player.current;
+    if (pbSpeedRange) pbSpeedRange.disabled = !hasTrack;
+    if (pbSpeedInput) pbSpeedInput.disabled = !hasTrack;
+    if (pbSpeedReset) pbSpeedReset.disabled = !hasTrack;
+    if (pbSpeedEmpty) pbSpeedEmpty.classList.toggle('hidden', hasTrack);
+  }
 
+  function syncPlayerBarVisibility() {
+    const bar = document.getElementById('playerBar') as HTMLElement | null;
+    if (!bar) return;
+    if (player.current || player.isPlaying) bar.style.display = '';
+  }
+
+  function syncSongUI(song = player.current) {
+    if (!song) return;
+    _likedSongId = song?.id ?? null;
+    const bar = document.getElementById('playerBar') as HTMLElement | null;
+    if (bar && bar.style.display === 'none') bar.style.display = '';
+    syncPlayerBarVisibility();
+    if (pbTitle)  pbTitle.textContent  = song.title || '—';
+    if (pbArtist) pbArtist.textContent = song.artist_names || '—';
+    if (pbCover) {
+      const bg = grad(song.id);
+      if (song.cover_url) {
+        pbCover.innerHTML = `<img src="${song.cover_url}" class="w-full h-full object-cover" alt="" />`;
+        pbCover.style.background = '';
+      } else {
+        pbCover.innerHTML = `<span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-white/30 text-3xl">music_note</span>`;
+        pbCover.style.background = bg;
+      }
+    }
+    if (pbDuration && song.duration) pbDuration.textContent = fmt(song.duration);
+    _lastSec = -1;
+    if (pbProgress) pbProgress.style.width = '0%';
+    if (pbCurtime)  pbCurtime.textContent  = '0:00';
+    updatePlayIcon(player.isPlaying);
+    startRaf();
+    syncSpeedAvailability();
+    setFavUI(false);
+    checkFavoriteStatus(song.id);
+  }
+
+  let _isDragging = false;
+  let _isVolumeDragging = false;
+  const _volumeState = { hover: false };
+  let _rafId = 0;
+  let _lastSec = -1;
+  let _likedSongId: number | null = null;
+  let _likedState = false;
+  let _likeErrorTimer: ReturnType<typeof setTimeout> | null = null;
   let _sessionSongId: number | null = null;
   let _sessionStart: number | null = null;
 
@@ -207,47 +277,23 @@
 
   player.preloadLibrary?.();
   player.restoreState();
+  player.syncPlaybackRateFromStorage?.();
+  syncPlayerBarVisibility();
   syncVolumeUI(player.volume ?? 1);
   syncSpeedUI(player.playbackRate ?? 1);
+  syncSpeedAvailability();
+  setVolumeInteractionState(false);
 
 
   window.addEventListener('player:songchange', (e: any) => {
     const song = e.detail.song;
     if (!song) return;
-
-    const bar = document.getElementById('playerBar') as HTMLElement | null;
-    if (bar && bar.style.display === 'none') bar.style.display = '';
-    if (pbTitle)  pbTitle.textContent  = song.title || '—';
-    if (pbArtist) pbArtist.textContent = song.artist_names || '—';
-    if (pbCover) {
-      const bg = grad(song.id);
-      if (song.cover_url) {
-        pbCover.innerHTML = `<img src="${song.cover_url}" class="w-full h-full object-cover" alt="" />`;
-        pbCover.style.background = '';
-      } else {
-        pbCover.innerHTML = `<span class="material-symbols-outlined absolute inset-0 flex items-center justify-center text-white/30 text-3xl">music_note</span>`;
-        pbCover.style.background = bg;
-      }
-    }
-    if (pbDuration && song.duration) pbDuration.textContent = fmt(song.duration);
-    _lastSec = -1;
-    if (pbProgress) pbProgress.style.width = '0%';
-    if (pbCurtime)  pbCurtime.textContent  = '0:00';
-    updatePlayIcon(player.isPlaying);
-    startRaf();
-
-    setFavUI(false);
-    checkFavoriteStatus(song.id);
+    syncSongUI(song);
 
     submitSessionIfValid();
     _sessionSongId = song.id;
     _sessionStart = Date.now();
   });
-
-  let _rafId = 0;
-  let _lastSec = -1;
-  let _isDragging = false;
-  let _isVolumeDragging = false;
 
   function startRaf() {
     cancelAnimationFrame(_rafId);
@@ -272,7 +318,7 @@
   }
 
   window.addEventListener('player:play', () => {
-
+    syncPlayerBarVisibility();
     if (player.current && !_sessionStart) {
       _sessionSongId = Number(player.current.id);
       _sessionStart = Date.now();
@@ -283,6 +329,7 @@
   window.addEventListener('player:pause', () => {
     submitSessionIfValid();
     updatePlayIcon(false);
+    syncSpeedAvailability();
   });
 
   pbPlay?.addEventListener('click', () => player.toggle());
@@ -315,7 +362,7 @@
     return frac;
   }
 
-  pbSeek?.addEventListener('mousedown', (e) => {
+  pbSeekHit?.addEventListener('mousedown', (e) => {
     _isDragging = true;
     applySeekVisual(e.clientX);
     const onMove = (mv: MouseEvent) => applySeekVisual(mv.clientX);
@@ -330,7 +377,7 @@
     window.addEventListener('mouseup',   onUp);
   });
 
-  pbSeek?.addEventListener('touchstart', (e) => {
+  pbSeekHit?.addEventListener('touchstart', (e) => {
     _isDragging = true;
     applySeekVisual(e.touches[0].clientX);
     const onMove = (mv: TouchEvent) => applySeekVisual(mv.touches[0].clientX);
@@ -345,38 +392,64 @@
     window.addEventListener('touchend',  onEnd);
   }, { passive: true });
 
-  function applyVolumeFromClientX(clientX: number) {
-    if (!pbVolTrack) return;
+  function volumeFromClientX(clientX: number) {
+    if (!pbVolTrack) return 1;
     const rect = pbVolTrack.getBoundingClientRect();
-    const raw = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    player.setVolume(raw);
-    syncVolumeUI(raw);
+    const raw = (clientX - rect.left) / rect.width;
+    return Math.max(0, Math.min(1, raw));
   }
 
-  pbVolTrack?.addEventListener('mousedown', (e) => {
+  function setVolumeInteractionState(active: boolean) {
+    if (!pbVolTooltip) return;
+    pbVolTooltip.classList.toggle('hidden', !active && !_volumeState.hover);
+  }
+
+  function applyVolumeFromClientX(clientX: number) {
+    if (!pbVolTrack) return;
+    const raw = volumeFromClientX(clientX);
+    player.setVolume(raw);
+    syncVolumeUI(raw);
+    setVolumeInteractionState(true);
+  }
+
+  pbVolHit?.addEventListener('mouseenter', () => {
+    _volumeState.hover = true;
+    setVolumeInteractionState(true);
+    syncVolumeUI(player.volume ?? 1);
+  });
+
+  pbVolHit?.addEventListener('mouseleave', () => {
+    _volumeState.hover = false;
+    if (!_isVolumeDragging) setVolumeInteractionState(false);
+  });
+
+  pbVolHit?.addEventListener('mousemove', (e) => {
+    if (!_isVolumeDragging) return;
+  });
+
+  pbVolHit?.addEventListener('mousedown', (e) => {
     _isVolumeDragging = true;
     applyVolumeFromClientX(e.clientX);
     const onMove = (mv: MouseEvent) => applyVolumeFromClientX(mv.clientX);
-    const onUp = () => {
+    const endDrag = () => {
       _isVolumeDragging = false;
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      if (!_volumeState.hover) setVolumeInteractionState(false);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', endDrag);
+      document.removeEventListener('mouseleave', endDrag);
     };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('mouseleave', endDrag);
   });
 
-  pbVolTrack?.addEventListener('click', (e) => {
-    if (_isVolumeDragging) return;
-    applyVolumeFromClientX(e.clientX);
-  });
-
-  pbVolTrack?.addEventListener('touchstart', (e) => {
+  pbVolHit?.addEventListener('touchstart', (e) => {
     _isVolumeDragging = true;
     applyVolumeFromClientX(e.touches[0].clientX);
     const onMove = (mv: TouchEvent) => applyVolumeFromClientX(mv.touches[0].clientX);
     const onEnd = () => {
       _isVolumeDragging = false;
+      if (!_volumeState.hover) setVolumeInteractionState(false);
       window.removeEventListener('touchmove', onMove);
       window.removeEventListener('touchend', onEnd);
     };
@@ -392,20 +465,27 @@
   });
 
   function closeSpeedMenu() {
-    if (!pbSpeedMenu || !pbSpeedBtn) return;
-    pbSpeedMenu.classList.add('hidden');
+    if (!pbSpeedPopover || !pbSpeedBtn) return;
+    pbSpeedPopover.classList.add('hidden');
     pbSpeedBtn.setAttribute('aria-expanded', 'false');
   }
 
   function openSpeedMenu() {
-    if (!pbSpeedMenu || !pbSpeedBtn) return;
-    pbSpeedMenu.classList.remove('hidden');
+    if (!pbSpeedPopover || !pbSpeedBtn) return;
+    pbSpeedPopover.classList.remove('hidden');
     pbSpeedBtn.setAttribute('aria-expanded', 'true');
   }
 
   function toggleSpeedMenu() {
-    if (!pbSpeedMenu || !pbSpeedBtn) return;
-    pbSpeedMenu.classList.contains('hidden') ? openSpeedMenu() : closeSpeedMenu();
+    if (!pbSpeedPopover || !pbSpeedBtn) return;
+    pbSpeedPopover.classList.contains('hidden') ? openSpeedMenu() : closeSpeedMenu();
+  }
+
+  function setPlaybackSpeed(rate: number) {
+    const next = clampSpeed(rate);
+    player.setPlaybackRate(next);
+    try { localStorage.setItem('player_speed', String(next)); } catch {}
+    syncSpeedUI(next);
   }
 
   pbSpeedBtn?.addEventListener('click', (e) => {
@@ -413,17 +493,26 @@
     toggleSpeedMenu();
   });
 
-  pbSpeedMenu?.querySelectorAll('[data-speed-option]').forEach((el) => {
-    el.addEventListener('click', () => {
-      const rate = Number((el as HTMLElement).dataset.speedOption || '1');
-      player.setPlaybackRate(rate);
-      syncSpeedUI(rate);
-      closeSpeedMenu();
-    });
+  pbSpeedRange?.addEventListener('input', () => setPlaybackSpeed(Number(pbSpeedRange.value)));
+  pbSpeedInput?.addEventListener('input', () => setPlaybackSpeed(Number(pbSpeedInput.value)));
+  pbSpeedReset?.addEventListener('click', () => setPlaybackSpeed(1));
+
+  document.addEventListener('astro:page-load', () => {
+    const savedSpeed = parseFloat(localStorage.getItem('player_speed') ?? '1');
+    if (Number.isFinite(savedSpeed)) {
+      player.syncPlaybackRateFromStorage?.();
+      syncSpeedUI(savedSpeed);
+    }
+    syncSpeedAvailability();
   });
 
   document.addEventListener('click', (e) => {
     if (!pbSpeedWrap?.contains(e.target as Node)) closeSpeedMenu();
+  });
+
+  window.addEventListener('favorites:changed', (e: any) => {
+    const { songId, isFavorite } = e.detail || {};
+    if (_likedSongId != null && Number(songId) === Number(_likedSongId)) setFavUI(!!isFavorite);
   });
 
   window.addEventListener('keydown', (e) => {
@@ -431,6 +520,8 @@
   });
 
   function setFavUI(isFav: boolean) {
+    _likedState = isFav;
+    if (pbFav) pbFav.dataset.liked = String(isFav);
     const icon = pbFav?.querySelector('.material-symbols-outlined') as HTMLElement | null;
     if (icon) {
       icon.textContent = isFav ? 'favorite' : 'favorite_border';
@@ -440,13 +531,20 @@
     pbFav?.classList.toggle('text-gray-400', !isFav);
   }
 
+  function favoritePayload(song: any) {
+    return JSON.stringify({ songId: song.id });
+  }
+
   async function checkFavoriteStatus(songId: number) {
+    _likedSongId = songId;
     const token = localStorage.getItem('auth_token');
     if (!token) { setFavUI(false); return; }
     try {
       const res = await apiFetch(`/favorites/${songId}/is-favorite`);
-      setFavUI(!!res.data?.isFavorite);
-    } catch { setFavUI(false); }
+      if (_likedSongId === songId) setFavUI(!!res.data?.isFavorite);
+    } catch {
+      if (_likedSongId === songId) setFavUI(false);
+    }
   }
 
   async function refreshLikedPages(songId: number, isFavorite: boolean) {
@@ -463,17 +561,24 @@
     if (!song) return;
     const token = localStorage.getItem('auth_token');
     if (!token) { window.location.href = '/login'; return; }
-    const isFav = pbFav.dataset.liked === 'true';
+    const isFav = _likedState;
+    if (_likeErrorTimer) clearTimeout(_likeErrorTimer);
+    const nextFav = !isFav;
+    setFavUI(nextFav);
     try {
-      setFavUI(!isFav);
       if (isFav) {
         await apiFetch(`/favorites/${song.id}`, { method: 'DELETE' });
       } else {
-        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ song_id: song.id }) });
+        await apiFetch('/favorites', { method: 'POST', body: favoritePayload(song) });
       }
-      await refreshLikedPages(song.id, !isFav);
-    } catch {
+      await refreshLikedPages(song.id, nextFav);
+    } catch (error) {
+      console.error('Favorite toggle failed:', error);
       setFavUI(isFav);
+      if (pbFav) pbFav.dataset.error = 'true';
+      _likeErrorTimer = setTimeout(() => {
+        if (pbFav?.dataset.error === 'true') delete pbFav.dataset.error;
+      }, 1500);
     }
   });
 </script>

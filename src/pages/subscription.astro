@@ -222,11 +222,16 @@ import PlayerBar from "../components/PlayerBar.astro";
       }
     }
 
+    function openCheckoutRedirect(url) {
+      if (!url) return;
+      window.location.href = url.startsWith('http') ? url : url;
+    }
+
     document.getElementById('plan-grid')?.addEventListener('click', async (e: Event) => {
       const btn = (e.target as HTMLElement).closest('.plan-btn') as HTMLButtonElement | null;
       if (!btn || btn.disabled) return;
       const plan = btn.dataset.plan || 'free';
-      const confirmed = window.confirm(`Activate ${plan.toUpperCase()} plan via MoMo?`);
+      const confirmed = window.confirm(`Thanh toán gói ${plan.toUpperCase()} bằng VNPAY giả lập?`);
       if (!confirmed) return;
       btn.disabled = true;
       const orig = btn.textContent;
@@ -234,12 +239,12 @@ import PlayerBar from "../components/PlayerBar.astro";
       try {
         const result = await apiFetch('/subscriptions/checkout', {
           method: 'POST',
-          body: JSON.stringify({ plan, paymentMethod: 'momo' }),
+          body: JSON.stringify({ plan, paymentMethod: 'vnpay' }),
         });
-        _subscription = result.data.subscription;
-        renderSubscription();
-        await loadPayments();
-        toast('Subscription activated successfully.', 'success');
+        const paymentUrl = result.data?.payment_url;
+        if (!paymentUrl) throw new Error('Missing payment url');
+        toast('Đang chuyển sang cổng thanh toán giả lập...', 'info');
+        openCheckoutRedirect(paymentUrl);
       } catch (err) {
         toast(err.message || 'Checkout failed.', 'error');
       } finally {

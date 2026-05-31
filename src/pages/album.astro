@@ -140,9 +140,10 @@ import Sidebar from "../components/Sidebar.astro";
   <script>
     import { apiFetch, formatDuration, formatCount, colorFor, API_BASE } from '../lib/api.js';
     import { player } from '../lib/player.js';
+    import { getRouteParams } from '../lib/route.js';
 
-    const params = new URLSearchParams(window.location.search);
-    const rawId = params.get('id');
+    const route = getRouteParams();
+    const rawId = route.get('id') || route.getPathParam('id');
     const albumId = rawId ? parseInt(rawId, 10) : NaN;
 
     const elErr = document.getElementById('album-error-state')!;

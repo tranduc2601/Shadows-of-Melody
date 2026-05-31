@@ -1,10 +1,10 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Shadows of Melody - Home">
+  <link slot="head" rel="preload" as="image" href="/images/hero.jpg" fetchpriority="high" />
   <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
     
     <Sidebar currentPage="home" />
@@ -140,7 +140,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                     <th class="font-medium text-sm px-4 py-3 pb-4">Title</th>
                     <th class="font-medium text-sm px-4 py-3 hidden sm:table-cell pb-4 text-right pr-12">Plays</th>
                     <th class="font-medium text-sm px-4 py-3 w-20 text-center pb-4"><span class="material-symbols-outlined text-[18px]">schedule</span></th>
-                    <th class="w-20"></th>
+                    <th class="font-medium text-sm px-4 py-3 w-20 text-center pb-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="trending-tbody">
@@ -156,7 +156,7 @@ import PlayerBar from "../components/PlayerBar.astro";
                <a href="/artists" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-wider">View All</a>
             </div>
 
-            <div id="artists-grid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-3 sm:gap-4">
+            <div id="artists-grid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-4 sm:gap-5">
               <div class="col-span-2 text-gray-500 text-sm text-center py-4">Loading...</div>
             </div>
           </div>
@@ -189,7 +189,7 @@ import PlayerBar from "../components/PlayerBar.astro";
               Artist Members
             </h2>
           </div>
-          <div id="artist-members-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+          <div id="artist-members-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
             <div class="col-span-6 text-gray-500 text-sm text-center py-4">Loading...</div>
           </div>
         </div>
@@ -240,8 +240,6 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </div>
       </div>
-
-      <PlayerBar />
     </main>
   </div>
 
@@ -274,136 +272,143 @@ import PlayerBar from "../components/PlayerBar.astro";
     'linear-gradient(135deg,#f59e0b,#f97316)',
   ];
 
-  document.getElementById('nav-back-btn')?.addEventListener('click', () => history.back());
-  document.getElementById('nav-forward-btn')?.addEventListener('click', () => history.forward());
+  let homeAbortController: AbortController | null = null;
 
-  const headerSearch = document.getElementById('header-search-input') as HTMLInputElement;
-  headerSearch?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const q = headerSearch.value.trim();
-      if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`;
-    }
-  });
+  function initHomePage() {
+    homeAbortController?.abort();
+    homeAbortController = new AbortController();
+    const { signal } = homeAbortController;
 
-  const user = getUser();
-  if (user) {
-    const greetingEl  = document.getElementById('header-greeting');
-    const avatarWrap  = document.getElementById('header-user');
-    const avatarToggle = document.getElementById('header-avatar-wrap') as HTMLElement;
-    const avatarImg   = document.getElementById('header-avatar-img') as HTMLImageElement;
-    const initials    = document.getElementById('header-avatar-initials');
-    const avatarDropdown = document.getElementById('header-avatar-dropdown') as HTMLElement;
-    const logoutBtn = document.getElementById('header-logout-btn') as HTMLButtonElement;
+    document.getElementById('nav-back-btn')?.addEventListener('click', () => history.back(), { signal });
+    document.getElementById('nav-forward-btn')?.addEventListener('click', () => history.forward(), { signal });
 
-    if (avatarWrap) avatarWrap.classList.remove('hidden');
-    document.getElementById('header-login-btn')?.remove();
-
-    const hour = new Date().getHours();
-    const timeGreeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-    const displayName = user.full_name || user.username || '';
-    if (greetingEl) greetingEl.textContent = `${timeGreeting}, ${displayName}`;
-
-    if (user.avatar_url && avatarImg) {
-      avatarImg.src = user.avatar_url;
-      avatarImg.classList.remove('hidden');
-      if (initials) initials.textContent = '';
-    } else if (initials) {
-      initials.textContent = (displayName || '?').slice(0, 2).toUpperCase();
-    }
-
-    const closeAvatarDropdown = () => avatarDropdown?.classList.add('hidden');
-
-    avatarToggle?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = avatarDropdown?.classList.contains('hidden');
-      document.querySelectorAll('#header-avatar-dropdown').forEach((el) => {
-        if (el !== avatarDropdown) el.classList.add('hidden');
-      });
-      if (isHidden) avatarDropdown?.classList.remove('hidden');
-      else closeAvatarDropdown();
+    const headerSearch = document.getElementById('header-search-input') as HTMLInputElement;
+    headerSearch?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const q = headerSearch.value.trim();
+        if (q) window.location.href = `/search?q=${encodeURIComponent(q)}`;
+      }
     });
-    avatarDropdown?.addEventListener('click', (e) => e.stopPropagation());
-    document.addEventListener('click', (e) => {
-      if (!avatarToggle?.contains(e.target as Node) && !avatarDropdown?.contains(e.target as Node)) closeAvatarDropdown();
-    });
-    logoutBtn?.addEventListener('click', () => {
-      clearAuth();
-      window.location.href = '/login';
-    });
-  } else {
-    document.getElementById('header-user')?.classList.add('hidden');
-    document.getElementById('header-login-btn')?.classList.remove('hidden');
-  }
 
-  let _heroSong: any = null;
+    const user = getUser();
+    if (user) {
+      const greetingEl = document.getElementById('header-greeting');
+      const avatarWrap = document.getElementById('header-user');
+      const avatarToggle = document.getElementById('header-avatar-wrap') as HTMLElement;
+      const avatarImg = document.getElementById('header-avatar-img') as HTMLImageElement;
+      const initials = document.getElementById('header-avatar-initials');
+      const avatarDropdown = document.getElementById('header-avatar-dropdown') as HTMLElement;
+      const logoutBtn = document.getElementById('header-logout-btn') as HTMLButtonElement;
 
-  async function loadHero() {
-    try {
-      const { data: songs } = await apiFetch('/songs?limit=50');
-      if (!songs?.length) return;
-      const sorted = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
-      _heroSong = sorted[0];
-      const s = _heroSong;
+      if (avatarWrap) avatarWrap.classList.remove('hidden');
+      document.getElementById('header-login-btn')?.remove();
 
-      const title = document.getElementById('hero-title');
-      const artistLabel = document.getElementById('hero-artist-label');
-      const desc = document.getElementById('hero-desc');
-      const coverBg = document.getElementById('hero-cover-bg');
-      const coverArt = document.getElementById('hero-cover-art');
-      const heroCard = document.getElementById('hero-card');
-      const heroLink = document.getElementById('hero-artist-link') as HTMLAnchorElement;
+      const hour = new Date().getHours();
+      const timeGreeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+      const displayName = user.full_name || user.username || '';
+      if (greetingEl) greetingEl.textContent = `${timeGreeting}, ${displayName}`;
 
-      if (title) title.textContent = s.title;
-      if (artistLabel) artistLabel.textContent = s.artist_names || 'Artist';
-
-      const plays = formatCount(s.plays_count || 0);
-      const dur   = formatDuration(s.duration);
-      if (desc) {
-        desc.textContent = `${plays} plays · ${dur}`;
-        desc.classList.remove('opacity-0');
+      if (user.avatar_url && avatarImg) {
+        avatarImg.src = user.avatar_url;
+        avatarImg.classList.remove('hidden');
+        if (initials) initials.textContent = '';
+      } else if (initials) {
+        initials.textContent = (displayName || '?').slice(0, 2).toUpperCase();
       }
 
-      if (s.cover_url) {
-        if (coverBg) {
-          coverBg.style.backgroundImage = `url('${s.cover_url}')`;
-          coverBg.style.opacity = '0.3';
-        }
-        if (coverArt) {
-          coverArt.innerHTML = `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="" />`;
-          coverArt.classList.remove('opacity-0');
-          coverArt.classList.remove('hidden');
-          coverArt.style.opacity = '1';
-        }
-      }
+      const closeAvatarDropdown = () => avatarDropdown?.classList.add('hidden');
 
-      if (heroCard && s.id) {
+      avatarToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = avatarDropdown?.classList.contains('hidden');
+        document.querySelectorAll('#header-avatar-dropdown').forEach((el) => {
+          if (el !== avatarDropdown) el.classList.add('hidden');
+        });
+        if (isHidden) avatarDropdown?.classList.remove('hidden');
+        else closeAvatarDropdown();
+      }, { signal });
+      avatarDropdown?.addEventListener('click', (e) => e.stopPropagation(), { signal });
+      document.addEventListener('click', (e) => {
+        if (!avatarToggle?.contains(e.target as Node) && !avatarDropdown?.contains(e.target as Node)) closeAvatarDropdown();
+      }, { signal });
+      logoutBtn?.addEventListener('click', () => {
+        clearAuth();
+        window.location.href = '/login';
+      }, { signal });
+    } else {
+      document.getElementById('header-user')?.classList.add('hidden');
+      document.getElementById('header-login-btn')?.classList.remove('hidden');
+    }
+
+    let _heroSong: any = null;
+
+    async function loadHero() {
+      try {
+        const { data: songs } = await apiFetch('/songs?limit=50');
+        if (!songs?.length) return;
+        const sorted = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
+        _heroSong = sorted[0];
+        const s = _heroSong;
+
+        const title = document.getElementById('hero-title');
+        const artistLabel = document.getElementById('hero-artist-label');
+        const desc = document.getElementById('hero-desc');
+        const coverBg = document.getElementById('hero-cover-bg');
+        const coverArt = document.getElementById('hero-cover-art');
+        const heroCard = document.getElementById('hero-card');
+        const heroLink = document.getElementById('hero-artist-link') as HTMLAnchorElement;
+
+        if (title) title.textContent = s.title;
+        if (artistLabel) artistLabel.textContent = s.artist_names || 'Artist';
+
+        const plays = formatCount(s.plays_count || 0);
+        const dur = formatDuration(s.duration);
+        if (desc) {
+          desc.textContent = `${plays} plays · ${dur}`;
+          desc.classList.remove('opacity-0');
+        }
+
+        if (s.cover_url) {
+          if (coverBg) {
+            coverBg.style.backgroundImage = `url('${s.cover_url}')`;
+            coverBg.style.opacity = '0.3';
+          }
+          if (coverArt) {
+            coverArt.innerHTML = `<img src="${s.cover_url}" class="w-full h-full object-cover" alt="" />`;
+            coverArt.classList.remove('opacity-0');
+            coverArt.classList.remove('hidden');
+            coverArt.style.opacity = '1';
+          }
+        }
+
+        if (heroCard && s.id) {
+          const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+          heroCard.style.background = `${grad}`;
+        }
+
+        if (s.artist_id && heroLink) {
+          heroLink.href = `/artist?id=${s.artist_id}`;
+        }
+      } catch {}
+    }
+
+    document.getElementById('hero-play-btn')?.addEventListener('click', () => {
+      if (_heroSong) player.playSong(_heroSong);
+    }, { signal });
+
+    const tbody = document.getElementById('trending-tbody');
+    const seeAllBtn = document.getElementById('trending-see-all') as HTMLButtonElement;
+    let _allSongs: any[] = [];
+    let _showingAll = false;
+
+    function renderTrendingRows(songs: any[]) {
+      if (!tbody) return;
+      tbody.innerHTML = songs.map((s: any, i: number) => {
         const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-        heroCard.style.background = `${grad}`;
-      }
-
-      if (s.artist_id && heroLink) {
-        heroLink.href = `/artist?id=${s.artist_id}`;
-      }
-    } catch {}
-  }
-
-  document.getElementById('hero-play-btn')?.addEventListener('click', () => {
-    if (_heroSong) player.playSong(_heroSong);
-  });
-
-  const tbody = document.getElementById('trending-tbody');
-  const seeAllBtn = document.getElementById('trending-see-all') as HTMLButtonElement;
-  let _allSongs: any[] = [];
-  let _showingAll = false;
-
-  function renderTrendingRows(songs: any[]) {
-    if (!tbody) return;
-    tbody.innerHTML = songs.map((s: any, i: number) => {
-      const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-      const cover = s.cover_url
-        ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover transition-transform duration-300 group-hover:scale-105" alt=""/>`
-        : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105" style="background:${grad}"></div>`;
-      return `
+        const cover = s.cover_url
+          ? `<img src="${s.cover_url}" class="w-12 h-12 rounded-lg shadow-lg shrink-0 object-cover transition-transform duration-300 group-hover:scale-105" alt=""/>`
+          : `<div class="w-12 h-12 rounded-lg shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105" style="background:${grad}"></div>`;
+        return `
         <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(s))}">
           <td class="px-4 py-3 text-center rounded-l-xl relative overflow-hidden">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-7 opacity-0 group-hover:opacity-100"></div>
@@ -436,50 +441,58 @@ import PlayerBar from "../components/PlayerBar.astro";
             </div>
           </td>
         </tr>`;
-    }).join('');
-  }
+      }).join('');
+    }
 
-  async function loadArtists() {
-    const artistsGrid = document.getElementById('artists-grid');
-    try {
-      const { data: artists } = await apiFetch('/artists?limit=4');
-      if (artistsGrid && artists?.length) {
-        artistsGrid.innerHTML = artists.slice(0, 4).map((a: any) => {
-          const grad = GRADIENTS_HEX[(a.id - 1) % GRADIENTS_HEX.length];
-          const img = a.image_url
-            ? `<img src="${a.image_url}" class="w-full h-full object-cover" alt=""/>`
-            : '';
-          return `
-            <a href="/artist?id=${a.id}" class="bg-white/5 border border-white/5 rounded-3xl p-5 flex flex-col items-center gap-3 hover:bg-white/[0.07] hover:border-white/[0.08] transition-[background,border-color] duration-200 cursor-pointer group no-underline">
-              <div class="w-24 h-24 rounded-full overflow-hidden relative shadow-lg group-hover:shadow-purple-500/20 transition-shadow duration-300" style="background:${grad}">
-                ${img}
-                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-black/30 flex items-center justify-center transition-opacity duration-200">
-                  <span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+    async function loadArtists() {
+      const artistsGrid = document.getElementById('artists-grid');
+      try {
+        const { data: artists } = await apiFetch('/artists?limit=4');
+        if (artistsGrid && artists?.length) {
+          artistsGrid.innerHTML = artists.slice(0, 4).map((a: any) => {
+            const grad = GRADIENTS_HEX[(a.id - 1) % GRADIENTS_HEX.length];
+            const imageUrl = a.image_url;
+            const avatarFallback = `<div class="absolute inset-0 flex items-center justify-center"><div class="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_48%)]"><div class="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-4xl font-black text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">${(a.name || 'A').slice(0, 1).toUpperCase()}</div></div></div>`;
+            return `
+            <a href="/artist?id=${a.id}" class="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-4 transition duration-300 ease-out hover:-translate-y-1 hover:border-purple-400/20 hover:bg-white/[0.06] hover:shadow-[0_18px_60px_rgba(0,0,0,0.25)] no-underline cursor-pointer">
+              <div class="absolute inset-0 bg-linear-to-br from-white/[0.06] via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100"></div>
+              <div class="relative flex flex-col gap-4">
+                <div class="relative mx-auto aspect-square w-full max-w-[13rem] overflow-hidden rounded-full border border-white/10 bg-white/[0.04] shadow-lg shadow-black/20" style="background:${grad}">
+                  ${imageUrl ? `<img src="${imageUrl}" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105" alt="${a.name || 'Artist'}"/>` : avatarFallback}
+                  <div class="absolute inset-0 bg-linear-to-t from-black/55 via-black/10 to-transparent"></div>
+                  <div class="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/35 to-transparent"></div>
+                  <div class="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur border border-white/15 text-white shadow-lg shadow-black/20">
+                      <span class="material-symbols-outlined text-[24px]">play_arrow</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0 text-center mx-auto">
+                    <p class="truncate text-base font-semibold text-white transition-colors duration-300 group-hover:text-purple-300">${a.name}</p>
+                    <p class="mt-1 text-xs text-gray-400">${formatCount(a.followers_count)} followers</p>
+                  </div>
                 </div>
               </div>
-              <div class="text-center mt-2">
-                <p class="font-bold text-[15px] text-gray-100 group-hover:text-purple-300 transition-colors">${a.name}</p>
-                <p class="text-xs text-gray-500 mt-0.5">${formatCount(a.followers_count)} fans</p>
-              </div>
             </a>`;
-        }).join('');
-      }
-    } catch {}
-  }
+          }).join('');
+        }
+      } catch {}
+    }
 
-  async function loadReleases() {
-    const releasesGrid = document.getElementById('releases-grid');
-    try {
-      const { data: albums } = await apiFetch('/albums?limit=12');
-      if (releasesGrid && albums?.length) {
-        releasesGrid.innerHTML = albums.map((al: any) => {
-          const grad = GRADIENTS_HEX[(al.id - 1) % GRADIENTS_HEX.length];
-          const cover = al.cover_url
-            ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
-            : '';
-          const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
-          const artistName = al.artist_name || al.artist?.name || '';
-          return `
+    async function loadReleases() {
+      const releasesGrid = document.getElementById('releases-grid');
+      try {
+        const { data: albums } = await apiFetch('/albums?limit=12');
+        if (releasesGrid && albums?.length) {
+          releasesGrid.innerHTML = albums.map((al: any) => {
+            const grad = GRADIENTS_HEX[(al.id - 1) % GRADIENTS_HEX.length];
+            const cover = al.cover_url
+              ? `<img src="${al.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+              : '';
+            const year = al.release_date ? new Date(al.release_date).getFullYear() : '';
+            const artistName = al.artist_name || al.artist?.name || '';
+            return `
             <div class="group cursor-pointer block release-album-card w-44 shrink-0" data-album-id="${al.id}">
               <div class="w-44 h-44 rounded-2xl shadow-lg mb-3 relative overflow-hidden transition-transform duration-200 group-hover:scale-105 group-hover:shadow-purple-500/20 group-hover:shadow-xl" style="background:${grad}">
                 ${cover}
@@ -495,34 +508,34 @@ import PlayerBar from "../components/PlayerBar.astro";
               <h3 class="font-bold text-[14px] text-gray-100 truncate group-hover:text-purple-400 transition-colors duration-200">${al.title}</h3>
               <p class="text-[12px] text-gray-400 truncate mt-0.5">${[artistName, year].filter(Boolean).join(' · ')}</p>
             </div>`;
-        }).join('');
-      }
-    } catch {}
-  }
+          }).join('');
+        }
+      } catch {}
+    }
 
-  const releasesWrapper = document.getElementById('releases-scroll-wrapper');
-  document.getElementById('releases-prev')?.addEventListener('click', () => {
-    releasesWrapper?.scrollBy({ left: -400, behavior: 'smooth' });
-  });
-  document.getElementById('releases-next')?.addEventListener('click', () => {
-    releasesWrapper?.scrollBy({ left: 400, behavior: 'smooth' });
-  });
+    const releasesWrapper = document.getElementById('releases-scroll-wrapper');
+    document.getElementById('releases-prev')?.addEventListener('click', () => {
+      releasesWrapper?.scrollBy({ left: -400, behavior: 'smooth' });
+    }, { signal });
+    document.getElementById('releases-next')?.addEventListener('click', () => {
+      releasesWrapper?.scrollBy({ left: 400, behavior: 'smooth' });
+    }, { signal });
 
-  async function loadRecentlyPlayed() {
-    if (!getToken()) return;
-    const section = document.getElementById('recently-played-section');
-    const grid    = document.getElementById('recently-played-grid');
-    if (!section || !grid) return;
-    try {
-      const { data: songs } = await apiFetch('/history/recent?limit=6');
-      if (!songs?.length) return;
-      section.classList.remove('hidden');
-      grid.innerHTML = songs.map((s: any) => {
-        const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-        const cover = s.cover_url
-          ? `<img src="${s.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
-          : '';
-        return `
+    async function loadRecentlyPlayed() {
+      if (!getToken()) return;
+      const section = document.getElementById('recently-played-section');
+      const grid = document.getElementById('recently-played-grid');
+      if (!section || !grid) return;
+      try {
+        const { data: songs } = await apiFetch('/history/recent?limit=6');
+        if (!songs?.length) return;
+        section.classList.remove('hidden');
+        grid.innerHTML = songs.map((s: any) => {
+          const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+          const cover = s.cover_url
+            ? `<img src="${s.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>`
+            : '';
+          return `
           <div class="group cursor-pointer recent-song-card" data-song="${encodeURIComponent(JSON.stringify(s))}">
             <div class="w-full aspect-square rounded-xl relative overflow-hidden mb-2.5 transition-transform duration-200 group-hover:scale-105" style="background:${grad}">
               ${cover}
@@ -533,102 +546,108 @@ import PlayerBar from "../components/PlayerBar.astro";
             <p class="text-sm font-semibold text-gray-200 truncate group-hover:text-purple-300 transition-colors">${s.title}</p>
             <p class="text-xs text-gray-500 truncate mt-0.5">${s.artist_names || '—'}</p>
           </div>`;
-      }).join('');
+        }).join('');
 
-      grid.addEventListener('click', (e) => {
-        const card = (e.target as HTMLElement).closest('.recent-song-card') as HTMLElement | null;
-        if (!card) return;
-        try {
-          const song = JSON.parse(decodeURIComponent(card.dataset.song || ''));
-          player.playSong(song);
-        } catch {}
-      });
-    } catch {}
-  }
+        grid.addEventListener('click', (e) => {
+          const card = (e.target as HTMLElement).closest('.recent-song-card') as HTMLElement | null;
+          if (!card) return;
+          try {
+            const song = JSON.parse(decodeURIComponent(card.dataset.song || ''));
+            player.playSong(song);
+          } catch {}
+        }, { signal });
+      } catch {}
+    }
 
-  async function loadArtistMembers() {
-    const grid    = document.getElementById('artist-members-grid');
-    const section = document.getElementById('artist-members-section');
-    if (!grid) return;
-    try {
-      const { data: members } = await apiFetch('/artists/members?limit=12');
-      if (!members?.length) {
-        if (section) section.classList.add('hidden');
-        return;
-      }
-      grid.innerHTML = members.map((m: any) => {
-        const displayName = m.artist_name || m.full_name || m.username || '—';
-        const initials    = displayName.slice(0, 2).toUpperCase();
-        const grad        = GRADIENTS_HEX[(m.user_id - 1) % GRADIENTS_HEX.length];
-        const href        = m.artist_id ? `/artist?id=${m.artist_id}` : '/artists';
-        return `
-          <a href="${href}" class="flex flex-col items-center gap-3 cursor-pointer group no-underline">
-            <div class="w-20 h-20 rounded-full overflow-hidden shadow-md ring-2 ring-white/5 group-hover:ring-purple-500/40 transition-all"
-                 style="background:${grad}">
-              ${m.avatar_url
-                ? `<img src="${m.avatar_url}" class="w-full h-full object-cover" alt="" />`
-                : `<div class="w-full h-full flex items-center justify-center text-white font-bold text-lg">${initials}</div>`}
+    async function loadArtistMembers() {
+      const grid = document.getElementById('artist-members-grid');
+      const section = document.getElementById('artist-members-section');
+      if (!grid) return;
+      try {
+        const { data: members } = await apiFetch('/artists/members?limit=12');
+        if (!members?.length) {
+          if (section) section.classList.add('hidden');
+          return;
+        }
+        grid.innerHTML = members.map((m: any) => {
+          const displayName = m.artist_name || m.full_name || m.username || '—';
+          const initials = displayName.slice(0, 2).toUpperCase();
+          const grad = GRADIENTS_HEX[(m.user_id - 1) % GRADIENTS_HEX.length];
+          const href = m.artist_id ? `/artist?id=${m.artist_id}` : '/artists';
+          const avatarFallback = `<div class="absolute inset-0 flex items-center justify-center"><div class="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_48%)]"><div class="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-4xl font-black text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)]">${initials.slice(0, 1)}</div></div></div>`;
+          return `
+          <a href="${href}" class="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-4 transition duration-300 ease-out hover:-translate-y-1 hover:border-purple-400/20 hover:bg-white/[0.06] hover:shadow-[0_18px_60px_rgba(0,0,0,0.25)] no-underline cursor-pointer flex flex-col gap-4 items-center">
+            <div class="absolute inset-0 bg-linear-to-br from-white/[0.06] via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100"></div>
+            <div class="relative mx-auto aspect-square w-full max-w-[13rem] overflow-hidden rounded-full border border-white/10 bg-white/[0.04] shadow-lg shadow-black/20" style="background:${grad}">
+              ${m.avatar_url ? `<img src="${m.avatar_url}" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105" alt="${displayName}" />` : avatarFallback}
+              <div class="absolute inset-0 bg-linear-to-t from-black/55 via-black/10 to-transparent"></div>
+              <div class="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/35 to-transparent"></div>
+              <div class="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur border border-white/15 text-white shadow-lg shadow-black/20">
+                  <span class="material-symbols-outlined text-[24px]">mic</span>
+                </div>
+              </div>
             </div>
-            <div class="text-center">
-              <p class="text-sm font-semibold text-gray-200 group-hover:text-purple-300 transition-colors truncate max-w-[80px]">${displayName}</p>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full mt-1">
+            <div class="text-center w-full">
+              <p class="text-sm font-semibold text-white group-hover:text-purple-300 transition-colors truncate">${displayName}</p>
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full mt-2">
                 <span class="material-symbols-outlined text-[10px]">mic</span>Artist
               </span>
             </div>
           </a>`;
-      }).join('');
-    } catch {
-      if (section) section.classList.add('hidden');
+        }).join('');
+      } catch {
+        if (section) section.classList.add('hidden');
+      }
     }
-  }
 
-  async function loadTrending() {
-    try {
-      const { data: songs } = await apiFetch('/songs?limit=50');
-      if (tbody) {
-        if (!songs?.length) {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No songs yet.</td></tr>';
-        } else {
-          _allSongs = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
-          renderTrendingRows(_allSongs.slice(0, 3));
-          if (seeAllBtn) {
-            seeAllBtn.addEventListener('click', () => {
-              _showingAll = !_showingAll;
-              renderTrendingRows(_showingAll ? _allSongs : _allSongs.slice(0, 3));
-              seeAllBtn.textContent = _showingAll ? 'Show Less' : 'View All';
-              setTimeout(loadFavoriteStatuses, 100);
-            });
+    async function loadTrending() {
+      try {
+        const { data: songs } = await apiFetch('/songs?limit=50');
+        if (tbody) {
+          if (!songs?.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">No songs yet.</td></tr>';
+          } else {
+            _allSongs = [...songs].sort((a: any, b: any) => (b.plays_count || 0) - (a.plays_count || 0));
+            renderTrendingRows(_allSongs.slice(0, 3));
+            if (seeAllBtn) {
+              seeAllBtn.addEventListener('click', () => {
+                _showingAll = !_showingAll;
+                renderTrendingRows(_showingAll ? _allSongs : _allSongs.slice(0, 3));
+                seeAllBtn.textContent = _showingAll ? 'Show Less' : 'View All';
+                setTimeout(loadFavoriteStatuses, 100);
+              });
+            }
           }
         }
+      } catch {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
       }
-    } catch {
-      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-red-400 text-sm">Failed to load data.</td></tr>';
     }
-  }
 
-  let _overlaySongs: any[] = [];
+    let _overlaySongs: any[] = [];
 
-  function shuffleArr<T>(arr: T[]): T[] {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+    function shuffleArr<T>(arr: T[]): T[] {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
     }
-    return a;
-  }
 
-  function renderOverlaySongs(songs: any[]) {
-    const tb = document.getElementById('album-overlay-tbody')!;
-    if (!songs.length) {
-      tb.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">This album has no songs yet.</td></tr>';
-      return;
-    }
-    tb.innerHTML = songs.map((s: any, i: number) => {
-      const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
-      const cover = s.cover_url
-        ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow" alt=""/>`
-        : `<div class="w-10 h-10 rounded-lg shrink-0 shadow" style="background:${grad}"></div>`;
-      return `
+    function renderOverlaySongs(songs: any[]) {
+      const tb = document.getElementById('album-overlay-tbody')!;
+      if (!songs.length) {
+        tb.innerHTML = '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">This album has no songs yet.</td></tr>';
+        return;
+      }
+      tb.innerHTML = songs.map((s: any, i: number) => {
+        const grad = GRADIENTS_HEX[(s.id - 1) % GRADIENTS_HEX.length];
+        const cover = s.cover_url
+          ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg object-cover shrink-0 shadow" alt=""/>`
+          : `<div class="w-10 h-10 rounded-lg shrink-0 shadow" style="background:${grad}"></div>`;
+        return `
         <tr class="group relative hover:bg-white/[0.06] transition-all duration-200 ease-out cursor-pointer overlay-song-row" data-idx="${i}">
           <td class="px-5 py-3 text-center relative overflow-hidden">
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-purple-500 rounded-full transition-all duration-200 group-hover:h-6 opacity-0 group-hover:opacity-100"></div>
@@ -646,167 +665,171 @@ import PlayerBar from "../components/PlayerBar.astro";
           </td>
           <td class="px-4 py-3 text-sm text-gray-500 text-center whitespace-nowrap group-hover:text-gray-300">${formatDuration(s.duration)}</td>
         </tr>`;
-    }).join('');
-  }
-
-  async function openAlbumOverlay(albumId: string) {
-    const overlay = document.getElementById('album-overlay')!;
-    overlay.classList.remove('hidden');
-    overlay.classList.add('flex', 'flex-col');
-    (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Loading...';
-    (document.getElementById('album-overlay-meta') as HTMLElement).textContent = '';
-    (document.getElementById('album-overlay-cover') as HTMLElement).innerHTML = '';
-    (document.getElementById('album-overlay-count') as HTMLElement).textContent = '';
-    (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
-      '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
-    try {
-      const { data: album } = await apiFetch(`/albums/${albumId}`);
-      const g = GRADIENTS_HEX[(album.id - 1) % GRADIENTS_HEX.length];
-      (document.getElementById('album-overlay-bg') as HTMLElement).style.background = g;
-      const coverEl = document.getElementById('album-overlay-cover') as HTMLElement;
-      coverEl.style.background = g;
-      if (album.cover_url) coverEl.innerHTML = `<img src="${album.cover_url}" class="w-full h-full object-cover" alt=""/>`;
-      (document.getElementById('album-overlay-title') as HTMLElement).textContent = album.title;
-      const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
-      _overlaySongs = album.songs || [];
-      const count = _overlaySongs.length;
-      (document.getElementById('album-overlay-meta') as HTMLElement).textContent =
-        [album.artist?.name, year, `${count} songs`].filter(Boolean).join(' · ');
-      (document.getElementById('album-overlay-count') as HTMLElement).textContent = `${count} songs`;
-      renderOverlaySongs(_overlaySongs);
-    } catch {
-      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Failed to load';
+      }).join('');
     }
-  }
 
-  function closeAlbumOverlay() {
-    const overlay = document.getElementById('album-overlay')!;
-    overlay.classList.add('hidden');
-    overlay.classList.remove('flex', 'flex-col');
-    _overlaySongs = [];
-  }
-
-  document.getElementById('album-overlay-back')?.addEventListener('click', closeAlbumOverlay);
-  document.getElementById('album-overlay-play')?.addEventListener('click', () => {
-    if (_overlaySongs.length) player.playSong(_overlaySongs[0], _overlaySongs);
-  });
-  document.getElementById('album-overlay-shuffle')?.addEventListener('click', () => {
-    if (!_overlaySongs.length) return;
-    const s = shuffleArr(_overlaySongs);
-    player.playSong(s[0], s);
-  });
-  document.getElementById('album-overlay-tbody')?.addEventListener('click', (e) => {
-    const row = (e.target as HTMLElement).closest('.overlay-song-row') as HTMLElement | null;
-    if (row && _overlaySongs.length) player.playSong(_overlaySongs[Number(row.dataset.idx)], _overlaySongs);
-  });
-
-  document.getElementById('releases-grid')?.addEventListener('click', async (e) => {
-    const btn = (e.target as HTMLElement).closest('.release-play-btn') as HTMLElement | null;
-    if (btn) {
-      e.stopPropagation();
-      const albumId = btn.dataset.albumId;
-      if (!albumId) return;
+    async function openAlbumOverlay(albumId: string) {
+      const overlay = document.getElementById('album-overlay')!;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex', 'flex-col');
+      (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Loading...';
+      (document.getElementById('album-overlay-meta') as HTMLElement).textContent = '';
+      (document.getElementById('album-overlay-cover') as HTMLElement).innerHTML = '';
+      (document.getElementById('album-overlay-count') as HTMLElement).textContent = '';
+      (document.getElementById('album-overlay-tbody') as HTMLElement).innerHTML =
+        '<tr><td colspan="3" class="px-4 py-10 text-center text-gray-500 text-sm">Loading...</td></tr>';
       try {
         const { data: album } = await apiFetch(`/albums/${albumId}`);
-        const songs: any[] = album?.songs || [];
-        if (songs.length) player.playSong(songs[0], songs);
-      } catch {}
-      return;
-    }
-    const card = (e.target as HTMLElement).closest('.release-album-card') as HTMLElement | null;
-    if (card?.dataset.albumId) openAlbumOverlay(card.dataset.albumId);
-  });
-
-  document.getElementById('trending-tbody')?.addEventListener('click', (e) => {
-    const atpBtn = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
-    if (atpBtn) {
-      e.stopPropagation();
-      try { const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
-      return;
-    }
-    const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement;
-    if (likeBtn) { toggleLike(likeBtn); return; }
-    const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
-    if (!row) return;
-    try {
-      const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
-      const queue = _allSongs.length ? _allSongs : Array.from(document.querySelectorAll('.song-row')).map(r => {
-        try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
-      }).filter(Boolean);
-      player.playSong(song, queue);
-    } catch {}
-  });
-
-  const _likingInFlight = new Set<string>();
-
-  function setLikeState(btn: HTMLElement, liked: boolean) {
-    const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
-    btn.dataset.liked = String(liked);
-    if (liked) {
-      if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
-      btn.classList.add('text-pink-500');
-      btn.classList.remove('text-gray-500', 'opacity-0');
-      btn.classList.add('!opacity-100');
-      btn.title = 'Unlike';
-    } else {
-      if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
-      btn.classList.remove('text-pink-500', '!opacity-100');
-      btn.classList.add('text-gray-500', 'opacity-0');
-      btn.title = 'Like';
-    }
-  }
-
-  async function toggleLike(btn: HTMLElement) {
-    const token = localStorage.getItem('auth_token');
-    if (!token) { window.location.href = '/login'; return; }
-    const songId = btn.dataset.id!;
-    if (_likingInFlight.has(songId)) return;
-    _likingInFlight.add(songId);
-    const isLiked = btn.dataset.liked === 'true';
-    setLikeState(btn, !isLiked);
-    try {
-      if (isLiked) {
-        await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
-      } else {
-        await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
+        const g = GRADIENTS_HEX[(album.id - 1) % GRADIENTS_HEX.length];
+        (document.getElementById('album-overlay-bg') as HTMLElement).style.background = g;
+        const coverEl = document.getElementById('album-overlay-cover') as HTMLElement;
+        coverEl.style.background = g;
+        if (album.cover_url) coverEl.innerHTML = `<img src="${album.cover_url}" class="w-full h-full object-cover" alt=""/>`;
+        (document.getElementById('album-overlay-title') as HTMLElement).textContent = album.title;
+        const year = album.release_date ? new Date(album.release_date).getFullYear() : '';
+        _overlaySongs = album.songs || [];
+        const count = _overlaySongs.length;
+        (document.getElementById('album-overlay-meta') as HTMLElement).textContent =
+          [album.artist?.name, year, `${count} songs`].filter(Boolean).join(' · ');
+        (document.getElementById('album-overlay-count') as HTMLElement).textContent = `${count} songs`;
+        renderOverlaySongs(_overlaySongs);
+      } catch {
+        (document.getElementById('album-overlay-title') as HTMLElement).textContent = 'Failed to load';
       }
-      window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !isLiked } }));
-    } catch {
-      setLikeState(btn, isLiked);
-    } finally {
-      _likingInFlight.delete(songId);
     }
-  }
 
-  async function loadFavoriteStatuses() {
-    const token = localStorage.getItem('auth_token');
-    if (!token) return;
-    document.querySelectorAll('.btn-like-song').forEach(async (btn) => {
-      const b = btn as HTMLElement;
-      const songId = b.dataset.id;
-      if (!songId) return;
+    function closeAlbumOverlay() {
+      const overlay = document.getElementById('album-overlay')!;
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex', 'flex-col');
+      _overlaySongs = [];
+    }
+
+    document.getElementById('album-overlay-back')?.addEventListener('click', closeAlbumOverlay, { signal });
+    document.getElementById('album-overlay-play')?.addEventListener('click', () => {
+      if (_overlaySongs.length) player.playSong(_overlaySongs[0], _overlaySongs);
+    }, { signal });
+    document.getElementById('album-overlay-shuffle')?.addEventListener('click', () => {
+      if (!_overlaySongs.length) return;
+      const s = shuffleArr(_overlaySongs);
+      player.playSong(s[0], s);
+    }, { signal });
+    document.getElementById('album-overlay-tbody')?.addEventListener('click', (e) => {
+      const row = (e.target as HTMLElement).closest('.overlay-song-row') as HTMLElement | null;
+      if (row && _overlaySongs.length) player.playSong(_overlaySongs[Number(row.dataset.idx)], _overlaySongs);
+    }, { signal });
+
+    document.getElementById('releases-grid')?.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest('.release-play-btn') as HTMLElement | null;
+      if (btn) {
+        e.stopPropagation();
+        const albumId = btn.dataset.albumId;
+        if (!albumId) return;
+        try {
+          const { data: album } = await apiFetch(`/albums/${albumId}`);
+          const songs: any[] = album?.songs || [];
+          if (songs.length) player.playSong(songs[0], songs);
+        } catch {}
+        return;
+      }
+      const card = (e.target as HTMLElement).closest('.release-album-card') as HTMLElement | null;
+      if (card?.dataset.albumId) openAlbumOverlay(card.dataset.albumId);
+    });
+
+    document.getElementById('trending-tbody')?.addEventListener('click', (e) => {
+      const atpBtn = (e.target as HTMLElement).closest('.btn-add-to-pl') as HTMLElement;
+      if (atpBtn) {
+        e.stopPropagation();
+        try { const song = JSON.parse(decodeURIComponent(atpBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
+        return;
+      }
+      const likeBtn = (e.target as HTMLElement).closest('.btn-like-song') as HTMLElement;
+      if (likeBtn) { toggleLike(likeBtn); return; }
+      const row = (e.target as HTMLElement).closest('.song-row') as HTMLElement;
+      if (!row) return;
       try {
-        const res = await apiFetch(`/favorites/${songId}/is-favorite`);
-        setLikeState(b, !!res.data?.isFavorite);
+        const song = JSON.parse(decodeURIComponent(row.dataset.song || ''));
+        const queue = _allSongs.length ? _allSongs : Array.from(document.querySelectorAll('.song-row')).map(r => {
+          try { return JSON.parse(decodeURIComponent((r as HTMLElement).dataset.song || '')); } catch { return null; }
+        }).filter(Boolean);
+        player.playSong(song, queue);
       } catch {}
     });
+
+    const _likingInFlight = new Set<string>();
+
+    function setLikeState(btn: HTMLElement, liked: boolean) {
+      const icon = btn.querySelector('.material-symbols-outlined') as HTMLElement;
+      btn.dataset.liked = String(liked);
+      if (liked) {
+        if (icon) { icon.textContent = 'favorite'; icon.style.fontVariationSettings = "'FILL' 1"; }
+        btn.classList.add('text-pink-500');
+        btn.classList.remove('text-gray-500', 'opacity-0');
+        btn.classList.add('!opacity-100');
+        btn.title = 'Unlike';
+      } else {
+        if (icon) { icon.textContent = 'favorite_border'; icon.style.fontVariationSettings = "'FILL' 0"; }
+        btn.classList.remove('text-pink-500', '!opacity-100');
+        btn.classList.add('text-gray-500', 'opacity-0');
+        btn.title = 'Like';
+      }
+    }
+
+    async function toggleLike(btn: HTMLElement) {
+      const token = localStorage.getItem('auth_token');
+      if (!token) { window.location.href = '/login'; return; }
+      const songId = btn.dataset.id!;
+      if (_likingInFlight.has(songId)) return;
+      _likingInFlight.add(songId);
+      const isLiked = btn.dataset.liked === 'true';
+      setLikeState(btn, !isLiked);
+      try {
+        if (isLiked) {
+          await apiFetch(`/favorites/${songId}`, { method: 'DELETE' });
+        } else {
+          await apiFetch('/favorites', { method: 'POST', body: JSON.stringify({ songId }) });
+        }
+        window.dispatchEvent(new CustomEvent('favorites:changed', { detail: { songId: Number(songId), isFavorite: !isLiked } }));
+      } catch {
+        setLikeState(btn, isLiked);
+      } finally {
+        _likingInFlight.delete(songId);
+      }
+    }
+
+    async function loadFavoriteStatuses() {
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+      document.querySelectorAll('.btn-like-song').forEach(async (btn) => {
+        const b = btn as HTMLElement;
+        const songId = b.dataset.id;
+        if (!songId) return;
+        try {
+          const res = await apiFetch(`/favorites/${songId}/is-favorite`);
+          setLikeState(b, !!res.data?.isFavorite);
+        } catch {}
+      });
+    }
+
+    window.addEventListener('favorites:changed', (e: any) => {
+      const { songId, isFavorite } = e.detail;
+      document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach((btn) => {
+        setLikeState(btn as HTMLElement, isFavorite);
+      });
+    });
+
+    Promise.all([
+      loadHero(),
+      loadTrending().then(() => setTimeout(loadFavoriteStatuses, 500)),
+      loadArtists(),
+      loadReleases(),
+      loadRecentlyPlayed(),
+      loadArtistMembers(),
+    ]);
   }
 
-  window.addEventListener('favorites:changed', (e: any) => {
-    const { songId, isFavorite } = e.detail;
-    document.querySelectorAll(`.btn-like-song[data-id="${songId}"]`).forEach((btn) => {
-      setLikeState(btn as HTMLElement, isFavorite);
-    });
-  });
-
-  Promise.all([
-    loadHero(),
-    loadTrending().then(() => setTimeout(loadFavoriteStatuses, 500)),
-    loadArtists(),
-    loadReleases(),
-    loadRecentlyPlayed(),
-    loadArtistMembers(),
-  ]);
+  document.removeEventListener('astro:page-load', initHomePage);
+  document.addEventListener('astro:page-load', initHomePage);
 </script>
 
 </MainLayout>

@@ -19,6 +19,18 @@ export const player = (() => {
     };
   }
 
+  const _audioKey = '__shadows_of_melody_audio__';
+  function getSharedAudio() {
+    if (window[_audioKey]) return window[_audioKey];
+    window[_audioKey] = new Audio();
+    window[_audioKey].addEventListener('timeupdate', () => _dispatch('timeupdate'));
+    window[_audioKey].addEventListener('ended', _onEnded);
+    window[_audioKey].addEventListener('play', () => _dispatch('play'));
+    window[_audioKey].addEventListener('pause', () => { if (!_loading) _dispatch('pause'); });
+    window[_audioKey].addEventListener('loadedmetadata', () => _dispatch('loaded'));
+    return window[_audioKey];
+  }
+
   let _audio = null;
   let _current = null;
   let _queue = [];
@@ -30,20 +42,44 @@ export const player = (() => {
   let _shuffle = false;
   let _repeat = 'none';
   let _playbackRate = 1;
+  const _storageKey = 'player_state';
   let _loading = false;
   let _historyTimer = null;
 
   function getAudio() {
-    if (!_audio) {
-      _audio = new Audio();
-      _audio.addEventListener('timeupdate', () => _dispatch('timeupdate'));
-      _audio.addEventListener('ended', _onEnded);
-      _audio.addEventListener('play', () => _dispatch('play'));
-      _audio.addEventListener('pause', () => { if (!_loading) _dispatch('pause'); });
-      _audio.addEventListener('loadedmetadata', () => _dispatch('loaded'));
-    }
-    _audio.playbackRate = _playbackRate;
+    if (!_audio) _audio = getSharedAudio();
     return _audio;
+  }
+
+  function _persistState() {
+    try {
+      sessionStorage.setItem(_storageKey, JSON.stringify({
+        song: _current,
+        queue: _queue,
+        queueIdx: _queueIdx,
+        currentTime: _audio?.currentTime || 0,
+        isPlaying: _audio ? !_audio.paused : false,
+        volume: _audio?.volume ?? 1,
+        playbackRate: _playbackRate,
+        shuffle: _shuffle,
+        repeat: _repeat,
+      }));
+    } catch {}
+  }
+
+  function _applyPlaybackRate(rate = _playbackRate) {
+    _playbackRate = Math.max(0.25, Math.min(3, Number(rate) || 1));
+    if (_audio) {
+      if (_audio.readyState >= 2) {
+        _audio.playbackRate = _playbackRate;
+      } else {
+        _audio.addEventListener('canplay', () => {
+          if (_audio) _audio.playbackRate = _playbackRate;
+        }, { once: true });
+      }
+    }
+    try { localStorage.setItem('player_speed', String(_playbackRate)); } catch {}
+    try { sessionStorage.setItem('player_playback_rate', String(_playbackRate)); } catch {}
   }
 
   function _dispatch(type, extra = {}) {
@@ -198,6 +234,7 @@ export const player = (() => {
         _queueIdx = _queue.findIndex(s => s.id === song.id);
         if (_queueIdx < 0) _queueIdx = 0;
       }
+      try { localStorage.setItem('player_speed', String(_playbackRate)); } catch {}
       _playSong(song);
     },
 
@@ -231,13 +268,11 @@ export const player = (() => {
     },
 
     setVolume(v) {
-      if (_audio) _audio.volume = Math.max(0, Math.min(1, v));
+      if (_audio) _audio.volume = Math.max(0, Math.min(1, Number(v)));
     },
 
     setPlaybackRate(rate) {
-      const next = [0.5, 0.75, 1, 1.25, 1.5, 2].includes(rate) ? rate : 1;
-      _playbackRate = next;
-      if (_audio) _audio.playbackRate = next;
+      _applyPlaybackRate(rate);
     },
 
     toggleShuffle() { _shuffle = !_shuffle; return _shuffle; },
@@ -250,23 +285,15 @@ export const player = (() => {
 
     saveState() {
       if (!_current) return;
-      try {
-        sessionStorage.setItem('player_state', JSON.stringify({
-          song: _current,
-          queue: _queue,
-          queueIdx: _queueIdx,
-          currentTime: _audio?.currentTime || 0,
-          isPlaying: _audio ? !_audio.paused : false,
-          volume: _audio?.volume ?? 1,
-          playbackRate: _audio?.playbackRate ?? _playbackRate,
-          shuffle: _shuffle,
-          repeat: _repeat,
-        }));
-      } catch {}
+      _persistState();
     },
 
 
     restoreState() {
+      try {
+        const savedSpeed = parseFloat(localStorage.getItem('player_speed') ?? '1');
+        if (Number.isFinite(savedSpeed)) _applyPlaybackRate(savedSpeed);
+      } catch {}
       try {
         const raw = sessionStorage.getItem('player_state');
         if (!raw) return;
@@ -281,13 +308,18 @@ export const player = (() => {
         _queueIdx = state.queueIdx ?? -1;
         _shuffle = state.shuffle ?? false;
         _repeat = state.repeat ?? 'none';
-        _playbackRate = [0.5, 0.75, 1, 1.25, 1.5, 2].includes(state.playbackRate) ? state.playbackRate : 1;
         const a = getAudio();
         if (state.volume != null) a.volume = state.volume;
-        a.playbackRate = _playbackRate;
         _loading = true;
         a.src = `${API_BASE}/stream/${state.song.id}?quality=standard`;
         _loading = false;
+        const restoredSpeed = Number.isFinite(Number(state.playbackRate)) ? Number(state.playbackRate) : parseFloat(localStorage.getItem('player_speed') ?? '1');
+        if (Number.isFinite(restoredSpeed)) {
+          a.addEventListener('canplay', () => {
+            if (_audio) _audio.playbackRate = restoredSpeed;
+          }, { once: true });
+          _applyPlaybackRate(restoredSpeed);
+        }
 
         const targetTime = state.currentTime || 0;
         const doSeek = () => { if (targetTime > 0) a.currentTime = targetTime; };
@@ -315,6 +347,10 @@ export const player = (() => {
         _audio.pause();
         _audio.src = '';
       }
+      if (window[_audioKey]) {
+        window[_audioKey].pause();
+        window[_audioKey].src = '';
+      }
       _current = null;
       _queue = [];
       _libraryQueue = [];
@@ -323,8 +359,15 @@ export const player = (() => {
       _queueIdx = -1;
       _shuffle = false;
       _repeat = 'none';
-      try { sessionStorage.removeItem('player_state'); } catch {}
+      try { sessionStorage.removeItem('player_state'); sessionStorage.removeItem('player_playback_rate'); } catch {}
       _dispatch('songchange');
+    },
+
+    syncPlaybackRateFromStorage() {
+      try {
+        const savedSpeed = parseFloat(localStorage.getItem('player_speed') ?? '1');
+        if (Number.isFinite(savedSpeed)) _applyPlaybackRate(savedSpeed);
+      } catch {}
     },
   };
 })();

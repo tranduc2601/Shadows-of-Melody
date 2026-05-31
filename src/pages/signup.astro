@@ -184,6 +184,10 @@ import MainLayout from "../layouts/MainLayout.astro";
   const errDiv = document.getElementById('signupError') as HTMLElement;
   const btn = document.getElementById('signupBtn') as HTMLButtonElement;
   const googleBtn = document.getElementById('googleSignupBtn') as HTMLButtonElement;
+  const usernameInput = document.getElementById('username') as HTMLInputElement;
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
+  const confirmPasswordInput = document.getElementById('confirmPassword') as HTMLInputElement;
 
   const existingToken = localStorage.getItem('auth_token');
   if (existingToken) window.location.href = '/';
@@ -251,6 +255,49 @@ import MainLayout from "../layouts/MainLayout.astro";
     (window as any).google.accounts.id.prompt();
   }
 
+  function setSignupError(message: string) {
+    errDiv.textContent = message;
+    errDiv.classList.remove('hidden');
+  }
+
+  function clearSignupError(message?: string) {
+    if (!message || errDiv.textContent === message) {
+      errDiv.classList.add('hidden');
+      errDiv.textContent = '';
+    }
+  }
+
+  function validateSignupField(field: 'username' | 'email' | 'password' | 'confirmPassword') {
+    const value = field === 'username' ? usernameInput.value.trim() : field === 'email' ? emailInput.value.trim() : field === 'password' ? passwordInput.value : confirmPasswordInput.value;
+    if (!value) {
+      setSignupError(`${field === 'confirmPassword' ? 'Confirm password' : field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
+      return false;
+    }
+    if (field === 'username' && (!/^[a-zA-Z0-9_]+$/.test(value) || value.length < 3 || value.length > 20)) {
+      setSignupError('Username must be 3-20 characters and contain only letters, numbers, and underscores.');
+      return false;
+    }
+    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setSignupError('Please enter a valid email address.');
+      return false;
+    }
+    if (field === 'password' && value.length < 8) {
+      setSignupError('Password must be at least 8 characters.');
+      return false;
+    }
+    if (field === 'confirmPassword' && value !== passwordInput.value) {
+      setSignupError('Passwords do not match.');
+      return false;
+    }
+    clearSignupError();
+    return true;
+  }
+
+  usernameInput?.addEventListener('blur', () => validateSignupField('username'));
+  emailInput?.addEventListener('blur', () => validateSignupField('email'));
+  passwordInput?.addEventListener('blur', () => validateSignupField('password'));
+  confirmPasswordInput?.addEventListener('blur', () => validateSignupField('confirmPassword'));
+
   async function loginWithGoogle(credential: string) {
     googleBtn.disabled = true;
     googleBtn.textContent = 'Signing up with Google...';
@@ -285,11 +332,12 @@ import MainLayout from "../layouts/MainLayout.astro";
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = (document.getElementById('username') as HTMLInputElement).value.trim();
-    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
-    const password = (document.getElementById('password') as HTMLInputElement).value;
-    const confirmPassword = (document.getElementById('confirmPassword') as HTMLInputElement).value;
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
 
+    if (![ 'username', 'email', 'password', 'confirmPassword' ].every((field) => validateSignupField(field as any))) return;
     errDiv.classList.add('hidden');
 
     if (password !== confirmPassword) {

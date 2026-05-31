@@ -144,6 +144,8 @@ import MainLayout from "../layouts/MainLayout.astro";
   const banner  = document.getElementById('sessionBanner') as HTMLElement;
   const btn     = document.getElementById('loginBtn') as HTMLButtonElement;
   const googleBtn = document.getElementById('googleLoginBtn') as HTMLButtonElement;
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
 
   const reason = new URLSearchParams(window.location.search).get('reason');
   if (reason === 'session_expired' && banner) banner.classList.remove('hidden');
@@ -245,11 +247,35 @@ import MainLayout from "../layouts/MainLayout.astro";
     }
   }
 
+  function validateLoginField(field: 'email' | 'password') {
+    const value = field === 'email' ? emailInput.value.trim() : passwordInput.value;
+    const message = field === 'email' ? 'Email is required.' : 'Password is required.';
+    if (!value) {
+      errDiv.textContent = message;
+      errDiv.classList.remove('hidden');
+      return false;
+    }
+    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      errDiv.textContent = 'Please enter a valid email address.';
+      errDiv.classList.remove('hidden');
+      return false;
+    }
+    if (errDiv.textContent === message || errDiv.textContent === 'Please enter a valid email address.') {
+      errDiv.classList.add('hidden');
+      errDiv.textContent = '';
+    }
+    return true;
+  }
+
+  emailInput?.addEventListener('blur', () => validateLoginField('email'));
+  passwordInput?.addEventListener('blur', () => validateLoginField('password'));
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
-    const password = (document.getElementById('password') as HTMLInputElement).value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
 
+    if (!validateLoginField('email') || !validateLoginField('password')) return;
     errDiv.classList.add('hidden');
     btn.disabled = true;
     btn.textContent = 'Logging in...';

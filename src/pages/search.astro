@@ -152,6 +152,7 @@ import PlayerBar from "../components/PlayerBar.astro";
   <script>
     import { apiFetch, formatDuration, formatCount, getUser, colorFor } from '../lib/api.js';
     import { player } from '../lib/player.js';
+    import { getRouteParams } from '../lib/route.js';
 
     function esc(str: unknown): string {
       return String(str ?? '')
@@ -761,7 +762,8 @@ import PlayerBar from "../components/PlayerBar.astro";
       (e.target as HTMLElement).closest('.genre-card')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    const urlQ = new URLSearchParams(window.location.search).get('q');
+    const route = getRouteParams();
+    const urlQ = route.get('q') || route.getPathParam('q');
 
     loadCategories();
 

@@ -46,15 +46,64 @@ function buildMomoPaymentUrl({ transactionId, amount, plan, userId }) {
     return `https://test-payment.momo.vn/v2/gateway/api/create?${params.toString()}`;
 }
 
+function buildVnpayMockUrl({ transactionId, amount, plan, userId }) {
+    const params = new URLSearchParams({
+        transactionId,
+        orderId: transactionId,
+        plan,
+        userId: String(userId),
+        amount: String(amount),
+        orderInfo: `Subscription ${plan.toUpperCase()} for user ${userId}`,
+        bankCode: 'VNPAYQR',
+    });
+    return `/payment/vnpay-mock?${params.toString()}`;
+}
+
+async function finalizePayment(transactionId, nextStatus = 'completed') {
+    const payment = await Payment.findByTransactionId(transactionId);
+    if (!payment) return null;
+
+    const now = new Date();
+    const updates = {
+        status: nextStatus,
+        updated_at: now,
+    };
+    if (nextStatus === 'completed') {
+        updates.paid_at = now;
+    }
+    await Payment.update(payment.id, updates);
+
+    if (nextStatus === 'completed' && payment.subscription_id) {
+        const subscription = await Subscription.findById(payment.subscription_id);
+        const startDate = new Date();
+        const planKey = subscription?.subscription_type || 'free';
+        const cfg = PLAN_CONFIG[planKey] || PLAN_CONFIG.free;
+        const baseDate = subscription?.end_date && new Date(subscription.end_date) > startDate
+            ? new Date(subscription.end_date)
+            : startDate;
+        const endDate = calcEndDate(baseDate, cfg.durationDays);
+        await Subscription.update(payment.subscription_id, {
+            is_active: true,
+            start_date: startDate,
+            end_date: endDate,
+        });
+    }
+
+    return {
+        payment: await Payment.findById(payment.id),
+        subscription: payment.subscription_id ? await Subscription.findById(payment.subscription_id) : null,
+    };
+}
+
 export const startCheckout = async (req, res) => {
     try {
         const { id: userId, role } = req.user;
         if (EXEMPT_ROLES.includes(role)) return res.status(400).json({ success: false, message: 'System administrators do not require subscriptions.' });
-        const { plan = 'premium', paymentMethod = 'momo' } = req.body;
+        const { plan = 'premium', paymentMethod = 'vnpay' } = req.body;
         const cfg = PLAN_CONFIG[plan];
         if (!cfg || plan === 'free') return res.status(400).json({ success: false, message: 'Invalid plan selected' });
         const transactionId = `sub_${userId}_${Date.now()}`;
-        const paymentUrl = paymentMethod === 'momo' ? buildMomoPaymentUrl({ transactionId, amount: cfg.price, plan, userId }) : null;
+        const paymentProvider = String(paymentMethod || 'vnpay').toLowerCase();
         const [existing] = await pool.query('SELECT id FROM subscriptions WHERE user_id = ? LIMIT 1', [userId]);
         const current = existing[0];
         const startDate = new Date();
@@ -63,12 +112,15 @@ export const startCheckout = async (req, res) => {
         if (!subscriptionId) {
             subscriptionId = await Subscription.create(userId, plan, startDate, endDate);
         } else {
-            await Subscription.update(subscriptionId, { subscription_type: plan, start_date: startDate, end_date: endDate, is_active: true });
+            await Subscription.update(subscriptionId, { subscription_type: plan, start_date: startDate, end_date: endDate, is_active: false });
         }
-        const paymentId = await Payment.create({ user_id: userId, subscription_id: subscriptionId, amount: cfg.price, currency: 'VND', payment_method: paymentMethod, transaction_id: transactionId, status: 'pending', description: `Subscription ${cfg.label}` });
+        const paymentId = await Payment.create({ user_id: userId, subscription_id: subscriptionId, amount: cfg.price, currency: 'VND', payment_method: paymentProvider, transaction_id: transactionId, status: 'pending', description: `Subscription ${cfg.label}` });
         const payment = await Payment.findById(paymentId);
         const subscription = await Subscription.findById(subscriptionId);
-        return res.status(201).json({ success: true, message: 'Checkout created', data: { subscription, payment, payment_url: paymentUrl, transaction_id: transactionId } });
+        const paymentUrl = paymentProvider === 'momo'
+            ? buildMomoPaymentUrl({ transactionId, amount: cfg.price, plan, userId })
+            : buildVnpayMockUrl({ transactionId, amount: cfg.price, plan, userId });
+        return res.status(201).json({ success: true, message: 'Checkout created', data: { subscription, payment, payment_url: paymentUrl, transaction_id: transactionId, payment_provider: paymentProvider } });
     } catch (error) { console.error('StartCheckout error:', error); return res.status(500).json({ success: false, message: 'Failed to start checkout' }); }
 };
 
@@ -76,14 +128,20 @@ export const confirmMomoPayment = async (req, res) => {
     try {
         const { transactionId, status = 'completed' } = req.body || {};
         if (!transactionId) return res.status(400).json({ success: false, message: 'Transaction id required' });
-        const payment = await Payment.findByTransactionId(transactionId);
-        if (!payment) return res.status(404).json({ success: false, message: 'Payment not found' });
-        await Payment.update(payment.id, { status });
-        if (status === 'completed') {
-            await Subscription.update(payment.subscription_id, { is_active: true });
-        }
-        return res.json({ success: true, data: { payment: await Payment.findById(payment.id), subscription: await Subscription.findById(payment.subscription_id) } });
+        const result = await finalizePayment(transactionId, status);
+        if (!result) return res.status(404).json({ success: false, message: 'Payment not found' });
+        return res.json({ success: true, data: result });
     } catch (error) { console.error('ConfirmMomoPayment error:', error); return res.status(500).json({ success: false, message: 'Failed to confirm payment' }); }
+};
+
+export const confirmVnpayPayment = async (req, res) => {
+    try {
+        const { transactionId, status = 'completed' } = req.body || {};
+        if (!transactionId) return res.status(400).json({ success: false, message: 'Transaction id required' });
+        const result = await finalizePayment(transactionId, status);
+        if (!result) return res.status(404).json({ success: false, message: 'Payment not found' });
+        return res.json({ success: true, data: result });
+    } catch (error) { console.error('ConfirmVnpayPayment error:', error); return res.status(500).json({ success: false, message: 'Failed to confirm payment' }); }
 };
 
 export const cancelSubscription = async (req, res) => {

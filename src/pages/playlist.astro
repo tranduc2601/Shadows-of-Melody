@@ -204,6 +204,14 @@ import PlayerBar from "../components/PlayerBar.astro";
     'linear-gradient(135deg,#fb923c,#fb7185)',
   ];
   const grad = (id: number) => GRADS[(id - 1) % GRADS.length];
+  const normalizeCoverUrl = (url: any) => {
+    if (!url || typeof url !== 'string') return '';
+    const trimmed = url.trim();
+    if (!trimmed) return '';
+    if (/^data:image\//i.test(trimmed) || /^https?:\/\//i.test(trimmed) || trimmed.startsWith('/')) return trimmed;
+    return trimmed.startsWith('uploads/') ? `/${trimmed}` : trimmed;
+  };
+  const playlistCoverUrl = (pl: any) => normalizeCoverUrl(pl?.cover_url || pl?.first_cover_url || pl?.cover || pl?.image_url);
 
   let _toastTimer: ReturnType<typeof setTimeout> | null = null;
   function showToast(msg: string, type: 'success' | 'error' | 'info' = 'info') {
@@ -429,7 +437,7 @@ import PlayerBar from "../components/PlayerBar.astro";
           <td class="px-4 py-3 text-right">
             <div class="flex items-center justify-end gap-2">
               <span class="text-gray-500 text-sm shrink-0">${formatDuration(s.duration)}</span>
-              <button class="btn-remove-song shrink-0 opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-400 transition-[opacity,color] duration-200"
+              <button class="btn-remove-song shrink-0 w-7 h-7 flex items-center justify-center text-gray-400 hover:text-red-400 transition-[color] duration-200"
                       data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}" title="Remove from playlist">
                 <span class="material-symbols-outlined text-[18px]">remove_circle</span>
               </button>
@@ -458,7 +466,7 @@ import PlayerBar from "../components/PlayerBar.astro";
         ? `<img src="${s.cover_url}" class="w-10 h-10 rounded-lg shrink-0 object-cover shadow-md" alt=""/>`
         : `<div class="w-10 h-10 rounded-lg shrink-0 shadow-md" style="background:${grad(s.id)}"></div>`;
       return `
-        <tr class="group hover:bg-white/[0.04] transition-[background] duration-150" data-song-id="${s.id}">
+        <tr class="group hover:bg-white/[0.04] transition-[background] duration-150 cursor-pointer" data-song-id="${s.id}">
           <td class="px-6 py-3 text-center">
             <span class="text-gray-500 text-sm">${i + 1}</span>
           </td>
@@ -476,8 +484,8 @@ import PlayerBar from "../components/PlayerBar.astro";
             <div class="flex items-center justify-end gap-2">
               <span class="text-gray-500 text-sm shrink-0">${formatDuration(s.duration)}</span>
               ${inPlaylist
-                ? `<span class="shrink-0 w-8 h-8 flex items-center justify-center text-green-500 opacity-0 group-hover:opacity-100" title="Already in playlist"><span class="material-symbols-outlined text-[22px]">check_circle</span></span>`
-                : `<button class="btn-add-song shrink-0 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-green-400 opacity-0 group-hover:opacity-100 transition-all"
+                ? `<span class="shrink-0 w-8 h-8 flex items-center justify-center text-green-400 transition-colors duration-200" title="Already in playlist"><span class="material-symbols-outlined text-[22px]">check_circle</span></span>`
+                : `<button class="btn-add-song shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200"
                         data-song="${encodeURIComponent(JSON.stringify(s))}" data-song-id="${s.id}" data-song-title="${encodeURIComponent(s.title)}" title="Add to playlist">
                     <span class="material-symbols-outlined text-[22px]">add_circle</span>
                   </button>`
@@ -487,6 +495,43 @@ import PlayerBar from "../components/PlayerBar.astro";
         </tr>`;
     }).join('');
   }
+
+  const addSongToPlaylist = async (button: HTMLButtonElement) => {
+    if (button.disabled) return;
+    const songId = Number(button.dataset.songId);
+    const title  = decodeURIComponent(button.dataset.songTitle || '');
+    button.disabled = true;
+    const origHTML = button.innerHTML;
+    button.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>';
+    try {
+      await apiFetch(`/playlists/${_activePlId}/songs`, {
+        method: 'POST',
+        body: JSON.stringify({ songId }),
+      });
+      const song = _allSongs.find((s: any) => Number(s.id) === songId) || JSON.parse(decodeURIComponent(button.dataset.song || 'null'));
+      if (song && !_plSongIds.has(songId)) {
+        _plSongs = [..._plSongs, song];
+        _plSongIds.add(songId);
+      }
+      renderInPlaylist();
+      renderAllSongs();
+      updateHeaderSongCount();
+      setActiveTab('in-pl');
+      try {
+        const { data: pl } = await apiFetch(`/playlists/${_activePlId}`);
+        _plSongs = pl?.songs || _plSongs;
+        _plSongIds = new Set(_plSongs.map((s: any) => Number(s.id)));
+        renderInPlaylist();
+        renderAllSongs();
+        updateHeaderSongCount();
+      } catch {}
+      showToast(`"${title}" added to playlist.`, 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to add song.', 'error');
+      button.disabled = false;
+      button.innerHTML = origHTML;
+    }
+  };
 
   featuredTbody.addEventListener('click', async (e) => {
     const removeBtn = (e.target as HTMLElement).closest('.btn-remove-song') as HTMLButtonElement | null;
@@ -523,28 +568,30 @@ import PlayerBar from "../components/PlayerBar.astro";
 
   allSongsTbody.addEventListener('click', async (e) => {
     const addBtn = (e.target as HTMLElement).closest('.btn-add-song') as HTMLButtonElement | null;
-    if (!addBtn || addBtn.disabled) return;
-    const songId = Number(addBtn.dataset.songId);
-    const title  = decodeURIComponent(addBtn.dataset.songTitle || '');
-    addBtn.disabled = true;
-    const origHTML = addBtn.innerHTML;
-    addBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>';
-    try {
-      await apiFetch(`/playlists/${_activePlId}/songs`, {
-        method: 'POST',
-        body: JSON.stringify({ songId }),
-      });
-      const song = _allSongs.find((s: any) => s.id === songId);
-      if (song) { _plSongs.push(song); _plSongIds.add(songId); }
-      renderAllSongs();
-      if (_activeTab === 'in-pl') renderInPlaylist();
-      updateHeaderSongCount();
-      showToast(`"${title}" added to playlist.`, 'success');
-    } catch (err: any) {
-      showToast(err.message || 'Failed to add song.', 'error');
-      addBtn.disabled = false;
-      addBtn.innerHTML = origHTML;
+    if (addBtn) {
+      e.stopPropagation();
+      await addSongToPlaylist(addBtn);
+      return;
     }
+    const row = (e.target as HTMLElement).closest('tr[data-song-id]') as HTMLTableRowElement | null;
+    if (!row) return;
+    const rowButton = row.querySelector('.btn-add-song') as HTMLButtonElement | null;
+    if (!rowButton || rowButton.disabled) return;
+    await addSongToPlaylist(rowButton);
+  });
+
+  allSongsTbody.addEventListener('click', async (e) => {
+    const addBtn = (e.target as HTMLElement).closest('.btn-add-song') as HTMLButtonElement | null;
+    if (addBtn) {
+      e.stopPropagation();
+      await addSongToPlaylist(addBtn);
+      return;
+    }
+    const row = (e.target as HTMLElement).closest('tr[data-song-id]') as HTMLTableRowElement | null;
+    if (!row) return;
+    const rowButton = row.querySelector('.btn-add-song') as HTMLButtonElement | null;
+    if (!rowButton || rowButton.disabled) return;
+    await addSongToPlaylist(rowButton);
   });
 
   function updateHeaderSongCount() {
@@ -603,7 +650,8 @@ import PlayerBar from "../components/PlayerBar.astro";
       grid.innerHTML = playlists.map((pl: any) => `
         <div class="group cursor-pointer playlist-card ${pl.id === _activePlId ? 'ring-2 ring-purple-500/60' : ''}" data-id="${pl.id}">
           <div class="aspect-square rounded-2xl mb-3 shadow-lg relative overflow-hidden transition-[box-shadow] duration-200 group-hover:shadow-[0_4px_24px_rgba(139,92,246,0.18)]" style="background:${grad(pl.id)}">
-            ${(pl.cover_url || pl.first_cover_url) ? `<img src="${pl.cover_url || pl.first_cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span></div>'}
+            ${playlistCoverUrl(pl) ? `<img src="${playlistCoverUrl(pl)}" class="absolute inset-0 w-full h-full object-cover" alt="${pl.name || 'Playlist'}" onerror="this.remove();this.parentElement?.querySelector('[data-fallback-cover]')?.classList.remove('hidden')"/>` : ''}
+            <div data-fallback-cover class="absolute inset-0 flex items-center justify-center ${playlistCoverUrl(pl) ? 'hidden' : ''}"><span class="material-symbols-outlined text-white/30 text-5xl">queue_music</span></div>
             <div class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all">
               <button class="w-12 h-12 rounded-full bg-green-500 hover:bg-green-400 flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 play-pl-btn" data-id="${pl.id}">
                 <span class="material-symbols-outlined text-black">play_arrow</span>
@@ -676,7 +724,8 @@ import PlayerBar from "../components/PlayerBar.astro";
 
       headerEl.innerHTML = `
         <div class="w-44 h-44 flex-shrink-0 rounded-2xl shadow-2xl relative overflow-hidden" style="background:${grad(pl.id)}">
-          ${pl.cover_url ? `<img src="${pl.cover_url}" class="absolute inset-0 w-full h-full object-cover" alt=""/>` : '<div class="absolute inset-0 flex items-center justify-center"><span class="material-symbols-outlined text-white/20 text-7xl">queue_music</span></div>'}
+          ${playlistCoverUrl(pl) ? `<img src="${playlistCoverUrl(pl)}" class="absolute inset-0 w-full h-full object-cover" alt="${pl.name || 'Playlist'}" onerror="this.remove();this.parentElement?.querySelector('[data-fallback-cover]')?.classList.remove('hidden')"/>` : ''}
+          <div data-fallback-cover class="absolute inset-0 flex items-center justify-center ${playlistCoverUrl(pl) ? 'hidden' : ''}"><span class="material-symbols-outlined text-white/20 text-7xl">queue_music</span></div>
         </div>
         <div class="flex flex-col justify-end flex-1 min-w-0">
           <span class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-2">${pl.is_public ? 'Public Playlist' : 'Private Playlist'}</span>

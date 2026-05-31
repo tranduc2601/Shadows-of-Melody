@@ -2,10 +2,23 @@ import { pool } from '../config/database.js';
 
 class Payment {
     static async create(data) {
-        const { user_id, subscription_id, amount, currency, payment_method, transaction_id, status, description } = data;
+        const {
+            user_id,
+            subscription_id,
+            amount,
+            currency,
+            payment_method,
+            payment_provider = 'vnpay',
+            transaction_id,
+            order_id = null,
+            response_code = null,
+            status,
+            description,
+            paid_at = null,
+        } = data;
         const [result] = await pool.query(
-            'INSERT INTO payments (user_id, subscription_id, amount, currency, payment_method, transaction_id, status, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [user_id, subscription_id, amount, currency, payment_method, transaction_id, status, description]
+            'INSERT INTO payments (user_id, subscription_id, amount, currency, payment_method, payment_provider, transaction_id, order_id, response_code, status, description, paid_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [user_id, subscription_id, amount, currency, payment_method, payment_provider, transaction_id, order_id, response_code, status, description, paid_at]
         );
         return result.insertId;
     }
@@ -41,7 +54,7 @@ class Payment {
         const values = Object.values(data);
 
         await pool.query(
-            `UPDATE payments SET ${fields} WHERE id = ?`,
+            `UPDATE payments SET ${fields}, updated_at = NOW() WHERE id = ?`,
             [...values, id]
         );
     }

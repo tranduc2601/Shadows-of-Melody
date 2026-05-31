@@ -1,0 +1,112 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+---
+
+<MainLayout title="VNPAY Mock Checkout - Shadows of Melody">
+  <div class="min-h-[100dvh] bg-[#060e20] text-gray-200 antialiased">
+    <div class="max-w-3xl mx-auto px-6 py-10">
+      <div class="rounded-3xl border border-white/10 bg-linear-to-br from-[#0f1c3a] to-[#091126] shadow-2xl overflow-hidden">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p class="text-xs uppercase tracking-[0.3em] text-purple-400 font-bold mb-2">VNPAY Mock</p>
+            <h1 class="text-2xl font-black text-white">Thanh toán subscription giả lập</h1>
+            <p class="text-sm text-gray-400 mt-2">Môi trường demo để test luồng thanh toán trước khi tích hợp thật.</p>
+          </div>
+          <a href="/subscription" class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-semibold text-white transition-all">Quay lại</a>
+        </div>
+
+        <div class="grid md:grid-cols-[1.2fr_0.8fr] gap-0">
+          <div class="p-6 space-y-4 border-b md:border-b-0 md:border-r border-white/10">
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-400">Mã giao dịch</span>
+                <span id="txn" class="font-mono text-white">—</span>
+              </div>
+              <div class="flex items-center justify-between text-sm mt-2">
+                <span class="text-gray-400">Gói</span>
+                <span id="plan" class="text-white font-semibold">—</span>
+              </div>
+              <div class="flex items-center justify-between text-sm mt-2">
+                <span class="text-gray-400">Số tiền</span>
+                <span id="amount" class="text-white font-semibold">—</span>
+              </div>
+              <div class="flex items-center justify-between text-sm mt-2">
+                <span class="text-gray-400">Ngân hàng</span>
+                <span class="text-white font-semibold">VNPAYQR</span>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-dashed border-purple-500/30 bg-purple-500/5 p-5 text-center">
+              <div class="w-24 h-24 mx-auto rounded-2xl bg-white flex items-center justify-center mb-4">
+                <span class="text-purple-700 font-black text-xl">VN</span>
+              </div>
+              <p class="text-white font-bold">Scan / Confirm</p>
+              <p class="text-xs text-gray-400 mt-1">Đây là mã QR mô phỏng cho flow demo.</p>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-4">
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+              <p class="text-sm font-semibold text-white mb-2">Trạng thái</p>
+              <div id="status-badge" class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300">Chờ thanh toán</div>
+              <p class="text-xs text-gray-400 mt-3">Bấm xác nhận để mô phỏng callback VNPAY.</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+              <button id="btn-success" class="w-full rounded-2xl py-3 font-semibold text-white bg-green-600 hover:bg-green-500 transition-all">Thanh toán thành công</button>
+              <button id="btn-fail" class="w-full rounded-2xl py-3 font-semibold text-white bg-rose-600 hover:bg-rose-500 transition-all">Thanh toán thất bại</button>
+            </div>
+
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-sm text-gray-300">
+              <p class="font-semibold text-white mb-2">Lưu ý</p>
+              <ul class="list-disc pl-5 space-y-1 text-gray-400">
+                <li>Đây không phải VNPAY thật.</li>
+                <li>Chỉ dùng để test subscription flow.</li>
+                <li>Sau khi success, hệ thống sẽ quay về trang subscription.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    import { apiFetch } from '../../lib/api.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const transactionId = params.get('transactionId') || params.get('transaction_id') || '';
+    const amount = params.get('amount') || '0';
+    const plan = (params.get('plan') || 'premium').toUpperCase();
+
+    document.getElementById('txn').textContent = transactionId || '—';
+    document.getElementById('amount').textContent = `${Number(amount).toLocaleString('vi-VN')} VND`;
+    document.getElementById('plan').textContent = plan;
+
+    function setStatus(text, cls) {
+      const el = document.getElementById('status-badge');
+      if (!el) return;
+      el.textContent = text;
+      el.className = `inline-flex px-3 py-1 rounded-full text-xs font-bold ${cls}`;
+    }
+
+    async function finish(status) {
+      if (!transactionId) return alert('Missing transactionId');
+      setStatus(status === 'completed' ? 'Đang xử lý...' : 'Giao dịch thất bại', status === 'completed' ? 'bg-blue-500/15 text-blue-300' : 'bg-rose-500/15 text-rose-300');
+      try {
+        await apiFetch('/subscriptions/vnpay/confirm', {
+          method: 'POST',
+          body: JSON.stringify({ transactionId, status }),
+        });
+        const target = status === 'completed' ? '/subscription?payment=success' : '/subscription?payment=failed';
+        window.location.href = target;
+      } catch (err) {
+        alert(err.message || 'Payment confirmation failed');
+      }
+    }
+
+    document.getElementById('btn-success')?.addEventListener('click', () => finish('completed'));
+    document.getElementById('btn-fail')?.addEventListener('click', () => finish('failed'));
+  </script>
+</MainLayout>

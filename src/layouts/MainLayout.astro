@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import PlayerBar from '../components/PlayerBar.astro';
 const { title = "Music App" } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -7,14 +9,21 @@ const { title = "Music App" } = Astro.props;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="image" href="/images/hero.jpg" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" /></noscript>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" /></noscript>
+  <script is:inline>
+    try {
+      document.documentElement.dataset.authed = localStorage.getItem('auth_token') ? 'true' : 'false';
+    } catch {}
+  </script>
+  <slot name="head" />
+  <ClientRouter />
   <title>{title}</title>
 
 </head>
@@ -24,8 +33,11 @@ const { title = "Music App" } = Astro.props;
     <slot />
   </div>
 
+  <div id="playbar-container" transition:persist>
+    <PlayerBar />
+  </div>
 
-  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-[#020617]/80 backdrop-blur-md p-4 sm:p-6">
+  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-[#020617]/80 p-4 sm:p-6" style="transform: translateZ(0); will-change: transform;">
     <div class="w-full max-w-lg overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98)_0%,rgba(9,15,29,0.98)_100%)] shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
       <div class="relative border-b border-white/10 px-5 py-4 sm:px-6 sm:py-5">
         <div class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-purple-400/40 to-transparent"></div>
@@ -56,7 +68,7 @@ const { title = "Music App" } = Astro.props;
   </div>
 
   <script>
-    import { API_BASE } from '../lib/api.js';
+    import { API_BASE, clearAuth } from '../lib/api.js';
 
     const _GRADS_ATP = [
       'linear-gradient(135deg,#6366f1,#8b5cf6)',
@@ -164,6 +176,76 @@ const { title = "Music App" } = Astro.props;
 
 
     (window as any).openAddToPlaylist = openAddToPlaylist;
+  </script>
+  <script>
+    import { getUser, getToken, clearAuth, apiFetch } from '../lib/api.js';
+
+    function applyAuthenticatedUI(user: any) {
+      document.documentElement.dataset.authed = 'true';
+      const sidebar = document.getElementById('main-sidebar');
+      if (sidebar) sidebar.dataset.authed = 'true';
+      document.getElementById('sidebar-guest')?.classList.add('hidden');
+      document.getElementById('sidebar-user')?.classList.remove('hidden');
+      document.getElementById('sidebar-user')?.classList.add('flex');
+      document.getElementById('btn-new-playlist')?.classList.remove('hidden');
+      document.getElementById('btn-new-playlist')?.classList.add('flex');
+      document.getElementById('header-user')?.classList.remove('hidden');
+      document.getElementById('header-login-btn')?.classList.add('hidden');
+      const greetingEl = document.getElementById('header-greeting');
+      if (greetingEl) {
+        const hour = new Date().getHours();
+        const timeGreeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+        greetingEl.textContent = `${timeGreeting}, ${user?.full_name || user?.username || ''}`;
+      }
+    }
+
+    function applyUnauthenticatedUI() {
+      document.documentElement.dataset.authed = 'false';
+      const sidebar = document.getElementById('main-sidebar');
+      if (sidebar) sidebar.dataset.authed = 'false';
+      document.getElementById('sidebar-guest')?.classList.remove('hidden');
+      document.getElementById('sidebar-user')?.classList.add('hidden');
+      document.getElementById('sidebar-user')?.classList.remove('flex');
+      document.getElementById('btn-new-playlist')?.classList.add('hidden');
+      document.getElementById('btn-new-playlist')?.classList.remove('flex');
+      document.getElementById('header-user')?.classList.add('hidden');
+      document.getElementById('header-login-btn')?.classList.remove('hidden');
+    }
+
+    function syncAuthFromStorage() {
+      const token = localStorage.getItem('auth_token');
+      const user = JSON.parse(localStorage.getItem('auth_user') ?? 'null');
+      if (token && user) applyAuthenticatedUI(user);
+      else applyUnauthenticatedUI();
+    }
+
+    document.addEventListener('astro:before-swap', (e: any) => {
+      const token = localStorage.getItem('auth_token');
+      if (token) e.newDocument.documentElement.dataset.authed = 'true';
+    });
+
+    document.addEventListener('astro:page-load', () => {
+      syncAuthFromStorage();
+      const token = getToken();
+      const user = getUser();
+      if (token && user) {
+        applyAuthenticatedUI(user);
+        const verify = () => apiFetch('/auth/me').catch(() => {
+          clearAuth();
+          applyUnauthenticatedUI();
+          window.location.href = '/login?reason=session_expired';
+        });
+        if ('requestIdleCallback' in window) requestIdleCallback(verify);
+        else setTimeout(verify, 0);
+      }
+    });
+
+    document.addEventListener('astro:before-swap', (e: any) => {
+      const token = localStorage.getItem('auth_token');
+      if (token) e.newDocument.documentElement.dataset.authed = 'true';
+    });
+
+    syncAuthFromStorage();
   </script>
 </body>
 </html>
