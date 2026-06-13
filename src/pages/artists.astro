@@ -318,12 +318,18 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
 
     function bootArtistsPage() {
+      if (window.location.pathname !== '/artists') return;
+      if ((window as any).__artistsPageBootedFor === window.location.pathname) return;
+      (window as any).__artistsPageBootedFor = window.location.pathname;
       artistsPageBound = false;
       bindArtistsPage();
       loadArtists();
     }
 
-    document.addEventListener('astro:page-load', bootArtistsPage);
+    if (!(window as any).__artistsPageNavBound) {
+      (window as any).__artistsPageNavBound = true;
+      document.addEventListener('astro:page-load', bootArtistsPage);
+    }
     bootArtistsPage();
   </script>
 </MainLayout>

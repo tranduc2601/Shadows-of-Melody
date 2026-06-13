@@ -1,5 +1,6 @@
 import { verifyToken } from '../utils/jwt.js';
 import Subscription from '../models/Subscription.js';
+import { hasPermission } from '../utils/authorization.js';
 
 export const ROLES = Object.freeze(['user', 'artist', 'manager', 'admin']);
 
@@ -35,7 +36,7 @@ const requireRole = (...roles) => (req, res, next) => {
 const authMiddleware = requireAuth;
 
 const adminMiddleware = (req, res, next) => {
-    if (!req.user?.is_admin && req.user?.role !== 'admin') {
+    if (!req.user || !hasPermission(req.user, 'system:settings')) {
         return res.status(403).json({ success: false, message: 'Admin access required' });
     }
     next();

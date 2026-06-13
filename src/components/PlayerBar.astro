@@ -1,4 +1,4 @@
-﻿<div id="playerBar" class="fixed bottom-0 left-0 right-0 w-full bg-[#0a1229]/80 border-t border-white/5 z-50 flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4 sm:py-4 lg:py-5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]" style="display:none; transform: translateZ(0); will-change: transform;">
+﻿<div id="playerBar" class="fixed bottom-0 left-0 right-0 w-full bg-[#0a1229]/80 border-t border-white/5 z-50 flex flex-col gap-3 sm:gap-0 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4 sm:py-4 lg:py-5 shadow-[0_-4px_16px_rgba(0,0,0,0.22)]" style="display:none;">
 
 
   <div class="flex items-center gap-3 w-full sm:w-1/4 min-w-0 sm:min-w-[180px]">
@@ -36,11 +36,18 @@
       <button id="pb-fav" type="button" aria-label="Yêu thích" class="ml-2 text-gray-400 hover:text-pink-500 transition-colors shrink-0">
         <span class="material-symbols-outlined">favorite_border</span>
       </button>
+      <button id="pb-add" type="button" aria-label="Thêm vào playlist" class="text-gray-400 hover:text-purple-400 transition-colors shrink-0">
+        <span class="material-symbols-outlined">playlist_add</span>
+      </button>
+      <button id="pb-share" type="button" aria-label="Chia sẻ" class="text-gray-400 hover:text-cyan-300 transition-colors shrink-0">
+        <span class="material-symbols-outlined">share</span>
+      </button>
+      <span id="pb-queue-chip" class="ml-1 hidden rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-gray-300"></span>
     </div>
     <div class="w-full flex items-center gap-3">
       <span id="pb-curtime" class="text-[11px] font-medium text-gray-400 w-10 text-right tabular-nums">0:00</span>
       <div id="pb-seek-hit" class="flex-1 py-1.5 cursor-pointer group">
-        <div id="pb-seek" class="relative h-1 bg-white/10 rounded-full overflow-visible transition-all group-hover:h-1.5">
+        <div id="pb-seek" class="relative h-1 bg-white/10 rounded-full overflow-visible transition-[height,background-color] duration-200 group-hover:h-1.5">
           <div id="pb-progress" class="absolute top-0 left-0 h-full bg-linear-to-r from-purple-500 to-pink-500 rounded-full pointer-events-none" style="width:0%">
             <div class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 shadow-md transition-opacity"></div>
           </div>
@@ -57,7 +64,7 @@
         <span class="material-symbols-outlined text-xl">volume_up</span>
       </button>
       <div id="pb-volhit" class="relative flex-1 py-1.5 cursor-pointer group">
-        <div id="pb-voltrack" class="relative h-1.5 bg-white/10 rounded-full overflow-visible transition-all group-hover:h-2">
+        <div id="pb-voltrack" class="relative h-1.5 bg-white/10 rounded-full overflow-visible transition-[height,background-color] duration-200 group-hover:h-2">
           <div id="pb-volbar" class="h-full bg-white hover:bg-purple-400 transition-colors rounded-full pointer-events-none" style="width:100%"></div>
           <div id="pb-volknob" class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white shadow-md border border-white/20 pointer-events-none" style="left:100%"></div>
           <div id="pb-voltooltip" class="absolute bottom-[calc(100%+0.4rem)] left-0 -translate-x-1/2 hidden bg-gray-800 text-white text-xs rounded px-2 py-0.5 pointer-events-none whitespace-nowrap">100%</div>
@@ -83,6 +90,35 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="add-to-playlist-modal" class="hidden fixed inset-0 z-[70] items-center justify-center bg-black/70 backdrop-blur-sm px-4 py-6">
+  <div class="w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#0d1630]/95 shadow-[0_30px_120px_rgba(0,0,0,0.6)]">
+    <div class="flex items-start justify-between gap-4 border-b border-white/10 px-5 sm:px-6 py-5">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-purple-400">Add to playlist</p>
+        <h3 class="mt-2 text-xl sm:text-2xl font-black text-white">Choose where to save this song</h3>
+        <p id="apt-song-title" class="mt-1 text-sm text-gray-400 truncate">—</p>
+      </div>
+      <button id="apt-close" type="button" class="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gray-300 transition hover:bg-white/10 hover:text-white" aria-label="Close modal">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+    <div class="px-5 sm:px-6 py-4 border-b border-white/10">
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-[20px]">search</span>
+        <input id="apt-search" type="text" placeholder="Search playlists..." class="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-12 pr-4 text-sm text-white placeholder-gray-500 outline-none transition focus:border-purple-500/40 focus:ring-2 focus:ring-purple-500/20" />
+      </div>
+    </div>
+    <div class="max-h-[60vh] overflow-y-auto custom-scrollbar px-3 sm:px-4 py-4">
+      <div id="apt-state" class="hidden rounded-2xl border border-dashed border-white/10 bg-white/5 px-4 py-10 text-center text-sm text-gray-400"></div>
+      <div id="apt-list" class="grid gap-3 sm:grid-cols-2"></div>
+    </div>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-white/10 px-5 sm:px-6 py-4">
+      <p id="apt-hint" class="text-xs text-gray-500">Select a playlist to add the current track.</p>
+      <button id="apt-cancel" type="button" class="rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/10 hover:text-white">Cancel</button>
     </div>
   </div>
 </div>
@@ -123,6 +159,16 @@
   const pbSpeedReset = document.getElementById('pb-speed-reset') as HTMLButtonElement;
   const pbSpeedEmpty = document.getElementById('pb-speed-empty') as HTMLElement;
   const pbFav      = document.getElementById('pb-fav') as HTMLButtonElement;
+  const pbAdd      = document.getElementById('pb-add') as HTMLButtonElement;
+  const pbShare    = document.getElementById('pb-share') as HTMLButtonElement;
+  const pbQueueChip = document.getElementById('pb-queue-chip') as HTMLElement;
+  const aptModal = document.getElementById('add-to-playlist-modal') as HTMLElement;
+  const aptClose = document.getElementById('apt-close') as HTMLButtonElement;
+  const aptCancel = document.getElementById('apt-cancel') as HTMLButtonElement;
+  const aptSearch = document.getElementById('apt-search') as HTMLInputElement;
+  const aptList = document.getElementById('apt-list') as HTMLElement;
+  const aptState = document.getElementById('apt-state') as HTMLElement;
+  const aptSongTitle = document.getElementById('apt-song-title') as HTMLElement;
 
   const GRADS = [
     'linear-gradient(135deg,#6366f1,#8b5cf6)',
@@ -202,6 +248,11 @@
 
   function syncSongUI(song = player.current) {
     if (!song) return;
+    const queueLen = player.queue?.length || 0;
+    if (pbQueueChip) {
+      pbQueueChip.textContent = queueLen ? `${player.queueIndex + 1}/${queueLen}` : '';
+      pbQueueChip.classList.toggle('hidden', !queueLen);
+    }
     _likedSongId = song?.id ?? null;
     const bar = document.getElementById('playerBar') as HTMLElement | null;
     if (bar && bar.style.display === 'none') bar.style.display = '';
@@ -239,6 +290,12 @@
   let _likeErrorTimer: ReturnType<typeof setTimeout> | null = null;
   let _sessionSongId: number | null = null;
   let _sessionStart: number | null = null;
+  let _aptSong: any = null;
+  let _aptPlaylists: any[] = [];
+
+  function showPlayerBarToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    window.dispatchEvent(new CustomEvent('toast', { detail: { message, type } }));
+  }
 
   async function submitSessionIfValid() {
     if (!_sessionSongId || !_sessionStart) return;
@@ -515,8 +572,25 @@
     if (_likedSongId != null && Number(songId) === Number(_likedSongId)) setFavUI(!!isFavorite);
   });
 
+  window.addEventListener('player:songchange', () => syncSongUI(player.current));
+
+  aptClose?.addEventListener('click', closeAddToPlaylistModal);
+  aptCancel?.addEventListener('click', closeAddToPlaylistModal);
+  aptModal?.addEventListener('click', (e) => {
+    if (e.target === aptModal) closeAddToPlaylistModal();
+  });
+  aptSearch?.addEventListener('input', () => renderPlaylistOptions(aptSearch.value));
+  aptList?.addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('.playlist-option') as HTMLElement | null;
+    const playlistId = card?.dataset.playlistId;
+    if (playlistId) addSongToPlaylist(Number(playlistId));
+  });
+
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeSpeedMenu();
+    if (e.key === 'Escape') {
+      closeSpeedMenu();
+      closeAddToPlaylistModal();
+    }
   });
 
   function setFavUI(isFav: boolean) {
@@ -535,6 +609,128 @@
     return JSON.stringify({ songId: song.id });
   }
 
+  function getShareUrl(song: any) {
+    return `${window.location.origin}/song?id=${encodeURIComponent(song.id)}`;
+  }
+
+  async function shareCurrentSong() {
+    const song = player.current;
+    if (!song) return;
+    const shareData = {
+      title: song.title || 'Shadows of Melody',
+      text: `${song.title || 'Listen to this track'} on Shadows of Melody`,
+      url: getShareUrl(song),
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch {}
+    try {
+      await navigator.clipboard.writeText(shareData.url);
+      showPlayerBarToast('Link copied to clipboard', 'success');
+    } catch {}
+  }
+
+  function closeAddToPlaylistModal() {
+    aptModal?.classList.add('hidden');
+    aptModal?.classList.remove('flex');
+    _aptSong = null;
+    if (aptSearch) aptSearch.value = '';
+  }
+
+  function setAddToPlaylistState(message: string, visible = true) {
+    if (!aptState) return;
+    aptState.textContent = message;
+    aptState.classList.toggle('hidden', !visible);
+  }
+
+  function renderPlaylistOptions(filter = '') {
+    if (!aptList) return;
+    const query = filter.trim().toLowerCase();
+    const playlists = _aptPlaylists.filter((pl) => !query || String(pl.name || '').toLowerCase().includes(query));
+    if (!playlists.length) {
+      aptList.innerHTML = '';
+      setAddToPlaylistState(query ? 'No playlists match your search.' : 'You do not have any playlists yet.');
+      return;
+    }
+    setAddToPlaylistState('', false);
+    aptList.innerHTML = playlists.map((pl: any) => {
+      const count = pl.songs_count ?? pl.song_count ?? pl.songs?.length ?? 0;
+      const cover = pl.cover_url
+        ? `<img src="${pl.cover_url}" class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105" alt="${pl.name || 'Playlist'}" />`
+        : `<div class="absolute inset-0 bg-linear-to-br from-purple-600 via-indigo-600 to-sky-500"></div>`;
+      return `
+        <button type="button" class="group playlist-option flex w-full items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-left transition hover:border-purple-500/30 hover:bg-white/[0.08]" data-playlist-id="${pl.id}">
+          <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-lg shadow-black/20">
+            ${cover}
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-white/90 opacity-0 transition group-hover:opacity-100">
+              <span class="material-symbols-outlined text-[22px]">queue_music</span>
+            </div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-white group-hover:text-purple-300">${pl.name || 'Untitled playlist'}</p>
+                <p class="mt-1 text-xs text-gray-400 truncate">${pl.description || 'No description'}</p>
+              </div>
+              <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-gray-300 whitespace-nowrap">${count} songs</span>
+            </div>
+            <div class="mt-3 flex items-center gap-2 text-xs text-gray-500">
+              <span class="material-symbols-outlined text-[14px]">${pl.is_public === false ? 'lock' : 'public'}</span>
+              <span>${pl.is_public === false ? 'Private' : 'Public'}</span>
+            </div>
+          </div>
+        </button>`;
+    }).join('');
+  }
+
+  async function openAddToPlaylistModal(song: any) {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
+    _aptSong = song;
+    if (aptSongTitle) aptSongTitle.textContent = song?.title || '—';
+    if (aptModal) {
+      aptModal.classList.remove('hidden');
+      aptModal.classList.add('flex');
+    }
+    setAddToPlaylistState('Loading playlists...');
+    if (aptList) aptList.innerHTML = '';
+    try {
+      const { data: playlists } = await apiFetch('/playlists/me');
+      _aptPlaylists = Array.isArray(playlists) ? playlists : [];
+      if (!_aptPlaylists.length) {
+        setAddToPlaylistState('You do not have any playlists yet. Create one first.');
+        return;
+      }
+      renderPlaylistOptions(aptSearch?.value || '');
+    } catch {
+      setAddToPlaylistState('Failed to load playlists.');
+    }
+  }
+
+  (window as any).openAddToPlaylist = openAddToPlaylistModal;
+
+  async function addSongToPlaylist(playlistId: number) {
+    if (!_aptSong?.id) return;
+    try {
+      await apiFetch(`/playlists/${playlistId}/songs`, {
+        method: 'POST',
+        body: JSON.stringify({ songId: _aptSong.id }),
+      });
+      const playlist = _aptPlaylists.find((pl) => Number(pl.id) === Number(playlistId));
+      showPlayerBarToast(`Song added to "${playlist?.name || 'playlist'}" successfully.`, 'success');
+      closeAddToPlaylistModal();
+    } catch (err: any) {
+      showPlayerBarToast(err?.message || 'Failed to add song to playlist.', 'error');
+    }
+  }
+
   async function checkFavoriteStatus(songId: number) {
     _likedSongId = songId;
     const token = localStorage.getItem('auth_token');
@@ -548,6 +744,12 @@
   }
 
   async function refreshLikedPages(songId: number, isFavorite: boolean) {
+    if (window.location.pathname !== '/liked') {
+      window.dispatchEvent(new CustomEvent('favorites:changed', {
+        detail: { songId, isFavorite },
+      }));
+      return;
+    }
     window.dispatchEvent(new CustomEvent('favorites:changed', {
       detail: { songId, isFavorite },
     }));
@@ -581,4 +783,21 @@
       }, 1500);
     }
   });
+
+  const openAddToPlaylistFromEvent = (detail: any) => {
+    const song = detail?.song || player.current;
+    if (!song) return;
+    openAddToPlaylistModal(song);
+  };
+
+  pbAdd?.addEventListener('click', () => {
+    openAddToPlaylistFromEvent({ song: player.current });
+  });
+
+  window.addEventListener('player:add-to-playlist', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    openAddToPlaylistFromEvent(detail);
+  });
+
+  pbShare?.addEventListener('click', shareCurrentSong);
 </script>

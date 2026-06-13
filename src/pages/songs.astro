@@ -1,17 +1,14 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import Sidebar from "../components/Sidebar.astro";
-import PlayerBar from "../components/PlayerBar.astro";
 ---
 
 <MainLayout title="Songs - Shadows of Melody">
-  <div class="flex h-screen overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
+  <div class="flex h-screen min-h-0 overflow-hidden bg-[#060e20] text-gray-200 antialiased selection:bg-purple-500/30">
     <Sidebar currentPage="songs" />
-    <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813] min-w-0">
-      <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15),transparent_30%)]"></div>
-      <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-8 custom-scrollbar relative">
-        <section class="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.35)] p-5 sm:p-6 lg:p-8 mb-6">
-          <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_35%)] pointer-events-none"></div>
+    <main class="flex-1 flex min-h-0 flex-col relative overflow-hidden bg-[#060e20] min-w-0">
+      <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-32 pt-8 custom-scrollbar relative">
+        <section class="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b1328] p-5 sm:p-6 lg:p-8 mb-6">
           <div class="relative flex flex-col gap-6">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
               <div class="max-w-2xl">
@@ -23,19 +20,19 @@ import PlayerBar from "../components/PlayerBar.astro";
               </div>
 
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full lg:w-auto">
-                <div class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 min-w-[120px]">
+                <div class="rounded-2xl border border-white/10 bg-[#060e20] px-4 py-3 min-w-[120px]">
                   <p class="text-[11px] uppercase tracking-[0.2em] text-gray-400">Total songs</p>
                   <p id="songs-count" class="mt-1 text-2xl font-black text-white tabular-nums">0</p>
                 </div>
-                <div class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 min-w-[120px]">
+                <div class="rounded-2xl border border-white/10 bg-[#060e20] px-4 py-3 min-w-[120px]">
                   <p class="text-[11px] uppercase tracking-[0.2em] text-gray-400">Visible now</p>
                   <p id="visible-count" class="mt-1 text-2xl font-black text-white tabular-nums">0</p>
                 </div>
-                <div class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 min-w-[120px]">
+                <div class="rounded-2xl border border-white/10 bg-[#060e20] px-4 py-3 min-w-[120px]">
                   <p class="text-[11px] uppercase tracking-[0.2em] text-gray-400">Plays</p>
                   <p id="total-plays" class="mt-1 text-2xl font-black text-white tabular-nums">0</p>
                 </div>
-                <div class="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 min-w-[120px]">
+                <div class="rounded-2xl border border-white/10 bg-[#060e20] px-4 py-3 min-w-[120px]">
                   <p class="text-[11px] uppercase tracking-[0.2em] text-gray-400">Total duration</p>
                   <p id="total-duration" class="mt-1 text-2xl font-black text-white tabular-nums">0:00</p>
                 </div>
@@ -45,11 +42,11 @@ import PlayerBar from "../components/PlayerBar.astro";
             <div class="flex flex-col xl:flex-row xl:items-center gap-3">
               <label class="flex-1 relative block">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none material-symbols-outlined">search</span>
-                <input id="song-search" type="search" placeholder="Search by song title or artist..." class="w-full h-12 rounded-2xl bg-black/20 border border-white/10 pl-12 pr-4 text-white placeholder:text-gray-500 outline-none focus:border-purple-400/60 focus:ring-4 focus:ring-purple-500/10 transition" />
+                <input id="song-search" type="search" placeholder="Search by song title or artist..." class="w-full h-12 rounded-2xl bg-[#060e20] border border-white/10 pl-12 pr-4 text-white placeholder:text-gray-500 outline-none focus:border-purple-400/60 focus:ring-4 focus:ring-purple-500/10 transition" />
               </label>
 
               <div class="flex flex-col sm:flex-row gap-3">
-                <select id="sort-select" class="songs-filter-select h-12 rounded-2xl bg-black border border-white/15 px-4 text-white outline-none focus:border-purple-400/60 focus:ring-4 focus:ring-purple-500/10 transition">
+                <select id="sort-select" class="songs-filter-select h-12 rounded-2xl bg-[#060e20] border border-white/15 px-4 text-white outline-none focus:border-purple-400/60 focus:ring-4 focus:ring-purple-500/10 transition">
                   <option value="recent">Default</option>
                   <option value="title">Title A → Z</option>
                   <option value="artist">Artist A → Z</option>
@@ -65,8 +62,8 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </section>
 
-        <section class="rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.30)] overflow-hidden">
-          <div class="flex items-center justify-between gap-3 px-5 sm:px-6 py-4 border-b border-white/10">
+        <section class="rounded-[2rem] border border-white/10 bg-[#0b1328] overflow-hidden">
+          <div class="flex items-center justify-between gap-3 px-5 sm:px-6 py-4 border-b border-white/10 bg-[#0c1328]">
             <div>
               <h2 class="text-lg sm:text-xl font-bold text-white">Song list</h2>
               <p id="songs-hint" class="text-sm text-gray-400 mt-1">Click a song to play it instantly.</p>
@@ -86,7 +83,6 @@ import PlayerBar from "../components/PlayerBar.astro";
           </div>
         </section>
       </div>
-      <PlayerBar />
     </main>
   </div>
 <script>
@@ -131,7 +127,6 @@ import PlayerBar from "../components/PlayerBar.astro";
     return String(value || '').toLowerCase().trim();
   }
 
-  const SONGS_FILTER_SELECT_CLASS = 'songs-filter-select';
 
   function getSongsForPlayer() {
     return state.songs.map((song) => ({ ...song }));
@@ -199,34 +194,31 @@ import PlayerBar from "../components/PlayerBar.astro";
     els.empty.classList.add('hidden');
     els.table.innerHTML = `
       <table class="w-full min-w-[780px]">
-        <thead class="sticky top-0 z-10 bg-[#0c1328]/95 backdrop-blur-xl border-b border-white/10">
-          <tr class="text-left text-[11px] uppercase tracking-[0.22em] text-gray-400">
-            <th class="px-5 py-4 w-16 text-center">#</th>
-            <th class="px-5 py-4">Song</th>
-            <th class="px-5 py-4 text-right hidden sm:table-cell">Plays</th>
-            <th class="px-5 py-4 text-center">Duration</th>
-            <th class="px-5 py-4 text-right">Play</th>
+        <thead class="sticky top-0 z-10 bg-[#0c1328] border-b border-white/10">
+          <tr class="text-center text-[11px] uppercase tracking-[0.22em] text-gray-400">
+            <th class="px-5 py-4 w-16 text-center align-middle">#</th>
+            <th class="px-5 py-4 text-center align-middle">Song</th>
+            <th class="px-5 py-4 text-center align-middle hidden sm:table-cell">Plays</th>
+            <th class="px-5 py-4 text-center align-middle">Duration</th>
+            <th class="px-5 py-4 text-center align-middle">Play</th>
           </tr>
         </thead>
         <tbody>
           ${filtered.map((song, index) => {
             const cover = song.cover_url
-              ? `<img src="${song.cover_url}" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover ring-1 ring-white/10" alt="${song.title || ''}"/>`
+              ? `<img src="${song.cover_url}" width="56" height="56" loading="lazy" decoding="async" class="w-14 h-14 rounded-2xl object-cover ring-1 ring-white/10" alt="${song.title || ''}"/>`
               : `<div class="w-14 h-14 rounded-2xl ring-1 ring-white/10" style="background:${gradientForSong(song)}"></div>`;
 
             return `
-              <tr class="group border-b border-white/5 hover:bg-white/[0.05] transition-colors cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(song))}">
-                <td class="px-5 py-4 text-center text-gray-500 group-hover:text-white tabular-nums">${index + 1}</td>
+              <tr class="border-b border-white/5 cursor-pointer song-row" data-song="${encodeURIComponent(JSON.stringify(song))}">
+                <td class="px-5 py-4 text-center text-gray-500 tabular-nums">${index + 1}</td>
                 <td class="px-5 py-4">
                   <div class="flex items-center gap-4 min-w-0">
                     <div class="relative shrink-0">
                       ${cover}
-                      <div class="absolute inset-0 rounded-2xl bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
-                      </div>
                     </div>
                     <div class="min-w-0">
-                      <p class="font-semibold text-white group-hover:text-purple-300 truncate">${song.title || 'Untitled'}</p>
+                      <p class="font-semibold text-white truncate">${song.title || 'Untitled'}</p>
                       <p class="text-xs text-gray-500 truncate mt-1">${song.artist_names || 'Unknown artist'}</p>
                     </div>
                   </div>
@@ -234,10 +226,21 @@ import PlayerBar from "../components/PlayerBar.astro";
                 <td class="px-5 py-4 text-right hidden sm:table-cell text-gray-500 tabular-nums">${formatCount(song.plays_count)}</td>
                 <td class="px-5 py-4 text-center text-gray-500 tabular-nums">${formatDuration(song.duration)}</td>
                 <td class="px-5 py-4 text-right">
-                  <button type="button" class="inline-flex items-center gap-2 rounded-full bg-white/8 border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500/20 hover:border-purple-400/40 transition">
-                    <span class="material-symbols-outlined text-base">play_arrow</span>
-                    Play
-                  </button>
+                  <div class="flex items-center justify-end gap-1 sm:gap-2">
+                    <button type="button" class="btn-song-add inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-400 hover:text-purple-300 hover:bg-purple-500/10 transition" data-song="${encodeURIComponent(JSON.stringify(song))}" title="Add to playlist" aria-label="Add to playlist">
+                      <span class="material-symbols-outlined text-[18px]">playlist_add</span>
+                    </button>
+                    <button type="button" class="btn-song-like inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-400 hover:text-pink-400 hover:bg-pink-500/10 transition" data-song-id="${song.id}" title="Like" aria-label="Like">
+                      <span class="material-symbols-outlined text-[18px]">favorite_border</span>
+                    </button>
+                    <button type="button" class="btn-song-share inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition" data-song="${encodeURIComponent(JSON.stringify(song))}" title="Share" aria-label="Share">
+                      <span class="material-symbols-outlined text-[18px]">share</span>
+                    </button>
+                    <button type="button" class="inline-flex items-center gap-2 rounded-full bg-white/8 border border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500/20 hover:border-purple-400/40 transition song-play-btn" data-song="${encodeURIComponent(JSON.stringify(song))}">
+                      <span class="material-symbols-outlined text-base">play_arrow</span>
+                      Play
+                    </button>
+                  </div>
                 </td>
               </tr>`;
           }).join('')}
@@ -284,6 +287,38 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     els.table?.addEventListener('click', (e) => {
       const target = e.target;
+      const shareBtn = target instanceof HTMLElement ? target.closest('.btn-song-share') as HTMLElement | null : null;
+      if (shareBtn) {
+        e.stopPropagation();
+        try { const song = JSON.parse(decodeURIComponent(shareBtn.dataset.song || '')); (window as any).shareMusicItem?.('song', song); } catch {}
+        return;
+      }
+      const addBtn = target instanceof HTMLElement ? target.closest('.btn-song-add') as HTMLElement | null : null;
+      if (addBtn) {
+        e.stopPropagation();
+        try { const song = JSON.parse(decodeURIComponent(addBtn.dataset.song || '')); (window as any).openAddToPlaylist?.(song); } catch {}
+        return;
+      }
+      const likeBtn = target instanceof HTMLElement ? target.closest('.btn-song-like') as HTMLElement | null : null;
+      if (likeBtn) {
+        e.stopPropagation();
+        const icon = likeBtn.querySelector('.material-symbols-outlined');
+        const isLiked = likeBtn.dataset.liked === 'true';
+        likeBtn.dataset.liked = String(!isLiked);
+        if (icon) icon.textContent = !isLiked ? 'favorite' : 'favorite_border';
+        likeBtn.classList.toggle('text-pink-400', !isLiked);
+        likeBtn.classList.toggle('text-gray-400', isLiked);
+        return;
+      }
+      const playBtn = target instanceof HTMLElement ? target.closest('.song-play-btn') as HTMLElement | null : null;
+      if (playBtn) {
+        e.stopPropagation();
+        try {
+          const song = JSON.parse(decodeURIComponent(playBtn.dataset.song || ''));
+          player.playSong(song, getSongsForPlayer());
+        } catch {}
+        return;
+      }
       const row = target instanceof HTMLElement ? target.closest('.song-row') as HTMLElement | null : null;
       if (!row) return;
       try {
@@ -319,28 +354,34 @@ import PlayerBar from "../components/PlayerBar.astro";
   }
 
   function bootSongsPage() {
+    if (window.location.pathname !== '/songs') return;
+    if ((window as any).__songsPageBootedFor === window.location.pathname) return;
+    (window as any).__songsPageBootedFor = window.location.pathname;
     songsPageBound = false;
     bindSongsPage();
     loadSongs();
   }
 
-  document.addEventListener('astro:page-load', bootSongsPage);
+  if (!(window as any).__songsPageNavBound) {
+    (window as any).__songsPageNavBound = true;
+    document.addEventListener('astro:page-load', bootSongsPage);
+  }
   bootSongsPage();
 </script>
 
 <style>
   #sort-select.songs-filter-select {
-    background-color: #000;
+    background-color: #060e20;
     color: #fff;
   }
 
   #sort-select.songs-filter-select option {
-    background-color: #000;
+    background-color: #060e20;
     color: #fff;
   }
 
   #sort-select.songs-filter-select:focus {
-    background-color: #000;
+    background-color: #060e20;
     color: #fff;
   }
 </style>

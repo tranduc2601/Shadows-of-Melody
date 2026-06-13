@@ -255,9 +255,18 @@ import PlayerBar from "../components/PlayerBar.astro";
 
     document.getElementById('refresh-payments-btn')?.addEventListener('click', loadPayments);
 
-    (async () => {
-      await loadSubscription();
-      await loadPayments();
-    })();
+    function bootSubscriptionPage() {
+      if (window.location.pathname !== '/subscription') return;
+      if ((window as any).__subscriptionPageBootedFor === window.location.pathname) return;
+      (window as any).__subscriptionPageBootedFor = window.location.pathname;
+      loadSubscription();
+      loadPayments();
+    }
+
+    if (!(window as any).__subscriptionPageNavBound) {
+      (window as any).__subscriptionPageNavBound = true;
+      document.addEventListener('astro:page-load', bootSubscriptionPage);
+    }
+    bootSubscriptionPage();
   </script>
 </MainLayout>

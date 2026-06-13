@@ -38,11 +38,36 @@ export function setCachedMe(data) {
 
 
 export async function refreshMe() {
+  const w = window;
+  if (w.__authVerifyPromise) {
+    try {
+      const data = await w.__authVerifyPromise;
+      if (data) setCachedMe(data);
+      return data ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  w.__authVerifyPromise = (async () => {
+    try {
+      const { data } = await apiFetch('/auth/me');
+      if (data) setCachedMe(data);
+      return data ?? null;
+    } catch {
+      return null;
+    } finally {
+      w.__authVerifyPromise = null;
+    }
+  })();
+
   try {
-    const { data } = await apiFetch('/auth/me');
+    const data = await w.__authVerifyPromise;
     if (data) setCachedMe(data);
     return data ?? null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 

@@ -91,6 +91,8 @@ CREATE TABLE IF NOT EXISTS songs (
     cover_url   VARCHAR(500),
     plays_count INT           DEFAULT 0,
     status      VARCHAR(20)   NOT NULL DEFAULT 'published',
+    is_featured BOOLEAN       NOT NULL DEFAULT FALSE,
+    featured_at TIMESTAMPTZ,
     tsv         TSVECTOR,
     upload_date TIMESTAMPTZ   DEFAULT NOW(),
     created_at  TIMESTAMPTZ   DEFAULT NOW(),

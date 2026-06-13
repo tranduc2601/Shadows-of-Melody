@@ -795,7 +795,7 @@ export const toggleSongStatus = async (req, res) => {
     }
     try {
         const [rows] = await pool.query(
-            `UPDATE songs SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING id, title, status`,
+            `UPDATE songs SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING id, title, status, is_featured, featured_at`,
             [status, id]
         );
         if (!rows.length) {
@@ -808,7 +808,29 @@ export const toggleSongStatus = async (req, res) => {
     }
 };
 
+export const toggleSongFeatured = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await pool.query(
+            `UPDATE songs
+             SET is_featured = NOT is_featured,
+                 featured_at = CASE WHEN NOT is_featured THEN NOW() ELSE NULL END,
+                 updated_at = NOW()
+             WHERE id = $1
+             RETURNING id, title, is_featured, featured_at`,
+            [id]
+        );
 
+        if (!rows.length) {
+            return res.status(404).json({ success: false, message: 'Song not found' });
+        }
+
+        return res.json({ success: true, data: rows[0] });
+    } catch (err) {
+        console.error('toggleSongFeatured error:', err);
+        return res.status(500).json({ success: false, message: 'Failed to update featured state' });
+    }
+};
 
 export const getAlbumSongs = async (req, res) => {
     const { id } = req.params;

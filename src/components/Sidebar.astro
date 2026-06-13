@@ -32,8 +32,8 @@ const libItems = [
 </script>
 
 <aside id="main-sidebar"
-  class="sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 backdrop-blur-xl hidden md:flex md:flex-col z-40
-         transition-[width] duration-300 ease-in-out overflow-hidden max-h-screen sticky top-0"
+  class="sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#0a1229]/80 hidden md:flex md:flex-col z-40
+         overflow-hidden max-h-screen sticky top-0"
   data-authed={isAuthed ? 'true' : 'false'}>
 
 
@@ -41,32 +41,32 @@ const libItems = [
     <a href="/" class="flex items-center gap-2 min-w-0 overflow-hidden">
       <span class="material-symbols-outlined text-purple-400 animate-pulse shrink-0">music_note</span>
       <span class="sidebar-label text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400
-                   transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Melody</span>
+                   transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Melody</span>
     </a>
     <button id="sidebar-toggle"
       title="Toggle sidebar"
       class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400
-             hover:text-white hover:bg-white/10 transition-all duration-200">
+             hover:text-white hover:bg-white/10 transition-colors duration-200">
       <span id="sidebar-toggle-icon" class="material-symbols-outlined text-[20px] transition-transform duration-300">chevron_left</span>
     </button>
   </div>
 
   <div class="px-3 py-4 flex-1 overflow-y-auto overflow-x-hidden">
     <p class="sidebar-label px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-3
-              transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Menu</p>
+              transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Menu</p>
     <nav class="space-y-1 mb-6">
       {navItems.map(item => (
         <a href={item.href}
            title={item.label}
-           class={`sidebar-nav-item flex items-center gap-4 px-3 py-3 rounded-xl font-medium transition-all duration-200 group ${
+           class={`sidebar-nav-item flex items-center gap-4 px-3 py-3 rounded-xl font-medium transition-colors duration-200 ${
              currentPage === item.page
-               ? 'nav-active bg-gradient-to-r from-purple-500/20 to-transparent text-white shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]'
+               ? 'nav-active bg-white/5 text-white'
                : 'text-gray-400 hover:text-white hover:bg-white/5'
            }`}>
-          <span class={`nav-icon material-symbols-outlined shrink-0 transition-all duration-200 ${
-            currentPage === item.page ? 'text-purple-400' : 'group-hover:scale-110'
+          <span class={`nav-icon material-symbols-outlined shrink-0 ${
+            currentPage === item.page ? 'text-purple-400' : ''
           }`}>{item.icon}</span>
-          <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">
+          <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">
             {item.label}
           </span>
         </a>
@@ -74,20 +74,20 @@ const libItems = [
     </nav>
 
     <p class="sidebar-label px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-3
-              transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Library</p>
+              transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Library</p>
     <nav class="space-y-1 mb-3">
       {libItems.map(item => (
         <a href={item.href}
            title={item.label}
-           class={`sidebar-nav-item flex items-center gap-4 px-3 py-3 rounded-xl font-medium transition-all duration-200 group ${
+           class={`sidebar-nav-item flex items-center gap-4 px-3 py-3 rounded-xl font-medium transition-colors duration-200 ${
              currentPage === item.page
-               ? 'nav-active bg-gradient-to-r from-purple-500/20 to-transparent text-white shadow-[inset_2px_0_0_0_rgba(168,85,247,1)]'
+               ? 'nav-active bg-white/5 text-white'
                : 'text-gray-400 hover:text-white hover:bg-white/5'
            }`}>
-          <span class={`nav-icon material-symbols-outlined shrink-0 transition-all duration-200 group-hover:scale-110 ${item.iconClass} ${
+          <span class={`nav-icon material-symbols-outlined shrink-0 ${item.iconClass} ${
             currentPage === item.page ? 'text-purple-400' : ''
           }`}>{item.icon}</span>
-          <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">
+          <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">
             {item.label}
           </span>
         </a>
@@ -96,38 +96,38 @@ const libItems = [
 
 
     <a id="sidebar-admin-link" href="/admin" title="Admin Panel"
-       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-purple-400 hover:text-white hover:bg-purple-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
+       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-purple-400 hover:text-white hover:bg-purple-500/10 w-full rounded-lg transition-colors duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-purple-500/20 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-purple-400 text-base">admin_panel_settings</span>
       </span>
-      <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Admin Panel</span>
+      <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Admin Panel</span>
     </a>
 
 
     <a id="sidebar-studio-link" href="/studio" title="Artist Studio"
-       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-green-400 hover:text-white hover:bg-green-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
+       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-green-400 hover:text-white hover:bg-green-500/10 w-full rounded-lg transition-colors duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-green-500/20 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-green-400 text-base">equalizer</span>
       </span>
-      <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Artist Studio</span>
+      <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Artist Studio</span>
     </a>
 
 
     <a id="sidebar-upload-link" href="/upload" title="Upload Song"
-       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-indigo-400 hover:text-white hover:bg-indigo-500/10 w-full rounded-lg transition-all duration-200 text-sm font-semibold">
+       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-indigo-400 hover:text-white hover:bg-indigo-500/10 w-full rounded-lg transition-colors duration-200 text-sm font-semibold">
       <span class="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-indigo-400 text-base">upload_file</span>
       </span>
-      <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Upload Song</span>
+      <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Upload Song</span>
     </a>
 
 
     <button id="btn-new-playlist" title="Create new playlist"
-       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-gray-500 hover:text-white w-full rounded-lg hover:bg-white/5 transition-all duration-200 text-sm">
+       class="hidden mt-2 sidebar-nav-item items-center gap-3 px-3 py-2 text-gray-500 hover:text-white w-full rounded-lg hover:bg-white/5 transition-colors duration-200 text-sm">
       <span class="w-8 h-8 rounded-md border border-dashed border-white/20 flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-base">add</span>
       </span>
-      <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Create new playlist</span>
+      <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Create new playlist</span>
     </button>
   </div>
 
@@ -138,7 +138,7 @@ const libItems = [
       <a href="/login" title="Đăng Nhập"
          class="sidebar-nav-item flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity">
         <span class="material-symbols-outlined text-base shrink-0">login</span>
-        <span class="sidebar-label transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap">Login</span>
+        <span class="sidebar-label transition-opacity duration-300 ease-in-out overflow-hidden whitespace-nowrap">Login</span>
       </a>
     </div>
 
@@ -164,8 +164,8 @@ const libItems = [
     width: 4.5rem;
   }
   .sidebar-root.sidebar-collapsed .sidebar-label {
-    max-width: 0;
     opacity: 0;
+    transform: translateX(-0.25rem);
     margin: 0;
     padding: 0;
   }
@@ -185,8 +185,8 @@ const libItems = [
     display: none;
   }
   .sidebar-root:not(.sidebar-collapsed) .sidebar-label {
-    max-width: 200px;
     opacity: 1;
+    transform: translateX(0);
   }
 
 
@@ -195,10 +195,7 @@ const libItems = [
     box-shadow: none !important;
   }
   .sidebar-root.sidebar-collapsed .nav-active .nav-icon {
-    background: linear-gradient(135deg, rgba(139,92,246,0.35), rgba(99,102,241,0.35));
-    border-radius: 0.75rem;
-    padding: 0.5rem;
-    box-shadow: 0 0 12px rgba(139,92,246,0.25);
+    color: rgb(196 181 253);
   }
 </style>
 
@@ -273,14 +270,14 @@ const libItems = [
                title="Click to upload cover">
             <span id="sbpl-cover-placeholder" class="material-symbols-outlined text-gray-500 text-3xl">add_photo_alternate</span>
             <img id="sbpl-cover-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-xl" alt="" />
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-xl">
               <span class="material-symbols-outlined text-white text-xl">edit</span>
             </div>
           </div>
           <div class="flex-1 min-w-0">
             <input id="sbpl-cover-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
             <button type="button" id="sbpl-cover-btn"
-              class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all text-left flex items-center gap-2">
+              class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors text-left flex items-center gap-2">
               <span class="material-symbols-outlined text-[18px]">upload</span>
               Choose image…
             </button>
@@ -297,7 +294,7 @@ const libItems = [
           Name <span class="text-rose-400">*</span>
         </label>
         <input id="sbpl-name" type="text" maxlength="100" placeholder="My Playlist"
-          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all" />
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors" />
         <div class="flex justify-between mt-1">
           <p id="sbpl-name-err" class="hidden text-xs text-red-400">Playlist name is required.</p>
           <span id="sbpl-name-count" class="ml-auto text-xs text-gray-600">0 / 100</span>
@@ -308,7 +305,7 @@ const libItems = [
       <div>
         <label for="sbpl-desc" class="block text-sm font-medium text-gray-300 mb-1.5">Description</label>
         <textarea id="sbpl-desc" rows="3" maxlength="300" placeholder="What's this playlist about?"
-          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"></textarea>
+          class="w-full px-4 py-3 bg-[#1a2847] border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors resize-none"></textarea>
         <span id="sbpl-desc-count" class="block text-right text-xs text-gray-600 mt-1">0 / 300</span>
       </div>
 
@@ -316,7 +313,7 @@ const libItems = [
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Visibility</label>
         <div class="grid grid-cols-2 gap-3">
-          <label id="lbl-vis-public" class="vis-option flex items-center gap-3 p-3 rounded-xl border-2 border-purple-500/60 bg-purple-500/10 cursor-pointer transition-all">
+          <label id="lbl-vis-public" class="vis-option flex items-center gap-3 p-3 rounded-xl border-2 border-purple-500/60 bg-purple-500/10 cursor-pointer transition-colors">
             <input type="radio" name="sbpl-visibility" value="public" checked class="accent-purple-500 w-4 h-4" />
             <div>
               <span class="material-symbols-outlined text-[18px] text-purple-400 align-middle">public</span>
@@ -324,7 +321,7 @@ const libItems = [
               <p class="text-xs text-gray-400 mt-0.5">Anyone can see</p>
             </div>
           </label>
-          <label id="lbl-vis-private" class="vis-option flex items-center gap-3 p-3 rounded-xl border-2 border-white/10 bg-white/5 cursor-pointer transition-all">
+          <label id="lbl-vis-private" class="vis-option flex items-center gap-3 p-3 rounded-xl border-2 border-white/10 bg-white/5 cursor-pointer transition-colors">
             <input type="radio" name="sbpl-visibility" value="private" class="accent-purple-500 w-4 h-4" />
             <div>
               <span class="material-symbols-outlined text-[18px] text-gray-400 align-middle">lock</span>
@@ -338,7 +335,7 @@ const libItems = [
       <div id="sbpl-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3"></div>
 
       <button type="submit" id="sbpl-submit"
-        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+        class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-[20px]">add</span>
         Create Playlist
       </button>

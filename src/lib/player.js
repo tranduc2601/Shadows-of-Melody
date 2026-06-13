@@ -166,7 +166,7 @@ export const player = (() => {
         _queueIdx = Math.min(_queueIdx + 1, queue.length - 1);
       }
     } else {
-      _queueIdx = Math.min(_queueIdx + 1, queue.length - 1);
+      _queueIdx = (_queueIdx + 1) % queue.length;
     }
 
     _playSong(queue[_queueIdx]);

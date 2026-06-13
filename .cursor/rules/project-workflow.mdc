@@ -1,0 +1,34 @@
+---
+description: Project workflow guardrails for agent changes
+alwaysApply: true
+---
+
+# Project Workflow Guardrails
+
+Follow this workflow for every task in this repository.
+
+1. At the start of every task, check whether a Superpowers skill applies.
+2. If a skill applies, read and follow it before acting.
+3. For debugging, performance, and bug-fix work:
+   - inspect first
+   - identify the confirmed cause
+   - produce a small plan
+   - wait for user approval before editing
+4. Never make broad refactors without approval.
+5. Never change business logic, API contracts, or data shape unless explicitly requested.
+6. For performance work:
+   - do not guess
+   - use DevTools findings or code evidence
+   - fix one confirmed cause at a time
+   - run `npm run build` after changes
+   - do not claim fixed until browser verification
+7. For UI/UX changes:
+   - preserve layout, spacing, colors, and behavior unless explicitly requested
+8. For admin/player/song functionality:
+   - avoid regressions
+   - verify core flows after changes
+9. After editing:
+   - report exact files changed
+   - report exact selectors/functions changed
+   - report verification result
+10. If unsure, ask before editing.

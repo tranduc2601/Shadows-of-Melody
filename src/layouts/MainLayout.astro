@@ -37,8 +37,8 @@ const { title = "Music App" } = Astro.props;
     <PlayerBar />
   </div>
 
-  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-[#020617]/80 p-4 sm:p-6" style="transform: translateZ(0); will-change: transform;">
-    <div class="w-full max-w-lg overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98)_0%,rgba(9,15,29,0.98)_100%)] shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
+  <div id="global-atp-modal" class="hidden fixed inset-0 z-[300] flex items-center justify-center bg-[#020617]/80 p-4 sm:p-6" style="pointer-events: none;">
+    <div class="w-full max-w-lg rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.98)_0%,rgba(9,15,29,0.98)_100%)] shadow-md">
       <div class="relative border-b border-white/10 px-5 py-4 sm:px-6 sm:py-5">
         <div class="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-purple-400/40 to-transparent"></div>
         <div class="flex items-start justify-between gap-4">
@@ -70,6 +70,7 @@ const { title = "Music App" } = Astro.props;
   <script>
     import { API_BASE, clearAuth } from '../lib/api.js';
 
+
     const _GRADS_ATP = [
       'linear-gradient(135deg,#6366f1,#8b5cf6)',
       'linear-gradient(135deg,#f43f5e,#f97316)',
@@ -95,14 +96,28 @@ const { title = "Music App" } = Astro.props;
       setTimeout(() => _atpFeedback.classList.add('hidden'), 2500);
     }
 
-    _atpClose?.addEventListener('click', () => _atpModal.classList.add('hidden'));
-    _atpModal?.addEventListener('click', (e) => { if (e.target === _atpModal) _atpModal.classList.add('hidden'); });
+    function _showAtpModal() {
+      _atpModal.classList.remove('hidden');
+      _atpModal.classList.add('flex');
+      _atpModal.style.opacity = '1';
+      _atpModal.style.pointerEvents = 'auto';
+    }
+
+    function _hideAtpModal() {
+      _atpModal.classList.add('hidden');
+      _atpModal.classList.remove('flex');
+      _atpModal.style.opacity = '0';
+      _atpModal.style.pointerEvents = 'none';
+    }
+
+    _atpClose?.addEventListener('click', _hideAtpModal);
+    _atpModal?.addEventListener('click', (e) => { if (e.target === _atpModal) _hideAtpModal(); });
 
     async function openAddToPlaylist(song: any) {
       _atpSong = song;
       _atpSongName.textContent = `"${song.title}"`;
       _atpFeedback.classList.add('hidden');
-      _atpModal.classList.remove('hidden');
+      _showAtpModal();
       _atpList.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Loading...</p>';
 
       const token = localStorage.getItem('auth_token');
@@ -128,16 +143,16 @@ const { title = "Music App" } = Astro.props;
           const img   = pl.cover_url || pl.first_cover_url;
           const cover = img ? `<img src="${img}" class="w-full h-full object-cover rounded-lg" alt="" />` : '';
           return `
-            <button class="atp-pl-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-left group"
+            <button class="atp-pl-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left"
                     data-pl-id="${pl.id}" data-pl-name="${pl.name}" type="button">
               <div class="w-10 h-10 rounded-lg shrink-0 overflow-hidden flex items-center justify-center" style="background:${bg}">
                 ${cover || '<span class="material-symbols-outlined text-white/30 text-lg">queue_music</span>'}
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-gray-200 group-hover:text-white truncate">${pl.name}</p>
+                <p class="text-sm font-semibold text-gray-200 truncate">${pl.name}</p>
                 <p class="text-xs text-gray-500">${pl.songs_count ?? 0} songs</p>
               </div>
-              <span class="material-symbols-outlined text-gray-600 group-hover:text-green-400 transition-colors text-[20px] shrink-0">add_circle</span>
+              <span class="material-symbols-outlined text-gray-600 text-[20px] shrink-0">add_circle</span>
             </button>`;
         }).join('');
       } catch {
@@ -165,12 +180,12 @@ const { title = "Music App" } = Astro.props;
         const json = await res.json();
         if (!res.ok) throw new Error(json.message || 'Failed');
         if (icon) { icon.textContent = 'check_circle'; icon.classList.add('text-green-400'); }
-        _atpShowFeedback(`Added to "${plName}"`, true);
-        setTimeout(() => _atpModal.classList.add('hidden'), 900);
+        _atpShowFeedback(`Song added to "${plName}" successfully.`, true);
+        setTimeout(_hideAtpModal, 900);
       } catch (err: any) {
         btn.disabled = false;
         if (icon) { icon.textContent = origIcon; icon.classList.remove('text-green-400'); }
-        _atpShowFeedback(err.message || 'Failed to add song.', false);
+        _atpShowFeedback(err.message || 'Failed to add song to playlist.', false);
       }
     });
 
@@ -179,6 +194,8 @@ const { title = "Music App" } = Astro.props;
   </script>
   <script>
     import { getUser, getToken, clearAuth, apiFetch } from '../lib/api.js';
+
+    const w = window as any;
 
     function applyAuthenticatedUI(user: any) {
       document.documentElement.dataset.authed = 'true';
@@ -209,7 +226,8 @@ const { title = "Music App" } = Astro.props;
       document.getElementById('btn-new-playlist')?.classList.add('hidden');
       document.getElementById('btn-new-playlist')?.classList.remove('flex');
       document.getElementById('header-user')?.classList.add('hidden');
-      document.getElementById('header-login-btn')?.classList.remove('hidden');
+      document.getElementById('header-login-btn')?.classList.add('hidden');
+      document.getElementById('header-actions')?.classList.add('justify-end');
     }
 
     function syncAuthFromStorage() {
@@ -219,33 +237,45 @@ const { title = "Music App" } = Astro.props;
       else applyUnauthenticatedUI();
     }
 
-    document.addEventListener('astro:before-swap', (e: any) => {
-      const token = localStorage.getItem('auth_token');
-      if (token) e.newDocument.documentElement.dataset.authed = 'true';
-    });
-
-    document.addEventListener('astro:page-load', () => {
-      syncAuthFromStorage();
+    function verifyAuthOnce() {
       const token = getToken();
       const user = getUser();
-      if (token && user) {
-        applyAuthenticatedUI(user);
-        const verify = () => apiFetch('/auth/me').catch(() => {
+      if (!token || !user) return;
+      applyAuthenticatedUI(user);
+
+      if (w.__authVerifyPromise) return w.__authVerifyPromise;
+      w.__authVerifyPromise = (async () => {
+        try {
+          await apiFetch('/auth/me');
+        } catch {
           clearAuth();
           applyUnauthenticatedUI();
           window.location.href = '/login?reason=session_expired';
-        });
-        if ('requestIdleCallback' in window) requestIdleCallback(verify);
-        else setTimeout(verify, 0);
-      }
-    });
+        } finally {
+          w.__authVerifyPromise = null;
+        }
+      })();
+      return w.__authVerifyPromise;
+    }
 
-    document.addEventListener('astro:before-swap', (e: any) => {
-      const token = localStorage.getItem('auth_token');
-      if (token) e.newDocument.documentElement.dataset.authed = 'true';
-    });
+    if (!w.__mainLayoutNavBound) {
+      w.__mainLayoutNavBound = true;
+
+      document.addEventListener('astro:before-swap', (e: any) => {
+        const token = localStorage.getItem('auth_token');
+        if (token) e.newDocument.documentElement.dataset.authed = 'true';
+      });
+
+      document.addEventListener('astro:page-load', () => {
+        syncAuthFromStorage();
+        const runVerify = () => verifyAuthOnce();
+        if ('requestIdleCallback' in window) requestIdleCallback(runVerify);
+        else setTimeout(runVerify, 0);
+      });
+    }
 
     syncAuthFromStorage();
+    verifyAuthOnce();
   </script>
 </body>
 </html>

@@ -285,6 +285,10 @@ import Sidebar from "../components/Sidebar.astro";
     refreshMe().then((fresh: any) => { if (fresh) applyHeroUser(fresh); });
   }
 
+  function isLikedPageActive() {
+    return window.location.pathname === '/liked' && !!document.getElementById('liked-tbody');
+  }
+
   let _tracks: any[] = [];
   let _searchQuery = '';
   let _sortKey: string = localStorage.getItem('liked_sort') || 'date_desc';
@@ -554,7 +558,8 @@ import Sidebar from "../components/Sidebar.astro";
   }
 
   function renderSkeletons(count = 6) {
-    const tbody = document.getElementById('liked-tbody')!;
+    const tbody = document.getElementById('liked-tbody');
+    if (!tbody) return;
     tbody.innerHTML = Array.from({ length: count }, () => `
       <tr class="border-b border-white/[0.03]">
         <td class="px-4 py-3 text-center">
@@ -582,9 +587,11 @@ import Sidebar from "../components/Sidebar.astro";
   }
 
   function render() {
+    if (!isLikedPageActive()) return;
     updateStats();
     const display = getDisplayTracks();
-    const tbody = document.getElementById('liked-tbody')!;
+    const tbody = document.getElementById('liked-tbody');
+    if (!tbody) return;
 
     if (!_tracks.length) {
       tbody.innerHTML = `
@@ -686,7 +693,7 @@ import Sidebar from "../components/Sidebar.astro";
 
   async function loadFavorites() {
     const token = localStorage.getItem('auth_token');
-    if (!token) return;
+    if (!token || !isLikedPageActive()) return;
 
     renderSkeletons();
 
@@ -826,6 +833,7 @@ import Sidebar from "../components/Sidebar.astro";
   });
 
   window.addEventListener('favorites:changed', (e: any) => {
+    if (!isLikedPageActive()) return;
     const { songId, isFavorite } = e.detail;
     if (!isFavorite) {
       _tracks = _tracks.filter((t: any) => t.id !== songId);
@@ -837,8 +845,19 @@ import Sidebar from "../components/Sidebar.astro";
     }
   });
 
-  loadAdvFiltersFromStorage();
-  loadFavorites();
+  function bootLikedPage() {
+    if (window.location.pathname !== '/liked') return;
+    if ((window as any).__likedPageBootedFor === window.location.pathname) return;
+    (window as any).__likedPageBootedFor = window.location.pathname;
+    loadAdvFiltersFromStorage();
+    loadFavorites();
+  }
+
+  if (!(window as any).__likedPageNavBound) {
+    (window as any).__likedPageNavBound = true;
+    document.addEventListener('astro:page-load', bootLikedPage);
+  }
+  bootLikedPage();
 
   const searchInput = document.getElementById('liked-search') as HTMLInputElement;
   const searchClear = document.getElementById('liked-search-clear') as HTMLElement;

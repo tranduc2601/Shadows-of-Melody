@@ -799,9 +799,19 @@ import PlayerBar from "../components/PlayerBar.astro";
     }
   }
 
-  window.addEventListener('playlist-created', () => loadPlaylists(false));
+  function bootPlaylistPage() {
+    if (window.location.pathname !== '/playlist') return;
+    if ((window as any).__playlistPageBootedFor === window.location.pathname) return;
+    (window as any).__playlistPageBootedFor = window.location.pathname;
+    loadPlaylists();
+  }
 
-  loadPlaylists();
+  if (!(window as any).__playlistPageNavBound) {
+    (window as any).__playlistPageNavBound = true;
+    window.addEventListener('playlist-created', () => loadPlaylists(false));
+    document.addEventListener('astro:page-load', bootPlaylistPage);
+  }
+  bootPlaylistPage();
 
   if (new URLSearchParams(window.location.search).get('create') === '1') {
     window.dispatchEvent(new CustomEvent('open-create-playlist-modal'));

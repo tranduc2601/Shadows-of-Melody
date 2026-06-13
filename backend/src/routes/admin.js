@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth, requireRole } from '../middleware/auth.js';
-import { getStats, getAnalytics, getUsers, getSubscriptions, deleteUser, toggleAdmin, getArtists, revokeArtistRole, getArtistContent, getGenres, createGenre, updateGenre, deleteGenre, getAlbums, createAlbum, updateAlbum, deleteAlbum, updateUserRole, toggleSongStatus, getAlbumSongs, updateAlbumSong, toggleLockUser, getAdminSongs, getAdminPlaylists, updateAdminPlaylist, deleteAdminPlaylist, getAdminPlaylistSongs, removeAdminPlaylistSong, updateAdminArtist, deleteAdminArtist } from '../controllers/adminController.js';
+import { requirePermission } from '../utils/authorization.js';
+import { getStats, getAnalytics, getUsers, getSubscriptions, deleteUser, toggleAdmin, getArtists, revokeArtistRole, getArtistContent, getGenres, createGenre, updateGenre, deleteGenre, getAlbums, createAlbum, updateAlbum, deleteAlbum, updateUserRole, toggleSongStatus, toggleSongFeatured, getAlbumSongs, updateAlbumSong, toggleLockUser, getAdminSongs, getAdminPlaylists, updateAdminPlaylist, deleteAdminPlaylist, getAdminPlaylistSongs, removeAdminPlaylistSong, updateAdminArtist, deleteAdminArtist } from '../controllers/adminController.js';
 import { adminUploadSong, adminUploadCover, adminUpdateSong } from '../controllers/adminSongController.js';
 import { listTasks, createTask, updateTaskStatus, getManagers } from '../controllers/taskController.js';
 import { uploadAudio, uploadImage } from '../config/multer.js';
@@ -8,7 +9,7 @@ import { uploadAudio, uploadImage } from '../config/multer.js';
 const router = express.Router();
 
 
-router.use(requireAuth, requireRole('manager', 'admin'));
+router.use(requireAuth, requirePermission('user:view'));
 
 router.get('/stats',                    getStats);
 router.get('/analytics',               getAnalytics);
@@ -43,6 +44,7 @@ router.patch('/songs/:id', adminUpdateSong);
 
 
 router.patch('/songs/:id/status', toggleSongStatus);
+router.patch('/songs/:id/featured', toggleSongFeatured);
 
 
 router.get('/albums/:id/songs',                    getAlbumSongs);

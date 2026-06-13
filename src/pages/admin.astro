@@ -22,7 +22,7 @@ import MainLayout from "../layouts/MainLayout.astro";
     </script>
 
     <aside id="admin-sidebar"
-      class="admin-sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#070d1f]/90 backdrop-blur-xl hidden md:flex md:flex-col z-40
+      class="admin-sidebar-root w-64 shrink-0 border-r border-white/5 bg-[#070d1f] hidden md:flex md:flex-col z-40
              transition-[width] duration-300 ease-in-out overflow-hidden">
       <div class="h-20 flex items-center justify-between px-4 border-b border-white/5 shrink-0">
         <a href="/" class="flex items-center gap-2 min-w-0 overflow-hidden">
@@ -132,8 +132,8 @@ import MainLayout from "../layouts/MainLayout.astro";
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden bg-linear-to-br from-[#0c1328] via-[#060e20] to-[#040813]">
-      <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/8 blur-[150px] rounded-full pointer-events-none"></div>
-      <div class="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] bg-purple-600/8 blur-[120px] rounded-full pointer-events-none"></div>
+      <div class="absolute top-[-10%] left-[-10%] w-[28%] h-[28%] bg-indigo-600/6 rounded-full opacity-60 pointer-events-none"></div>
+      <div class="absolute bottom-[10%] right-[-5%] w-[20%] h-[20%] bg-purple-600/6 rounded-full opacity-50 pointer-events-none"></div>
 
       <header class="h-20 shrink-0 flex items-center justify-between px-6 lg:px-8 border-b border-white/5 relative z-10">
         <div class="flex items-center gap-4">
@@ -152,7 +152,7 @@ import MainLayout from "../layouts/MainLayout.astro";
             <input
               type="text"
               placeholder="Search anything..."
-              class="w-64 h-10 bg-white/6 border border-white/10 text-gray-100 placeholder-gray-500 rounded-xl py-0 pl-11 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40 focus:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+              class="w-64 h-10 bg-white/6 border border-white/10 text-gray-100 placeholder-gray-500 rounded-xl py-0 pl-11 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500/40 focus:bg-white/10 transition-all duration-200 "
             />
             <kbd class="absolute right-3 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600 bg-white/5 border border-white/10 rounded-md pointer-events-none select-none">/</kbd>
           </div>
@@ -165,7 +165,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <div id="section-dashboard" class="space-y-5">
 
           <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white/3 border border-white/5 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/5 transition-all group">
+            <div class="bg-white/3 border border-white/5 rounded-2xl p-5  hover:bg-white/5 transition-all group">
               <div class="flex items-start justify-between mb-3">
                 <div class="w-11 h-11 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined text-white text-[20px]">group</span>
@@ -985,7 +985,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   </div>
 
 <div id="modal-confirm" class="admin-modal hidden fixed inset-0 z-[300] flex items-center justify-center">
-  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-confirm-bg"></div>
+  <div class="admin-modal-bg absolute inset-0 bg-black/60" id="modal-confirm-bg"></div>
   <div class="admin-modal-panel relative rounded-2xl p-7 w-full max-w-md z-10 mx-4">
     <div class="flex items-start gap-4 mb-6">
       <div id="modal-confirm-icon-wrap" class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-rose-500/15 border border-rose-500/20">
@@ -1043,7 +1043,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 </div>
 
 <div id="modal-edit-album" class="admin-modal hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="admin-modal-bg absolute inset-0 bg-black/60 backdrop-blur-md" id="modal-edit-album-bg"></div>
+  <div class="admin-modal-bg absolute inset-0 bg-black/60 " id="modal-edit-album-bg"></div>
   <div class="admin-modal-panel relative rounded-2xl w-full max-w-lg z-10 mx-4 max-h-[90vh] overflow-y-auto adm-modal-scroll">
     <div class="flex items-center justify-between px-7 py-5 border-b border-white/6 sticky top-0 bg-[#0f1c3a] z-10">
       <h2 class="text-base font-bold text-white flex items-center gap-2.5">
@@ -1531,7 +1531,9 @@ import MainLayout from "../layouts/MainLayout.astro";
     background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(9,15,29,0.98));
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(168,85,247,0.08) inset;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 90vh;
   }
 
   .admin-modal-panel form,
@@ -2094,9 +2096,54 @@ import MainLayout from "../layouts/MainLayout.astro";
 
   let _activeSection: string = 'dashboard';
   const _loadedSections = new Set<string>(['dashboard']);
+  const _prunedSections = new Set<string>();
+
+  function pruneSectionDom(section: string) {
+    if (section === 'users') {
+      ['admin-users-tbody', 'users-pagination-btns', 'users-results-count', 'users-filter-chips', 'artist-requests-list'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
+      _loadedSections.delete('users');
+      _prunedSections.add('users');
+      return;
+    }
+    if (section === 'songs') {
+      ['admin-songs-tbody', 'songs-pagination-btns', 'songs-results-count', 'songs-filter-chips'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
+      _loadedSections.delete('songs');
+      _prunedSections.add('songs');
+      return;
+    }
+    if (section === 'analytics') {
+      destroyDashCharts();
+      destroyAnalyticsCharts();
+      ['dash-top-songs', 'dash-genre-legend', 'admin-recent-users', 'top-songs-list', 'genre-dist-legend', 'subscription-legend'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
+      ['dash-chart-user-growth', 'dash-chart-listening', 'dash-chart-genres', 'chart-user-growth', 'chart-listening-activity', 'chart-top-songs', 'chart-top-artists', 'chart-genre-dist', 'chart-revenue', 'chart-subscriptions'].forEach((id) => {
+        const el = document.getElementById(id) as HTMLCanvasElement | null;
+        if (el) {
+          const ctx = el.getContext('2d');
+          ctx?.clearRect(0, 0, el.width, el.height);
+        }
+      });
+      ['chart-user-growth-empty', 'chart-listening-activity-empty', 'chart-revenue-empty', 'dash-genres-empty'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      _loadedSections.delete('analytics');
+      _prunedSections.add('analytics');
+      return;
+    }
+  }
 
   function switchSection(section: string) {
     if (_activeSection === section) return;
+    const prevSection = _activeSection;
     _activeSection = section;
 
     ALL_SECTIONS.forEach((s) => {
@@ -2122,6 +2169,8 @@ import MainLayout from "../layouts/MainLayout.astro";
         icon.classList.toggle('group-hover:scale-110', !isActive);
       }
     });
+
+    if (prevSection === 'users' || prevSection === 'songs' || prevSection === 'analytics') pruneSectionDom(prevSection);
 
     const titleEl = document.getElementById('page-title');
     if (titleEl) titleEl.textContent = SECTION_TITLES[section] ?? 'Dashboard';
@@ -3544,14 +3593,22 @@ import MainLayout from "../layouts/MainLayout.astro";
           <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-400 text-right font-medium">${s.plays_count?.toLocaleString() || 0}</td>
           <td class="px-6 py-4 hidden lg:table-cell text-sm text-gray-400 text-center">${fmt(s.duration)}</td>
           <td class="px-6 py-4">
-            <button class="btn-toggle-status flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer
-              ${(s.status || 'published') === 'suppressed'
-                ? 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
-                : 'bg-green-500/15 text-green-400 hover:bg-green-500/25'}"
-              data-id="${s.id}" data-status="${s.status || 'published'}" data-title="${encodeURIComponent(s.title)}" title="Click to toggle status">
-              <span class="material-symbols-outlined text-[13px]">${(s.status || 'published') === 'suppressed' ? 'visibility_off' : 'visibility'}</span>
-              ${(s.status || 'published') === 'suppressed' ? 'Suppressed' : 'Published'}
-            </button>
+            <div class="flex flex-col items-start gap-2">
+              <button class="btn-toggle-status flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer
+                ${(s.status || 'published') === 'suppressed'
+                  ? 'bg-amber-500/15 text-amber-400 hover:bg-amber-500/25'
+                  : 'bg-green-500/15 text-green-400 hover:bg-green-500/25'}"
+                data-id="${s.id}" data-status="${s.status || 'published'}" data-title="${encodeURIComponent(s.title)}" title="Click to toggle status">
+                <span class="material-symbols-outlined text-[13px]">${(s.status || 'published') === 'suppressed' ? 'visibility_off' : 'visibility'}</span>
+                ${(s.status || 'published') === 'suppressed' ? 'Suppressed' : 'Published'}
+              </button>
+              <button class="btn-toggle-featured flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer
+                ${s.is_featured ? 'bg-pink-500/15 text-pink-300 hover:bg-pink-500/25' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}"
+                data-id="${s.id}" data-featured="${s.is_featured ? '1' : '0'}" data-title="${encodeURIComponent(s.title)}" title="Click to toggle featured">
+                <span class="material-symbols-outlined text-[13px]">${s.is_featured ? 'star' : 'star_outline'}</span>
+                ${s.is_featured ? 'Featured' : 'Mark featured'}
+              </button>
+            </div>
           </td>
           <td class="px-6 py-4">
             <div class="flex items-center justify-end gap-1 min-w-max">
@@ -3571,9 +3628,44 @@ import MainLayout from "../layouts/MainLayout.astro";
         const editBtn   = (e.target as HTMLElement).closest('.btn-edit-song') as HTMLElement;
         const delBtn    = (e.target as HTMLElement).closest('.btn-delete-song') as HTMLElement;
         const statusBtn = (e.target as HTMLElement).closest('.btn-toggle-status') as HTMLElement;
+        const featuredBtn = (e.target as HTMLElement).closest('.btn-toggle-featured') as HTMLElement;
 
         if (editBtn) {
           openEditSongModal(editBtn.dataset.id!, editBtn.dataset.song!);
+        }
+
+        if (featuredBtn) {
+          const id = featuredBtn.dataset.id!;
+          const songLabel = decodeURIComponent(featuredBtn.dataset.title ?? `Song #${id}`);
+          const isFeatured = featuredBtn.dataset.featured === '1';
+          const confirmed = await showConfirm({
+            title: isFeatured ? 'Unfeature Song' : 'Feature Song',
+            body: isFeatured
+              ? `Remove "${songLabel}" from featured songs?`
+              : `Mark "${songLabel}" as featured?`,
+            confirmLabel: isFeatured ? 'Unfeature' : 'Feature',
+            confirmClass: isFeatured ? 'bg-white/10 hover:bg-white/15' : 'bg-pink-600 hover:bg-pink-500',
+            icon: isFeatured ? 'star_outline' : 'star',
+            iconClass: isFeatured ? 'text-gray-300' : 'text-pink-300',
+            iconWrapClass: isFeatured ? 'bg-white/5 border-white/10' : 'bg-pink-500/15 border-pink-500/20',
+          });
+          if (!confirmed) return;
+          const origHTML = featuredBtn.innerHTML;
+          featuredBtn.disabled = true;
+          featuredBtn.innerHTML = '<span class="material-symbols-outlined text-[13px] animate-spin">refresh</span> Saving...';
+          try {
+            const { data } = await apiFetch(`/admin/songs/${id}/featured`, { method: 'PATCH' });
+            featuredBtn.dataset.featured = data.is_featured ? '1' : '0';
+            featuredBtn.className = `btn-toggle-featured flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer ${data.is_featured ? 'bg-pink-500/15 text-pink-300 hover:bg-pink-500/25' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'}`;
+            featuredBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">${data.is_featured ? 'star' : 'star_outline'}</span>${data.is_featured ? 'Featured' : 'Mark featured'}`;
+            showToast(data.is_featured ? `"${songLabel}" is now featured.` : `"${songLabel}" was removed from featured.`, 'success');
+          } catch (err: any) {
+            featuredBtn.innerHTML = origHTML;
+            showToast(err.message || 'Failed to update featured state.', 'error');
+          } finally {
+            featuredBtn.disabled = false;
+          }
+          return;
         }
 
         if (statusBtn) {
@@ -3668,8 +3760,16 @@ import MainLayout from "../layouts/MainLayout.astro";
   const editCoverFilename = document.getElementById('edit-cover-filename') as HTMLElement;
   const editCoverStatus   = document.getElementById('edit-cover-status') as HTMLElement;
   const editCoverUrl      = document.getElementById('edit-cover-url') as HTMLInputElement;
+  const editSubmitBtn     = document.getElementById('btn-edit-song-submit') as HTMLButtonElement;
 
   let _editSongId: string | null = null;
+  let _editSongCoverPending = false;
+  let _editSongSubmitPending = false;
+
+  function updateEditSongSubmitState() {
+    if (!editSubmitBtn) return;
+    editSubmitBtn.disabled = _editSongCoverPending || _editSongSubmitPending;
+  }
 
   async function openEditSongModal(songId: string, songJson: string) {
     _editSongId = songId;
@@ -3686,6 +3786,9 @@ import MainLayout from "../layouts/MainLayout.astro";
     editCoverFilename.classList.add('hidden');
     editCoverStatus.classList.add('hidden');
     editErrDiv?.classList.add('hidden');
+    _editSongCoverPending = false;
+    _editSongSubmitPending = false;
+    updateEditSongSubmitState();
 
     const albumSel = document.getElementById('edit-album') as HTMLSelectElement;
     try {
@@ -3731,8 +3834,12 @@ import MainLayout from "../layouts/MainLayout.astro";
       editErrDiv.textContent = 'Image must be JPG/PNG/WebP, max 5MB.';
       editErrDiv.classList.remove('hidden');
       editCoverFile.value = '';
+      _editSongCoverPending = false;
+      updateEditSongSubmitState();
       return;
     }
+    _editSongCoverPending = true;
+    updateEditSongSubmitState();
     editCoverFilename.textContent = file.name;
     editCoverFilename.classList.remove('hidden');
     editCoverStatus.textContent = 'Uploading...';
@@ -3752,18 +3859,20 @@ import MainLayout from "../layouts/MainLayout.astro";
       if (!res.ok) throw new Error(json.message || 'Upload failed');
       editCoverUrl.value = json.data.url;
       editCoverStatus.textContent = '✓ Uploaded successfully';
-      URL.revokeObjectURL(objUrl);
     } catch (err: any) {
       editCoverStatus.textContent = `Error: ${err.message}`;
       editCoverPreview.innerHTML = '<span class="material-symbols-outlined text-gray-500 text-2xl">image</span>';
       editCoverUrl.value = '';
+    } finally {
+      _editSongCoverPending = false;
+      updateEditSongSubmitState();
       URL.revokeObjectURL(objUrl);
     }
   });
 
   editForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!_editSongId) return;
+    if (!_editSongId || _editSongCoverPending || _editSongSubmitPending) return;
     editErrDiv?.classList.add('hidden');
 
     const title    = (document.getElementById('edit-title') as HTMLInputElement).value.trim();
@@ -3786,10 +3895,11 @@ import MainLayout from "../layouts/MainLayout.astro";
     });
     if (!confirmed) return;
 
-    const submitBtn = document.getElementById('btn-edit-song-submit') as HTMLButtonElement;
-    submitBtn.disabled = true;
-    const origText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Saving...';
+    if (_editSongCoverPending || _editSongSubmitPending) return;
+    _editSongSubmitPending = true;
+    updateEditSongSubmitState();
+    const origText = editSubmitBtn?.innerHTML ?? '';
+    if (editSubmitBtn) editSubmitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Saving...';
 
     try {
       await apiFetch(`/admin/songs/${_editSongId}`, {
@@ -3802,15 +3912,16 @@ import MainLayout from "../layouts/MainLayout.astro";
           genre_ids:  genreIds,
         }),
       });
-      closeAdminModal(editModal as HTMLElement);
       showToast('Song updated successfully.', 'success');
+      closeAdminModal(editModal as HTMLElement);
       loadSongs();
     } catch (err: any) {
       editErrDiv.textContent = err.message || 'Failed to save changes.';
       editErrDiv.classList.remove('hidden');
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = origText;
+      _editSongSubmitPending = false;
+      updateEditSongSubmitState();
+      if (editSubmitBtn) editSubmitBtn.innerHTML = origText;
     }
   });
 
@@ -5810,7 +5921,7 @@ import MainLayout from "../layouts/MainLayout.astro";
   }
 </style>
 <div id="modal-assign-task" class="hidden fixed inset-0 z-[200] flex items-center justify-center">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]" id="modal-task-bg"></div>
+  <div class="absolute inset-0 bg-black/70 " id="modal-task-bg"></div>
   <div class="relative bg-[#0e1835] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl z-10 mx-4">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-lg font-bold text-white flex items-center gap-2">
