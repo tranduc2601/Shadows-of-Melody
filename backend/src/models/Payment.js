@@ -16,11 +16,11 @@ class Payment {
             description,
             paid_at = null,
         } = data;
-        const [result] = await pool.query(
-            'INSERT INTO payments (user_id, subscription_id, amount, currency, payment_method, payment_provider, transaction_id, order_id, response_code, status, description, paid_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        const [rows] = await pool.query(
+            'INSERT INTO payments (user_id, subscription_id, amount, currency, payment_method, payment_provider, transaction_id, order_id, response_code, status, description, paid_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id',
             [user_id, subscription_id, amount, currency, payment_method, payment_provider, transaction_id, order_id, response_code, status, description, paid_at]
         );
-        return result.insertId;
+        return rows[0].id;
     }
 
     static async findById(id) {
@@ -39,6 +39,14 @@ class Payment {
         return rows[0];
     }
 
+    static async findByOrderId(orderId) {
+        const [rows] = await pool.query(
+            'SELECT * FROM payments WHERE order_id = ?',
+            [orderId]
+        );
+        return rows[0];
+    }
+
     static async findByUserId(userId, limit = 20, offset = 0) {
         const [rows] = await pool.query(
             'SELECT * FROM payments WHERE user_id = ? ORDER BY payment_date DESC LIMIT ? OFFSET ?',
@@ -48,13 +56,18 @@ class Payment {
     }
 
     static async update(id, data) {
-        const fields = Object.keys(data)
+        const updateData = { ...data };
+        delete updateData.updated_at;
+
+        const keys = Object.keys(updateData);
+        const fields = keys
             .map(key => `${key} = ?`)
             .join(', ');
-        const values = Object.values(data);
+        const values = Object.values(updateData);
+        const setClause = fields ? `${fields}, updated_at = NOW()` : 'updated_at = NOW()';
 
         await pool.query(
-            `UPDATE payments SET ${fields}, updated_at = NOW() WHERE id = ?`,
+            `UPDATE payments SET ${setClause} WHERE id = ?`,
             [...values, id]
         );
     }

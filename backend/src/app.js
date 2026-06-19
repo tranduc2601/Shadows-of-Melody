@@ -16,6 +16,7 @@ import favoriteRoutes from './routes/favorites.js';
 import historyRoutes from './routes/history.js';
 import streamRoutes from './routes/stream.js';
 import subscriptionRoutes from './routes/subscriptions.js';
+import paymentRoutes from './routes/payments.js';
 import adminRoutes from './routes/admin.js';
 import roleRoutes from './routes/roles.js';
 import studioRoutes from './routes/studio.js';
@@ -36,8 +37,15 @@ testConnection();
     `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS amount_paid NUMERIC(12,2) DEFAULT 0`,
     `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS currency VARCHAR(10) DEFAULT 'VND'`,
     `ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_provider VARCHAR(50) DEFAULT 'vnpay'`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS order_id VARCHAR(100)`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS response_code VARCHAR(20)`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`,
 
     `CREATE UNIQUE INDEX IF NOT EXISTS artists_user_id_unique ON artists (user_id) WHERE user_id IS NOT NULL`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS payments_order_id_unique ON payments (order_id) WHERE order_id IS NOT NULL`,
 
     `CREATE TABLE IF NOT EXISTS artist_follows (
        user_id   INT NOT NULL REFERENCES users(id)   ON DELETE CASCADE,
@@ -87,6 +95,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/stream', streamRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/studio', studioRoutes);
