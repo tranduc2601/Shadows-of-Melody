@@ -16,6 +16,10 @@ const pool = new Pool({
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
+pool.on('error', (error) => {
+    console.error('[PostgreSQL pool error]', error?.stack || error);
+});
+
 const _pgQuery = pool.query.bind(pool);
 
 pool.query = async (sql, params = []) => {

@@ -1,6 +1,5 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import PlayerBar from "../components/PlayerBar.astro";
 import Sidebar from "../components/Sidebar.astro";
 ---
 
@@ -238,7 +237,6 @@ import Sidebar from "../components/Sidebar.astro";
         </div>
       </div>
 
-      <PlayerBar />
     </main>
   </div>
 
@@ -847,8 +845,10 @@ import Sidebar from "../components/Sidebar.astro";
 
   function bootLikedPage() {
     if (window.location.pathname !== '/liked') return;
-    if ((window as any).__likedPageBootedFor === window.location.pathname) return;
-    (window as any).__likedPageBootedFor = window.location.pathname;
+    const root = document.getElementById('liked-tbody');
+    if (!root) return;
+    if ((window as any).__likedPageBootedFor === root) return;
+    (window as any).__likedPageBootedFor = root;
     loadAdvFiltersFromStorage();
     loadFavorites();
   }

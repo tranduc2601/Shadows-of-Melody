@@ -2,11 +2,30 @@ import { pool } from '../config/database.js';
 
 class History {
     static async upsert(userId, songId, durationPlayed = null) {
+        const [existing] = await pool.query(
+            `SELECT id
+             FROM listening_history
+             WHERE user_id = ? AND song_id = ?
+             ORDER BY played_at DESC
+             LIMIT 1`,
+            [userId, songId]
+        );
+
+        if (existing[0]?.id) {
+            const [rows] = await pool.query(
+                `UPDATE listening_history
+                 SET played_at = NOW(), duration_played = ?
+                 WHERE id = ?
+                 RETURNING *`,
+                [durationPlayed, existing[0].id]
+            );
+            return rows;
+        }
+
         const [rows] = await pool.query(
             `INSERT INTO listening_history (user_id, song_id, duration_played, played_at)
              VALUES (?, ?, ?, NOW())
-             ON CONFLICT (user_id, song_id)
-             DO UPDATE SET played_at = NOW(), duration_played = EXCLUDED.duration_played`,
+             RETURNING *`,
             [userId, songId, durationPlayed]
         );
         return rows;

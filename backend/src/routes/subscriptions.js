@@ -1,5 +1,6 @@
 import express from 'express';
 import * as subscriptionController from '../controllers/subscriptionController.js';
+import { createVnpayPayment } from '../controllers/paymentController.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -7,6 +8,7 @@ const router = express.Router();
 router.get('/plans', subscriptionController.listPlans);
 router.get('/', requireAuth, subscriptionController.getSubscription);
 router.post('/checkout', requireAuth, subscriptionController.startCheckout);
+router.post('/vnpay/create', requireAuth, requireRole('user', 'artist'), createVnpayPayment);
 router.post('/momo/confirm', subscriptionController.confirmMomoPayment);
 router.post('/vnpay/confirm', subscriptionController.confirmVnpayPayment);
 router.post('/cancel', requireAuth, subscriptionController.cancelSubscription);

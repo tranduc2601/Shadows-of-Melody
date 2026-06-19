@@ -23,6 +23,15 @@ const config = {
     google: {
         clientId: process.env.GOOGLE_CLIENT_ID || '',
     },
+    vnpay: {
+        tmnCode: process.env.VNPAY_TMN_CODE || '',
+        hashSecret: process.env.VNPAY_HASH_SECRET || '',
+        paymentUrl: process.env.VNPAY_PAYMENT_URL || 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+        returnUrl: process.env.VNPAY_RETURN_URL || 'http://localhost:5000/api/payments/vnpay/return',
+        ipnUrl: process.env.VNPAY_IPN_URL || 'http://localhost:5000/api/payments/vnpay/ipn',
+        locale: process.env.VNPAY_LOCALE || 'vn',
+        orderType: process.env.VNPAY_ORDER_TYPE || 'other',
+    },
     cors: {
         origin: process.env.CORS_ORIGIN || 'http://localhost:4321',
     },
