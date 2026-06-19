@@ -572,8 +572,6 @@
     if (_likedSongId != null && Number(songId) === Number(_likedSongId)) setFavUI(!!isFavorite);
   });
 
-  window.addEventListener('player:songchange', () => syncSongUI(player.current));
-
   aptClose?.addEventListener('click', closeAddToPlaylistModal);
   aptCancel?.addEventListener('click', closeAddToPlaylistModal);
   aptModal?.addEventListener('click', (e) => {

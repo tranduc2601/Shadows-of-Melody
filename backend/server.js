@@ -27,6 +27,15 @@ const server = app.listen(PORT, () => {
     `);
 });
 
+process.on('uncaughtException', (error) => {
+    console.error('[uncaughtException]', error?.stack || error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[unhandledRejection]', reason?.stack || reason);
+    throw reason instanceof Error ? reason : new Error(String(reason));
+});
 
 process.on('SIGTERM', () => {
     console.log('SIGTERM received, shutting down gracefully...');

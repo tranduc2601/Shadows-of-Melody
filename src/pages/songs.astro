@@ -355,8 +355,10 @@ import Sidebar from "../components/Sidebar.astro";
 
   function bootSongsPage() {
     if (window.location.pathname !== '/songs') return;
-    if ((window as any).__songsPageBootedFor === window.location.pathname) return;
-    (window as any).__songsPageBootedFor = window.location.pathname;
+    const root = document.getElementById('songs-table');
+    if (!root) return;
+    if ((window as any).__songsPageBootedFor === root) return;
+    (window as any).__songsPageBootedFor = root;
     songsPageBound = false;
     bindSongsPage();
     loadSongs();
